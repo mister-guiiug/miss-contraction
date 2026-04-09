@@ -2,6 +2,8 @@
 
 Application web (PWA) pour **noter les contractions**, suivre la **fréquence et les intervalles**, et **recevoir une alerte** lorsque les seuils configurés suggèrent de contacter la maternité. Interface en français, pensée pour mobile.
 
+**[Accéder à l'application](https://mister-guiiug.github.io/miss-contraction/)**
+
 > **Avertissement** : cet outil est un aide-mémoire. Il ne remplace pas un avis médical. En cas de doute ou d’urgence, contactez un professionnel de santé ou les services d’urgence.
 
 ## Fonctionnalités
