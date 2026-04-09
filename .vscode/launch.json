@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "PWA — Chrome (dev)",
+      "url": "http://localhost:5173/miss-contraction/",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "dev: Vite"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "PWA — Chrome (preview build)",
+      "url": "http://localhost:4173/miss-contraction/",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "preview: Vite"
+    }
+  ]
+}
