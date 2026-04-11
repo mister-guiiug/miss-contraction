@@ -7,7 +7,7 @@ const GSC_VERIFICATION = "iUfQ7_dOztC3XoSGesC2b7IkxyNL2O9fegKXECoOg30";
 
 // Dépôt GitHub Pages : https://<user>.github.io/miss-contraction/
 export default defineConfig(({ command }) => ({
-  base: "/miss-contraction/",
+  base: command === "build" ? "/miss-contraction/" : "/",
   plugins: [
     {
       name: "google-tag-manager",
@@ -46,7 +46,7 @@ export default defineConfig(({ command }) => ({
       name: "miss-contraction-trailing-slash",
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
-          const raw = req.url ?? "";
+          const raw = req.originalUrl ?? "";
           const pathOnly = raw.split("?")[0] ?? "";
           if (pathOnly === "/miss-contraction") {
             const qs = raw.includes("?") ? `?${raw.split("?")[1]}` : "";
@@ -60,7 +60,7 @@ export default defineConfig(({ command }) => ({
       },
       configurePreviewServer(server) {
         server.middlewares.use((req, res, next) => {
-          const raw = req.url ?? "";
+          const raw = req.originalUrl ?? "";
           const pathOnly = raw.split("?")[0] ?? "";
           if (pathOnly === "/miss-contraction") {
             const qs = raw.includes("?") ? `?${raw.split("?")[1]}` : "";

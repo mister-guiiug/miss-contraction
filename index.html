@@ -2,6 +2,21 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
+    <!-- Script anti-FOUC : applique le thème avant tout rendu -->
+    <script>
+      (function () {
+        try {
+          var k = 'mc_theme';
+          var v = localStorage.getItem(k);
+          var eff;
+          if (v === 'light' || v === 'dark') eff = v;
+          else eff = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', eff);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -11,7 +26,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
     <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#5c1f5c" />
+    <meta id="meta-theme-color" name="theme-color" content="#a0309a" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
