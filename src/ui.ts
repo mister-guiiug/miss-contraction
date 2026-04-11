@@ -386,7 +386,7 @@ function bind(root: HTMLElement): void {
   syncThemeButton(btnTheme);
   btnTheme.addEventListener("click", () => {
     cycleThemePreference();
-    syncThemeButton(btnTheme);
+    syncThemeButton(btnTheme, true);
   });
 
   appDrawer.addEventListener("click", (e) => {
