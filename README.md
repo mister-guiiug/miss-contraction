@@ -1,84 +1,118 @@
 # Miss Contraction
 
-Application web (PWA) pour **noter les contractions**, suivre la **fréquence et les intervalles**, et **recevoir une alerte** lorsque les seuils configurés suggèrent de contacter la maternité. Interface en français, pensée pour mobile.
+[![Déployer sur GitHub Pages](https://github.com/mister-guiiug/miss-contraction/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/mister-guiiug/miss-contraction/actions/workflows/deploy-pages.yml)
+[![Licence MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-mister.guiiug-orange?logo=buy-me-a-coffee)](https://www.buymeacoffee.com/mister.guiiug)
 
-**[Accéder à l'application](https://mister-guiiug.github.io/miss-contraction/)**
+> Chronomètre les contractions, suit leur fréquence et vous alerte quand il est temps d'appeler la maternité.
 
-> **Avertissement** : cet outil est un aide-mémoire. Il ne remplace pas un avis médical. En cas de doute ou d’urgence, contactez un professionnel de santé ou les services d’urgence.
+**[▶ Accéder à l'application](https://mister-guiiug.github.io/miss-contraction/)**
+
+> ⚠️ **Avertissement médical** : cet outil est un aide-mémoire. Il ne remplace en aucun cas un avis médical. En cas de doute ou d'urgence, contactez immédiatement un professionnel de santé ou le 15 (SAMU).
+
+---
+
+## Table des matières
+
+- [Fonctionnalités](#fonctionnalités)
+- [Comment utiliser l'application](#comment-utiliser-lapplication)
+- [Installation sur votre téléphone (PWA)](#installation-sur-votre-téléphone-pwa)
+- [Confidentialité](#confidentialité)
+- [Licence](#licence)
+
+---
 
 ## Fonctionnalités
 
-### Accueil
+### Suivi des contractions
 
-- **Début / fin de contraction** : chronomètre pendant une contraction en cours.
-- **Indicateur de seuil** : état visuel selon la régularité récente (calme, en approche du seuil, ou critères remplis sur les **N dernières** contractions : intervalle max entre débuts, durée min, nombre de contractions consécutives — tout est réglable).
-- **Pré-alerte** (optionnelle) : bandeau « rythme soutenu » avant le déclenchement strict des notifications.
-- **Rappel** si une contraction est restée « ouverte » (début sans fin) trop longtemps (durée configurable).
-- **Graphique** des intervalles entre débuts des derniers enregistrements (selon la fenêtre de stats choisie).
-- **Chronologie** des contractions avec **note** optionnelle par événement.
-- **Annuler** l’ajout de la dernière contraction pendant ~30 secondes.
-- **Exporter / partager** l’historique et les réglages dans un **fichier JSON** (téléchargement ou partage natif si disponible) ; rappel périodique pour penser à sauvegarder avant un changement de téléphone.
-- **Effacer tout l’historique** sur l’appareil (avec confirmation).
+| Fonctionnalité | Description |
+|---|---|
+| Chronomètre | Lance / arrête un chronomètre à chaque contraction en cours |
+| Indicateur de seuil | Affichage visuel : calme, rythme soutenu, ou seuil atteint |
+| Pré-alerte | Bandeau d'avertissement avant le déclenchement des notifications |
+| Rappel contraction ouverte | Alerte si une contraction a été démarrée mais jamais terminée |
+| Graphique des intervalles | Visualisation des derniers intervalles entre contractions |
+| Chronologie | Historique des contractions avec note personnalisée par événement |
+| Annulation | Annuler le dernier enregistrement dans les ~30 secondes |
 
-### Paramètres
+### Alertes et notifications
 
-- Seuils d’alerte : **intervalle max** (minutes), **durée min** (secondes), **nombre de contractions** consécutives à analyser.
-- **Notifications** navigateur (demande de permission) ; **reporter les alertes** 30 min / 1 h ou annuler le report.
-- **Fenêtre de temps** pour moyennes et graphique sur l’accueil : toutes les données ou **30 / 60 / 120** dernières minutes.
-- **Fiche maternité** : libellé, **numéro** (appel rapide depuis l’écran dédié), **adresse / consignes**.
-- **Accessibilité / confort** : textes et boutons plus grands ; **garder l’écran allumé** pendant une contraction en cours ; **vibrations** courtes au début / fin si l’appareil le permet.
-- **Commande vocale** (expérimentale, activable) : début / fin de contraction à la voix ; le module peut être masqué dans le menu.
-- **Module « message maternité »** : affichage de l’écran et de l’entrée de menu (désactivable).
+| Fonctionnalité | Description |
+|---|---|
+| Seuils personnalisables | Intervalle max (min), durée min (sec), nombre de contractions consécutives |
+| Notifications navigateur | Alerte dès que les seuils sont atteints |
+| Report d'alerte | Snooze 30 min ou 1 h, ou annulation du report |
+
+### Paramètres et personnalisation
+
+| Fonctionnalité | Description |
+|---|---|
+| Fenêtre de statistiques | Toutes les données ou les 30 / 60 / 120 dernières minutes |
+| Fiche maternité | Nom, numéro de téléphone (appel rapide) et consignes d'admission |
+| Grand confort | Textes et boutons agrandis ; écran maintenu allumé pendant une contraction |
+| Vibrations | Retour haptique au début et à la fin de chaque contraction |
+| Commande vocale *(expérimental)* | Début / fin de contraction à la voix (activable dans les réglages) |
 
 ### Autres écrans
 
-- **Tableau des contractions** : tableau détaillé (horaires, durée, intervalle, fréquence, notes) avec **modification** (dates/heures + note) et **suppression** ligne par ligne.
-- **Message maternité** : texte modifiable (modèle par défaut fourni), prêt à copier ou partager (SMS / WhatsApp / etc. selon le système).
-- **Maternité** : rappel des infos saisies + **appel** en un geste.
-- Navigation par **hash** (`#/`, `#/parametres`, `#/historique`, `#/maternite`, `#/message`), **menu latéral** et **fil d’Ariane**.
+| Écran | Description |
+|---|---|
+| Tableau des contractions | Vue détaillée (heure, durée, intervalle, fréquence, notes) avec modification et suppression |
+| Message maternité | Texte pré-rempli prêt à copier ou partager par SMS / WhatsApp |
+| Écran maternité | Récapitulatif des infos + appel en un geste |
 
-### PWA
+### Sauvegarde et export
 
-- Installation sur l’**écran d’accueil**, raccourcis vers les sections principales (selon le manifeste), **mise à jour** automatique du service worker, mise en cache des ressources pour un usage **hors ligne** limité aux assets de l’app.
+| Fonctionnalité | Description |
+|---|---|
+| Export JSON | Téléchargement ou partage natif de l'historique et des réglages |
+| Rappel de sauvegarde | Notification périodique pour penser à exporter avant un changement de téléphone |
+| Effacement | Suppression complète de l'historique sur l'appareil (avec confirmation) |
 
-## Prérequis
+---
 
-- [Node.js](https://nodejs.org/) (version LTS recommandée)
+## Comment utiliser l'application
 
-## Démarrage
+1. **Ouvrez l'application** sur votre téléphone : [miss-contraction](https://mister-guiiug.github.io/miss-contraction/)
+2. **Configurez votre maternité** dans les paramètres (nom, numéro, consignes).
+3. **Appuyez sur « Début »** au début d'une contraction, puis **« Fin »** quand elle se termine.
+4. L'application calcule automatiquement les intervalles et la durée.
+5. **Une notification s'affiche** dès que les seuils configurés sont atteints.
+6. **Appelez la maternité** directement depuis l'écran dédié.
 
-```bash
-npm install
-npm run dev
-```
+---
 
-Puis ouvrir l’URL affichée dans le terminal (souvent `http://localhost:5173`).
+## Installation sur votre téléphone (PWA)
 
-## Scripts
+Miss Contraction est une application web progressive (PWA) : elle s'installe directement sur votre écran d'accueil, sans passer par un store.
 
-| Commande | Description |
-| -------- | ----------- |
-| `npm run dev` | Serveur de développement Vite |
-| `npm run build` | Build de production dans `dist/` |
-| `npm run preview` | Prévisualisation du build (base `/miss-contraction/`, comme sur GitHub Pages) |
-| `npm run icons` | Régénère les icônes PWA à partir de `public/icon.svg` (Sharp) |
+**Sur Android (Chrome) :**
+1. Ouvrez le site dans Chrome.
+2. Appuyez sur les trois points en haut à droite → **« Ajouter à l'écran d'accueil »**.
 
-## Déploiement (GitHub Pages)
+**Sur iPhone (Safari) :**
+1. Ouvrez le site dans Safari.
+2. Appuyez sur le bouton Partager → **« Sur l'écran d'accueil »**.
 
-Le dépôt est configuré avec la base Vite `/miss-contraction/`, adaptée à une URL du type :
+Une fois installée, l'application fonctionne **hors ligne** pour les fonctions de base.
 
-`https://<utilisateur>.github.io/miss-contraction/`
+---
 
-Le workflow dans `.github/workflows/deploy-pages.yml` peut déployer le site automatiquement après un push sur la branche configurée.
+## Confidentialité
 
-## Technique
+Miss Contraction ne collecte **aucune donnée personnelle**.
 
-- **Vite** + **TypeScript**
-- **PWA** (`vite-plugin-pwa`) : installation sur l’écran d’accueil, mode hors ligne pour les assets mis en cache
-- Données stockées **localement** dans le navigateur (pas de compte serveur dans cette app)
+| Donnée | Traitement |
+|---|---|
+| Historique des contractions | Stocké **uniquement sur votre appareil** (localStorage du navigateur) |
+| Paramètres | Stockés **uniquement sur votre appareil** |
+| Données réseau | Aucune donnée n'est envoyée à un serveur externe |
+
+L'application ne nécessite pas de compte, pas d'inscription et pas de connexion internet une fois installée.
+
+---
 
 ## Licence
 
 [MIT](LICENSE) — Copyright (c) 2026 Guillaume GUERIN.
-
-Le champ `private` dans `package.json` évite une publication accidentelle sur le registre npm ; il ne change pas les droits sur le code hébergé ici.
