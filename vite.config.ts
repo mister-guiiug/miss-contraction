@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 const GTM_ID = "GTM-M2GSG3V4";
+const GA_ID = "G-B44CK4VR08";
 
 // Dépôt GitHub Pages : https://<user>.github.io/miss-contraction/
 export default defineConfig(({ command }) => ({
@@ -21,6 +22,16 @@ export default defineConfig(({ command }) => ({
             tag: "noscript",
             injectTo: "body-prepend",
             children: `<iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
+          },
+          {
+            tag: "script",
+            injectTo: "head",
+            attrs: { async: true, src: `https://www.googletagmanager.com/gtag/js?id=${GA_ID}` },
+          },
+          {
+            tag: "script",
+            injectTo: "head",
+            children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`,
           },
         ];
       },
