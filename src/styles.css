@@ -1724,6 +1724,16 @@ a.btn {
   text-align: center;
 }
 
+.footer-link {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
 .app-banners {
   display: flex;
   flex-direction: column;
