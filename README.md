@@ -1,7 +1,7 @@
 # Miss Contraction
 
 [![Application en ligne](https://img.shields.io/badge/Application-En%20ligne-brightgreen?style=for-the-badge)](https://mister-guiiug.github.io/miss-contraction/)
-[![License](https://img.shields.io/badge/Application-En%20ligne-brightblue?style=for-the-badge)](https://github.com/mister-guiiug/miss-contraction/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/Licence-MIT-blue?style=for-the-badge)](https://github.com/mister-guiiug/miss-contraction/blob/main/LICENSE)
 [![Buy Me A Coffee](https://img.shields.io/badge/Soutenir-%E2%98%95-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/mister.guiiug)
 
 > Chronomètre les contractions, suit leur fréquence et vous alerte quand il est temps d'appeler la maternité.
