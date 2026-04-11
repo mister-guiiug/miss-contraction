@@ -8,12 +8,16 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview --base /miss-contraction/",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "icons": "node scripts/generate-pwa-icons.mjs"
   },
   "devDependencies": {
+    "jsdom": "^26.0.0",
     "sharp": "^0.33.5",
     "typescript": "~5.7.2",
     "vite": "^6.2.0",
-    "vite-plugin-pwa": "^0.21.1"
+    "vite-plugin-pwa": "^0.21.1",
+    "vitest": "^3.0.0"
   }
 }
