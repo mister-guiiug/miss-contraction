@@ -1,0 +1,27 @@
+# Normalise les fins de ligne en LF dans le dépôt (CRLF → LF au commit)
+* text=auto eol=lf
+
+# Fichiers texte explicites
+*.ts        text eol=lf
+*.js        text eol=lf
+*.mjs       text eol=lf
+*.json      text eol=lf
+*.html      text eol=lf
+*.css       text eol=lf
+*.md        text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.txt       text eol=lf
+*.svg       text eol=lf
+.gitattributes text eol=lf
+.gitignore     text eol=lf
+
+# Fichiers binaires — pas de conversion
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.webp binary
+*.woff binary
+*.woff2 binary
