@@ -85,6 +85,24 @@ html[data-theme="dark"] .panel-cta {
     var(--shadow);
 }
 
+html[data-theme="dark"] .cta-hint {
+  color: rgba(var(--ink-rgb), 0.8);
+}
+
+html[data-theme="dark"] .cta-hint strong {
+  color: var(--text);
+}
+
+html[data-theme="dark"] .panel-cta .btn-secondary {
+  background: rgba(var(--accent-rgb), 0.2);
+  color: var(--text);
+  border: 1px solid rgba(var(--accent-rgb), 0.35);
+}
+
+html[data-theme="dark"] .panel-cta .btn-secondary:hover {
+  background: rgba(var(--accent-rgb), 0.3);
+}
+
 /* ── Overrides dark mode : barre maternité ───────────────────── */
 html[data-theme="dark"] .maternity-quick {
   background: linear-gradient(
