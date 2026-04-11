@@ -43,7 +43,53 @@ html[data-theme="dark"] body {
     linear-gradient(168deg, #1c0d28 0%, #160b1c 48%, #130920 100%);
 }
 
-/* Bannière « nouvelle version » (service worker) */
+/* ── Overrides dark mode : bannières ─────────────────────────── */
+html[data-theme="dark"] .app-banner--warn {
+  background: rgba(220, 150, 30, 0.12);
+  border-color: rgba(220, 150, 30, 0.35);
+  color: #f5c97a;
+}
+
+html[data-theme="dark"] .app-banner--info {
+  background: rgba(80, 150, 255, 0.1);
+  border-color: rgba(80, 150, 255, 0.3);
+  color: #90bfff;
+}
+
+html[data-theme="dark"] .app-banner--accent {
+  background: rgba(var(--accent-rgb), 0.12);
+  border-color: rgba(var(--accent-rgb), 0.3);
+  color: var(--primary);
+}
+
+html[data-theme="dark"] .app-banner--muted {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+/* ── Overrides dark mode : badges de seuil ───────────────────── */
+html[data-theme="dark"] .threshold-badge[data-state="empty"] {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+}
+
+html[data-theme="dark"] .threshold-badge[data-state="calm"] {
+  background: rgba(80, 200, 120, 0.1);
+  color: #7de0a0;
+}
+
+html[data-theme="dark"] .threshold-badge[data-state="approaching"] {
+  background: rgba(220, 150, 30, 0.12);
+  color: #f5c97a;
+}
+
+html[data-theme="dark"] .threshold-badge[data-state="match"] {
+  background: rgba(var(--accent-rgb), 0.14);
+  color: var(--primary);
+}
+
+
 .sw-update-banner {
   position: fixed;
   bottom: 0;
