@@ -1,8 +1,8 @@
 # Miss Contraction
 
-[![Déployer sur GitHub Pages](https://github.com/mister-guiiug/miss-contraction/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/mister-guiiug/miss-contraction/actions/workflows/deploy-pages.yml)
-[![Licence MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-mister.guiiug-orange?logo=buy-me-a-coffee)](https://www.buymeacoffee.com/mister.guiiug)
+[![Application en ligne](https://img.shields.io/badge/Application-En%20ligne-brightgreen?style=for-the-badge)](https://mister-guiiug.github.io/miss-contraction/)
+[![License](https://img.shields.io/badge/Application-En%20ligne-brightblue?style=for-the-badge)](https://github.com/mister-guiiug/miss-contraction/blob/main/LICENSE)
+[![Buy Me A Coffee](https://img.shields.io/badge/Soutenir-%E2%98%95-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/mister.guiiug)
 
 > Chronomètre les contractions, suit leur fréquence et vous alerte quand il est temps d'appeler la maternité.
 
@@ -115,4 +115,4 @@ L'application ne nécessite pas de compte, pas d'inscription et pas de connexion
 
 ## Licence
 
-[MIT](LICENSE) — Copyright (c) 2026 Guillaume GUERIN.
+[MIT](LICENSE) — Copyright © 2026 Guillaume GUERIN.
