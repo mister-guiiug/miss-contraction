@@ -43,6 +43,29 @@ html[data-theme="dark"] body {
     linear-gradient(168deg, #1c0d28 0%, #160b1c 48%, #130920 100%);
 }
 
+/* Lien d'évitement clavier */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 10001;
+  padding: 0.65rem 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  background: var(--primary);
+  border-radius: 0.55rem;
+  box-shadow: 0 4px 16px rgba(var(--ink-rgb), 0.25);
+}
+
+.skip-to-content:focus {
+  left: max(0.5rem, env(safe-area-inset-left, 0px));
+  top: max(0.5rem, env(safe-area-inset-top, 0px));
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
+
 *,
 *::before,
 *::after {
