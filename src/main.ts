@@ -1,10 +1,10 @@
 import "./styles.css";
-import { registerSW } from "virtual:pwa-register";
 import { applyResolvedTheme, wireSystemThemeListener } from "./theme";
+import { registerServiceWorker } from "./register-sw";
 import { mountApp } from "./ui";
 
 applyResolvedTheme();
 wireSystemThemeListener();
-registerSW({ immediate: true });
+registerServiceWorker();
 
 mountApp(document.querySelector<HTMLDivElement>("#app")!);
