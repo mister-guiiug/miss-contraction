@@ -3,8 +3,8 @@
   "tasks": [
     {
       "label": "dev: Vite",
-      "type": "npm",
-      "script": "dev",
+      "type": "shell",
+      "command": "npm run dev",
       "isBackground": true,
       "problemMatcher": {
         "owner": "vite",
@@ -13,6 +13,13 @@
           "activeOnStart": true,
           "beginsPattern": ".",
           "endsPattern": "ready in"
+        }
+      },
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "shell": {
+          "executable": "cmd.exe",
+          "args": ["/d", "/c"]
         }
       },
       "presentation": {
@@ -34,12 +41,16 @@
           "endsPattern": "Local:"
         }
       },
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "shell": {
+          "executable": "cmd.exe",
+          "args": ["/d", "/c"]
+        }
+      },
       "presentation": {
         "reveal": "silent",
         "panel": "shared"
-      },
-      "options": {
-        "cwd": "${workspaceFolder}"
       }
     }
   ]

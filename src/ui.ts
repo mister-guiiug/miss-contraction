@@ -15,6 +15,10 @@ import {
   findFirstThresholdMatchEndMs,
   getRecentIntervalsMs,
 } from "./statsHelpers";
+import type { AppRoute } from "./router";
+import { parseRoute, getBreadcrumbLabel, getDocumentTitle } from "./router";
+import { focusMainContent } from "./focus-utils";
+import { cycleThemePreference, getStoredThemePreference } from "./theme";
 
 type State = {
   records: ContractionRecord[];
@@ -72,42 +76,7 @@ export function mountApp(root: HTMLDivElement): void {
   render(root);
 }
 
-type AppRoute = "home" | "settings" | "message" | "table" | "maternity" | "midwife";
 
-function parseRoute(): AppRoute {
-  const path = window.location.hash.replace(/^#/, "") || "/";
-  const normalized = path.startsWith("/") ? path : `/${path}`;
-  if (normalized === "/parametres" || normalized === "/settings") return "settings";
-  if (
-    normalized === "/message" ||
-    normalized === "/messages" ||
-    normalized === "/sms"
-  )
-    return "message";
-  if (
-    normalized === "/historique" ||
-    normalized === "/tableau" ||
-    normalized === "/table"
-  )
-    return "table";
-  if (normalized === "/maternite" || normalized === "/maternity") return "maternity";
-  if (
-    normalized === "/sage-femme" ||
-    normalized === "/resume" ||
-    normalized === "/midwife"
-  )
-    return "midwife";
-  return "home";
-}
-
-const BREADCRUMB_LABELS: Record<AppRoute, string> = {
-  home: "Accueil",
-  settings: "Paramètres",
-  message: "Message maternité",
-  table: "Tableau des contractions",
-  maternity: "Maternité",
-  midwife: "Résumé sage-femme",
-};
 
 function updateDrawerNavActive(root: HTMLElement, route: AppRoute): void {
   root.querySelectorAll<HTMLAnchorElement>("a.drawer-link[data-drawer-route]").forEach((a) => {
@@ -122,8 +91,8 @@ function updateDrawerNavActive(root: HTMLElement, route: AppRoute): void {
 function renderTopBreadcrumb(root: HTMLElement, route: AppRoute): void {
   const nav = root.querySelector<HTMLElement>("#top-bar-bc-nav");
   if (!nav) return;
-  const acc = BREADCRUMB_LABELS.home;
-  const cur = BREADCRUMB_LABELS[route];
+  const acc = getBreadcrumbLabel("home");
+  const cur = getBreadcrumbLabel(route);
   if (route === "home") {
     nav.innerHTML = `<ol class="top-bar-bc-list">
       <li class="top-bar-bc-step" aria-current="page"><span class="top-bar-bc-text">${acc}</span></li>
@@ -174,9 +143,8 @@ function applyRoute(root: HTMLElement): void {
     window.scrollTo(0, 0);
   }
   renderTopBreadcrumb(root, route);
-  const docTitle = BREADCRUMB_LABELS[route];
-  document.title =
-    route === "home" ? "Miss Contraction" : `${docTitle} — Miss Contraction`;
+  updateDrawerNavActive(root, route);
+  document.title = getDocumentTitle(route);
   closeEditDialogIfOpen(root);
   closeDrawer(root);
 }
@@ -205,6 +173,19 @@ function openDrawer(root: HTMLElement): void {
   btn.setAttribute("aria-expanded", "true");
   btn.classList.add("hamburger--open");
   document.body.style.overflow = "hidden";
+}
+
+function syncThemeButton(btn: HTMLButtonElement): void {
+  const pref = getStoredThemePreference();
+  const labels: Record<typeof pref, string> = {
+    light: "Thème clair",
+    dark: "Thème sombre",
+    system: "Thème automatique",
+  };
+  const icons: Record<typeof pref, string> = { light: "☀", dark: "🌙", system: "🖥" };
+  btn.textContent = icons[pref];
+  btn.setAttribute("aria-label", labels[pref]);
+  btn.title = labels[pref];
 }
 
 function toggleDrawer(root: HTMLElement): void {
@@ -312,6 +293,13 @@ function shellHtml(): string {
           </h1>
           <nav class="top-bar-bc" id="top-bar-bc-nav" aria-label="Fil d'Ariane"></nav>
         </div>
+        <button
+          type="button"
+          class="btn-theme"
+          id="btn-theme"
+          aria-label="Thème automatique"
+          title="Thème automatique"
+        >🖥</button>
         <button
           type="button"
           class="hamburger"
@@ -1036,6 +1024,13 @@ function bind(root: HTMLElement): void {
     btnMenu.focus();
   });
 
+  const btnTheme = root.querySelector<HTMLButtonElement>("#btn-theme")!;
+  syncThemeButton(btnTheme);
+  btnTheme.addEventListener("click", () => {
+    cycleThemePreference();
+    syncThemeButton(btnTheme);
+  });
+
   appDrawer.addEventListener("click", (e) => {
     const a = (e.target as HTMLElement).closest<HTMLAnchorElement>("a.drawer-link");
     if (!a) return;
@@ -1045,6 +1040,7 @@ function bind(root: HTMLElement): void {
   window.addEventListener("hashchange", () => {
     applyRoute(root);
     render(root);
+    requestAnimationFrame(() => focusMainContent());
   });
 
   document.addEventListener("keydown", (e: KeyboardEvent) => {
@@ -1481,7 +1477,7 @@ function evaluateAlert(): void {
     icon,
     tag: "mc-threshold",
     renotify: true,
-  });
+  } as NotificationOptions);
 }
 
 /** Si l’écart entre les deux dernières contractions dépasse le seuil, on peut à nouveau alerter plus tard. */
