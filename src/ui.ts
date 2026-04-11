@@ -434,6 +434,11 @@ function shellHtml(): string {
 
         <footer class="footer">
           <p>Cet outil ne remplace pas un avis médical. Appelez la maternité ou le 15 en cas de doute.</p>
+          <p>
+            <a class="footer-link" href="https://github.com/mister-guiiug/miss-contraction" target="_blank" rel="noopener noreferrer">Code source sur GitHub</a>
+            &nbsp;·&nbsp;
+            <a class="footer-link" href="https://buymeacoffee.com/mister.guiiug" target="_blank" rel="noopener noreferrer">☕ Buy me a coffee</a>
+          </p>
         </footer>
       </div>
 
