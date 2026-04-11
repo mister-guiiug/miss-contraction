@@ -74,7 +74,7 @@ export default defineConfig(({ command }) => ({
       },
     },
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: "prompt",
       includeAssets: [
         "icons/icon-192.png",
         "icons/icon-512.png",
