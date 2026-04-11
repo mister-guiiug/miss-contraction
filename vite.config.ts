@@ -3,6 +3,7 @@ import { VitePWA } from "vite-plugin-pwa";
 
 const GTM_ID = "GTM-M2GSG3V4";
 const GA_ID = "G-B44CK4VR08";
+const GSC_VERIFICATION = "iUfQ7_dOztC3XoSGesC2b7IkxyNL2O9fegKXECoOg30";
 
 // Dépôt GitHub Pages : https://<user>.github.io/miss-contraction/
 export default defineConfig(({ command }) => ({
@@ -13,6 +14,11 @@ export default defineConfig(({ command }) => ({
       transformIndexHtml() {
         if (command !== "build") return [];
         return [
+          {
+            tag: "meta",
+            injectTo: "head",
+            attrs: { name: "google-site-verification", content: GSC_VERIFICATION },
+          },
           {
             tag: "script",
             injectTo: "head",
