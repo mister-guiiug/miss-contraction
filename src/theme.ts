@@ -55,3 +55,20 @@ export function wireSystemThemeListener(): void {
     applyTheme(getResolvedTheme());
   });
 }
+
+/**
+ * Met à jour l'icône et le label du bouton selon la préférence courante.
+ * Appeler après chaque appel à cycleThemePreference().
+ */
+export function syncThemeButton(btn: HTMLButtonElement): void {
+  const pref = getStoredThemePreference();
+  const labels: Record<ThemePreference, string> = {
+    light: "Thème clair",
+    dark: "Thème sombre",
+    system: "Thème automatique",
+  };
+  const icons: Record<ThemePreference, string> = { light: "☀", dark: "🌙", system: "🖥" };
+  btn.textContent = icons[pref];
+  btn.setAttribute("aria-label", labels[pref]);
+  btn.title = labels[pref];
+}

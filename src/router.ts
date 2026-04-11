@@ -54,3 +54,13 @@ export function hrefForRoute(route: AppRoute): string {
   };
   return hashes[route];
 }
+
+/**
+ * Démarre l'écoute des changements de route.
+ * @returns Fonction de nettoyage (removeEventListener).
+ */
+export function startRouter(onChange: () => void): () => void {
+  const handler = () => onChange();
+  window.addEventListener("hashchange", handler);
+  return () => window.removeEventListener("hashchange", handler);
+}
