@@ -4,8 +4,10 @@ export type ContractionRecord = {
   id: string;
   start: number;
   end: number;
-  /** Note libre (optionnelle), ex. intensité ou contexte. */
+  /** Note libre (optionnelle), ex. contexte. */
   note?: string;
+  /** Intensité de la douleur (1 à 5). */
+  intensity?: number;
 };
 
 export type AppSettings = {
@@ -166,6 +168,11 @@ function isRecord(x: unknown): x is ContractionRecord {
   )
     return false;
   if (r.note !== undefined && typeof r.note !== "string") return false;
+  if (
+    r.intensity !== undefined &&
+    (typeof r.intensity !== "number" || r.intensity < 1 || r.intensity > 5)
+  )
+    return false;
   return true;
 }
 
