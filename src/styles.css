@@ -2520,3 +2520,117 @@ a.btn {
     -webkit-print-color-adjust: exact;
   }
 }
+
+/* Intensity Pickers */
+.intensity-picker {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.intensity-picker--mini {
+  gap: 0.2rem;
+}
+
+.btn-intensity {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 0.4rem;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.intensity-picker--mini .btn-intensity {
+  width: 1.8rem;
+  height: 1.8rem;
+  font-size: 0.85rem;
+}
+
+.btn-intensity:hover {
+  border-color: rgba(var(--accent-rgb), 0.5);
+  background: rgba(var(--accent-rgb), 0.05);
+}
+
+/* Styles pour les inputs radio cachés */
+input[type="radio"]:checked + .btn-intensity {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.3);
+}
+
+/* Couleurs spécifiques par intensité */
+.btn-intensity[data-intensity="1"], label[for="int-1"] { --int-color: #80c878; }
+.btn-intensity[data-intensity="2"], label[for="int-2"] { --int-color: #a8d678; }
+.btn-intensity[data-intensity="3"], label[for="int-3"] { --int-color: #ffd04b; }
+.btn-intensity[data-intensity="4"], label[for="int-4"] { --int-color: #ff9d4b; }
+.btn-intensity[data-intensity="5"], label[for="int-5"] { --int-color: #ff5e4b; }
+
+.intensity-picker button.btn-intensity:active {
+  background: var(--int-color);
+  color: #fff;
+}
+
+/* Timeline Intensity */
+.timeline-intensity {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #fff;
+  background: var(--muted);
+  flex-shrink: 0;
+}
+
+.timeline-intensity--1 { background-color: #80c878; }
+.timeline-intensity--2 { background-color: #a8d678; }
+.timeline-intensity--3 { background-color: #ffd04b; color: #444 !important; }
+.timeline-intensity--4 { background-color: #ff9d4b; }
+.timeline-intensity--5 { background-color: #ff5e4b; }
+
+/* Chart Bars by Intensity */
+.chart-bar--intensity-1 { background-color: #80c878 !important; }
+.chart-bar--intensity-2 { background-color: #a8d678 !important; }
+.chart-bar--intensity-3 { background-color: #ffd04b !important; }
+.chart-bar--intensity-4 { background-color: #ff9d4b !important; }
+.chart-bar--intensity-5 { background-color: #ff5e4b !important; }
+
+/* Quick Notes */
+.quick-notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+
+/* Banner layout update */
+.banner-undo-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.banner-undo-intensity {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.banner-undo-intensity-label {
+  font-weight: 600;
+  font-size: 0.8rem;
+}
