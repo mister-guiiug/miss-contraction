@@ -158,6 +158,13 @@ html[data-theme="dark"] .threshold-badge[data-state="match"] {
   color: var(--primary);
 }
 
+/* ── Overrides dark mode : textareas ─────────────────────────── */
+html[data-theme="dark"] .settings-textarea,
+html[data-theme="dark"] .msg-textarea {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  border-color: rgba(200, 130, 220, 0.25);
+}
 
 .sw-update-banner {
   position: fixed;
