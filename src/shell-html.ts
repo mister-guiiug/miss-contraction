@@ -149,9 +149,21 @@ export function shellHtml(): string {
             <p class="app-banner-text" id="banner-long-open-text"></p>
             <button type="button" class="btn btn-ghost btn-small" id="btn-dismiss-long-open">OK</button>
           </div>
-          <div class="app-banner app-banner--info" id="banner-undo" hidden>
-            <span class="app-banner-text">Dernière contraction enregistrée — vous pouvez annuler.</span>
-            <button type="button" class="btn btn-ghost btn-small" id="btn-undo-add">Annuler</button>
+          <div class="app-banner app-banner--info banner-undo" id="banner-undo" hidden>
+            <div class="banner-undo-top">
+              <span class="app-banner-text">Enregistré !</span>
+              <div class="banner-undo-intensity" id="undo-intensity-area">
+                <span class="banner-undo-intensity-label">Intensité :</span>
+                <div class="intensity-picker intensity-picker--mini">
+                  <button type="button" class="btn-intensity" data-intensity="1" aria-label="Très faible">1</button>
+                  <button type="button" class="btn-intensity" data-intensity="2" aria-label="Faible">2</button>
+                  <button type="button" class="btn-intensity" data-intensity="3" aria-label="Moyenne">3</button>
+                  <button type="button" class="btn-intensity" data-intensity="4" aria-label="Forte">4</button>
+                  <button type="button" class="btn-intensity" data-intensity="5" aria-label="Très forte">5</button>
+                </div>
+              </div>
+              <button type="button" class="btn btn-ghost btn-small" id="btn-undo-add">Annuler</button>
+            </div>
           </div>
           <div class="app-banner app-banner--accent" id="banner-pre-alert" hidden>
             <p class="app-banner-text" id="banner-pre-alert-text"></p>
@@ -620,10 +632,32 @@ export function shellHtml(): string {
             <span>Fin</span>
             <input type="datetime-local" id="edit-end" name="end" step="1" required />
           </label>
+          <div class="field">
+            <span class="field-label">Intensité de la douleur</span>
+            <div class="intensity-picker" id="edit-intensity-picker">
+              <input type="radio" name="intensity" value="1" id="int-1" class="sr-only" />
+              <label for="int-1" class="btn-intensity" title="Très faible">1</label>
+              <input type="radio" name="intensity" value="2" id="int-2" class="sr-only" />
+              <label for="int-2" class="btn-intensity" title="Faible">2</label>
+              <input type="radio" name="intensity" value="3" id="int-3" class="sr-only" />
+              <label for="int-3" class="btn-intensity" title="Moyenne">3</label>
+              <input type="radio" name="intensity" value="4" id="int-4" class="sr-only" />
+              <label for="int-4" class="btn-intensity" title="Forte">4</label>
+              <input type="radio" name="intensity" value="5" id="int-5" class="sr-only" />
+              <label for="int-5" class="btn-intensity" title="Très forte">5</label>
+              <button type="button" class="btn btn-ghost btn-tiny" id="btn-edit-intensity-clear">Effacer</button>
+            </div>
+          </div>
           <label class="field">
             <span>Note (optionnelle)</span>
             <textarea id="edit-note" name="note" rows="2" maxlength="240" placeholder="Ex. plus intense, repos…"></textarea>
           </label>
+          <div class="quick-notes" id="edit-quick-notes">
+            <button type="button" class="btn btn-ghost btn-tiny" data-note="Ballon">🎈 Ballon</button>
+            <button type="button" class="btn btn-ghost btn-tiny" data-note="Marche">🚶 Marche</button>
+            <button type="button" class="btn btn-ghost btn-tiny" data-note="Repos">🛌 Repos</button>
+            <button type="button" class="btn btn-ghost btn-tiny" data-note="Douche">🚿 Douche</button>
+          </div>
           <p class="edit-dialog-error" id="edit-dialog-error" role="alert"></p>
           <div class="edit-dialog-buttons">
             <button type="button" class="btn btn-secondary" id="edit-dialog-cancel">Annuler</button>

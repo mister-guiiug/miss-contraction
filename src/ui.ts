@@ -265,6 +265,19 @@ function bind(root: HTMLElement): void {
     render(root);
   });
 
+  root.querySelector<HTMLElement>("#undo-intensity-area")!.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("button[data-intensity]");
+    if (!btn || !pendingUndo) return;
+    const val = Number(btn.dataset.intensity);
+    const last = state.records[state.records.length - 1];
+    if (last?.id === pendingUndo.id) {
+      last.intensity = val;
+      saveRecords(state.records);
+      dismissUndoBanner(root);
+      render(root);
+    }
+  });
+
   root.querySelector<HTMLButtonElement>("#btn-dismiss-pre")!.addEventListener("click", () => {
     preAlertBannerDismissed = true;
     root.querySelector<HTMLElement>("#banner-pre-alert")!.hidden = true;
@@ -571,12 +584,36 @@ function bindEditDialog(root: HTMLElement): void {
     const noteRaw = inpNote.value.trim();
     if (noteRaw) rec.note = noteRaw.slice(0, 240);
     else delete rec.note;
+
+    const fd = new FormData(form);
+    const intensity = fd.get("intensity");
+    if (intensity) rec.intensity = Number(intensity);
+    else delete rec.intensity;
+
     sortRecordsByStart();
     state.alertLatch = false;
     saveRecords(state.records);
     editingRecordId = null;
     dialog.close();
     render(root);
+  });
+
+  root.querySelector<HTMLButtonElement>("#btn-edit-intensity-clear")!.addEventListener("click", () => {
+    form.querySelectorAll<HTMLInputElement>("input[name=\"intensity\"]").forEach((rad) => {
+      rad.checked = false;
+    });
+  });
+
+  root.querySelector<HTMLElement>("#edit-quick-notes")!.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("button[data-note]");
+    if (!btn) return;
+    const tag = btn.dataset.note || "";
+    const cur = inpNote.value.trim();
+    if (!cur) {
+      inpNote.value = tag;
+    } else if (!cur.includes(tag)) {
+      inpNote.value = `${cur}, ${tag}`;
+    }
   });
 }
 
@@ -603,6 +640,12 @@ function openEditDialog(
   inpStart.value = toDatetimeLocalValue(rec.start);
   inpEnd.value = toDatetimeLocalValue(rec.end);
   inpNote.value = rec.note ?? "";
+
+  const radios = root.querySelectorAll<HTMLInputElement>("input[name=\"intensity\"]");
+  radios.forEach((r) => {
+    r.checked = Number(r.value) === rec.intensity;
+  });
+
   dialog.showModal();
 }
 
@@ -1228,12 +1271,22 @@ function renderIntervalChart(root: HTMLElement): void {
   }
   block.hidden = false;
   const max = Math.max(...intervals, 1);
-  intervals.forEach((ms) => {
+  // On récupère les records correspondants aux intervalles (on en a N records, N-1 intervalles)
+  const recordsForChart = done.slice(-intervals.length - 1);
+
+  intervals.forEach((ms, i) => {
     const pct = Math.min(100, Math.round((ms / max) * 100));
     const wrap = document.createElement("div");
     wrap.className = "chart-bar-wrap";
     const bar = document.createElement("div");
     bar.className = "chart-bar";
+
+    // Couleur basée sur l'intensité de la contraction qui "clôt" l'intervalle
+    const intensity = recordsForChart[i + 1]?.intensity;
+    if (intensity) {
+      bar.classList.add(`chart-bar--intensity-${intensity}`);
+    }
+
     bar.style.height = `${pct}%`;
     bar.title = formatDuration(ms);
     wrap.appendChild(bar);
@@ -1378,7 +1431,8 @@ function renderHistoryTable(root: HTMLElement): void {
     const tdNote = document.createElement("td");
     tdNote.className = "history-table-note";
     const nt = r.note?.trim();
-    tdNote.textContent = nt ?? "—";
+    const intensity = r.intensity ? ` [Int. ${r.intensity}]` : "";
+    tdNote.textContent = (nt || "—") + intensity;
 
     tr.append(thNum, tdStart, tdDur, tdInt, tdFreq, tdNote);
     tbody.appendChild(tr);
@@ -1449,8 +1503,9 @@ function buildMidwifePlainText(root: HTMLElement): string {
     const intervalMs = i > 0 ? r.start - done[i - 1]!.start : null;
     const intervalStr = intervalMs != null ? formatDuration(intervalMs) : "—";
     const note = r.note?.trim();
+    const intensity = r.intensity ? ` — intensité : ${r.intensity}` : "";
     lines.push(
-      `${i + 1}. ${dateTimeFmt.format(r.start)} — durée ${formatDuration(r.end - r.start)} — écart depuis précédente : ${intervalStr}${note ? ` — note : ${note}` : ""}`
+      `${i + 1}. ${dateTimeFmt.format(r.start)} — durée ${formatDuration(r.end - r.start)} — écart depuis précédente : ${intervalStr}${intensity}${note ? ` — note : ${note}` : ""}`
     );
   }
   lines.push("");
@@ -1513,12 +1568,13 @@ function renderMidwifePanel(root: HTMLElement): void {
       const intervalMs = i > 0 ? r.start - done[i - 1]!.start : null;
       const intervalStr = intervalMs != null ? formatDuration(intervalMs) : "—";
       const note = r.note?.trim();
+      const intensity = r.intensity ? `[Int. ${r.intensity}] ` : "";
       return `<tr>
         <td>${i + 1}</td>
         <td>${escapeHtml(dateTimeFmt.format(r.start))}</td>
         <td>${escapeHtml(formatDuration(r.end - r.start))}</td>
         <td>${escapeHtml(intervalStr)}</td>
-        <td>${note ? escapeHtml(note) : "—"}</td>
+        <td>${intensity}${note ? escapeHtml(note) : "—"}</td>
       </tr>`;
     })
     .join("");
@@ -1617,12 +1673,19 @@ function renderHistory(root: HTMLElement): void {
         ? formatDuration(r.start - done[i + 1]!.start)
         : "—";
     const iso = new Date(r.start).toISOString();
+    const intensityHtml = r.intensity
+      ? `<span class="timeline-intensity timeline-intensity--${r.intensity}" title="Intensité ${r.intensity}">
+           <span class="sr-only">Intensité</span> ${r.intensity}
+         </span>`
+      : "";
+
     li.innerHTML = `
       <div class="timeline-marker" aria-hidden="true"></div>
       <div class="timeline-body">
         <div class="timeline-time-row">
           <span class="timeline-num" title="Contraction n°${occurrenceNum}">${occurrenceNum}</span>
           <time class="timeline-time" datetime="${iso}">${dateTimeFmt.format(r.start)}</time>
+          ${intensityHtml}
         </div>
         <p class="timeline-meta">
           <span class="timeline-stat">Durée <strong>${formatDuration(r.end - r.start)}</strong></span>
@@ -1718,8 +1781,9 @@ function buildShareText(): string {
     const interval =
       idx > 0 ? formatDuration(r.start - recs[idx - 1]!.start) : "—";
     const notePart = r.note?.trim() ? ` — note : ${r.note.trim()}` : "";
+    const intensityPart = r.intensity ? ` — intensité : ${r.intensity}` : "";
     lines.push(
-      `• ${dateTimeFmt.format(r.start)} — durée ${formatDuration(r.end - r.start)} — écart : ${interval}${notePart}`
+      `• ${dateTimeFmt.format(r.start)} — durée ${formatDuration(r.end - r.start)} — écart : ${interval}${intensityPart}${notePart}`
     );
   }
   const s = state.settings;
