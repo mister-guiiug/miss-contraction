@@ -1,7 +1,7 @@
 ---
 name: readme-webapp
-description: "Improve or create a README for a web application project. Use when: writing a README, restructuring docs, improving project documentation, adding badges, table of contents, or getting-started sections for a web app, PWA, SPA, or frontend project."
-argument-hint: "Optional: language (fr/en), target audience (dev/public), or specific sections to include"
+description: 'Improve or create a README for a web application project. Use when: writing a README, restructuring docs, improving project documentation, adding badges, table of contents, or getting-started sections for a web app, PWA, SPA, or frontend project.'
+argument-hint: 'Optional: language (fr/en), target audience (dev/public), or specific sections to include'
 ---
 
 # README — Web Application
@@ -20,6 +20,7 @@ Skill for writing and restructuring README files for web application projects (P
 ### 1. Gather context
 
 Read in parallel:
+
 - `package.json` → project name, scripts, dependencies/devDependencies
 - Existing `README.md` (if any) → current language, tone, and content to preserve
 - `docs/context.md` or `docs/*.md` (if present) → product context and functional scope
@@ -62,6 +63,7 @@ Group features into themed sub-sections with two-column tables (`| Feature | Des
 ### 5. Badges
 
 Include at minimum:
+
 - CI/CD status badge (GitHub Actions) if a workflow exists
 - License badge
 - Optional: version, coverage, buy-me-a-coffee, etc.
@@ -85,23 +87,25 @@ npm run preview
 ### 7. Stack table
 
 ```markdown
-| Layer   | Technology     |
-|---------|----------------|
-| Build   | Vite 6         |
-| Tests   | Vitest 3       |
-| Runtime | Vanilla JS / React / Vue … |
+| Layer   | Technology                    |
+| ------- | ----------------------------- |
+| Build   | Vite 6                        |
+| Tests   | Vitest 3                      |
+| Runtime | Vanilla JS / React / Vue …    |
 | Deploy  | GitHub Actions → GitHub Pages |
 ```
 
 ### 8. Privacy / security note
 
 For apps handling personal or medical data, add a **Confidentialité / Privacy** section that clearly describes:
+
 - What is processed locally vs. sent over the network
 - What external services receive user data and under what conditions
 
 ### 9. Validate
 
 Before finalising:
+
 - [ ] All internal links (`docs/context.md`, `.github/workflows/…`) resolve to real files
 - [ ] Code blocks use correct language identifiers (`bash`, `js`, etc.)
 - [ ] Anchor links in TOC match actual heading text (GitHub-flavored markdown slugs)

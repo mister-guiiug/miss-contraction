@@ -1,14 +1,14 @@
-import type { AppSettings, ContractionRecord, StatsWindowKey } from "./storage";
+import type { AppSettings, ContractionRecord, StatsWindowKey } from './storage';
 
 export function filterRecordsByStatsWindow(
   done: ContractionRecord[],
   key: StatsWindowKey,
   nowMs: number
 ): ContractionRecord[] {
-  if (key === "all" || done.length === 0) return done;
-  const mins = key === "30" ? 30 : key === "60" ? 60 : 120;
+  if (key === 'all' || done.length === 0) return done;
+  const mins = key === '30' ? 30 : key === '60' ? 60 : 120;
   const t0 = nowMs - mins * 60 * 1000;
-  return done.filter((r) => r.start >= t0);
+  return done.filter(r => r.start >= t0);
 }
 
 /** Intervalles entre débuts consécutifs (ms), jusqu’à `max` derniers. */
@@ -24,23 +24,23 @@ export function getRecentIntervalsMs(
   return out.slice(-max);
 }
 
-export type ThresholdBadgeKind = "match" | "approaching" | "calm" | "empty";
+export type ThresholdBadgeKind = 'match' | 'approaching' | 'calm' | 'empty';
 
 export function computeThresholdBadge(
   records: ContractionRecord[],
   settings: AppSettings
 ): ThresholdBadgeKind {
-  const done = records.filter((r) => r.end > r.start);
-  if (done.length === 0) return "empty";
+  const done = records.filter(r => r.end > r.start);
+  if (done.length === 0) return 'empty';
   const n = settings.consecutiveCount;
   if (done.length < n) {
     if (done.length >= 2) {
       const a = done[done.length - 2]!;
       const b = done[done.length - 1]!;
       const diffMin = (b.start - a.start) / 60_000;
-      if (diffMin <= settings.maxIntervalMin * 1.2) return "approaching";
+      if (diffMin <= settings.maxIntervalMin * 1.2) return 'approaching';
     }
-    return "calm";
+    return 'calm';
   }
   const slice = done.slice(-n);
   const intervalsOk = slice.slice(1).every((r, i) => {
@@ -48,14 +48,14 @@ export function computeThresholdBadge(
     return (r.start - prev.start) / 60_000 <= settings.maxIntervalMin;
   });
   const durationsOk = slice.every(
-    (r) => (r.end - r.start) / 1000 >= settings.minDurationSec
+    r => (r.end - r.start) / 1000 >= settings.minDurationSec
   );
-  if (intervalsOk && durationsOk) return "match";
+  if (intervalsOk && durationsOk) return 'match';
   const last = done[done.length - 1]!;
   const prev = done[done.length - 2]!;
   const diffMin = (last.start - prev.start) / 60_000;
-  if (diffMin <= settings.maxIntervalMin * 1.2) return "approaching";
-  return "calm";
+  if (diffMin <= settings.maxIntervalMin * 1.2) return 'approaching';
+  return 'calm';
 }
 
 /**
@@ -68,7 +68,7 @@ export function findFirstThresholdMatchEndMs(
   settings: AppSettings
 ): number | null {
   const sorted = [...records]
-    .filter((r) => r.end > r.start)
+    .filter(r => r.end > r.start)
     .sort((a, b) => a.start - b.start);
   const n = settings.consecutiveCount;
   if (sorted.length < n) return null;
@@ -79,7 +79,7 @@ export function findFirstThresholdMatchEndMs(
       return (r.start - prev.start) / 60_000 <= settings.maxIntervalMin;
     });
     const durationsOk = slice.every(
-      (r) => (r.end - r.start) / 1000 >= settings.minDurationSec
+      r => (r.end - r.start) / 1000 >= settings.minDurationSec
     );
     if (intervalsOk && durationsOk) return slice[n - 1]!.end;
   }
