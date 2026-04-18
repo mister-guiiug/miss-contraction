@@ -8,6 +8,31 @@ const GSC_VERIFICATION = "iUfQ7_dOztC3XoSGesC2b7IkxyNL2O9fegKXECoOg30";
 // Dépôt GitHub Pages : https://<user>.github.io/miss-contraction/
 export default defineConfig(({ command }) => ({
   base: command === "build" ? "/miss-contraction/" : "/",
+  build: {
+    sourcemap: true,
+    chunkSizeWarningLimit: 800,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+
+          const norm = id.replace(/\\/g, '/')
+
+          // Séparer les librairies principales
+          if (norm.includes('/vite-plugin-pwa/') || norm.includes('/workbox-')) {
+            return 'pwa'
+          }
+
+          // Sharp pour les images
+          if (norm.includes('/sharp/')) {
+            return 'image-processing'
+          }
+
+          return 'vendor'
+        },
+      },
+    },
+  },
   plugins: [
     {
       name: "google-tag-manager",
