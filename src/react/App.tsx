@@ -65,6 +65,16 @@ function ReactViewRenderer() {
   const settingsContainer = document.getElementById('view-settings');
   const maternityContainer = document.getElementById('view-maternity');
 
+  // Nettoyer le contenu vanilla avant de rendre React
+  useEffect(() => {
+    if (currentRoute === 'settings' && settingsContainer) {
+      settingsContainer.innerHTML = '';
+    }
+    if (currentRoute === 'maternity' && maternityContainer) {
+      maternityContainer.innerHTML = '';
+    }
+  }, [currentRoute, settingsContainer, maternityContainer]);
+
   // Afficher les vues React via Portal
   if (currentRoute === 'settings' && settingsContainer) {
     return createPortal(<SettingsView />, settingsContainer);
