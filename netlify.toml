@@ -1,0 +1,47 @@
+# Configuration Netlify pour miss-contraction
+# Déploie automatiquement toutes les branches avec des URLs de preview
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  REACT_PREVIEW = "true"
+
+# Redirections pour le routing hash
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers pour PWA
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+
+# Contexte pour les previews de branches (toutes sauf main)
+[context.branch-deploy]
+  [context.branch-deploy.environment]
+    REACT_PREVIEW = "true"
+
+[context.deploy-preview]
+  [context.deploy-preview.environment]
+    REACT_PREVIEW = "true"
+
+# Contexte production (branche main) - désactivé pour ne pas remplacer
+[context.production]
+  # Ne pas déployer la branche main sur Netlify
+  # Elle reste sur GitHub Pages
+  ignore = "git log -1 --pretty=%B | grep -q 'skip-netlify'"
