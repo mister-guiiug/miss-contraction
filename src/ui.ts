@@ -132,23 +132,26 @@ function applyRoute(root: HTMLElement): void {
   const maternity = root.querySelector<HTMLElement>('#view-maternity')!;
   const midwife = root.querySelector<HTMLElement>('#view-midwife')!;
 
-  // Vérifier si React gère cette vue
-  const settingsIsReact = isReactRoute('settings') && route === 'settings';
-  const maternityIsReact = isReactRoute('maternity') && route === 'maternity';
-
   home.hidden = route !== 'home';
-  settings.hidden = route !== 'settings';
+  // Ne pas masquer les vues gérées par React - elles seront gérées par React
+  if (!isReactRoute('settings')) {
+    settings.hidden = route !== 'settings';
+  }
   message.hidden = route !== 'message';
   table.hidden = route !== 'table';
-  maternity.hidden = route !== 'maternity';
+  if (!isReactRoute('maternity')) {
+    maternity.hidden = route !== 'maternity';
+  }
   midwife.hidden = route !== 'midwife';
 
   // Nettoyer le contenu vanilla des vues gérées par React
-  if (settingsIsReact && settings) {
+  if (isReactRoute('settings') && route === 'settings' && settings) {
     settings.innerHTML = '';
+    settings.hidden = false;
   }
-  if (maternityIsReact && maternity) {
+  if (isReactRoute('maternity') && route === 'maternity' && maternity) {
     maternity.innerHTML = '';
+    maternity.hidden = false;
   }
   if (route === 'settings') {
     window.scrollTo(0, 0);
@@ -205,11 +208,6 @@ function toggleDrawer(root: HTMLElement): void {
 }
 
 function bind(root: HTMLElement): void {
-  // Ne pas lier les événements vanilla si React gère la vue actuelle
-  const currentRoute = parseRoute();
-  if (isReactRoute(currentRoute)) {
-    return;
-  }
   const btnToggle = root.querySelector<HTMLButtonElement>('#btn-toggle')!;
   const btnClear = root.querySelector<HTMLButtonElement>('#btn-clear-history')!;
   const btnShare = root.querySelector<HTMLButtonElement>('#btn-share')!;
