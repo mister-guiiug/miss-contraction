@@ -116,6 +116,6 @@ export function slugify(text: string): string {
     .toLowerCase()
     .normalize('NFD').trim()
     .replace(/\s+/g, '-')
-    .replace(/[^\w\-]+/g, '')
-    .replace(/\-\-+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/-+/g, '-')
 }

@@ -81,8 +81,8 @@ test.describe('miss-contraction - Fonctionnalités critiques', () => {
     expect(response.ok()).toBeTruthy()
 
     // Vérifier qu'il y a un bouton d'installation ou d'info PWA
-    const installButton = page.locator('button:has-text("Installer"), button:has-text("Install"), [data-pwa-install]')
-    // Le bouton peut ne pas être visible si déjà installé
+    // Note: le bouton peut ne pas être visible si déjà installé
+    page.locator('button:has-text("Installer"), button:has-text("Install"), [data-pwa-install]')
   })
 
   test('paramètres - ouverture modal/settings', async ({ page }) => {
