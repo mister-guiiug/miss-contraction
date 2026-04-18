@@ -768,7 +768,7 @@ function startContraction(root: HTMLElement): void {
   maybeVibrate(40);
   const btn = root.querySelector<HTMLButtonElement>("#btn-toggle")!;
   btn.textContent = "Fin de contraction";
-  btn.classList.add("btn-danger");
+  btn.classList.add("btn-danger", "recording");
   btn.classList.remove("btn-primary");
   const timerBlock = root.querySelector<HTMLElement>("#timer-block")!;
   timerBlock.hidden = false;
@@ -805,7 +805,7 @@ function endContraction(root: HTMLElement): void {
   const btn = root.querySelector<HTMLButtonElement>("#btn-toggle")!;
   btn.textContent = "Début de contraction";
   btn.classList.add("btn-primary");
-  btn.classList.remove("btn-danger");
+  btn.classList.remove("btn-danger", "recording");
   root.querySelector<HTMLElement>("#timer-block")!.hidden = true;
   root.querySelector<HTMLElement>("#status-hint")!.textContent = "";
   showUndoBanner(root, rec.id);
@@ -819,6 +819,17 @@ function updateTimer(root: HTMLElement): void {
   const s = sec % 60;
   const el = root.querySelector<HTMLElement>("#timer-value");
   if (el) el.textContent = `${m}:${String(s).padStart(2, "0")}`;
+
+  // Mettre à jour le cercle de progression
+  const circle = root.querySelector<HTMLElement>("#timer-circle-progress");
+  if (circle) {
+    // Calculer la progression (60 secondes = cercle complet)
+    const maxSeconds = 60;
+    const progress = Math.min(sec / maxSeconds, 1);
+    const circumference = 2 * Math.PI * 90; // r = 90
+    const offset = circumference * (1 - progress);
+    circle.style.strokeDashoffset = String(offset);
+  }
 }
 
 function evaluatePreAlert(): void {
@@ -1195,14 +1206,28 @@ function updateThresholdBadge(root: HTMLElement): void {
   const el = root.querySelector<HTMLElement>("#threshold-badge");
   if (!el) return;
   const kind = computeThresholdBadge(state.records, state.settings);
-  el.dataset.state = kind;
+
+  // Retirer toutes les classes de badge
+  el.classList.remove("threshold-badge-empty", "threshold-badge-calm", "threshold-badge-approaching", "threshold-badge-match");
+
+  // Ajouter la classe appropriée et l’icône
+  const icons: Record<string, string> = {
+    match: "🏥",
+    approaching: "🎯",
+    calm: "😌",
+    empty: "📊",
+  };
+
   const labels: Record<string, string> = {
     match: "Les dernières contractions correspondent à vos seuils d’alerte.",
     approaching: "Rythme soutenu — restez attentive aux consignes de votre sage-femme.",
     calm: "En dehors du schéma d’alerte configuré (pour l’instant).",
     empty: "Pas encore assez de données pour comparer aux seuils.",
   };
-  el.textContent = labels[kind] ?? "";
+
+  el.dataset.state = kind;
+  el.classList.add(`threshold-badge-${kind}`);
+  el.innerHTML = `<span class="badge-icon">${icons[kind] ?? ""}</span> ${labels[kind] ?? ""}`;
 }
 
 function updatePreAlertBanner(root: HTMLElement): void {
@@ -1277,9 +1302,23 @@ function renderIntervalChart(root: HTMLElement): void {
   intervals.forEach((ms, i) => {
     const pct = Math.min(100, Math.round((ms / max) * 100));
     const wrap = document.createElement("div");
-    wrap.className = "chart-bar-wrap";
+    wrap.className = "chart-bar-container";
+
+    // Label avec l'heure de début de la contraction
+    const record = recordsForChart[i + 1];
+    const labelDiv = document.createElement("div");
+    labelDiv.className = "chart-bar-label";
+    if (record) {
+      const date = new Date(record.start);
+      labelDiv.textContent = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+    } else {
+      labelDiv.textContent = "—";
+    }
+    wrap.appendChild(labelDiv);
+
     const bar = document.createElement("div");
     bar.className = "chart-bar";
+    bar.style.width = `${pct}%`;
 
     // Couleur basée sur l'intensité de la contraction qui "clôt" l'intervalle
     const intensity = recordsForChart[i + 1]?.intensity;
@@ -1287,9 +1326,23 @@ function renderIntervalChart(root: HTMLElement): void {
       bar.classList.add(`chart-bar--intensity-${intensity}`);
     }
 
-    bar.style.height = `${pct}%`;
     bar.title = formatDuration(ms);
     wrap.appendChild(bar);
+
+    // Badge d'intensité
+    if (intensity) {
+      const intensityBadge = document.createElement("div");
+      intensityBadge.className = "chart-bar-intensity";
+      intensityBadge.textContent = String(intensity);
+      intensityBadge.title = `Intensité ${intensity}`;
+      wrap.appendChild(intensityBadge);
+    }
+
+    // Label de durée
+    const durationLabel = document.createElement("div");
+    durationLabel.textContent = formatDuration(ms);
+    wrap.appendChild(durationLabel);
+
     bars.appendChild(wrap);
   });
 }
