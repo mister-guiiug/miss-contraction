@@ -117,4 +117,4 @@ L'application ne nécessite pas de compte, pas d'inscription et pas de connexion
 
 ## Licence
 
-[MIT](LICENSE) — Copyright © 2026 Guillaume GUERIN. 
+[MIT](LICENSE) — Copyright © 2026 Guillaume GUERIN.

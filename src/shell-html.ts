@@ -208,17 +208,17 @@ export function shellHtml(): string {
           <h2 id="summary-heading" class="section-title">Indicateurs récents</h2>
           <div class="stats-enhanced" role="group" aria-label="Synthèse des contractions">
             <div class="stat-card">
-              <span class="stat-card-icon" aria-hidden="true">📊</span>
+              <span class="stat-card-icon" aria-hidden="true"></span>
               <span class="stat-card-value" id="stat-qty-hour" aria-live="polite">—</span>
               <span class="stat-card-label">Quantité / h</span>
             </div>
             <div class="stat-card">
-              <span class="stat-card-icon" aria-hidden="true">⏱️</span>
+              <span class="stat-card-icon" aria-hidden="true"></span>
               <span class="stat-card-value" id="stat-avg-duration" aria-live="polite">—</span>
               <span class="stat-card-label">Durée moyenne</span>
             </div>
             <div class="stat-card">
-              <span class="stat-card-icon" aria-hidden="true">🔄</span>
+              <span class="stat-card-icon" aria-hidden="true"></span>
               <span class="stat-card-value" id="stat-avg-frequency" aria-live="polite">—</span>
               <span class="stat-card-label">Fréquence moyenne</span>
             </div>
