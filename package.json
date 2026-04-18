@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:react-preview": "tsc -b && REACT_PREVIEW=1 vite build",
     "preview": "vite preview --base /miss-contraction/",
+    "preview:react": "REACT_PREVIEW=1 vite preview --base /miss-contraction-react/",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -21,6 +23,9 @@
   "devDependencies": {
     "@eslint/js": "^9.39.4",
     "@playwright/test": "^1.49.1",
+    "@vitejs/plugin-react": "^5.2.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "husky": "^9.1.7",
     "jsdom": "^26.0.0",
@@ -33,5 +38,13 @@
     "vite-plugin-pwa": "^1.2.0",
     "vitest": "^3.2.4",
     "web-vitals": "^4.2.0"
+  },
+  "dependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-router-dom": "^7.14.1",
+    "zustand": "^5.0.12"
   }
 }
