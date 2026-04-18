@@ -22,6 +22,20 @@ registerReactRoute('settings');
 registerReactRoute('maternity');
 
 /**
+ * Hook pour récupérer un élément du DOM de manière sécurisée
+ */
+function useElement(id: string): HTMLElement | null {
+  const [element, setElement] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const el = document.getElementById(id);
+    setElement(el);
+  }, [id]);
+
+  return element;
+}
+
+/**
  * Parse la route actuelle depuis le hash (compatible avec le routeur vanilla)
  */
 function parseRouteFromHash(): string {
@@ -49,16 +63,15 @@ function parseRouteFromHash(): string {
  * Composant qui rend le contenu React via Portal dans les conteneurs vanilla
  */
 function ReactViewRenderer() {
-  const [, setForceUpdate] = useState({});
+  const [currentRoute, setCurrentRoute] = useState(parseRouteFromHash);
 
   // Forcer le re-render quand le hash change
   const onHashChange = useCallback(() => {
-    setForceUpdate({});
+    setCurrentRoute(parseRouteFromHash());
   }, []);
 
   useEffect(() => {
     window.addEventListener('hashchange', onHashChange);
-    // Également écouter les pushState/popstate (si utilisé par vanilla)
     window.addEventListener('popstate', onHashChange);
     return () => {
       window.removeEventListener('hashchange', onHashChange);
@@ -66,31 +79,19 @@ function ReactViewRenderer() {
     };
   }, [onHashChange]);
 
-  const currentRoute = parseRouteFromHash();
-
   // Récupérer les conteneurs vanilla
-  const settingsContainer = document.getElementById('view-settings');
-  const maternityContainer = document.getElementById('view-maternity');
+  const settingsContainer = useElement('view-settings');
+  const maternityContainer = useElement('view-maternity');
 
-  // Nettoyer le contenu vanilla avant de rendre React
+  // Marquer la route React active
   useEffect(() => {
-    if (currentRoute === 'settings' && settingsContainer) {
-      settingsContainer.innerHTML = '';
-      // Marquer que React gère cette route
-      window.__REACT_ROUTE__ = 'settings';
-      console.log('🟦 React: Settings view mounted');
-    }
-    if (currentRoute === 'maternity' && maternityContainer) {
-      maternityContainer.innerHTML = '';
-      // Marquer que React gère cette route
-      window.__REACT_ROUTE__ = 'maternity';
-      console.log('🟦 React: Maternity view mounted');
-    }
-    // Si ce n'est pas une route React, réinitialiser le marqueur
-    if (currentRoute !== 'settings' && currentRoute !== 'maternity') {
+    if (currentRoute === 'settings' || currentRoute === 'maternity') {
+      window.__REACT_ROUTE__ = currentRoute;
+      console.log('🟦 React: Route =', currentRoute);
+    } else {
       window.__REACT_ROUTE__ = null;
     }
-  }, [currentRoute, settingsContainer, maternityContainer]);
+  }, [currentRoute]);
 
   // Afficher les vues React via Portal
   if (currentRoute === 'settings' && settingsContainer) {
