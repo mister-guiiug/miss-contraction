@@ -28,6 +28,14 @@ import { shellHtml } from './shell-html';
 import { escapeHtml } from './html-utils';
 import { isReactRoute } from './react/reactRoutes';
 
+// Marqueur global pour indiquer que Vanilla gère une route
+declare global {
+  interface Window {
+    __VANILLA_ROUTE__: string | null;
+    __REACT_ROUTE__: string | null;
+  }
+}
+
 type State = {
   records: ContractionRecord[];
   settings: AppSettings;
@@ -86,6 +94,29 @@ export function mountApp(root: HTMLDivElement): void {
   render(root);
 }
 
+/**
+ * Affiche un badge indiquant le renderer actif (Vanilla ou React)
+ */
+function updateRendererBadge(root: HTMLElement, isReact: boolean): void {
+  let badge = root.querySelector<HTMLElement>('#renderer-badge');
+  if (!badge) {
+    // Créer le badge s'il n'existe pas
+    badge = document.createElement('div');
+    badge.id = 'renderer-badge';
+    badge.style.cssText = 'position:fixed;top:60px;right:8px;z-index:9999;padding:4px 8px;font-size:10px;border-radius:4px;font-weight:bold;opacity:0.8;';
+    document.body.appendChild(badge);
+  }
+  if (isReact) {
+    badge.textContent = '🟦 React';
+    badge.style.backgroundColor = '#61dafb';
+    badge.style.color = '#000';
+  } else {
+    badge.textContent = '🟩 Vanilla';
+    badge.style.backgroundColor = '#4caf50';
+    badge.style.color = '#fff';
+  }
+}
+
 function updateDrawerNavActive(root: HTMLElement, route: AppRoute): void {
   root
     .querySelectorAll<HTMLAnchorElement>('a.drawer-link[data-drawer-route]')
@@ -138,6 +169,13 @@ function applyRoute(root: HTMLElement): void {
   table.hidden = route !== 'table';
   maternity.hidden = route !== 'maternity';
   midwife.hidden = route !== 'midwife';
+
+  // Marqueur Vanilla pour le débogage
+  window.__VANILLA_ROUTE__ = route;
+  console.log('🟩 Vanilla: Route changed to', route);
+
+  // Mettre à jour le badge de renderer
+  updateRendererBadge(root, isReactRoute(route));
   if (route === 'settings') {
     window.scrollTo(0, 0);
     if (settingsSaveFeedbackTimer !== null) {
