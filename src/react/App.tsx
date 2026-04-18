@@ -3,9 +3,8 @@
  * Coexiste avec l'application vanilla existante
  */
 
-import { StrictMode } from 'react';
+import { StrictMode, useEffect, useState, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
-import { HashRouter, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { SettingsView } from './views/SettingsView';
 import { MaternityView } from './views/MaternityView';
@@ -16,26 +15,51 @@ registerReactRoute('settings');
 registerReactRoute('maternity');
 
 /**
+ * Parse la route actuelle depuis le hash (compatible avec le routeur vanilla)
+ */
+function parseRouteFromHash(): string {
+  const hash = window.location.hash.replace(/^#/, '') || '';
+  const path = hash.startsWith('/') ? hash : `/${hash}`;
+
+  const routeMap: Record<string, string> = {
+    '/parametres': 'settings',
+    '/settings': 'settings',
+    '/historique': 'table',
+    '/table': 'table',
+    '/tableau': 'table',
+    '/sagefemme': 'midwife',
+    '/sage-femme': 'midwife',
+    '/midwife': 'midwife',
+    '/maternite': 'maternity',
+    '/maternity': 'maternity',
+    '/message': 'message',
+  };
+
+  return routeMap[path] || 'home';
+}
+
+/**
  * Composant qui rend le contenu React via Portal dans les conteneurs vanilla
  */
 function ReactViewRenderer() {
-  const location = useLocation();
-  const route = location.pathname.replace(/^\//, '') || 'home';
+  const [, setForceUpdate] = useState({});
 
-  // Mapping des routes vanilla vers React
-  const routeMap: Record<string, string> = {
-    parametres: 'settings',
-    settings: 'settings',
-    historique: 'table',
-    table: 'table',
-    sagefemme: 'midwife',
-    'sage-femme': 'midwife',
-    maternite: 'maternity',
-    maternity: 'maternity',
-    message: 'message',
-  };
+  // Forcer le re-render quand le hash change
+  const onHashChange = useCallback(() => {
+    setForceUpdate({});
+  }, []);
 
-  const currentRoute = routeMap[route] || 'home';
+  useEffect(() => {
+    window.addEventListener('hashchange', onHashChange);
+    // Également écouter les pushState/popstate (si utilisé par vanilla)
+    window.addEventListener('popstate', onHashChange);
+    return () => {
+      window.removeEventListener('hashchange', onHashChange);
+      window.removeEventListener('popstate', onHashChange);
+    };
+  }, [onHashChange]);
+
+  const currentRoute = parseRouteFromHash();
 
   // Récupérer les conteneurs vanilla
   const settingsContainer = document.getElementById('view-settings');
@@ -58,11 +82,7 @@ function ReactViewRenderer() {
  * Composant principal de l'application React
  */
 function ReactApp() {
-  return (
-    <HashRouter>
-      <ReactViewRenderer />
-    </HashRouter>
-  );
+  return <ReactViewRenderer />;
 }
 
 /**
