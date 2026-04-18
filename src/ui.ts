@@ -132,16 +132,24 @@ function applyRoute(root: HTMLElement): void {
   const maternity = root.querySelector<HTMLElement>('#view-maternity')!;
   const midwife = root.querySelector<HTMLElement>('#view-midwife')!;
 
-  // Masquer les vues gérées par React
-  const isSettingsReact = isReactRoute('settings');
-  const isMaternityReact = isReactRoute('maternity');
+  // Vérifier si React gère cette vue
+  const settingsIsReact = isReactRoute('settings') && route === 'settings';
+  const maternityIsReact = isReactRoute('maternity') && route === 'maternity';
 
   home.hidden = route !== 'home';
-  settings.hidden = route !== 'settings' || isSettingsReact;
+  settings.hidden = route !== 'settings';
   message.hidden = route !== 'message';
   table.hidden = route !== 'table';
-  maternity.hidden = route !== 'maternity' || isMaternityReact;
+  maternity.hidden = route !== 'maternity';
   midwife.hidden = route !== 'midwife';
+
+  // Nettoyer le contenu vanilla des vues gérées par React
+  if (settingsIsReact && settings) {
+    settings.innerHTML = '';
+  }
+  if (maternityIsReact && maternity) {
+    maternity.innerHTML = '';
+  }
   if (route === 'settings') {
     window.scrollTo(0, 0);
     if (settingsSaveFeedbackTimer !== null) {
