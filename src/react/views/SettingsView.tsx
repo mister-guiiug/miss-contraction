@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
+import { setSnoozeUntilMs, clearSnoozeUntil } from '../../storage';
 
 export function SettingsView() {
   const { settings, updateSettings, saveSettings } = useAppStore();
@@ -399,13 +400,4 @@ export function SettingsView() {
       </div>
     </div>
   );
-}
-
-// Import des fonctions utilitaires existantes
-function setSnoozeUntilMs(ms: number): void {
-  localStorage.setItem('mc_snooze_until', String(ms));
-}
-
-function clearSnoozeUntil(): void {
-  localStorage.removeItem('mc_snooze_until');
 }
