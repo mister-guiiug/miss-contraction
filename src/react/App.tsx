@@ -6,13 +6,19 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter, useLocation } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import { SettingsView } from './views/SettingsView';
 import { MaternityView } from './views/MaternityView';
+import { registerReactRoute } from './reactRoutes';
+
+// Enregistrer les routes React gérées
+registerReactRoute('settings');
+registerReactRoute('maternity');
 
 /**
- * Composant principal de l'application React
+ * Composant qui rend le contenu React via Portal dans les conteneurs vanilla
  */
-function ReactApp() {
+function ReactViewRenderer() {
   const location = useLocation();
   const route = location.pathname.replace(/^\//, '') || 'home';
 
@@ -31,19 +37,32 @@ function ReactApp() {
 
   const currentRoute = routeMap[route] || 'home';
 
-  // Afficher les vues React
-  // Les autres routes restent en vanilla
-  if (currentRoute === 'settings') {
-    return <SettingsView />;
+  // Récupérer les conteneurs vanilla
+  const settingsContainer = document.getElementById('view-settings');
+  const maternityContainer = document.getElementById('view-maternity');
+
+  // Afficher les vues React via Portal
+  if (currentRoute === 'settings' && settingsContainer) {
+    return createPortal(<SettingsView />, settingsContainer);
   }
 
-  if (currentRoute === 'maternity') {
-    return <MaternityView />;
+  if (currentRoute === 'maternity' && maternityContainer) {
+    return createPortal(<MaternityView />, maternityContainer);
   }
 
   // Pour les autres routes, on retourne null
-  // L'application vanilla gère l'affichage
   return null;
+}
+
+/**
+ * Composant principal de l'application React
+ */
+function ReactApp() {
+  return (
+    <HashRouter>
+      <ReactViewRenderer />
+    </HashRouter>
+  );
 }
 
 /**
@@ -56,9 +75,7 @@ export function mountReactApp(): void {
   const root = createRoot(rootElement);
   root.render(
     <StrictMode>
-      <HashRouter>
-        <ReactApp />
-      </HashRouter>
+      <ReactApp />
     </StrictMode>
   );
 }
