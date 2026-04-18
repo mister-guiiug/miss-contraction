@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:netlify": "tsc -b && REACT_PREVIEW=1 vite build",
     "build:react-preview": "tsc -b && REACT_PREVIEW=1 vite build",
     "preview": "vite preview --base /miss-contraction/",
     "preview:react": "REACT_PREVIEW=1 vite preview --base /miss-contraction-react/",
