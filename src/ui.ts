@@ -26,6 +26,7 @@ import { focusMainContent } from './focus-utils';
 import { cycleThemePreference, syncThemeButton } from './theme';
 import { shellHtml } from './shell-html';
 import { escapeHtml } from './html-utils';
+import { isReactRoute } from './react/reactRoutes';
 
 type State = {
   records: ContractionRecord[];
@@ -130,11 +131,16 @@ function applyRoute(root: HTMLElement): void {
   const table = root.querySelector<HTMLElement>('#view-table')!;
   const maternity = root.querySelector<HTMLElement>('#view-maternity')!;
   const midwife = root.querySelector<HTMLElement>('#view-midwife')!;
+
+  // Masquer les vues gérées par React
+  const isSettingsReact = isReactRoute('settings');
+  const isMaternityReact = isReactRoute('maternity');
+
   home.hidden = route !== 'home';
-  settings.hidden = route !== 'settings';
+  settings.hidden = route !== 'settings' || isSettingsReact;
   message.hidden = route !== 'message';
   table.hidden = route !== 'table';
-  maternity.hidden = route !== 'maternity';
+  maternity.hidden = route !== 'maternity' || isMaternityReact;
   midwife.hidden = route !== 'midwife';
   if (route === 'settings') {
     window.scrollTo(0, 0);
