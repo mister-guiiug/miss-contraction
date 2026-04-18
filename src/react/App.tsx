@@ -7,6 +7,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter, useLocation } from 'react-router-dom';
 import { SettingsView } from './views/SettingsView';
+import { MaternityView } from './views/MaternityView';
 
 /**
  * Composant principal de l'application React
@@ -30,14 +31,14 @@ function ReactApp() {
 
   const currentRoute = routeMap[route] || 'home';
 
-  // Afficher uniquement la vue React pour /parametres
-  // Les autres vues restent en vanilla
+  // Afficher les vues React
+  // Les autres routes restent en vanilla
   if (currentRoute === 'settings') {
-    return (
-      <div className="app">
-        <SettingsView />
-      </div>
-    );
+    return <SettingsView />;
+  }
+
+  if (currentRoute === 'maternity') {
+    return <MaternityView />;
   }
 
   // Pour les autres routes, on retourne null
