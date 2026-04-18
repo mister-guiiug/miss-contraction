@@ -1,44 +1,34 @@
 # Déploiement Netlify - Miss Contraction React Preview
 
-## 🚀 Configuration rapide
+## 📱 Environnements
 
-### 1. Connecter le dépôt à Netlify
+| Type | URL | Branche | Platform |
+|------|-----|---------|----------|
+| **Production** | `https://mister-guiiug.github.io/miss-contraction/` | `main` | GitHub Pages |
+| **Développement React** | `https://miss-contraction-dev.netlify.app` | `react-migration` | Netlify |
 
-1. Allez sur [netlify.com](https://netlify.com)
-2. Cliquez sur "Add new site" → "Import an existing project"
-3. Sélectionnez GitHub
-4. Recherchez et sélectionnez `mister-guiiug/miss-contraction`
+## 🚀 Configuration Netlify
 
-### 2. Configuration du build
+### Site : miss-contraction-dev
 
-Dans les paramètres du site Netlify :
+- **Nom du projet** : `miss-contraction-dev`
+- **URL** : `https://miss-contraction-dev.netlify.app`
+- **Branche déployée** : `react-migration`
+- **Build command** : `npm run build`
+- **Publish directory** : `dist`
 
-| Paramètre | Valeur |
-|-----------|--------|
-| **Build command** | `npm run build` |
-| **Publish directory** | `dist` |
-| **Branches to deploy** | `All` (ou `react-migration` uniquement) |
+### Variables d'environnement
 
-### 3. Variables d'environnement
-
-Ajoutez dans Site settings → Environment variables :
+Dans Site settings → Environment variables :
 
 ```
 REACT_PREVIEW = true
 ```
 
-## 📱 URLs de déploiement
-
-| Type | URL |
-|------|-----|
-| **Production** | `https://miss-contraction.netlify.app` |
-| **Preview react-migration** | `https://deploy-preview-1--miss-contraction.netlify.app` |
-
 ## 🔄 Déploiement automatique
 
-Chaque push sur `react-migration` déclenche un déploiement avec une URL unique :
-- Format : `https://deploy-preview-PR_NUMBER--miss-contraction.netlify.app`
-- Ou pour les branches : `https://BRANCH_NAME--miss-contraction.netlify.app`
+Chaque push sur la branche `react-migration` déclenche automatiquement un déploiement sur :
+- **https://miss-contraction-dev.netlify.app**
 
 ## 🛠️ Commandes utiles
 
@@ -46,13 +36,26 @@ Chaque push sur `react-migration` déclenche un déploiement avec une URL unique
 # Build local pour tester
 npm run build
 
+# Build spécifique Netlify
+npm run build:netlify
+
 # Preview local avec Netlify CLI
 npm install -g netlify-cli
 netlify deploy
 ```
 
-## ⚠️ Note importante
+## 🧪 Tester la preview React
 
-La branche `main` (production) reste sur GitHub Pages :
-- Production : `https://mister-guiiug.github.io/miss-contraction/`
-- Preview React : Netlify
+1. Allez sur **https://miss-contraction-dev.netlify.app**
+2. Naviguez vers **/#/parametres** pour voir la vue Settings en React
+3. Les autres vues restent en vanilla (Home, Table, Maternity, etc.)
+
+## 📊 Comparaison Vanilla vs React
+
+| Fonctionnalité | Vanilla (GitHub Pages) | React (Netlify) |
+|----------------|------------------------|-----------------|
+| Vue Settings | ✅ Template strings | ✅ Composants React |
+| État global | localStorage | Zustand + localStorage |
+| Routing | Hash routing maison | React Router + Hash |
+| CSS | Identique | Identique |
+| PWA | ✅ Oui | ✅ Oui |
