@@ -8,7 +8,7 @@ interface WakeLockSentinel extends EventTarget {
 }
 
 interface WakeLock {
-  request(type: "screen"): Promise<WakeLockSentinel>;
+  request(type: 'screen'): Promise<WakeLockSentinel>;
 }
 
 interface Navigator {
