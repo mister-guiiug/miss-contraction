@@ -182,10 +182,17 @@ export function shellHtml(): string {
           </p>
           <div class="timer" id="timer-block" hidden>
             <p class="timer-label">Contraction en cours</p>
-            <p class="timer-value" id="timer-value">0:00</p>
+            <div class="timer-circle-container">
+              <svg class="timer-circle" viewBox="0 0 200 200" aria-hidden="true">
+                <circle class="timer-circle-bg" cx="100" cy="100" r="90"/>
+                <circle class="timer-circle-progress" id="timer-circle-progress" cx="100" cy="100" r="90"/>
+              </svg>
+              <div class="timer-pulse"></div>
+              <p class="timer-value" id="timer-value">0:00</p>
+            </div>
           </div>
           <div class="actions actions-cta">
-            <button type="button" class="btn btn-primary btn-cta" id="btn-toggle" aria-live="polite">
+            <button type="button" class="btn btn-primary btn-cta btn-cta-enhanced" id="btn-toggle" aria-live="polite">
               Début de contraction
             </button>
           </div>
@@ -199,26 +206,29 @@ export function shellHtml(): string {
 
         <section class="card" aria-labelledby="summary-heading">
           <h2 id="summary-heading" class="section-title">Indicateurs récents</h2>
-          <div class="stats-strip" role="group" aria-label="Synthèse des contractions">
-            <div class="stats-cell">
-              <p class="stats-label">Quantité / h</p>
-              <p class="stats-value" id="stat-qty-hour" aria-live="polite">—</p>
+          <div class="stats-enhanced" role="group" aria-label="Synthèse des contractions">
+            <div class="stat-card">
+              <span class="stat-card-icon" aria-hidden="true">📊</span>
+              <span class="stat-card-value" id="stat-qty-hour" aria-live="polite">—</span>
+              <span class="stat-card-label">Quantité / h</span>
             </div>
-            <div class="stats-cell">
-              <p class="stats-label">Durée moyenne</p>
-              <p class="stats-value stats-value-mono" id="stat-avg-duration" aria-live="polite">—</p>
+            <div class="stat-card">
+              <span class="stat-card-icon" aria-hidden="true">⏱️</span>
+              <span class="stat-card-value" id="stat-avg-duration" aria-live="polite">—</span>
+              <span class="stat-card-label">Durée moyenne</span>
             </div>
-            <div class="stats-cell">
-              <p class="stats-label">Fréquence moyenne</p>
-              <p class="stats-value stats-value-mono" id="stat-avg-frequency" aria-live="polite">—</p>
+            <div class="stat-card">
+              <span class="stat-card-icon" aria-hidden="true">🔄</span>
+              <span class="stat-card-value" id="stat-avg-frequency" aria-live="polite">—</span>
+              <span class="stat-card-label">Fréquence moyenne</span>
             </div>
           </div>
           <p class="stats-window-label" id="stats-window-label"></p>
-          <p class="threshold-badge" id="threshold-badge" data-state="empty"></p>
+          <p class="threshold-badge threshold-badge-enhanced" id="threshold-badge" data-state="empty"></p>
           <dl class="summary summary-extra" id="summary-extra"></dl>
           <div class="chart-block" id="chart-block" hidden>
             <h3 class="chart-title">Intervalles entre débuts (derniers enregistrements)</h3>
-            <div class="chart-bars" id="chart-bars" role="img" aria-label="Barres proportionnelles aux intervalles"></div>
+            <div class="chart-bars chart-enhanced" id="chart-bars" role="img" aria-label="Barres proportionnelles aux intervalles"></div>
           </div>
         </section>
 
@@ -665,6 +675,13 @@ export function shellHtml(): string {
           </div>
         </form>
       </dialog>
+
+      <!-- Vagues décoratives apaisantes -->
+      <div class="wave-container" aria-hidden="true">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+      </div>
     </main>
   `;
 }

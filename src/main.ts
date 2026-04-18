@@ -1,4 +1,5 @@
 import "./styles.css";
+import "./enhanced-styles.css";
 import { applyResolvedTheme, wireSystemThemeListener } from "./theme";
 import { registerServiceWorker } from "./register-sw";
 import { mountApp } from "./ui";
