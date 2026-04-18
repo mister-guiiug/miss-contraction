@@ -104,3 +104,20 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ alertLatch: latched });
   },
 }));
+
+// Synchroniser avec localStorage (modifications vanilla)
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'mc_settings_v1') {
+      useAppStore.setState({ settings: loadSettings() });
+    }
+    if (e.key === 'mc_contractions_v1') {
+      useAppStore.setState({ records: loadRecords() });
+    }
+  });
+}
+
+// Hook pour recharger les settings depuis localStorage
+export function useRefreshSettings() {
+  return useAppStore((s) => s.updateSettings);
+}

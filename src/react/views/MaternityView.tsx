@@ -3,11 +3,18 @@
  */
 
 import { useEffect } from 'react';
-import { useAppStore } from '../store/useAppStore';
+import { useAppStore, useRefreshSettings } from '../store/useAppStore';
+import { loadSettings } from '../../storage';
 
 export function MaternityView() {
   const { settings } = useAppStore();
+  const updateSettings = useRefreshSettings();
   const { maternityLabel, maternityPhone, maternityAddress } = settings;
+
+  // Recharger les settings au montage (synchronisation vanilla ↔ React)
+  useEffect(() => {
+    updateSettings(loadSettings());
+  }, [updateSettings]);
 
   const phone = maternityPhone.trim();
   const label = maternityLabel.trim();
