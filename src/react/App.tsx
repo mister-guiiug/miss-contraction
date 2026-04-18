@@ -10,6 +10,13 @@ import { SettingsView } from './views/SettingsView';
 import { MaternityView } from './views/MaternityView';
 import { registerReactRoute } from './reactRoutes';
 
+// Marqueur global pour indiquer que React gère une route
+declare global {
+  interface Window {
+    __REACT_ROUTE__: string | null;
+  }
+}
+
 // Enregistrer les routes React gérées
 registerReactRoute('settings');
 registerReactRoute('maternity');
@@ -69,9 +76,19 @@ function ReactViewRenderer() {
   useEffect(() => {
     if (currentRoute === 'settings' && settingsContainer) {
       settingsContainer.innerHTML = '';
+      // Marquer que React gère cette route
+      window.__REACT_ROUTE__ = 'settings';
+      console.log('🟦 React: Settings view mounted');
     }
     if (currentRoute === 'maternity' && maternityContainer) {
       maternityContainer.innerHTML = '';
+      // Marquer que React gère cette route
+      window.__REACT_ROUTE__ = 'maternity';
+      console.log('🟦 React: Maternity view mounted');
+    }
+    // Si ce n'est pas une route React, réinitialiser le marqueur
+    if (currentRoute !== 'settings' && currentRoute !== 'maternity') {
+      window.__REACT_ROUTE__ = null;
     }
   }, [currentRoute, settingsContainer, maternityContainer]);
 
