@@ -1,0 +1,460 @@
+/**
+ * AMÉLIORATIONS GRAPHIQUES - Miss Contraction
+ * À ajouter au fichier styles.css existant
+ */
+
+/* ========================================
+   1. CHRONOMÈTRE CIRCULAIRE ANIMÉ
+   ======================================== */
+
+.timer-circle-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 20px auto;
+}
+
+.timer-circle {
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.timer-circle-bg {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 8;
+}
+
+.timer-circle-progress {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 565;
+  stroke-dashoffset: 565;
+  animation: timerProgress 60s linear forwards;
+  filter: drop-shadow(0 0 8px rgba(160, 48, 154, 0.3));
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+@keyframes timerProgress {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.timer-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(160, 48, 154, 0.1) 0%, transparent 70%);
+  animation: pulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* ========================================
+   2. BOUTON CTA ENHANCÉ
+   ======================================== */
+
+.btn-cta-enhanced {
+  position: relative;
+  padding: 24px 32px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  color: white;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow:
+    0 4px 16px rgba(160, 48, 154, 0.3),
+    0 0 0 0 rgba(160, 48, 154, 0.7);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-cta-enhanced:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 24px rgba(160, 48, 154, 0.4),
+    0 0 0 8px rgba(160, 48, 154, 0.1);
+}
+
+.btn-cta-enhanced:active {
+  transform: translateY(0);
+  box-shadow:
+    0 2px 8px rgba(160, 48, 154, 0.3),
+    0 0 0 4px rgba(160, 48, 154, 0.2);
+}
+
+.btn-cta-enhanced.recording {
+  background: linear-gradient(135deg, var(--danger) 0%, var(--danger-hover) 100%);
+  animation: recordingPulse 2s ease-in-out infinite;
+}
+
+@keyframes recordingPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(196, 30, 58, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 16px rgba(196, 30, 58, 0);
+  }
+}
+
+/* ========================================
+   3. CARTES STATISTIQUES MODERNES
+   ======================================== */
+
+.stats-enhanced {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.stat-card {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card:hover::before {
+  transform: scaleX(1);
+}
+
+.stat-card-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.stat-card-label {
+  font-size: 0.875rem;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+/* ========================================
+   4. BADGES DE SEUILS DYNAMIQUES
+   ======================================== */
+
+.threshold-badge-enhanced {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 32px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.threshold-badge-match {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  color: white;
+  box-shadow: 0 4px 16px rgba(160, 48, 154, 0.4);
+  animation: matchAlert 1.5s ease-in-out infinite;
+}
+
+@keyframes matchAlert {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 16px rgba(160, 48, 154, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(160, 48, 154, 0.6);
+  }
+}
+
+.threshold-badge-approaching {
+  background: var(--badge-approaching-bg);
+  color: var(--badge-approaching-text);
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+  animation: approachingPulse 2s ease-in-out infinite;
+}
+
+@keyframes approachingPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+/* ========================================
+   5. ANIMATIONS DE TRANSITIONS
+   ======================================== */
+
+.view {
+  animation: fadeInSlideUp 0.4s ease-out;
+}
+
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card, .stats-strip, .timeline li {
+  animation: scaleIn 0.3s ease-out backwards;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ========================================
+   6. GRAPHIQUE ENHANCÉ
+   ======================================== */
+
+.chart-enhanced {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.chart-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: var(--surface-input);
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.chart-bar-container:hover {
+  transform: translateX(4px);
+  background: var(--surface-highlight);
+}
+
+.chart-bar {
+  height: 24px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+  position: relative;
+  overflow: hidden;
+  min-width: 40px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chart-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    left: 100%;
+  }
+}
+
+.chart-bar-label {
+  min-width: 60px;
+  font-size: 0.875rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ========================================
+   7. TRANSITION DE THÈME DOUCE
+   ======================================== */
+
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+*, *::before, *::after {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-theme-enhanced {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-theme-enhanced:hover {
+  transform: rotate(15deg) scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ========================================
+   8. VAGUES D'APaiseMENT (DÉCORATIF)
+   ======================================== */
+
+.wave-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.05;
+  z-index: 0;
+}
+
+.wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23a0309a' fill-opacity='0.3' d='M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") repeat-x;
+  background-size: 50% 100%;
+  animation: wave 20s linear infinite;
+}
+
+@keyframes wave {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ========================================
+   9. RESPONSIVE MOBILE FIRST
+   ======================================== */
+
+@media (max-width: 768px) {
+  .btn-cta-enhanced {
+    padding: 28px 40px;
+    font-size: 1.4rem;
+    border-radius: 28px;
+  }
+
+  .timer-circle-container {
+    width: 180px;
+    height: 180px;
+  }
+
+  .stat-card {
+    padding: 16px;
+    min-width: 120px;
+  }
+
+  .stat-card-value {
+    font-size: 1.5rem;
+  }
+
+  /* Touch targets minimum 44x44px */
+  .btn, button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* ========================================
+   10. ACCESSIBILITY VISUAL
+   ======================================== */
+
+/* Focus visible amélioré */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --border: rgba(0, 0, 0, 0.5);
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark mode enhancement */
+@media (prefers-color-scheme: dark) {
+  .timer-circle-progress {
+    filter: drop-shadow(0 0 12px rgba(214, 120, 207, 0.5));
+  }
+}
