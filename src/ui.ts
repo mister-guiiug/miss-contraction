@@ -205,6 +205,11 @@ function toggleDrawer(root: HTMLElement): void {
 }
 
 function bind(root: HTMLElement): void {
+  // Ne pas lier les événements vanilla si React gère la vue actuelle
+  const currentRoute = parseRoute();
+  if (isReactRoute(currentRoute)) {
+    return;
+  }
   const btnToggle = root.querySelector<HTMLButtonElement>('#btn-toggle')!;
   const btnClear = root.querySelector<HTMLButtonElement>('#btn-clear-history')!;
   const btnShare = root.querySelector<HTMLButtonElement>('#btn-share')!;
@@ -1168,21 +1173,31 @@ function showSettingsSavedFeedback(root: HTMLElement): void {
 
 function render(root: HTMLElement): void {
   const s = state.settings;
+  const currentRoute = parseRoute();
+
+  // Ne pas mettre à jour les éléments vanilla si React gère la vue actuelle
+  if (isReactRoute(currentRoute)) {
+    // Appliquer uniquement les styles globaux
+    document.documentElement.classList.toggle('mc-large-mode', s.largeMode);
+    if (!s.moduleVoiceCommands || !s.voiceCommandsEnabled) {
+      stopVoiceRecognition();
+    }
+    return;
+  }
+
   document.documentElement.classList.toggle('mc-large-mode', s.largeMode);
 
   if (!s.moduleVoiceCommands || !s.voiceCommandsEnabled) {
     stopVoiceRecognition();
   }
 
-  root.querySelector<HTMLElement>('#lbl-n')!.textContent = String(
-    s.consecutiveCount
-  );
-  root.querySelector<HTMLElement>('#lbl-interval')!.textContent = String(
-    s.maxIntervalMin
-  );
-  root.querySelector<HTMLElement>('#lbl-dur')!.textContent = String(
-    s.minDurationSec
-  );
+  const lblN = root.querySelector<HTMLElement>('#lbl-n');
+  const lblInterval = root.querySelector<HTMLElement>('#lbl-interval');
+  const lblDur = root.querySelector<HTMLElement>('#lbl-dur');
+
+  if (lblN) lblN.textContent = String(s.consecutiveCount);
+  if (lblInterval) lblInterval.textContent = String(s.maxIntervalMin);
+  if (lblDur) lblDur.textContent = String(s.minDurationSec);
 
   const form = root.querySelector<HTMLFormElement>('#form-settings');
   if (form) {
