@@ -8,6 +8,7 @@ import { createRoot } from 'react-dom/client';
 import { createPortal } from 'react-dom';
 import { SettingsView } from './views/SettingsView';
 import { MaternityView } from './views/MaternityView';
+import { MessageView } from './views/MessageView';
 import { registerReactRoute } from './reactRoutes';
 
 // Marqueur global pour indiquer que React gère une route
@@ -20,6 +21,7 @@ declare global {
 // Enregistrer les routes React gérées
 registerReactRoute('settings');
 registerReactRoute('maternity');
+registerReactRoute('message');
 
 /**
  * Hook pour récupérer un élément du DOM de manière sécurisée
@@ -82,10 +84,11 @@ function ReactViewRenderer() {
   // Récupérer les conteneurs vanilla
   const settingsContainer = useElement('view-settings');
   const maternityContainer = useElement('view-maternity');
+  const messageContainer = useElement('view-message');
 
   // Marquer la route React active
   useEffect(() => {
-    if (currentRoute === 'settings' || currentRoute === 'maternity') {
+    if (currentRoute === 'settings' || currentRoute === 'maternity' || currentRoute === 'message') {
       window.__REACT_ROUTE__ = currentRoute;
       console.log('🟦 React: Route =', currentRoute);
     } else {
@@ -100,6 +103,10 @@ function ReactViewRenderer() {
 
   if (currentRoute === 'maternity' && maternityContainer) {
     return createPortal(<MaternityView />, maternityContainer);
+  }
+
+  if (currentRoute === 'message' && messageContainer) {
+    return createPortal(<MessageView />, messageContainer);
   }
 
   // Pour les autres routes, on retourne null
