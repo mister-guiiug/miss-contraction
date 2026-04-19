@@ -10,6 +10,7 @@ import { SettingsView } from './views/SettingsView';
 import { MaternityView } from './views/MaternityView';
 import { MessageView } from './views/MessageView';
 import { TableView } from './views/TableView';
+import { MidwifeView } from './views/MidwifeView';
 import { registerReactRoute } from './reactRoutes';
 
 // Marqueur global pour indiquer que React gère une route
@@ -24,6 +25,7 @@ registerReactRoute('settings');
 registerReactRoute('maternity');
 registerReactRoute('message');
 registerReactRoute('table');
+registerReactRoute('midwife');
 
 /**
  * Hook pour récupérer un élément du DOM de manière sécurisée
@@ -88,10 +90,11 @@ function ReactViewRenderer() {
   const maternityContainer = useElement('view-maternity');
   const messageContainer = useElement('view-message');
   const tableContainer = useElement('view-table');
+  const midwifeContainer = useElement('view-midwife');
 
   // Marquer la route React active
   useEffect(() => {
-    if (currentRoute === 'settings' || currentRoute === 'maternity' || currentRoute === 'message' || currentRoute === 'table') {
+    if (currentRoute === 'settings' || currentRoute === 'maternity' || currentRoute === 'message' || currentRoute === 'table' || currentRoute === 'midwife') {
       window.__REACT_ROUTE__ = currentRoute;
       console.log('🟦 React: Route =', currentRoute);
     } else {
@@ -114,6 +117,10 @@ function ReactViewRenderer() {
 
   if (currentRoute === 'table' && tableContainer) {
     return createPortal(<TableView />, tableContainer);
+  }
+
+  if (currentRoute === 'midwife' && midwifeContainer) {
+    return createPortal(<MidwifeView />, midwifeContainer);
   }
 
   // Pour les autres routes, on retourne null
