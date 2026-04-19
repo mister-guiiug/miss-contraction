@@ -451,82 +451,11 @@ export function shellHtml(): string {
       </div>
 
       <div id="view-message" class="view" hidden>
-        <p class="subtitle message-page-lead">
-          Modèle de SMS ou WhatsApp pour prévenir vos proches que vous partez à la maternité. Adaptez le texte,
-          puis copiez-le ou ouvrez directement une application.
-        </p>
-        <section class="card" aria-labelledby="message-heading">
-          <h2 id="message-heading" class="section-title">Votre message</h2>
-          <label class="field">
-            <span>Personnalisez le texte avant envoi</span>
-            <textarea
-              id="msg-template"
-              class="msg-textarea"
-              rows="10"
-              spellcheck="true"
-              autocomplete="off"
-              aria-describedby="msg-hint-block"
-            ></textarea>
-          </label>
-          <p class="msg-feedback" id="msg-feedback" role="status" aria-live="polite"></p>
-          <div class="msg-actions" role="group" aria-label="Envoyer ou copier le message">
-            <button type="button" class="btn btn-secondary" id="btn-msg-reset">
-              Réinitialiser le modèle
-            </button>
-            <button type="button" class="btn btn-secondary" id="btn-msg-copy">Copier</button>
-            <button type="button" class="btn btn-primary" id="btn-msg-whatsapp">
-              Ouvrir WhatsApp
-            </button>
-            <button type="button" class="btn btn-secondary" id="btn-msg-sms">Ouvrir SMS</button>
-          </div>
-          <p class="msg-hint" id="msg-hint-block">
-            WhatsApp et SMS ouvrent l'application par défaut sur téléphone ; sur ordinateur, WhatsApp Web peut
-            s'ouvrir dans un nouvel onglet. Si le lien SMS échoue (message très long), utilisez « Copier ».
-            Vous pouvez aussi coller le texte dans Signal, e-mail, etc.
-          </p>
-        </section>
-        <p class="settings-back-wrap">
-          <a href="#/" class="btn btn-secondary settings-back-link">Retour à l'accueil</a>
-        </p>
+        <!-- Contenu géré par React -->
       </div>
 
       <div id="view-table" class="view" hidden>
-        <p class="subtitle table-page-lead">
-          Historique détaillé : pour chaque contraction, la <strong>durée</strong>, l'<strong>intervalle</strong> depuis le
-          début de la précédente, et la <strong>fréquence</strong> estimée (contractions par heure) dérivée de cet intervalle.
-        </p>
-        <section class="card" aria-labelledby="table-heading">
-          <h2 id="table-heading" class="section-title">Contractions (ordre chronologique)</h2>
-          <div
-            class="history-table-wrap"
-            role="region"
-            aria-label="Tableau défilant sur petit écran"
-            tabindex="0"
-            hidden
-          >
-            <table class="history-table">
-              <thead>
-                <tr>
-                  <th scope="col">N°</th>
-                  <th scope="col">Début</th>
-                  <th scope="col">Durée</th>
-                  <th scope="col">Intervalle</th>
-                  <th scope="col">Fréquence</th>
-                  <th scope="col">Note</th>
-                </tr>
-              </thead>
-              <tbody id="history-table-body"></tbody>
-            </table>
-          </div>
-          <p class="empty" id="history-table-empty">Aucune contraction à afficher.</p>
-          <p class="table-footnote">
-            <strong>Intervalle</strong> : écart entre le début de cette contraction et celui de la ligne précédente.
-            <strong>Fréquence</strong> : ≈ nombre de contractions par heure si le rythme restait identique à cet intervalle.
-          </p>
-        </section>
-        <p class="settings-back-wrap">
-          <a href="#/" class="btn btn-secondary settings-back-link">Retour à l'accueil</a>
-        </p>
+        <!-- Contenu géré par React -->
       </div>
 
       <div id="view-midwife" class="view" hidden>
