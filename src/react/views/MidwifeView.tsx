@@ -5,6 +5,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { findFirstThresholdMatchEndMs } from '../../statsHelpers';
+import { loadRecords } from '../../storage';
 import type { ContractionRecord } from '../../storage';
 
 function meanStartIntervalMs(done: ContractionRecord[]): number | null {
@@ -69,13 +70,20 @@ function sliceForMidwife(records: ContractionRecord[], mode: MidwifeMode): Contr
 }
 
 export function MidwifeView() {
-  const { records, settings } = useAppStore();
+  const { records, settings, setRecords } = useAppStore();
   const [mode, setMode] = useState<MidwifeMode>('12');
   const [copyFeedback, setCopyFeedback] = useState('');
 
   useEffect(() => {
     document.title = 'Résumé sage-femme - Miss Contraction';
   }, []);
+
+  // Recharger les records depuis localStorage au montage
+  // pour synchroniser avec les ajouts faits par le code vanilla
+  useEffect(() => {
+    const freshRecords = loadRecords();
+    setRecords(freshRecords);
+  }, [setRecords]);
 
   // Filtrer et trier les records valides
   const validRecords = useMemo(() => {
