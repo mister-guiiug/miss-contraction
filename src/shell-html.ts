@@ -446,68 +446,8 @@ export function shellHtml(): string {
           </div>
         </div>
       </div>
-
       <div id="view-maternity" class="view" hidden>
-        <p class="subtitle maternity-page-lead">
-          Libellé, numéro et adresse sont modifiables dans les paramètres. Appel et itinéraire en un geste.
-        </p>
-        <section class="card card--maternity-call" aria-labelledby="maternity-call-heading">
-          <h2 id="maternity-call-heading" class="section-title">Contacter la maternité</h2>
-          <p class="maternity-page-venue" id="maternity-page-venue" hidden></p>
-          <div class="maternity-page-phone-block">
-            <div class="maternity-page-phone-head">
-              <p class="maternity-page-subheading">Numéro</p>
-              <span class="maternity-page-readonly-badge">Lecture seule</span>
-            </div>
-            <p class="maternity-page-phone-line" id="maternity-page-phone-line" hidden></p>
-            <p class="maternity-page-phone-placeholder" id="maternity-page-phone-placeholder">
-              Aucun numéro enregistré. Indiquez-le dans les
-              <a href="#/parametres">paramètres</a>.
-            </p>
-            <div class="maternity-page-dial-wrap">
-              <a class="maternity-page-dial" id="maternity-page-dial-link" href="#/parametres">
-                <span class="maternity-page-dial-ring" aria-hidden="true">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                </span>
-                <span class="maternity-page-dial-label" id="maternity-page-dial-label">Renseigner le numéro</span>
-              </a>
-            </div>
-            <p class="maternity-page-hint" id="maternity-page-hint"></p>
-          </div>
-          <div class="maternity-page-address-block" id="maternity-page-address-block">
-            <div class="maternity-page-address-head">
-              <p class="maternity-page-address-heading">Adresse</p>
-              <span class="maternity-page-readonly-badge">Lecture seule</span>
-            </div>
-            <p class="maternity-page-address" id="maternity-page-address" hidden></p>
-            <p class="maternity-page-address-placeholder" id="maternity-page-address-placeholder">
-              Aucune adresse enregistrée. Indiquez-la dans les
-              <a href="#/parametres">paramètres</a>.
-            </p>
-          </div>
-          <div class="maternity-page-maps" id="maternity-page-maps-wrap" hidden>
-            <a
-              class="btn btn-secondary maternity-page-maps-btn"
-              id="maternity-page-maps-link"
-              target="_blank"
-              rel="noopener noreferrer"
-              href="#"
-            >
-              <span class="maternity-page-maps-icon" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              </span>
-              <span>Itinéraire dans Maps</span>
-            </a>
-            <p class="maternity-page-maps-hint">
-              Ouvre Google Maps dans un nouvel onglet pour un itinéraire vers l'adresse ci-dessus (position actuelle →
-              destination).
-            </p>
-          </div>
-        </section>
-        <p class="settings-back-wrap maternity-page-actions">
-          <a href="#/parametres" class="btn btn-secondary settings-back-link">Paramètres</a>
-          <a href="#/" class="btn btn-ghost settings-back-link">Accueil</a>
-        </p>
+        <!-- Contenu géré par React -->
       </div>
 
       <div id="view-message" class="view" hidden>
