@@ -9,6 +9,7 @@ import { createPortal } from 'react-dom';
 import { SettingsView } from './views/SettingsView';
 import { MaternityView } from './views/MaternityView';
 import { MessageView } from './views/MessageView';
+import { TableView } from './views/TableView';
 import { registerReactRoute } from './reactRoutes';
 
 // Marqueur global pour indiquer que React gère une route
@@ -22,6 +23,7 @@ declare global {
 registerReactRoute('settings');
 registerReactRoute('maternity');
 registerReactRoute('message');
+registerReactRoute('table');
 
 /**
  * Hook pour récupérer un élément du DOM de manière sécurisée
@@ -85,10 +87,11 @@ function ReactViewRenderer() {
   const settingsContainer = useElement('view-settings');
   const maternityContainer = useElement('view-maternity');
   const messageContainer = useElement('view-message');
+  const tableContainer = useElement('view-table');
 
   // Marquer la route React active
   useEffect(() => {
-    if (currentRoute === 'settings' || currentRoute === 'maternity' || currentRoute === 'message') {
+    if (currentRoute === 'settings' || currentRoute === 'maternity' || currentRoute === 'message' || currentRoute === 'table') {
       window.__REACT_ROUTE__ = currentRoute;
       console.log('🟦 React: Route =', currentRoute);
     } else {
@@ -107,6 +110,10 @@ function ReactViewRenderer() {
 
   if (currentRoute === 'message' && messageContainer) {
     return createPortal(<MessageView />, messageContainer);
+  }
+
+  if (currentRoute === 'table' && tableContainer) {
+    return createPortal(<TableView />, tableContainer);
   }
 
   // Pour les autres routes, on retourne null
