@@ -91,7 +91,7 @@ export function MaternityView() {
           )}
         </div>
 
-        {/* Adresse - même carte que le téléphone */}
+        {/* Bloc Adresse */}
         <div className="maternity-page-address-block">
           <div className="maternity-page-address-head">
             <p className="maternity-page-address-heading">Adresse</p>
@@ -101,34 +101,7 @@ export function MaternityView() {
           </div>
 
           {hasAddress ? (
-            <>
-              <p className="maternity-page-address">{addr}</p>
-              <div className="maternity-page-maps">
-                <a
-                  className="btn btn-secondary maternity-page-maps-btn"
-                  href={mapsHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Ouvrir Google Maps : itinéraire vers ${mapsDest}`}
-                >
-                  <span className="maternity-page-maps-icon" aria-hidden="true">
-                    <svg
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                      <circle cx="12" cy="10" r="3" />
-                    </svg>
-                  </span>
-                  <span>Itinéraire dans Maps</span>
-                </a>
-                <p className="maternity-page-maps-hint">
-                  Ouvre Google Maps dans un nouvel onglet pour un itinéraire
-                  vers l&apos;adresse ci-dessus (position actuelle →
-                  destination).
-                </p>
-              </div>
-            </>
+            <p className="maternity-page-address">{addr}</p>
           ) : (
             <p className="maternity-page-address-placeholder">
               Aucune adresse enregistrée. Indiquez-la dans les{' '}
@@ -136,6 +109,32 @@ export function MaternityView() {
             </p>
           )}
         </div>
+
+        {/* Itinéraire Maps - même carte, en dehors du bloc Adresse */}
+        {hasAddress && (
+          <div className="maternity-page-maps">
+            <a
+              className="btn btn-secondary maternity-page-maps-btn"
+              href={mapsHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Ouvrir Google Maps : itinéraire vers ${mapsDest}`}
+            >
+              <span className="maternity-page-maps-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </span>
+              <span>Itinéraire dans Maps</span>
+            </a>
+            <p className="maternity-page-maps-hint">
+              Ouvre Google Maps dans un nouvel onglet pour un itinéraire
+              vers l&apos;adresse ci-dessus (position actuelle →
+              destination).
+            </p>
+          </div>
+        )}
       </section>
 
       {/* Boutons footer */}
