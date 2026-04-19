@@ -5,13 +5,21 @@
 
 import { useEffect, useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
-import { setSnoozeUntilMs, clearSnoozeUntil } from '../../storage';
+import { setSnoozeUntilMs, clearSnoozeUntil, loadSettings } from '../../storage';
 
 export function SettingsView() {
   const { settings, updateSettings, saveSettings } = useAppStore();
   const [formData, setFormData] = useState(settings);
   const [saveStatus, setSaveStatus] = useState('');
   const [notifyPermission, setNotifyPermission] = useState<NotificationPermission>('default');
+
+  // Recharger les settings depuis localStorage au montage
+  // pour synchroniser avec les modifications faits par le code vanilla
+  useEffect(() => {
+    const freshSettings = loadSettings();
+    updateSettings(freshSettings);
+    setFormData(freshSettings);
+  }, [updateSettings]);
 
   useEffect(() => {
     if ('Notification' in window) {
