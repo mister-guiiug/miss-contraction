@@ -530,45 +530,7 @@ export function shellHtml(): string {
       </div>
 
       <div id="view-midwife" class="view" hidden>
-        <p class="subtitle midwife-page-lead no-print">
-          Synthèse courte des <strong>dernières contractions</strong>, des <strong>moyennes</strong> sur la période choisie et,
-          si elle a eu lieu, l'<strong>heure à laquelle les seuils d'alerte ont été atteints pour la première fois</strong>
-          dans tout l'historique. À imprimer ou enregistrer en PDF depuis le navigateur.
-        </p>
-        <section class="card midwife-card">
-          <h2 class="section-title no-print">Contenu du résumé</h2>
-          <label class="field field--wide midwife-field no-print">
-            <span>Contractions listées (ordre chronologique)</span>
-            <select id="midwife-count-select" class="midwife-select" aria-describedby="midwife-count-hint">
-              <option value="6">6 dernières</option>
-              <option value="10">10 dernières</option>
-              <option value="12" selected>12 dernières</option>
-              <option value="20">20 dernières</option>
-              <option value="all">Tout l'historique</option>
-            </select>
-          </label>
-          <p class="midwife-hint no-print" id="midwife-count-hint">
-            Les moyennes (durée, intervalle, quantité / h) sont calculées <strong>uniquement</strong> sur cette sélection.
-            Le « premier seuil atteint » utilise <strong>tout</strong> l'historique enregistré.
-          </p>
-          <div id="midwife-print-root" class="midwife-print-root" aria-live="polite"></div>
-          <p class="midwife-copy-feedback no-print" id="midwife-copy-feedback" role="status" aria-live="polite" hidden></p>
-          <div class="midwife-actions no-print" role="group" aria-label="Copier ou imprimer le résumé">
-            <button type="button" class="btn btn-secondary" id="btn-midwife-copy">
-              Copier le texte
-            </button>
-            <button type="button" class="btn btn-primary" id="btn-midwife-print">
-              Imprimer ou PDF
-            </button>
-          </div>
-          <p class="midwife-print-hint no-print">
-            Dans la boîte d'impression, choisissez <strong>Enregistrer au format PDF</strong> si vous voulez un fichier.
-          </p>
-        </section>
-        <p class="settings-back-wrap no-print">
-          <a href="#/historique" class="btn btn-ghost settings-back-link">Tableau détaillé</a>
-          <a href="#/" class="btn btn-secondary settings-back-link">Accueil</a>
-        </p>
+        <!-- Contenu géré par React -->
       </div>
 
       <dialog class="edit-dialog" id="edit-contraction-dialog" aria-labelledby="edit-dialog-title">
