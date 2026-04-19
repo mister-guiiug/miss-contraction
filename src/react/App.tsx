@@ -29,12 +29,17 @@ registerReactRoute('midwife');
 
 /**
  * Hook pour récupérer un élément du DOM de manière sécurisée
+ * et vider son contenu pour éviter les doublons vanilla/React
  */
 function useElement(id: string): HTMLElement | null {
   const [element, setElement] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     const el = document.getElementById(id);
+    if (el) {
+      // Vider le contenu vanilla pour éviter les doublons
+      el.innerHTML = '';
+    }
     setElement(el);
   }, [id]);
 
