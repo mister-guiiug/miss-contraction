@@ -54,7 +54,7 @@ export function shellHtml(): string {
           <li>
             <a class="drawer-link" data-drawer-route="maternity" href="#/maternite">
               <span class="drawer-link-icon" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81 2.7A2 2 0 0 1 22 16.92z"/></svg>
               </span>
               <span class="drawer-link-label">Appeler la maternité</span>
               <span class="drawer-link-arrow" aria-hidden="true">›</span>
@@ -129,7 +129,7 @@ export function shellHtml(): string {
       <div class="maternity-quick" id="maternity-quick" hidden>
         <a class="maternity-quick__link" id="maternity-quick-link" href="tel:">
           <span class="maternity-quick__icon" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0f1 22 16.92z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81 2.7A2 2 0 0 1 22 16.92z"/></svg>
           </span>
           <span class="maternity-quick__body">
             <span class="maternity-quick__title" id="maternity-quick-title">Appeler la maternité</span>
@@ -139,127 +139,7 @@ export function shellHtml(): string {
       </div>
 
       <div id="view-home" class="view">
-        <p class="subtitle home-intro">
-          Suivez la fréquence des contractions et recevez une alerte selon les seuils définis dans les paramètres
-          (à valider avec votre sage-femme).
-        </p>
-
-        <div class="app-banners" id="app-banners">
-          <div class="app-banner app-banner--warn" id="banner-long-open" hidden>
-            <p class="app-banner-text" id="banner-long-open-text"></p>
-            <button type="button" class="btn btn-ghost btn-small" id="btn-dismiss-long-open">OK</button>
-          </div>
-          <div class="app-banner app-banner--info banner-undo" id="banner-undo" hidden>
-            <div class="banner-undo-top">
-              <span class="app-banner-text">Enregistré !</span>
-              <div class="banner-undo-intensity" id="undo-intensity-area">
-                <span class="banner-undo-intensity-label">Intensité :</span>
-                <div class="intensity-picker intensity-picker--mini">
-                  <button type="button" class="btn-intensity" data-intensity="1" aria-label="Très faible">1</button>
-                  <button type="button" class="btn-intensity" data-intensity="2" aria-label="Faible">2</button>
-                  <button type="button" class="btn-intensity" data-intensity="3" aria-label="Moyenne">3</button>
-                  <button type="button" class="btn-intensity" data-intensity="4" aria-label="Forte">4</button>
-                  <button type="button" class="btn-intensity" data-intensity="5" aria-label="Très forte">5</button>
-                </div>
-              </div>
-              <button type="button" class="btn btn-ghost btn-small" id="btn-undo-add">Annuler</button>
-            </div>
-          </div>
-          <div class="app-banner app-banner--accent" id="banner-pre-alert" hidden>
-            <p class="app-banner-text" id="banner-pre-alert-text"></p>
-            <button type="button" class="btn btn-ghost btn-small" id="btn-dismiss-pre">Fermer</button>
-          </div>
-          <div class="app-banner app-banner--muted" id="banner-export-nudge" hidden>
-            <span class="app-banner-text">Pensez à exporter une sauvegarde (Partager / Exporter) avant un changement de téléphone.</span>
-            <button type="button" class="btn btn-ghost btn-small" id="btn-dismiss-export-nudge">Plus tard</button>
-          </div>
-        </div>
-
-        <section class="card panel panel-cta" aria-labelledby="action-heading">
-          <h2 id="action-heading" class="cta-heading">Enregistrer une contraction</h2>
-          <p class="cta-hint">
-            Touchez le gros bouton au <strong>début</strong> d'une contraction, puis à nouveau à la <strong>fin</strong>.
-          </p>
-          <div class="timer" id="timer-block" hidden>
-            <p class="timer-label">Contraction en cours</p>
-            <div class="timer-circle-container">
-              <svg class="timer-circle" viewBox="0 0 200 200" aria-hidden="true">
-                <circle class="timer-circle-bg" cx="100" cy="100" r="90"/>
-                <circle class="timer-circle-progress" id="timer-circle-progress" cx="100" cy="100" r="90"/>
-              </svg>
-              <div class="timer-pulse"></div>
-              <p class="timer-value" id="timer-value">0:00</p>
-            </div>
-          </div>
-          <div class="actions actions-cta">
-            <button type="button" class="btn btn-primary btn-cta btn-cta-enhanced" id="btn-toggle" aria-live="polite">
-              Début de contraction
-            </button>
-          </div>
-          <div class="cta-extras">
-            <button type="button" class="btn btn-secondary btn-small" id="btn-voice" hidden>
-              Commande vocale (début / fin)
-            </button>
-          </div>
-          <p class="hint" id="status-hint"></p>
-        </section>
-
-        <section class="card" aria-labelledby="summary-heading">
-          <h2 id="summary-heading" class="section-title">Indicateurs récents</h2>
-          <div class="stats-enhanced" role="group" aria-label="Synthèse des contractions">
-            <div class="stat-card">
-              <span class="stat-card-icon" aria-hidden="true"></span>
-              <span class="stat-card-value" id="stat-qty-hour" aria-live="polite">—</span>
-              <span class="stat-card-label">Quantité / h</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-card-icon" aria-hidden="true"></span>
-              <span class="stat-card-value" id="stat-avg-duration" aria-live="polite">—</span>
-              <span class="stat-card-label">Durée moyenne</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-card-icon" aria-hidden="true"></span>
-              <span class="stat-card-value" id="stat-avg-frequency" aria-live="polite">—</span>
-              <span class="stat-card-label">Fréquence moyenne</span>
-            </div>
-          </div>
-          <p class="stats-window-label" id="stats-window-label"></p>
-          <p class="threshold-badge threshold-badge-enhanced" id="threshold-badge" data-state="empty"></p>
-          <dl class="summary summary-extra" id="summary-extra"></dl>
-          <div class="chart-block" id="chart-block" hidden>
-            <h3 class="chart-title">Intervalles entre débuts (derniers enregistrements)</h3>
-            <div class="chart-bars chart-enhanced" id="chart-bars" role="img" aria-label="Barres proportionnelles aux intervalles"></div>
-          </div>
-        </section>
-
-        <section class="card" aria-labelledby="history-heading">
-          <div class="section-head">
-            <h2 id="history-heading" class="section-title">Historique</h2>
-            <div class="section-actions" role="group" aria-label="Partage et historique">
-              <button type="button" class="btn btn-ghost btn-small" id="btn-share" disabled>
-                Partager
-              </button>
-              <button type="button" class="btn btn-ghost btn-small" id="btn-export" disabled>
-                Exporter
-              </button>
-              <button type="button" class="btn btn-ghost btn-small" id="btn-clear-history">
-                Effacer l'historique
-              </button>
-            </div>
-          </div>
-          <p class="share-export-feedback" id="share-export-feedback" hidden></p>
-          <ul class="timeline" id="history-list" role="list"></ul>
-          <p class="empty" id="history-empty">Aucune contraction enregistrée pour le moment.</p>
-        </section>
-
-        <footer class="footer">
-          <p>Cet outil ne remplace pas un avis médical. Appelez la maternité ou le 15 en cas de doute.</p>
-          <p>
-            <a class="footer-link" href="https://github.com/mister-guiiug/miss-contraction" target="_blank" rel="noopener noreferrer">Code source sur GitHub</a>
-            &nbsp;·&nbsp;
-            <a class="footer-link" href="https://buymeacoffee.com/mister.guiiug" target="_blank" rel="noopener noreferrer">☕ Buy me a coffee</a>
-          </p>
-        </footer>
+        <!-- Contenu géré par React -->
       </div>
 
       <div id="view-settings" class="view" hidden>

@@ -231,19 +231,23 @@ function toggleDrawer(root: HTMLElement): void {
 }
 
 function bind(root: HTMLElement): void {
-  const btnToggle = root.querySelector<HTMLButtonElement>('#btn-toggle')!;
-  const btnClear = root.querySelector<HTMLButtonElement>('#btn-clear-history')!;
-  const btnShare = root.querySelector<HTMLButtonElement>('#btn-share')!;
-  const btnExport = root.querySelector<HTMLButtonElement>('#btn-export')!;
+  const btnToggle = root.querySelector<HTMLButtonElement>('#btn-toggle');
+  const btnClear = root.querySelector<HTMLButtonElement>('#btn-clear-history');
+  const btnShare = root.querySelector<HTMLButtonElement>('#btn-share');
+  const btnExport = root.querySelector<HTMLButtonElement>('#btn-export');
   const form = root.querySelector<HTMLFormElement>('#form-settings')!;
   const btnNotify = root.querySelector<HTMLButtonElement>('#btn-notify')!;
 
-  btnToggle.addEventListener('click', () => {
-    if (state.activeStart === null) startContraction(root);
-    else endContraction(root);
-  });
+  // Éléments gérés par React - ne plus binder si non trouvés
+  if (btnToggle) {
+    btnToggle.addEventListener('click', () => {
+      if (state.activeStart === null) startContraction(root);
+      else endContraction(root);
+    });
+  }
 
-  btnClear.addEventListener('click', () => {
+  if (btnClear) {
+    btnClear.addEventListener('click', () => {
     if (!confirm('Effacer tout l’historique sur cet appareil ?')) return;
     state.records = [];
     state.alertLatch = false;
@@ -253,6 +257,7 @@ function bind(root: HTMLElement): void {
     closeEditDialogIfOpen(root);
     render(root);
   });
+}
 
   form.addEventListener('submit', e => {
     e.preventDefault();
@@ -438,14 +443,19 @@ function bind(root: HTMLElement): void {
     render(root);
   });
 
-  btnShare.addEventListener('click', () => {
-    void shareHistory(root);
-  });
+  // Éléments gérés par React - ne plus binder si non trouvés
+  if (btnShare) {
+    btnShare.addEventListener('click', () => {
+      void shareHistory(root);
+    });
+  }
 
-  btnExport.addEventListener('click', () => {
-    downloadExportJson();
-    flashShareExportFeedback(root, 'Fichier JSON téléchargé.');
-  });
+  if (btnExport) {
+    btnExport.addEventListener('click', () => {
+      downloadExportJson();
+      flashShareExportFeedback(root, 'Fichier JSON téléchargé.');
+    });
+  }
 
   root
     .querySelector<HTMLSelectElement>('#midwife-count-select')!
