@@ -3,7 +3,7 @@
  * Ces routes sont masquées dans l'application vanilla
  */
 
-const REACT_ROUTES = new Set(['settings', 'maternity']);
+const REACT_ROUTES = new Set(['settings', 'maternity', 'message']);
 
 /**
  * Vérifie si une route est gérée par React
