@@ -66,7 +66,7 @@ export function MaternityView() {
               <p className="maternity-page-phone-line">{phone}</p>
               <div className="maternity-page-dial-wrap">
                 <a
-                  className="maternity-page-dial"
+                  className={`maternity-page-dial${hasPhone ? ' maternity-page-dial--ready' : ''}`}
                   href={telHref}
                   aria-label={`Appeler ${destName} au ${phone}`}
                 >
