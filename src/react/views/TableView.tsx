@@ -4,6 +4,7 @@
 
 import { useEffect, useMemo } from 'react';
 import { useAppStore } from '../store/useAppStore';
+import { loadRecords } from '../../storage';
 
 const dateTimeFmt = new Intl.DateTimeFormat('fr-FR', {
   weekday: 'short',
@@ -30,11 +31,18 @@ function formatContractionsPerHour(meanIntervalMs: number): string {
 }
 
 export function TableView() {
-  const { records } = useAppStore();
+  const { records, setRecords } = useAppStore();
 
   useEffect(() => {
     document.title = 'Tableau des contractions - Miss Contraction';
   }, []);
+
+  // Recharger les records depuis localStorage au montage
+  // pour synchroniser avec les ajouts faits par le code vanilla
+  useEffect(() => {
+    const freshRecords = loadRecords();
+    setRecords(freshRecords);
+  }, [setRecords]);
 
   // Filtrer et trier les records valides
   const validRecords = useMemo(() => {
