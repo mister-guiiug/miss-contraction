@@ -86,7 +86,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     if (activeStart === null) return;
 
     const newRecord: ContractionRecord = {
-      id: `rec-${Date.now()}`,
+      id: crypto.randomUUID(),
       start: activeStart,
       end: Date.now(),
       note,

@@ -6,6 +6,7 @@
 import { StrictMode, useEffect, useState, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createPortal } from 'react-dom';
+import { HomeView } from './views/HomeView';
 import { SettingsView } from './views/SettingsView';
 import { MaternityView } from './views/MaternityView';
 import { MessageView } from './views/MessageView';
@@ -21,6 +22,7 @@ declare global {
 }
 
 // Enregistrer les routes React gérées
+registerReactRoute('home');
 registerReactRoute('settings');
 registerReactRoute('maternity');
 registerReactRoute('message');
@@ -91,6 +93,7 @@ function ReactViewRenderer() {
   }, [onHashChange]);
 
   // Récupérer les conteneurs vanilla
+  const homeContainer = useElement('view-home');
   const settingsContainer = useElement('view-settings');
   const maternityContainer = useElement('view-maternity');
   const messageContainer = useElement('view-message');
@@ -99,7 +102,7 @@ function ReactViewRenderer() {
 
   // Marquer la route React active
   useEffect(() => {
-    if (currentRoute === 'settings' || currentRoute === 'maternity' || currentRoute === 'message' || currentRoute === 'table' || currentRoute === 'midwife') {
+    if (currentRoute === 'home' || currentRoute === 'settings' || currentRoute === 'maternity' || currentRoute === 'message' || currentRoute === 'table' || currentRoute === 'midwife') {
       window.__REACT_ROUTE__ = currentRoute;
       console.log('🟦 React: Route =', currentRoute);
     } else {
@@ -108,6 +111,10 @@ function ReactViewRenderer() {
   }, [currentRoute]);
 
   // Afficher les vues React via Portal
+  if (currentRoute === 'home' && homeContainer) {
+    return createPortal(<HomeView />, homeContainer);
+  }
+
   if (currentRoute === 'settings' && settingsContainer) {
     return createPortal(<SettingsView />, settingsContainer);
   }
