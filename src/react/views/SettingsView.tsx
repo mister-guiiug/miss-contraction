@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 /**
  * Vue Paramètres - Migration progressive vers React
  * Cette version React coexiste avec la version vanilla
@@ -6,6 +7,7 @@
 import { useEffect, useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { setSnoozeUntilMs, clearSnoozeUntil, loadSettings } from '../../storage';
+import { HighContrastToggle } from '../components/settings/HighContrastToggle';
 
 export function SettingsView() {
   const { settings, updateSettings, saveSettings } = useAppStore();
@@ -307,6 +309,7 @@ export function SettingsView() {
             />
             <span>Mode grandes tailles (texte et boutons plus lisibles)</span>
           </label>
+          <HighContrastToggle />
         </section>
 
         {/* Section Confort */}
@@ -401,9 +404,9 @@ export function SettingsView() {
           <button type="submit" form="form-settings" className="btn btn-primary settings-save-btn">
             Enregistrer
           </button>
-          <a href="#/" className="settings-back-inline">
+          <Link to="/" className="settings-back-inline">
             Accueil
-          </a>
+          </Link>
         </div>
       </div>
     </div>
