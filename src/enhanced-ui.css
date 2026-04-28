@@ -422,15 +422,17 @@
     left: 0;
     right: 0;
     display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
-    padding: 0.5rem calc(0.5rem + env(safe-area-inset-right))
-                calc(0.5rem + env(safe-area-inset-bottom))
-                calc(0.5rem + env(safe-area-inset-left));
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem calc(0.7rem + env(safe-area-inset-right))
+                calc(0.65rem + env(safe-area-inset-bottom))
+                calc(0.7rem + env(safe-area-inset-left));
+    min-height: 4.85rem;
     background: var(--drawer-bg);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-top: 1px solid var(--border);
+    border-radius: 1rem 1rem 0 0;
     z-index: 50;
     box-shadow: 0 -4px 20px rgba(var(--ink-rgb), 0.1);
   }
@@ -439,20 +441,29 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.25rem;
-    padding: 0.5rem 0.75rem;
+    gap: 0.18rem;
+    padding: 0.35rem 0.25rem;
     text-decoration: none;
     color: var(--muted);
-    font-size: 0.7rem;
+    font-size: 0.72rem;
+    line-height: 1.15;
     font-weight: 600;
     transition: color 0.15s ease;
-    min-width: 3.5rem;
+    min-width: 0;
+    flex: 1 1 0;
+    max-width: 5.1rem;
     position: relative;
   }
 
+  .bottom-nav-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .bottom-nav-item svg {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.42rem;
+    height: 1.42rem;
   }
 
   .bottom-nav-item:hover,
@@ -474,8 +485,7 @@
   .bottom-nav-item.active:not(.cta) .bottom-nav-icon {
     background: rgba(var(--accent-rgb), 0.13);
     border-radius: 999px;
-    padding: 0.25rem 0.7rem;
-    margin-bottom: -0.25rem;
+    padding: 0.22rem 0.62rem;
     transition: background 0.2s ease;
   }
 
@@ -483,27 +493,37 @@
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%);
     color: #fff;
     border-radius: 50%;
-    width: 4rem;
-    height: 4rem;
-    margin-bottom: -1.25rem;
+    width: 3.7rem;
+    height: 3.7rem;
+    margin-bottom: 0.45rem;
     box-shadow:
       0 4px 0 rgba(var(--depth-rgb), 0.22),
       0 12px 28px rgba(var(--accent-rgb), 0.4);
     padding: 0;
     justify-content: center;
+    transform: translateY(-0.55rem);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
+    flex: 0 0 auto;
   }
 
   .bottom-nav-item.cta:hover {
-    transform: scale(1.05);
+    transform: translateY(-0.55rem) scale(1.04);
     box-shadow:
       0 4px 0 rgba(var(--depth-rgb), 0.22),
       0 16px 32px rgba(var(--accent-rgb), 0.5);
   }
 
+  .bottom-nav-item.cta:focus-visible {
+    outline-color: rgba(255, 255, 255, 0.95);
+  }
+
   .bottom-nav-item.cta svg {
-    width: 1.75rem;
-    height: 1.75rem;
+    width: 1.62rem;
+    height: 1.62rem;
+  }
+
+  .bottom-nav-item:not(.cta) > span:last-child {
+    white-space: nowrap;
   }
 
   /* Masquer le hamburger sur mobile quand bottom nav est présent */
@@ -513,7 +533,18 @@
 
   /* Ajuster le padding bottom pour la bottom nav */
   .app:not(.settings-page) {
-    padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (max-width: 360px) {
+  .bottom-nav-item {
+    font-size: 0.66rem;
+  }
+
+  .bottom-nav-item svg {
+    width: 1.34rem;
+    height: 1.34rem;
   }
 }
 
