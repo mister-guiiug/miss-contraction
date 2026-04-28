@@ -22,61 +22,61 @@ export function StatsSection() {
   const { data, windowLabel, isEmpty } = useStats(records, settings);
 
   return (
-    <>
-      <section className="card" aria-labelledby="summary-heading">
-        <h2 id="summary-heading" className="section-title">Indicateurs récents</h2>
-        <div className="stats-enhanced" role="group" aria-label="Synthèse des contractions">
-          <div className="stat-card">
-            <span className="stat-card-icon" aria-hidden="true" />
-            <span className="stat-card-value" aria-live="polite">
-              {data.qtyPerHour}
-            </span>
-            <span className="stat-card-label">Quantité / h</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-card-icon" aria-hidden="true" />
-            <span className="stat-card-value" aria-live="polite">
-              {data.avgDuration}
-            </span>
-            <span className="stat-card-label">Durée moyenne</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-card-icon" aria-hidden="true" />
-            <span className="stat-card-value" aria-live="polite">
-              {data.avgFrequency}
-            </span>
-            <span className="stat-card-label">Fréquence moyenne</span>
-          </div>
-        </div>
-        <p className="stats-window-label" id="stats-window-label">
-          {windowLabel}
-        </p>
-        <p
-          className={`threshold-badge threshold-badge-enhanced threshold-badge-${data.thresholdKind}`}
-          id="threshold-badge"
-          data-state={data.thresholdKind}
-        >
-          <span className="badge-icon">
-            {THRESHOLD_ICONS[data.thresholdKind] ?? ''}
+    <section className="card" aria-labelledby="summary-heading">
+      <h2 id="summary-heading" className="section-title">Indicateurs récents</h2>
+      <div className="stats-enhanced" role="group" aria-label="Synthèse des contractions">
+        <div className="stat-card">
+          <span className="stat-card-icon" aria-hidden="true" />
+          <span className="stat-card-value" aria-live="polite">
+            {data.qtyPerHour}
           </span>
-          {THRESHOLD_LABELS[data.thresholdKind] ?? ''}
-        </p>
-        {!isEmpty && (
-          <dl className="summary summary-extra" id="summary-extra">
-            <dt>Contractions (dernière heure)</dt>
-            <dd>{data.lastHourCount}</dd>
-            <dt>Estimation détaillée</dt>
-            <dd>{data.perHourFromMean}</dd>
-            <dt>Dernier intervalle</dt>
-            <dd>{data.lastInterval}</dd>
-            <dt>Dernière durée</dt>
-            <dd>{data.lastDuration}</dd>
-          </dl>
-        )}
-      </section>
+          <span className="stat-card-label">Quantité / h</span>
+        </div>
+        <div className="stat-card">
+          <span className="stat-card-icon" aria-hidden="true" />
+          <span className="stat-card-value" aria-live="polite">
+            {data.avgDuration}
+          </span>
+          <span className="stat-card-label">Durée moyenne</span>
+        </div>
+        <div className="stat-card">
+          <span className="stat-card-icon" aria-hidden="true" />
+          <span className="stat-card-value" aria-live="polite">
+            {data.avgFrequency}
+          </span>
+          <span className="stat-card-label">Fréquence moyenne</span>
+        </div>
+      </div>
+      <p className="stats-window-label" id="stats-window-label">
+        {windowLabel}
+      </p>
+      <p
+        className={`threshold-badge threshold-badge-enhanced threshold-badge-${data.thresholdKind}`}
+        id="threshold-badge"
+        data-state={data.thresholdKind}
+      >
+        <span className="badge-icon">
+          {THRESHOLD_ICONS[data.thresholdKind] ?? ''}
+        </span>
+        {THRESHOLD_LABELS[data.thresholdKind] ?? ''}
+      </p>
+      {!isEmpty && (
+        <dl className="summary summary-extra" id="summary-extra">
+          <dt>Contractions (dernière heure)</dt>
+          <dd>{data.lastHourCount}</dd>
+          <dt>Estimation détaillée</dt>
+          <dd>{data.perHourFromMean}</dd>
+          <dt>Dernier intervalle</dt>
+          <dd>{data.lastInterval}</dd>
+          <dt>Dernière durée</dt>
+          <dd>{data.lastDuration}</dd>
+        </dl>
+      )}
+
+      <div className="section-divider" role="separator" aria-orientation="horizontal" />
 
       <IntervalChart intervals={data.intervals} recordsForChart={data.recordsForChart} />
-    </>
+    </section>
   );
 }
 
@@ -89,21 +89,13 @@ function IntervalChart({
 }) {
   if (intervals.length === 0) return null;
 
-  const max = Math.max(...intervals, 1);
-
   return (
-    <div className="chart-block" id="chart-block">
+    <div className="interval-list">
       <h3 className="chart-title">
         Intervalles entre débuts (derniers enregistrements)
       </h3>
-      <div
-        className="chart-bars chart-enhanced"
-        id="chart-bars"
-        role="img"
-        aria-label="Barres proportionnelles aux intervalles"
-      >
+      <ul className="interval-items" role="list">
         {intervals.map((ms, i) => {
-          const pct = Math.min(100, Math.round((ms / max) * 100));
           const record = recordsForChart[i + 1];
           const intensity = record?.intensity;
           const date = record ? new Date(record.start) : null;
@@ -112,23 +104,21 @@ function IntervalChart({
             : '—';
 
           return (
-            <div key={i} className="chart-bar-container">
-              <div className="chart-bar-label">{timeLabel}</div>
-              <div
-                className={`chart-bar ${intensity ? `chart-bar--intensity-${intensity}` : ''}`}
-                style={{ width: `${pct}%` }}
-                title={formatDuration(ms)}
-              />
+            <li key={i} className="interval-item">
+              <span className="interval-time">{timeLabel}</span>
+              <span className="interval-sep">›</span>
+              <span className="interval-value">
+                {formatDuration(ms)}
+              </span>
               {intensity && (
-                <div className="chart-bar-intensity" title={`Intensité ${intensity}`}>
+                <span className={`interval-intensity interval-intensity--${intensity}`}>
                   {intensity}
-                </div>
+                </span>
               )}
-              <div>{formatDuration(ms)}</div>
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </div>
   );
 }

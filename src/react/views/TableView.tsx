@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 /**
  * Vue Table - Historique des contractions avec édition
  */
@@ -128,9 +129,9 @@ export function TableView() {
       </section>
 
       <p className="settings-back-wrap">
-        <a href="#/" className="btn btn-secondary settings-back-link">
+        <Link to="/" className="btn btn-secondary settings-back-link">
           Retour à l'accueil
-        </a>
+        </Link>
       </p>
     </div>
   );

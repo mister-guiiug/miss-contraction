@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 /**
  * Vue Midwife - Résumé pour la sage-femme avec export
  */
@@ -318,12 +319,12 @@ export function MidwifeView() {
       </section>
 
       <p className="settings-back-wrap no-print">
-        <a href="#/historique" className="btn btn-ghost settings-back-link">
+        <Link to="/historique" className="btn btn-ghost settings-back-link">
           Tableau détaillé
-        </a>
-        <a href="#/" className="btn btn-secondary settings-back-link">
+        </Link>
+        <Link to="/" className="btn btn-secondary settings-back-link">
           Accueil
-        </a>
+        </Link>
       </p>
     </div>
   );
