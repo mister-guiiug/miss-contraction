@@ -1,0 +1,51 @@
+name: Déployer preview React sur GitHub Pages
+
+on:
+  push:
+    branches: [react-migration]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-react-preview
+  cancel-in-progress: true
+
+jobs:
+  build-react-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+        env:
+          REACT_PREVIEW: '1'
+
+      - name: Créer structure preview
+        run: |
+          mkdir -p preview-dist
+          mv dist preview-dist/miss-contraction-react
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: preview-dist
+
+  deploy-react-preview:
+    needs: build-react-preview
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages-react-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
