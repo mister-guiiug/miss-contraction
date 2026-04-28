@@ -1,5 +1,6 @@
 import { useState, useEffect, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { BottomNav } from './BottomNav';
 import {
   cycleThemePreference,
   getStoredThemePreference,
@@ -299,6 +300,8 @@ export function Shell({ children }: ShellProps) {
         </header>
 
         {children}
+
+        <BottomNav />
       </main>
     </>
   );
