@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, type Dispatch, type SetStateAction } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { formatDateTime } from '../../../utils/formatStats';
 import { formatDuration } from '../../../utils/formatDuration';
@@ -320,7 +320,7 @@ function toDatetimeLocalValue(ms: number): string {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
 }
 
-function addQuickNote(setNote: (note: string) => void, tag: string) {
+function addQuickNote(setNote: Dispatch<SetStateAction<string>>, tag: string) {
   setNote((prev) => {
     const cur = prev.trim();
     if (!cur) {
