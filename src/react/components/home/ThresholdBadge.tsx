@@ -7,13 +7,11 @@ import { useAppStore } from '../../store/useAppStore';
 export function ThresholdBadge() {
   const { records, settings } = useAppStore();
 
-  const { state, message, consecutiveBelow, totalNeeded } = useMemo(() => {
+  const { state, message } = useMemo(() => {
     if (records.length === 0) {
       return {
         state: 'empty' as const,
         message: 'Aucune contraction enregistrée',
-        consecutiveBelow: 0,
-        totalNeeded: settings.consecutiveCount,
       };
     }
 
@@ -21,7 +19,7 @@ export function ThresholdBadge() {
     const now = Date.now();
     const windowMs = settings.statsWindowMinutes === 'all'
       ? Infinity
-      : settings.statsWindowMinutes * 60 * 1000;
+      : Number(settings.statsWindowMinutes) * 60 * 1000;
 
     const filtered = records.filter((r) => now - r.start <= windowMs);
 
@@ -52,8 +50,6 @@ export function ThresholdBadge() {
       return {
         state: 'match' as const,
         message: `✓ Seuil atteint ! (${consecutiveCount}/${settings.consecutiveCount} contractions)`,
-        consecutiveBelow: consecutiveCount,
-        totalNeeded: settings.consecutiveCount,
       };
     }
 
@@ -61,16 +57,12 @@ export function ThresholdBadge() {
       return {
         state: 'approaching' as const,
         message: `Presque... (${consecutiveCount}/${settings.consecutiveCount} contractions sous le seuil)`,
-        consecutiveBelow: consecutiveCount,
-        totalNeeded: settings.consecutiveCount,
       };
     }
 
     return {
       state: 'calm' as const,
       message: `${consecutiveCount}/${settings.consecutiveCount} contractions sous le seuil`,
-      consecutiveBelow: consecutiveCount,
-      totalNeeded: settings.consecutiveCount,
     };
   }, [records, settings]);
 
