@@ -1,12 +1,13 @@
 # Miss Contraction
 
-[![Application en ligne](https://img.shields.io/badge/Application-En%20ligne-brightgreen?style=for-the-badge)](https://mister-guiiug.github.io/miss-contraction/)
+[![Production](https://img.shields.io/badge/Production-GitHub%20Pages-brightgreen?style=for-the-badge)](https://mister-guiiug.github.io/miss-contraction/)
+[![Development](https://img.shields.io/badge/Développement-Netlify-blue?style=for-the-badge)](https://miss-contraction-dev.netlify.app)
 [![License](https://img.shields.io/badge/Licence-MIT-blue?style=for-the-badge)](https://github.com/mister-guiiug/miss-contraction/blob/main/LICENSE)
 [![Buy Me A Coffee](https://img.shields.io/badge/Soutenir-%E2%98%95-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/mister.guiiug)
 
 > Chronomètre les contractions, suit leur fréquence et vous alerte quand il est temps d'appeler la maternité.
 
-**[▶ Accéder à l'application](https://mister-guiiug.github.io/miss-contraction/)**
+**[▶ Production (GitHub Pages)](https://mister-guiiug.github.io/miss-contraction/)** | **[▶ Développement React (Netlify)](https://miss-contraction-dev.netlify.app)**
 
 > ⚠️ **Avertissement médical** : cet outil est un aide-mémoire. Il ne remplace en aucun cas un avis médical. En cas de doute ou d'urgence, contactez immédiatement un professionnel de santé ou le 15 (SAMU).
 
@@ -18,6 +19,7 @@
 - [Comment utiliser l'application](#comment-utiliser-lapplication)
 - [Installation sur votre téléphone (PWA)](#installation-sur-votre-téléphone-pwa)
 - [Confidentialité](#confidentialité)
+- [Développement](#développement)
 - [Licence](#licence)
 
 ---
@@ -98,6 +100,28 @@ Miss Contraction est une application web progressive (PWA) : elle s'installe dir
 2. Appuyez sur le bouton Partager → **« Sur l'écran d'accueil »**.
 
 Une fois installée, l'application fonctionne **hors ligne** pour les fonctions de base.
+
+---
+
+## Développement
+
+### Environnements
+
+| Environnement | URL | Branche | Technologie |
+|---------------|-----|---------|-------------|
+| **Production** | [mister-guiiug.github.io/miss-contraction](https://mister-guiiug.github.io/miss-contraction/) | `main` | Vanilla TypeScript |
+| **Développement** | [miss-contraction-dev.netlify.app](https://miss-contraction-dev.netlify.app) | `react-migration` | React 19 + TypeScript |
+
+### Migration React en cours
+
+L'application est progressivement migrée de Vanilla TypeScript vers React 19. La branche `react-migration` contient la version hybride :
+
+- ✅ **Vue Settings** - Migrée vers React avec Zustand pour l'état global
+- 🔄 **Autres vues** - Restent en Vanilla (Home, Table, Maternity, etc.)
+
+Le développement se fait sur la branche `react-migration` et est déployé automatiquement sur Netlify pour tester les nouvelles fonctionnalités React avant de les fusionner dans la production.
+
+Voir [NETLIFY.md](NETLIFY.md) pour plus de détails sur le déploiement.
 
 ---
 

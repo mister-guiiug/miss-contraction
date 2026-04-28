@@ -25,6 +25,23 @@ function showUpdateBanner(): void {
 }
 
 export function registerServiceWorker(): void {
+  if (import.meta.env.DEV) {
+    // Avoid stale cached assets during local development.
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((registrations) => {
+          registrations.forEach((registration) => {
+            registration.unregister();
+          });
+        })
+        .catch(() => {
+          // Ignore unregister errors in development.
+        });
+    }
+    return;
+  }
+
   updateSWFn = registerSW({
     onNeedRefresh() {
       showUpdateBanner();
