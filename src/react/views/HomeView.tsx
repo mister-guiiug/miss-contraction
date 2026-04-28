@@ -8,7 +8,6 @@ import { EmptyState } from '../components/home/EmptyState';
 import { TimelineCompact } from '../components/home/TimelineCompact';
 import { ThresholdBadge } from '../components/home/ThresholdBadge';
 import { QuickNotes } from '../components/home/QuickNotes';
-import { BottomNav } from '../components/layout/BottomNav';
 
 export function HomeView() {
   const { records, setRecords, settings } = useAppStore();
@@ -39,8 +38,7 @@ export function HomeView() {
   const hasContractions = records.length > 0;
 
   return (
-    <>
-      <div id="view-home" className="view">
+    <div id="view-home" className="view">
         <details className="home-intro-details">
           <summary className="home-intro-summary">
             <span>À propos de l'application</span>
@@ -107,10 +105,6 @@ export function HomeView() {
             </a>
           </p>
         </footer>
-      </div>
-
-      {/* Bottom Navigation pour mobile */}
-      <BottomNav />
-    </>
+    </div>
   );
 }
