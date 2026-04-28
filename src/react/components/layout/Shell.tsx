@@ -306,7 +306,7 @@ export function Shell({ children }: ShellProps) {
 
         {children}
 
-        <BottomNav />
+        <BottomNav onMenuClick={toggleDrawer} isMenuOpen={isDrawerOpen} />
       </main>
     </>
   );
