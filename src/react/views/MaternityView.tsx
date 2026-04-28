@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 /**
  * Vue Maternité - Coordonnées et contact
  */
@@ -92,7 +93,7 @@ export function MaternityView() {
           ) : (
             <p className="maternity-page-phone-placeholder">
               Aucun numéro enregistré. Indiquez-le dans les{' '}
-              <a href="#/parametres">paramètres</a>.
+              <Link to="/parametres">paramètres</Link>.
             </p>
           )}
         </div>
@@ -111,7 +112,7 @@ export function MaternityView() {
           ) : (
             <p className="maternity-page-address-placeholder">
               Aucune adresse enregistrée. Indiquez-la dans les{' '}
-              <a href="#/parametres">paramètres</a>.
+              <Link to="/parametres">paramètres</Link>.
             </p>
           )}
         </div>
@@ -155,12 +156,12 @@ export function MaternityView() {
 
       {/* Boutons footer */}
       <p className="settings-back-wrap maternity-page-actions">
-        <a href="#/parametres" className="btn btn-secondary settings-back-link">
+        <Link to="/parametres" className="btn btn-secondary settings-back-link">
           Paramètres
-        </a>
-        <a href="#/" className="btn btn-ghost settings-back-link">
+        </Link>
+        <Link to="/" className="btn btn-ghost settings-back-link">
           Accueil
-        </a>
+        </Link>
       </p>
     </div>
   );

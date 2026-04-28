@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 /**
  * Vue Message - Modèle de SMS/WhatsApp pour la maternité
  */
@@ -144,9 +145,9 @@ export function MessageView() {
       </section>
 
       <p className="settings-back-wrap">
-        <a href="#/" className="btn btn-secondary settings-back-link">
+        <Link to="/" className="btn btn-secondary settings-back-link">
           Retour à l'accueil
-        </a>
+        </Link>
       </p>
     </div>
   );

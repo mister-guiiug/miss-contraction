@@ -40,18 +40,9 @@ export function Banners() {
     setShowExportNudge(Date.now() - dismissedAt >= EXPORT_NUDGE_INTERVAL_MS);
   }, [records]);
 
-  // Afficher undo banner quand une contraction est ajoutée
+  // Afficher undo banner quand une contraction est ajoutée (pas supprimée)
   const lastRecordIdRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    if (records.length > 0) {
-      const last = records[records.length - 1];
-      if (last && last.id !== lastRecordIdRef.current) {
-        lastRecordIdRef.current = last.id;
-        showUndoBanner(last.id);
-      }
-    }
-  }, [records]);
+  const lastCountRef = useRef<number>(0);
 
   // Nettoyer les timers au unmount
   useEffect(() => {
@@ -89,6 +80,25 @@ export function Banners() {
     undoTimeoutRef.current = null;
     setUndoState({ visible: false, remainingTime: 0, recordId: null });
   }, []);
+
+  useEffect(() => {
+    // Ne montrer la bannière que si un NOUVEAU record a été ajouté
+    // (ignore les suppressions et modifications)
+    if (records.length > lastCountRef.current) {
+      const last = records[records.length - 1];
+      if (last && last.id !== lastRecordIdRef.current) {
+        lastRecordIdRef.current = last.id;
+        lastCountRef.current = records.length;
+        showUndoBanner(last.id);
+      }
+    } else {
+      // Mise à jour du compteur sans afficher la bannière (suppression ou modification)
+      lastCountRef.current = records.length;
+      if (records.length > 0) {
+        lastRecordIdRef.current = records[records.length - 1].id;
+      }
+    }
+  }, [records, showUndoBanner]);
 
   const handleUndo = useCallback(() => {
     const recordId = undoState.recordId;
