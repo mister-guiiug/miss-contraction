@@ -4,7 +4,12 @@
  */
 import { Link, useLocation } from 'react-router-dom';
 
-export function BottomNav() {
+interface BottomNavProps {
+  onMenuClick?: () => void;
+  isMenuOpen?: boolean;
+}
+
+export function BottomNav({ onMenuClick, isMenuOpen = false }: BottomNavProps) {
   const location = useLocation();
 
   const navItems = [
@@ -13,6 +18,8 @@ export function BottomNav() {
     { href: '/maternite', label: 'Maternité', icon: PhoneIcon, isCta: true },
     { href: '/parametres', label: 'Réglages', icon: SettingsIcon },
   ];
+
+  const isMenuRoute = location.pathname === '/message' || location.pathname === '/sage-femme';
 
   return (
     <nav className="bottom-nav">
@@ -31,6 +38,18 @@ export function BottomNav() {
           </Link>
         );
       })}
+
+      <button
+        type="button"
+        className={`bottom-nav-item ${isMenuOpen || isMenuRoute ? 'active' : ''}`}
+        aria-label="Menu"
+        aria-expanded={isMenuOpen}
+        aria-controls="app-drawer"
+        onClick={onMenuClick}
+      >
+        <span className="bottom-nav-icon" aria-hidden="true">{MenuIcon()}</span>
+        <span>Menu</span>
+      </button>
     </nav>
   );
 }
@@ -72,6 +91,16 @@ function SettingsIcon() {
       <path d="M12 1v6m0 6v6" />
       <path d="m4.93 4.93 4.24 4.24m5.66 5.66 4.24 4.24M1 12h6m6 0h6" />
       <path d="m4.93 19.07 4.24-4.24m5.66-5.66 4.24-4.24" />
+    </svg>
+  );
+}
+
+function MenuIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="4" y1="7" x2="20" y2="7" />
+      <line x1="4" y1="12" x2="20" y2="12" />
+      <line x1="4" y1="17" x2="20" y2="17" />
     </svg>
   );
 }
