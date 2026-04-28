@@ -93,26 +93,21 @@ function Breadcrumb() {
   const homeLabel = getBreadcrumbLabel('home');
   const currentLabel = getBreadcrumbLabel(route);
 
+  // Masquer le breadcrumb sur l'accueil (redondant avec le titre)
+  if (route === 'home') return null;
+
   return (
     <nav className="top-bar-bc" id="top-bar-bc-nav" aria-label="Fil d'Ariane">
-      {route === 'home' ? (
-        <ol className="top-bar-bc-list">
-          <li className="top-bar-bc-step" aria-current="page">
-            <span className="top-bar-bc-text">{homeLabel}</span>
-          </li>
-        </ol>
-      ) : (
-        <ol className="top-bar-bc-list">
-          <li className="top-bar-bc-step">
-            <Link className="top-bar-bc-link" to="/">
-              {homeLabel}
-            </Link>
-          </li>
-          <li className="top-bar-bc-step" aria-current="page">
-            <span className="top-bar-bc-text">{currentLabel}</span>
-          </li>
-        </ol>
-      )}
+      <ol className="top-bar-bc-list">
+        <li className="top-bar-bc-step">
+          <Link className="top-bar-bc-link" to="/">
+            {homeLabel}
+          </Link>
+        </li>
+        <li className="top-bar-bc-step" aria-current="page">
+          <span className="top-bar-bc-text">{currentLabel}</span>
+        </li>
+      </ol>
     </nav>
   );
 }
