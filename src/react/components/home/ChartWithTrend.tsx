@@ -16,7 +16,7 @@ export function ChartWithTrend({ thresholdMinutes = 5 }: ChartWithTrendProps) {
     const now = Date.now();
     const windowMs = settings.statsWindowMinutes === 'all'
       ? Infinity
-      : settings.statsWindowMinutes * 60 * 1000;
+      : Number(settings.statsWindowMinutes) * 60 * 1000;
 
     const filtered = records.filter((r) => now - r.start <= windowMs);
 

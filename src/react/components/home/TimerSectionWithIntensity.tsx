@@ -8,7 +8,7 @@ import { IntensityPicker } from './IntensityPicker';
  * Timer principal amélioré avec sélecteur d'intensité intégré
  */
 export function TimerSectionWithIntensity() {
-  const { activeStart, settings, startContraction, endContraction, updateCurrentIntensity } = useAppStore();
+  const { activeStart, settings, startContraction, endContraction } = useAppStore();
   const { formatted, progress, isRunning } = useContractionTimer(activeStart);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [ripplePosition, setRipplePosition] = useState<{ x: number; y: number } | null>(null);

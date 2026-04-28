@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
   cycleThemePreference,
@@ -9,7 +9,7 @@ import type { AppRoute } from '../../../routes';
 import { getBreadcrumbLabel } from '../../../routes';
 
 interface ShellProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const iconSrc = `${import.meta.env.BASE_URL}icons/icon-192.png`;
