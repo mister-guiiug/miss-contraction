@@ -27,7 +27,7 @@ export function BottomNav() {
             aria-current={isActive ? 'page' : undefined}
           >
             <span className="bottom-nav-icon">{item.icon()}</span>
-            <span>{item.label}</span>
+            <span className={item.isCta ? 'sr-only' : ''}>{item.label}</span>
           </Link>
         );
       })}

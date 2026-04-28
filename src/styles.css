@@ -805,6 +805,52 @@ body {
   margin-bottom: 1.1rem;
 }
 
+/* Intro accueil collapsible */
+.home-intro-details {
+  margin-bottom: 0.85rem;
+}
+
+.home-intro-details .home-intro {
+  margin-top: 0.45rem;
+  margin-bottom: 0;
+}
+
+.home-intro-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  padding: 0.35rem 0;
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.home-intro-summary::-webkit-details-marker {
+  display: none;
+}
+
+.home-intro-summary:focus-visible {
+  outline: 2px solid rgba(var(--accent-rgb), 0.45);
+  outline-offset: 3px;
+  border-radius: 0.3rem;
+}
+
+.home-intro-chevron {
+  font-size: 1rem;
+  line-height: 1;
+  color: rgba(var(--accent-rgb), 0.55);
+  transition: transform 0.2s ease;
+}
+
+.home-intro-details[open] .home-intro-chevron {
+  transform: rotate(90deg);
+}
+
 .settings-page-lead {
   margin-bottom: 0.85rem;
   line-height: 1.5;
@@ -1452,6 +1498,13 @@ a.btn {
     0 1px 0 var(--surface-highlight) inset;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+}
+
+@media (max-width: 359px) {
+  .card {
+    padding: 0.9rem 0.85rem;
+    border-radius: 0.85rem;
+  }
 }
 
 .panel {

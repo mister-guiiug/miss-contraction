@@ -41,10 +41,16 @@ export function HomeView() {
   return (
     <>
       <div id="view-home" className="view">
-        <p className="subtitle home-intro">
-          Suivez la fréquence des contractions et recevez une alerte selon les seuils définis dans les
-          paramètres (à valider avec votre sage-femme).
-        </p>
+        <details className="home-intro-details">
+          <summary className="home-intro-summary">
+            <span>À propos de l'application</span>
+            <span className="home-intro-chevron" aria-hidden="true">›</span>
+          </summary>
+          <p className="subtitle home-intro">
+            Suivez la fréquence des contractions et recevez une alerte selon les seuils définis dans les
+            paramètres (à valider avec votre sage-femme).
+          </p>
+        </details>
 
         <div className="app-banners" id="app-banners">
           <Banners />

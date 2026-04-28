@@ -447,6 +447,7 @@
     font-weight: 600;
     transition: color 0.15s ease;
     min-width: 3.5rem;
+    position: relative;
   }
 
   .bottom-nav-item svg {
@@ -459,8 +460,23 @@
     color: var(--primary);
   }
 
+  .bottom-nav-item:focus-visible {
+    outline: 2px solid rgba(var(--accent-rgb), 0.55);
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+  }
+
   .bottom-nav-item.active {
     color: var(--primary);
+  }
+
+  /* Pill indicateur d'état actif sous l'icône */
+  .bottom-nav-item.active:not(.cta) .bottom-nav-icon {
+    background: rgba(var(--accent-rgb), 0.13);
+    border-radius: 999px;
+    padding: 0.25rem 0.7rem;
+    margin-bottom: -0.25rem;
+    transition: background 0.2s ease;
   }
 
   .bottom-nav-item.cta {
@@ -497,7 +513,7 @@
 
   /* Ajuster le padding bottom pour la bottom nav */
   .app:not(.settings-page) {
-    padding-bottom: calc(4rem + 3.5rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
   }
 }
 
