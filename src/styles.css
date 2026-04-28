@@ -583,7 +583,7 @@ body {
 
 .top-bar {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem;
   margin-bottom: 1rem;
   padding-bottom: 0.75rem;
@@ -596,6 +596,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.28rem;
+  min-height: 3.85rem;
 }
 
 .top-bar-h1 {
@@ -636,6 +637,7 @@ body {
 .top-bar-bc {
   margin: 0;
   padding-left: calc(3rem + 0.75rem);
+  min-height: 1.2rem;
 }
 
 .top-bar-bc-list {
@@ -684,6 +686,10 @@ body {
   font-weight: 700;
 }
 
+.top-bar-bc-list--home .top-bar-bc-text {
+  color: var(--primary);
+}
+
 .hamburger {
   flex-shrink: 0;
   display: inline-flex;
@@ -701,6 +707,7 @@ body {
   transition:
     background 0.15s ease,
     border-color 0.15s ease;
+  margin-top: 0.1rem;
 }
 
 .hamburger:hover {
@@ -725,6 +732,7 @@ body {
   transition:
     background 0.15s ease,
     border-color 0.15s ease;
+  margin-top: 0.1rem;
 }
 
 .btn-theme svg {
