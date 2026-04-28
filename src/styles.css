@@ -690,6 +690,22 @@ body {
   color: var(--primary);
 }
 
+@media (max-width: 767px) {
+  .top-bar {
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.6rem;
+  }
+
+  .top-bar-brand {
+    min-height: 3rem;
+    justify-content: center;
+  }
+
+  .top-bar-bc {
+    display: none;
+  }
+}
+
 .hamburger {
   flex-shrink: 0;
   display: inline-flex;
