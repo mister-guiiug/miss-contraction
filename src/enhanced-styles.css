@@ -43,7 +43,7 @@
   }
 }
 
-.timer-text {
+.timer-value {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -290,76 +290,7 @@
 }
 
 /* ========================================
-   6. GRAPHIQUE ENHANCÉ
-   ======================================== */
-
-.chart-enhanced {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 16px 0;
-}
-
-.chart-bar-container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  background: var(--surface-input);
-  border-radius: 8px;
-  transition: transform 0.2s ease;
-}
-
-.chart-bar-container:hover {
-  transform: translateX(4px);
-  background: var(--surface-highlight);
-}
-
-.chart-bar {
-  height: 24px;
-  border-radius: 12px;
-  background: linear-gradient(
-    90deg,
-    var(--primary) 0%,
-    var(--primary-light) 100%
-  );
-  position: relative;
-  overflow: hidden;
-  min-width: 40px;
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.chart-bar::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
-  animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
-  100% {
-    left: 100%;
-  }
-}
-
-.chart-bar-label {
-  min-width: 60px;
-  font-size: 0.875rem;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ========================================
-   7. TRANSITION DE THÈME DOUCE
+   6. TRANSITION DE THÈME DOUCE
    ======================================== */
 
 html {
