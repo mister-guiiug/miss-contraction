@@ -127,11 +127,11 @@ export function MidwifeView() {
     lines.push('');
     if (stats.firstEnd != null) {
       lines.push(
-        `Première fois où ces critères ont été remplis (sur tout l\'historique) : ${dateTimeFmtLong.format(stats.firstEnd)}.`
+        `Première fois où ces critères ont été remplis (sur tout l'historique) : ${dateTimeFmtLong.format(stats.firstEnd)}.`
       );
     } else {
       lines.push(
-        'Aucun groupe de contractions consécutives n\'a encore rempli ces critères dans l\'historique enregistré.'
+        "Aucun groupe de contractions consécutives n'a encore rempli ces critères dans l'historique enregistré."
       );
     }
     lines.push('');
