@@ -6,6 +6,10 @@ const GTM_ID = 'GTM-M2GSG3V4';
 const GA_ID = 'G-B44CK4VR08';
 const GSC_VERIFICATION = 'iUfQ7_dOztC3XoSGesC2b7IkxyNL2O9fegKXECoOg30';
 
+// Domaine racine pour les cookies GA (GitHub Pages utilise un sous-chemin,
+// pas un sous-domaine — le cookie doit être ancré sur le domaine réel).
+const GA_COOKIE_DOMAIN = 'mister-guiiug.github.io';
+
 // Dépôt GitHub Pages : https://<user>.github.io/miss-contraction/
 // Preview React : https://<user>.github.io/miss-contraction-react/
 // Netlify Dev : https://miss-contraction-dev.netlify.app
@@ -114,7 +118,7 @@ export default defineConfig(({ command }) => {
             {
               tag: 'script',
               injectTo: 'head',
-              children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`,
+              children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}',{'cookie_domain':'${GA_COOKIE_DOMAIN}'});`,
             },
           ];
         },
