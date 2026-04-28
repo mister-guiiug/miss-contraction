@@ -1,5 +1,5 @@
 import { useState, useEffect, type ReactNode } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   cycleThemePreference,
   getStoredThemePreference,
@@ -46,8 +46,8 @@ function DrawerLink({ route, href, label }: { route: AppRoute; href: string; lab
   const isCurrentRoute = location.pathname === href;
 
   return (
-    <a
-      href={href}
+    <Link
+      to={href}
       className={`drawer-link ${isCurrentRoute ? 'drawer-link--current' : ''}`}
       aria-current={isCurrentRoute ? 'page' : undefined}
       data-drawer-route={route}
@@ -74,7 +74,7 @@ function DrawerLink({ route, href, label }: { route: AppRoute; href: string; lab
       </span>
       <span className="drawer-link-label">{label}</span>
       <span className="drawer-link-arrow" aria-hidden="true">›</span>
-    </a>
+    </Link>
   );
 }
 
@@ -104,9 +104,9 @@ function Breadcrumb() {
       ) : (
         <ol className="top-bar-bc-list">
           <li className="top-bar-bc-step">
-            <a className="top-bar-bc-link" href="/">
+            <Link className="top-bar-bc-link" to="/">
               {homeLabel}
-            </a>
+            </Link>
           </li>
           <li className="top-bar-bc-step" aria-current="page">
             <span className="top-bar-bc-text">{currentLabel}</span>
