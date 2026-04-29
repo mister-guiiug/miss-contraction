@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
  */
 
 import { useEffect, useState, useCallback } from 'react';
+import { ViewLayout } from '../components/layout/ViewLayout';
 
 const MATERNITY_MESSAGE_STORAGE_KEY = 'mc_maternity_message_v1';
 
@@ -90,12 +91,12 @@ export function MessageView() {
   }, []);
 
   return (
-    <div className="message-page" data-testid="message-view">
-      <p className="subtitle message-page-lead">
-        Modèle de SMS ou WhatsApp pour prévenir vos proches que vous partez à
-        la maternité. Adaptez le texte, puis copiez-le ou ouvrez directement
-        une application.
-      </p>
+    <ViewLayout
+      className="message-page"
+      dataTestId="message-view"
+      title="Message a la maternite"
+      lead="Modele de SMS ou WhatsApp pour prevenir vos proches. Adaptez le texte, puis copiez-le ou ouvrez directement une application."
+    >
 
       <section className="card" aria-labelledby="message-heading" data-testid="message-section">
         <h2 id="message-heading" className="section-title">
@@ -145,11 +146,11 @@ export function MessageView() {
         </p>
       </section>
 
-      <p className="settings-back-wrap">
+      <p className="settings-back-wrap mobile-home-only">
         <Link to="/" className="btn btn-secondary settings-back-link" data-testid="message-back-link">
-          Retour à l'accueil
+          Retour a l'accueil
         </Link>
       </p>
-    </div>
+    </ViewLayout>
   );
 }

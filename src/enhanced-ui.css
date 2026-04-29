@@ -428,13 +428,13 @@
                 calc(0.65rem + env(safe-area-inset-bottom))
                 calc(0.7rem + env(safe-area-inset-left));
     min-height: 4.85rem;
-    background: var(--drawer-bg);
+    background: var(--chrome-surface);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border-top: 1px solid var(--border);
-    border-radius: 1rem 1rem 0 0;
+    border-top: 1px solid var(--chrome-border);
+    border-radius: var(--chrome-radius) var(--chrome-radius) 0 0;
     z-index: 50;
-    box-shadow: 0 -4px 20px rgba(var(--ink-rgb), 0.1);
+    box-shadow: 0 -8px 26px rgba(var(--ink-rgb), 0.12);
   }
 
   .bottom-nav-item {
@@ -453,6 +453,7 @@
     flex: 1 1 0;
     max-width: 5.1rem;
     position: relative;
+    border-radius: 0.9rem;
   }
 
   .bottom-nav-icon {
@@ -469,6 +470,7 @@
   .bottom-nav-item:hover,
   .bottom-nav-item:focus {
     color: var(--primary);
+    background: rgba(var(--accent-rgb), 0.06);
   }
 
   .bottom-nav-item:focus-visible {
@@ -483,7 +485,7 @@
 
   /* Pill indicateur d'état actif sous l'icône */
   .bottom-nav-item.active:not(.cta) .bottom-nav-icon {
-    background: rgba(var(--accent-rgb), 0.13);
+    background: rgba(var(--accent-rgb), 0.14);
     border-radius: 999px;
     padding: 0.22rem 0.62rem;
     transition: background 0.2s ease;

@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { setSnoozeUntilMs, clearSnoozeUntil, loadSettings } from '../../storage';
 import { HighContrastToggle } from '../components/settings/HighContrastToggle';
+import { ViewLayout } from '../components/layout/ViewLayout';
 
 export function SettingsView() {
   const { settings, updateSettings, saveSettings } = useAppStore();
@@ -70,12 +71,18 @@ export function SettingsView() {
   };
 
   return (
-    <div className="settings-page" data-testid="settings-view">
-      <p className="subtitle settings-page-lead">
-        Ajustez l'alerte, le numéro de la maternité et l'affichage.{' '}
-        <strong className="settings-page-hint">Pensez à enregistrer</strong> pour appliquer les
-        changements.
-      </p>
+    <ViewLayout
+      className="settings-page"
+      dataTestId="settings-view"
+      title="Parametres et alertes"
+      lead={
+        <>
+          Ajustez l'alerte, le numero de la maternite et l'affichage.{' '}
+          <strong className="settings-page-hint">Pensez a enregistrer</strong> pour appliquer les
+          changements.
+        </>
+      }
+    >
 
       <nav className="settings-toc" aria-label="Aller à une section">
         <ul className="settings-toc-list">
@@ -425,11 +432,11 @@ export function SettingsView() {
           <button type="submit" form="form-settings" className="btn btn-primary settings-save-btn" data-testid="settings-save-btn">
             Enregistrer
           </button>
-          <Link to="/" className="settings-back-inline" data-testid="settings-back-link">
+          <Link to="/" className="settings-back-inline mobile-home-link" data-testid="settings-back-link">
             Accueil
           </Link>
         </div>
       </div>
-    </div>
+    </ViewLayout>
   );
 }
