@@ -22,46 +22,47 @@ export function StatsSection() {
   const { data, windowLabel, isEmpty } = useStats(records, settings);
 
   return (
-    <section className="card" aria-labelledby="summary-heading">
+    <section className="card" aria-labelledby="summary-heading" data-testid="stats-section">
       <h2 id="summary-heading" className="section-title">Indicateurs récents</h2>
-      <div className="stats-enhanced" role="group" aria-label="Synthèse des contractions">
-        <div className="stat-card">
+      <div className="stats-enhanced" role="group" aria-label="Synthèse des contractions" data-testid="stats-cards">
+        <div className="stat-card" data-testid="stat-card-quantity">
           <span className="stat-card-icon" aria-hidden="true" />
-          <span className="stat-card-value" aria-live="polite">
+          <span className="stat-card-value" aria-live="polite" data-testid="stat-value-qty">
             {data.qtyPerHour}
           </span>
           <span className="stat-card-label">Quantité / h</span>
         </div>
-        <div className="stat-card">
+        <div className="stat-card" data-testid="stat-card-duration">
           <span className="stat-card-icon" aria-hidden="true" />
-          <span className="stat-card-value" aria-live="polite">
+          <span className="stat-card-value" aria-live="polite" data-testid="stat-value-duration">
             {data.avgDuration}
           </span>
           <span className="stat-card-label">Durée moyenne</span>
         </div>
-        <div className="stat-card">
+        <div className="stat-card" data-testid="stat-card-frequency">
           <span className="stat-card-icon" aria-hidden="true" />
-          <span className="stat-card-value" aria-live="polite">
+          <span className="stat-card-value" aria-live="polite" data-testid="stat-value-frequency">
             {data.avgFrequency}
           </span>
           <span className="stat-card-label">Fréquence moyenne</span>
         </div>
       </div>
-      <p className="stats-window-label" id="stats-window-label">
+      <p className="stats-window-label" id="stats-window-label" data-testid="stats-window-label">
         {windowLabel}
       </p>
       <p
         className={`threshold-badge threshold-badge-enhanced threshold-badge-${data.thresholdKind}`}
         id="threshold-badge"
         data-state={data.thresholdKind}
+        data-testid="stats-threshold-badge"
       >
-        <span className="badge-icon">
+        <span className="badge-icon" aria-hidden="true">
           {THRESHOLD_ICONS[data.thresholdKind] ?? ''}
         </span>
-        {THRESHOLD_LABELS[data.thresholdKind] ?? ''}
+        <span data-testid="threshold-message">{THRESHOLD_LABELS[data.thresholdKind] ?? ''}</span>
       </p>
       {!isEmpty && (
-        <dl className="summary summary-extra" id="summary-extra">
+        <dl className="summary summary-extra" id="summary-extra" data-testid="stats-details">
           <dt>Contractions (dernière heure)</dt>
           <dd>{data.lastHourCount}</dd>
           <dt>Estimation détaillée</dt>
@@ -90,11 +91,11 @@ function IntervalChart({
   if (intervals.length === 0) return null;
 
   return (
-    <div className="interval-list">
+    <div className="interval-list" data-testid="interval-chart">
       <h3 className="chart-title">
         Intervalles entre débuts (derniers enregistrements)
       </h3>
-      <ul className="interval-items" role="list">
+      <ul className="interval-items" role="list" data-testid="interval-items">
         {intervals.map((ms, i) => {
           const record = recordsForChart[i + 1];
           const intensity = record?.intensity;
@@ -104,14 +105,14 @@ function IntervalChart({
             : '—';
 
           return (
-            <li key={i} className="interval-item">
+            <li key={i} className="interval-item" data-testid={`interval-item-${i}`}>
               <span className="interval-time">{timeLabel}</span>
               <span className="interval-sep">›</span>
-              <span className="interval-value">
+              <span className="interval-value" data-testid={`interval-value-${i}`}>
                 {formatDuration(ms)}
               </span>
               {intensity && (
-                <span className={`interval-intensity interval-intensity--${intensity}`}>
+                <span className={`interval-intensity interval-intensity--${intensity}`} data-testid={`interval-intensity-${i}`}>
                   {intensity}
                 </span>
               )}
