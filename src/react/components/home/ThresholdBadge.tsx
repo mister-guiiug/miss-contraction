@@ -70,13 +70,14 @@ export function ThresholdBadge() {
     <div
       className="threshold-badge"
       data-state={state}
+      data-testid="threshold-badge"
       style={{
         textAlign: 'center',
         marginTop: '0.5rem',
       }}
     >
       {(state === 'match' || state === 'approaching') && (
-        <span className="threshold-icon">
+        <span className="threshold-icon" data-testid="threshold-icon">
           <svg
             viewBox="0 0 24 24"
             fill="none"
@@ -86,13 +87,14 @@ export function ThresholdBadge() {
             strokeLinejoin="round"
             width="20"
             height="20"
+            aria-hidden="true"
           >
             <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
             <path d="M12 6v6l4 2" />
           </svg>
         </span>
       )}
-      {message}
+      <span data-testid="threshold-message">{message}</span>
     </div>
   );
 }

@@ -91,7 +91,7 @@ export function IntensityPicker({ value, onChange, disabled = false, compact = f
   }, [disabled, onChange]);
 
   return (
-    <div className={`intensity-picker ${compact ? 'intensity-picker--compact' : ''}`}>
+    <div className={`intensity-picker ${compact ? 'intensity-picker--compact' : ''}`} data-testid="intensity-picker">
       <div className="intensity-scale">
         {intensities.map((intensity) => {
           const isSelected = value === intensity.level;
@@ -102,6 +102,7 @@ export function IntensityPicker({ value, onChange, disabled = false, compact = f
               key={intensity.level}
               type="button"
               className={`intensity-option ${isSelected ? 'intensity-option--selected' : ''}`}
+              data-testid={`intensity-option-${intensity.level}`}
               onClick={() => handleSelect(intensity.level)}
               onMouseEnter={() => setHovered(intensity.level)}
               onMouseLeave={() => setHovered(null)}
