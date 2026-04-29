@@ -71,26 +71,26 @@ export function TableView() {
   }, [validRecords]);
 
   return (
-    <div className="table-page">
+    <div className="table-page" data-testid="table-view">
       <p className="subtitle table-page-lead">
         Historique détaillé : pour chaque contraction, la <strong>durée</strong>,
-        l'<strong>intervalle</strong> depuis le début de la précédente, et la
-        <strong>fréquence</strong> estimée (contractions par heure) dérivée de
+        l'<strong>intervalle</strong> depuis le début de la précédente, et la 
+        <strong>fréquence</strong> estimée (contractions par heure) dérivée de 
         cet intervalle.
       </p>
 
-      <section className="card" aria-labelledby="table-heading">
+      <section className="card" aria-labelledby="table-heading" data-testid="table-section">
         <h2 id="table-heading" className="section-title">
           Contractions (ordre chronologique)
         </h2>
 
         {validRecords.length === 0 ? (
-          <p className="empty" id="history-table-empty">
+          <p className="empty" id="history-table-empty" data-testid="table-empty">
             Aucune contraction à afficher.
           </p>
         ) : (
-          <div className="history-table-wrap" role="region" aria-label="Tableau défilable sur petit écran" tabIndex={0}>
-            <table className="history-table">
+          <div className="history-table-wrap" role="region" aria-label="Tableau défilable sur petit écran" tabIndex={0} data-testid="table-wrapper">
+            <table className="history-table" data-testid="contractions-table">
               <thead>
                 <tr>
                   <th scope="col">N°</th>
@@ -103,13 +103,13 @@ export function TableView() {
               </thead>
               <tbody>
                 {tableData.map((row) => (
-                  <tr key={row.id}>
+                  <tr key={row.id} data-testid={`table-row-${row.id}`}>
                     <th scope="row">{row.index}</th>
-                    <td>{dateTimeFmt.format(row.start)}</td>
-                    <td>{row.durationStr}</td>
-                    <td>{row.intervalStr}</td>
-                    <td>{row.freqStr}</td>
-                    <td className="history-table-note">
+                    <td data-testid="table-cell-date">{dateTimeFmt.format(row.start)}</td>
+                    <td data-testid="table-cell-duration">{row.durationStr}</td>
+                    <td data-testid="table-cell-interval">{row.intervalStr}</td>
+                    <td data-testid="table-cell-frequency">{row.freqStr}</td>
+                    <td className="history-table-note" data-testid="table-cell-note">
                       {(row.note?.trim() || '—')}
                       {row.intensity && ` [Int. ${row.intensity}]`}
                     </td>
@@ -129,7 +129,7 @@ export function TableView() {
       </section>
 
       <p className="settings-back-wrap">
-        <Link to="/" className="btn btn-secondary settings-back-link">
+        <Link to="/" className="btn btn-secondary settings-back-link" data-testid="table-back-link">
           Retour à l'accueil
         </Link>
       </p>

@@ -70,7 +70,7 @@ export function SettingsView() {
   };
 
   return (
-    <div className="settings-page">
+    <div className="settings-page" data-testid="settings-view">
       <p className="subtitle settings-page-lead">
         Ajustez l'alerte, le numéro de la maternité et l'affichage.{' '}
         <strong className="settings-page-hint">Pensez à enregistrer</strong> pour appliquer les
@@ -107,12 +107,13 @@ export function SettingsView() {
         </ul>
       </nav>
 
-      <form className="form settings-form" id="form-settings" onSubmit={handleSubmit}>
+      <form className="form settings-form" id="form-settings" onSubmit={handleSubmit} data-testid="settings-form">
         {/* Section Alertes */}
         <section
           className="card settings-card"
           id="settings-section-alertes"
           aria-labelledby="settings-heading"
+          data-testid="settings-section-alerts"
         >
           <h2 id="settings-heading" className="section-title">
             Alertes
@@ -131,6 +132,7 @@ export function SettingsView() {
               <input
                 type="number"
                 name="maxIntervalMin"
+                data-testid="max-interval-input"
                 min={1}
                 max={30}
                 step={1}
@@ -144,6 +146,7 @@ export function SettingsView() {
               <input
                 type="number"
                 name="minDurationSec"
+                data-testid="min-duration-input"
                 min={10}
                 max={180}
                 step={5}
@@ -157,6 +160,7 @@ export function SettingsView() {
               <input
                 type="number"
                 name="consecutiveCount"
+                data-testid="consecutive-count-input"
                 min={2}
                 max={12}
                 step={1}
@@ -173,6 +177,7 @@ export function SettingsView() {
                 type="checkbox"
                 name="preAlertEnabled"
                 id="pre-alert-check"
+                data-testid="pre-alert-check"
                 checked={formData.preAlertEnabled}
                 onChange={handleChange}
               />
@@ -182,11 +187,12 @@ export function SettingsView() {
               <button
                 type="button"
                 className="btn btn-secondary"
+                data-testid="request-notification-btn"
                 onClick={requestNotificationPermission}
               >
                 Autoriser les notifications
               </button>
-              <span className="notify-status">
+              <span className="notify-status" data-testid="notification-status">
                 {notifyPermission === 'granted'
                   ? '✓ Autorisées'
                   : notifyPermission === 'denied'
@@ -200,6 +206,7 @@ export function SettingsView() {
                 <button
                   type="button"
                   className="btn btn-secondary btn-small"
+                  data-testid="snooze-30min-btn"
                   onClick={() => handleSnooze(30)}
                 >
                   30 min
@@ -207,6 +214,7 @@ export function SettingsView() {
                 <button
                   type="button"
                   className="btn btn-secondary btn-small"
+                  data-testid="snooze-60min-btn"
                   onClick={() => handleSnooze(60)}
                 >
                   1 h
@@ -214,12 +222,13 @@ export function SettingsView() {
                 <button
                   type="button"
                   className="btn btn-ghost btn-small"
+                  data-testid="clear-snooze-btn"
                   onClick={handleClearSnooze}
                 >
                   Annuler le report
                 </button>
               </div>
-              <p className="snooze-status" id="snooze-status">
+              <p className="snooze-status" id="snooze-status" data-testid="snooze-status">
                 {saveStatus}
               </p>
             </div>
@@ -231,6 +240,7 @@ export function SettingsView() {
           className="card settings-card"
           id="settings-section-maternite"
           aria-labelledby="maternity-settings-heading"
+          data-testid="settings-section-maternity"
         >
           <h2 id="maternity-settings-heading" className="section-title">
             Maternité
@@ -244,6 +254,7 @@ export function SettingsView() {
             <input
               type="text"
               name="maternityLabel"
+              data-testid="maternity-label-input"
               maxLength={120}
               autoComplete="organization"
               placeholder="ex. Maternité — CHU de Nantes"
@@ -256,6 +267,7 @@ export function SettingsView() {
             <input
               type="tel"
               name="maternityPhone"
+              data-testid="maternity-phone-input"
               inputMode="tel"
               autoComplete="tel"
               placeholder="ex. 0123456789"
@@ -269,6 +281,7 @@ export function SettingsView() {
             <textarea
               name="maternityAddress"
               id="maternity-address-field"
+              data-testid="maternity-address-textarea"
               className="settings-textarea"
               rows={3}
               maxLength={800}
@@ -281,7 +294,7 @@ export function SettingsView() {
         </section>
 
         {/* Section Statistiques */}
-        <section className="card settings-card" id="settings-section-stats" aria-labelledby="stats-heading">
+        <section className="card settings-card" id="settings-section-stats" aria-labelledby="stats-heading" data-testid="settings-section-stats">
           <h2 id="stats-heading" className="section-title">
             Statistiques et affichage
           </h2>
@@ -290,6 +303,7 @@ export function SettingsView() {
             <select
               name="statsWindowMinutes"
               id="stats-window-select"
+              data-testid="stats-window-select"
               value={formData.statsWindowMinutes}
               onChange={handleChange}
             >
@@ -304,6 +318,7 @@ export function SettingsView() {
               type="checkbox"
               name="largeMode"
               id="large-mode-check"
+              data-testid="large-mode-check"
               checked={formData.largeMode}
               onChange={handleChange}
             />
@@ -313,7 +328,7 @@ export function SettingsView() {
         </section>
 
         {/* Section Confort */}
-        <section className="card settings-card" id="settings-section-confort" aria-labelledby="comfort-heading">
+        <section className="card settings-card" id="settings-section-confort" aria-labelledby="comfort-heading" data-testid="settings-section-comfort">
           <h2 id="comfort-heading" className="section-title">
             Confort et saisie
           </h2>
@@ -322,6 +337,7 @@ export function SettingsView() {
             <input
               type="number"
               name="openContractionReminderMin"
+              data-testid="reminder-delay-input"
               min={2}
               max={30}
               step={1}
@@ -335,6 +351,7 @@ export function SettingsView() {
               type="checkbox"
               name="keepAwakeDuringContraction"
               id="keep-awake-check"
+              data-testid="keep-awake-check"
               checked={formData.keepAwakeDuringContraction}
               onChange={handleChange}
             />
@@ -345,6 +362,7 @@ export function SettingsView() {
               type="checkbox"
               name="vibrationEnabled"
               id="vibration-check"
+              data-testid="vibration-check"
               checked={formData.vibrationEnabled}
               onChange={handleChange}
             />
@@ -355,6 +373,7 @@ export function SettingsView() {
               type="checkbox"
               name="voiceCommandsEnabled"
               id="voice-check"
+              data-testid="voice-commands-check"
               checked={formData.voiceCommandsEnabled}
               onChange={handleChange}
             />
@@ -363,7 +382,7 @@ export function SettingsView() {
         </section>
 
         {/* Section Modules */}
-        <section className="card settings-card" id="settings-section-modules" aria-labelledby="features-heading">
+        <section className="card settings-card" id="settings-section-modules" aria-labelledby="features-heading" data-testid="settings-section-modules">
           <h2 id="features-heading" className="section-title">
             Options du menu
           </h2>
@@ -375,6 +394,7 @@ export function SettingsView() {
               type="checkbox"
               name="moduleVoiceCommands"
               id="module-voice-check"
+              data-testid="module-voice-commands-check"
               checked={formData.moduleVoiceCommands}
               onChange={handleChange}
             />
@@ -385,6 +405,7 @@ export function SettingsView() {
               type="checkbox"
               name="moduleMaternityMessage"
               id="module-message-check"
+              data-testid="module-maternity-message-check"
               checked={formData.moduleMaternityMessage}
               onChange={handleChange}
             />
@@ -394,17 +415,17 @@ export function SettingsView() {
       </form>
 
       {saveStatus && (
-        <p className="settings-save-feedback" role="status" aria-live="polite">
+        <p className="settings-save-feedback" role="status" aria-live="polite" data-testid="settings-save-feedback">
           {saveStatus}
         </p>
       )}
 
       <div className="settings-sticky-actions" aria-label="Enregistrer ou quitter">
         <div className="settings-sticky-row">
-          <button type="submit" form="form-settings" className="btn btn-primary settings-save-btn">
+          <button type="submit" form="form-settings" className="btn btn-primary settings-save-btn" data-testid="settings-save-btn">
             Enregistrer
           </button>
-          <Link to="/" className="settings-back-inline">
+          <Link to="/" className="settings-back-inline" data-testid="settings-back-link">
             Accueil
           </Link>
         </div>

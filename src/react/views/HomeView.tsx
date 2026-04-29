@@ -38,8 +38,8 @@ export function HomeView() {
   const hasContractions = records.length > 0;
 
   return (
-    <div id="view-home" className="view">
-        <details className="home-intro-details">
+    <div id="view-home" className="view" data-testid="view-home">
+        <details className="home-intro-details" data-testid="home-intro-details">
           <summary className="home-intro-summary">
             <span>À propos de l'application</span>
             <span className="home-intro-chevron" aria-hidden="true">›</span>
@@ -50,11 +50,13 @@ export function HomeView() {
           </p>
         </details>
 
-        <div className="app-banners" id="app-banners">
+        <div className="app-banners" id="app-banners" data-testid="app-banners">
           <Banners />
         </div>
 
-        <TimerSectionWithIntensity />
+        <div data-testid="timer-section">
+          <TimerSectionWithIntensity />
+        </div>
 
         <ThresholdBadge />
 
@@ -66,14 +68,14 @@ export function HomeView() {
             <StatsSection />
 
             {/* Section Quick Notes */}
-            <div className="card">
+            <div className="card" data-testid="quick-notes-card">
               <h3 className="section-title">Notes rapides</h3>
               <p className="settings-intro" style={{ marginBottom: '0.5rem' }}>
                 Ajoutez une note à la contraction en cours ou à venir
               </p>
               <QuickNotes onNoteSelect={handleNoteSelect} />
               {selectedNote && (
-                <p className="hint" style={{ marginTop: '0.5rem', color: 'var(--primary)' }}>
+                <p className="hint" style={{ marginTop: '0.5rem', color: 'var(--primary)' }} data-testid="selected-note-display">
                   Note sélectionnée : {selectedNote}
                 </p>
               )}

@@ -36,7 +36,7 @@ export function MaternityView() {
     : '#';
 
   return (
-    <div className="maternity-page">
+    <div className="maternity-page" data-testid="maternity-view">
       <p className="subtitle maternity-page-lead">
         Libellé, numéro et adresse sont modifiables dans les paramètres. Appel
         et itinéraire en un geste.
@@ -45,13 +45,14 @@ export function MaternityView() {
       <section
         className="card card--maternity-call"
         aria-labelledby="maternity-call-heading"
+        data-testid="maternity-call-section"
       >
         <h2 id="maternity-call-heading" className="section-title">
           Contacter la maternité
         </h2>
 
         {hasLabel && (
-          <p className="maternity-page-venue">{label}</p>
+          <p className="maternity-page-venue" data-testid="maternity-label">{label}</p>
         )}
 
         <div className="maternity-page-phone-block">
@@ -64,11 +65,12 @@ export function MaternityView() {
 
           {hasPhone ? (
             <>
-              <p className="maternity-page-phone-line">{phone}</p>
+              <p className="maternity-page-phone-line" data-testid="maternity-phone">{phone}</p>
               <div className="maternity-page-dial-wrap">
                 <a
                   className={`maternity-page-dial${hasPhone ? ' maternity-page-dial--ready' : ''}`}
                   href={telHref}
+                  data-testid="maternity-call-btn"
                   aria-label={`Appeler ${destName} au ${phone}`}
                 >
                   <span className="maternity-page-dial-ring" aria-hidden="true">
@@ -91,7 +93,7 @@ export function MaternityView() {
               </div>
             </>
           ) : (
-            <p className="maternity-page-phone-placeholder">
+            <p className="maternity-page-phone-placeholder" data-testid="maternity-phone-placeholder">
               Aucun numéro enregistré. Indiquez-le dans les{' '}
               <Link to="/parametres">paramètres</Link>.
             </p>
@@ -108,9 +110,9 @@ export function MaternityView() {
           </div>
 
           {hasAddress ? (
-            <p className="maternity-page-address">{addr}</p>
+            <p className="maternity-page-address" data-testid="maternity-address">{addr}</p>
           ) : (
-            <p className="maternity-page-address-placeholder">
+            <p className="maternity-page-address-placeholder" data-testid="maternity-address-placeholder">
               Aucune adresse enregistrée. Indiquez-la dans les{' '}
               <Link to="/parametres">paramètres</Link>.
             </p>
@@ -123,6 +125,7 @@ export function MaternityView() {
             <a
               className="btn btn-secondary maternity-page-maps-btn"
               href={mapsHref}
+              data-testid="maternity-maps-btn"
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Ouvrir Google Maps : itinéraire vers ${mapsDest}`}
@@ -156,10 +159,10 @@ export function MaternityView() {
 
       {/* Boutons footer */}
       <p className="settings-back-wrap maternity-page-actions">
-        <Link to="/parametres" className="btn btn-secondary settings-back-link">
+        <Link to="/parametres" className="btn btn-secondary settings-back-link" data-testid="maternity-settings-link">
           Paramètres
         </Link>
-        <Link to="/" className="btn btn-ghost settings-back-link">
+        <Link to="/" className="btn btn-ghost settings-back-link" data-testid="maternity-home-link">
           Accueil
         </Link>
       </p>

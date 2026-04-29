@@ -90,14 +90,14 @@ export function MessageView() {
   }, []);
 
   return (
-    <div className="message-page">
+    <div className="message-page" data-testid="message-view">
       <p className="subtitle message-page-lead">
         Modèle de SMS ou WhatsApp pour prévenir vos proches que vous partez à
         la maternité. Adaptez le texte, puis copiez-le ou ouvrez directement
         une application.
       </p>
 
-      <section className="card" aria-labelledby="message-heading">
+      <section className="card" aria-labelledby="message-heading" data-testid="message-section">
         <h2 id="message-heading" className="section-title">
           Votre message
         </h2>
@@ -108,6 +108,7 @@ export function MessageView() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             className="msg-textarea"
+            data-testid="message-textarea"
             rows={10}
             spellCheck="true"
             autoComplete="off"
@@ -116,22 +117,22 @@ export function MessageView() {
         </label>
 
         {feedback && (
-          <p className="msg-feedback" role="status" aria-live="polite">
+          <p className="msg-feedback" role="status" aria-live="polite" data-testid="message-feedback">
             {feedback}
           </p>
         )}
 
         <div className="msg-actions" role="group" aria-label="Envoyer ou copier le message">
-          <button type="button" className="btn btn-secondary" onClick={handleReset}>
+          <button type="button" className="btn btn-secondary" data-testid="message-reset-btn" onClick={handleReset}>
             Réinitialiser le modèle
           </button>
-          <button type="button" className="btn btn-secondary" onClick={handleCopy}>
+          <button type="button" className="btn btn-secondary" data-testid="message-copy-btn" onClick={handleCopy}>
             Copier
           </button>
-          <button type="button" className="btn btn-primary" onClick={handleWhatsApp}>
+          <button type="button" className="btn btn-primary" data-testid="message-whatsapp-btn" onClick={handleWhatsApp}>
             Ouvrir WhatsApp
           </button>
-          <button type="button" className="btn btn-secondary" onClick={handleSms}>
+          <button type="button" className="btn btn-secondary" data-testid="message-sms-btn" onClick={handleSms}>
             Ouvrir SMS
           </button>
         </div>
@@ -145,7 +146,7 @@ export function MessageView() {
       </section>
 
       <p className="settings-back-wrap">
-        <Link to="/" className="btn btn-secondary settings-back-link">
+        <Link to="/" className="btn btn-secondary settings-back-link" data-testid="message-back-link">
           Retour à l'accueil
         </Link>
       </p>
