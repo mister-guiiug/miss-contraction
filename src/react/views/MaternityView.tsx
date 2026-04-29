@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAppStore, useRefreshSettings } from '../store/useAppStore';
 import { loadSettings } from '../../storage';
+import { ViewLayout } from '../components/layout/ViewLayout';
 
 export function MaternityView() {
   const { settings } = useAppStore();
@@ -36,11 +37,12 @@ export function MaternityView() {
     : '#';
 
   return (
-    <div className="maternity-page" data-testid="maternity-view">
-      <p className="subtitle maternity-page-lead">
-        Libellé, numéro et adresse sont modifiables dans les paramètres. Appel
-        et itinéraire en un geste.
-      </p>
+    <ViewLayout
+      className="maternity-page"
+      dataTestId="maternity-view"
+      title="Maternite"
+      lead="Libelle, numero et adresse sont modifiables dans les parametres. Appel et itineraire en un geste."
+    >
 
       <section
         className="card card--maternity-call"
@@ -160,12 +162,12 @@ export function MaternityView() {
       {/* Boutons footer */}
       <p className="settings-back-wrap maternity-page-actions">
         <Link to="/parametres" className="btn btn-secondary settings-back-link" data-testid="maternity-settings-link">
-          Paramètres
+          Parametres
         </Link>
-        <Link to="/" className="btn btn-ghost settings-back-link" data-testid="maternity-home-link">
+        <Link to="/" className="btn btn-ghost settings-back-link mobile-home-link" data-testid="maternity-home-link">
           Accueil
         </Link>
       </p>
-    </div>
+    </ViewLayout>
   );
 }

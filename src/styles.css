@@ -62,6 +62,15 @@ html[data-theme='light'] {
     rgba(232, 210, 255, 0.45) 100%
   );
   --panel-cta-inset: rgba(255, 255, 255, 0.55);
+  --chrome-surface: linear-gradient(
+    175deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(252, 246, 255, 0.9) 55%,
+    rgba(245, 238, 255, 0.88) 100%
+  );
+  --chrome-border: rgba(var(--accent-rgb), 0.14);
+  --chrome-shadow: 0 14px 34px rgba(var(--ink-rgb), 0.1);
+  --chrome-radius: 1rem;
 
   /* ── Couleurs sémantiques / statuts ──────────────────────── */
   --warn-bg: #fff5e6;
@@ -153,6 +162,15 @@ html[data-theme='dark'] {
     rgba(35, 12, 50, 0.6) 100%
   );
   --panel-cta-inset: rgba(255, 255, 255, 0.06);
+  --chrome-surface: linear-gradient(
+    175deg,
+    rgba(28, 14, 40, 0.94) 0%,
+    rgba(22, 11, 32, 0.94) 55%,
+    rgba(18, 8, 28, 0.92) 100%
+  );
+  --chrome-border: rgba(var(--accent-rgb), 0.18);
+  --chrome-shadow: 0 16px 38px rgba(0, 0, 0, 0.34);
+  --chrome-radius: 1rem;
 
   /* ── Couleurs sémantiques / statuts ──────────────────────── */
   --warn-bg: rgba(220, 150, 30, 0.12);
@@ -586,8 +604,13 @@ body {
   align-items: flex-start;
   gap: 0.75rem;
   margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border);
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--chrome-border);
+  border-radius: var(--chrome-radius);
+  background: var(--chrome-surface);
+  box-shadow: var(--chrome-shadow);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .top-bar-brand {
@@ -714,9 +737,9 @@ body {
   width: 2.75rem;
   height: 2.75rem;
   padding: 0;
-  border: 1px solid var(--border);
+  border: 1px solid var(--chrome-border);
   border-radius: 0.55rem;
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.16);
   color: var(--text);
   cursor: pointer;
   box-shadow: var(--shadow);
@@ -739,9 +762,9 @@ body {
   width: 2.75rem;
   height: 2.75rem;
   padding: 0;
-  border: 1px solid var(--border);
+  border: 1px solid var(--chrome-border);
   border-radius: 0.55rem;
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.16);
   color: var(--text);
   cursor: pointer;
   box-shadow: var(--shadow);
@@ -876,7 +899,6 @@ body {
 }
 
 .settings-page-lead {
-  margin-bottom: 0.85rem;
   line-height: 1.5;
 }
 
@@ -1066,11 +1088,9 @@ body {
 }
 
 .message-page-lead {
-  margin-bottom: 1rem;
 }
 
 .table-page-lead {
-  margin-bottom: 1rem;
 }
 
 .table-page-lead strong {
@@ -1079,7 +1099,46 @@ body {
 }
 
 .maternity-page-lead {
-  margin-bottom: 1rem;
+}
+
+.view-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.view-layout__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--chrome-border);
+  border-radius: calc(var(--chrome-radius) - 0.1rem);
+  background: rgba(var(--accent-rgb), 0.045);
+  box-shadow: 0 6px 18px rgba(var(--ink-rgb), 0.05);
+}
+
+.view-layout__title {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+
+.view-layout__lead {
+  margin: 0;
+}
+
+.view-layout__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.view-layout__footer {
+  margin-top: 0.25rem;
 }
 
 .card--maternity-call {
@@ -1505,6 +1564,51 @@ body {
   text-decoration: none;
   width: 100%;
   justify-content: center;
+}
+
+.midwife-nav-footer {
+  margin-top: 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.midwife-table-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--primary);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 0.3rem 0.1rem;
+  border-radius: 0.35rem;
+  transition: color 0.15s ease, text-decoration 0.15s ease;
+  flex-shrink: 0;
+}
+
+.midwife-table-link:hover {
+  text-decoration: underline;
+}
+
+.midwife-table-link:focus-visible {
+  outline: 2px solid rgba(var(--accent-rgb), 0.5);
+  outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+  .midwife-table-link {
+    font-size: 0.84rem;
+  }
+
+  .mobile-home-only {
+    display: none;
+  }
+
+  .mobile-home-link {
+    display: none !important;
+  }
 }
 
 a.btn {
@@ -2092,6 +2196,11 @@ a.btn {
   font-size: 0.8rem;
   color: var(--muted);
   text-align: center;
+}
+
+.footer--app {
+  padding: 0.9rem 1rem 0;
+  border-top: 1px solid var(--border);
 }
 
 .footer-link {

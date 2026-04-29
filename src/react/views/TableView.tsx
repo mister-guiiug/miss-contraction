@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { useEffect, useMemo } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { loadRecords } from '../../storage';
+import { ViewLayout } from '../components/layout/ViewLayout';
 
 const dateTimeFmt = new Intl.DateTimeFormat('fr-FR', {
   weekday: 'short',
@@ -71,13 +72,18 @@ export function TableView() {
   }, [validRecords]);
 
   return (
-    <div className="table-page" data-testid="table-view">
-      <p className="subtitle table-page-lead">
-        Historique détaillé : pour chaque contraction, la <strong>durée</strong>,
-        l'<strong>intervalle</strong> depuis le début de la précédente, et la 
-        <strong>fréquence</strong> estimée (contractions par heure) dérivée de 
-        cet intervalle.
-      </p>
+    <ViewLayout
+      className="table-page"
+      dataTestId="table-view"
+      title="Tableau des contractions"
+      lead={
+        <>
+          Historique detaille : pour chaque contraction, la <strong>duree</strong>,
+          l'<strong>intervalle</strong> depuis le debut de la precedente, et la{' '}
+          <strong>frequence</strong> estimee en contractions par heure.
+        </>
+      }
+    >
 
       <section className="card" aria-labelledby="table-heading" data-testid="table-section">
         <h2 id="table-heading" className="section-title">
@@ -128,11 +134,11 @@ export function TableView() {
         </p>
       </section>
 
-      <p className="settings-back-wrap">
+      <p className="settings-back-wrap mobile-home-only">
         <Link to="/" className="btn btn-secondary settings-back-link" data-testid="table-back-link">
-          Retour à l'accueil
+          Retour a l'accueil
         </Link>
       </p>
-    </div>
+    </ViewLayout>
   );
 }
