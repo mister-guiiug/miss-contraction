@@ -8,6 +8,8 @@ import { EmptyState } from '../components/home/EmptyState';
 import { TimelineCompact } from '../components/home/TimelineCompact';
 import { ThresholdBadge } from '../components/home/ThresholdBadge';
 import { QuickNotes } from '../components/home/QuickNotes';
+import { AppFooter } from '../components/layout/AppFooter';
+import { ViewLayout } from '../components/layout/ViewLayout';
 
 export function HomeView() {
   const { records, setRecords, settings } = useAppStore();
@@ -38,7 +40,14 @@ export function HomeView() {
   const hasContractions = records.length > 0;
 
   return (
-    <div id="view-home" className="view" data-testid="view-home">
+    <ViewLayout
+      id="view-home"
+      dataTestId="view-home"
+      className="view--home"
+      title="Suivi des contractions"
+      lead="Enregistrez chaque contraction, surveillez le rythme et gardez vos reperes essentiels a portee de main."
+      footer={<AppFooter />}
+    >
         <details className="home-intro-details" data-testid="home-intro-details">
           <summary className="home-intro-summary">
             <span>À propos de l'application</span>
@@ -85,28 +94,6 @@ export function HomeView() {
           </>
         )}
 
-        <footer className="footer">
-          <p>Cet outil ne remplace pas un avis médical. Appelez la maternité ou le 15 en cas de doute.</p>
-          <p>
-            <a
-              className="footer-link"
-              href="https://github.com/mister-guiiug/miss-contraction"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Code source sur GitHub
-            </a>
-            {' '}·{' '}
-            <a
-              className="footer-link"
-              href="https://buymeacoffee.com/mister.guiiug"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              ☕ Buy me a coffee
-            </a>
-          </p>
-        </footer>
-    </div>
+    </ViewLayout>
   );
 }

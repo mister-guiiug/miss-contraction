@@ -8,6 +8,7 @@ import { useAppStore } from '../store/useAppStore';
 import { findFirstThresholdMatchEndMs } from '../../statsHelpers';
 import { loadRecords } from '../../storage';
 import type { ContractionRecord } from '../../storage';
+import { ViewLayout } from '../components/layout/ViewLayout';
 
 function meanStartIntervalMs(done: ContractionRecord[]): number | null {
   if (done.length < 2) return null;
@@ -194,14 +195,17 @@ export function MidwifeView() {
   const modeLabel = mode === 'all' ? `Tout l'historique` : `Les ${mode} dernières contractions`;
 
   return (
-    <div className="midwife-page">
-      <p className="subtitle midwife-page-lead no-print">
-        Synthèse courte des <strong>dernières contractions</strong>, des{' '}
-        <strong>moyennes</strong> sur la période choisie et, si elle a eu lieu,
-        l'<strong>heure à laquelle les seuils d'alerte ont été atteints pour la
-        première fois</strong> dans tout l'historique. À imprimer ou enregistrer
-        en PDF depuis le navigateur.
-      </p>
+    <ViewLayout
+      className="midwife-page"
+      dataTestId="midwife-view"
+      title="Resume sage-femme"
+      lead={
+        <span className="no-print">
+          Synthese courte des <strong>dernieres contractions</strong>, des <strong>moyennes</strong>{' '}
+          sur la periode choisie et, si elle a eu lieu, de l'<strong>heure du premier seuil atteint</strong>.
+        </span>
+      }
+    >
 
       <section className="card midwife-card">
         <h2 className="section-title no-print">Contenu du résumé</h2>
@@ -318,14 +322,15 @@ export function MidwifeView() {
         </p>
       </section>
 
-      <p className="settings-back-wrap no-print">
-        <Link to="/historique" className="btn btn-ghost settings-back-link">
+      <div className="midwife-nav-footer no-print">
+        <Link to="/historique" className="midwife-table-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
           Tableau détaillé
         </Link>
-        <Link to="/" className="btn btn-secondary settings-back-link">
+        <Link to="/" className="btn btn-secondary mobile-home-link">
           Accueil
         </Link>
-      </p>
-    </div>
+      </div>
+    </ViewLayout>
   );
 }
