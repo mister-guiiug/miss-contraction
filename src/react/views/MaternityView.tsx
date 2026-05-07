@@ -43,7 +43,6 @@ export function MaternityView() {
       title="Maternite"
       lead="Libelle, numero et adresse sont modifiables dans les parametres. Appel et itineraire en un geste."
     >
-
       <section
         className="card card--maternity-call"
         aria-labelledby="maternity-call-heading"
@@ -54,20 +53,25 @@ export function MaternityView() {
         </h2>
 
         {hasLabel && (
-          <p className="maternity-page-venue" data-testid="maternity-label">{label}</p>
+          <p className="maternity-page-venue" data-testid="maternity-label">
+            {label}
+          </p>
         )}
 
         <div className="maternity-page-phone-block">
           <div className="maternity-page-phone-head">
             <p className="maternity-page-subheading">Numéro</p>
-            <span className="maternity-page-readonly-badge">
-              Lecture seule
-            </span>
+            <span className="maternity-page-readonly-badge">Lecture seule</span>
           </div>
 
           {hasPhone ? (
             <>
-              <p className="maternity-page-phone-line" data-testid="maternity-phone">{phone}</p>
+              <p
+                className="maternity-page-phone-line"
+                data-testid="maternity-phone"
+              >
+                {phone}
+              </p>
               <div className="maternity-page-dial-wrap">
                 <a
                   className={`maternity-page-dial${hasPhone ? ' maternity-page-dial--ready' : ''}`}
@@ -90,12 +94,17 @@ export function MaternityView() {
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81 2.7A2 2 0 0 1 22 16.92z" />
                     </svg>
                   </span>
-                  <span className="maternity-page-dial-label">Appeler {destName}</span>
+                  <span className="maternity-page-dial-label">
+                    Appeler {destName}
+                  </span>
                 </a>
               </div>
             </>
           ) : (
-            <p className="maternity-page-phone-placeholder" data-testid="maternity-phone-placeholder">
+            <p
+              className="maternity-page-phone-placeholder"
+              data-testid="maternity-phone-placeholder"
+            >
               Aucun numéro enregistré. Indiquez-le dans les{' '}
               <Link to="/parametres">paramètres</Link>.
             </p>
@@ -106,15 +115,21 @@ export function MaternityView() {
         <div className="maternity-page-address-block">
           <div className="maternity-page-address-head">
             <p className="maternity-page-address-heading">Adresse</p>
-            <span className="maternity-page-readonly-badge">
-              Lecture seule
-            </span>
+            <span className="maternity-page-readonly-badge">Lecture seule</span>
           </div>
 
           {hasAddress ? (
-            <p className="maternity-page-address" data-testid="maternity-address">{addr}</p>
+            <p
+              className="maternity-page-address"
+              data-testid="maternity-address"
+            >
+              {addr}
+            </p>
           ) : (
-            <p className="maternity-page-address-placeholder" data-testid="maternity-address-placeholder">
+            <p
+              className="maternity-page-address-placeholder"
+              data-testid="maternity-address-placeholder"
+            >
               Aucune adresse enregistrée. Indiquez-la dans les{' '}
               <Link to="/parametres">paramètres</Link>.
             </p>
@@ -151,9 +166,8 @@ export function MaternityView() {
               <span>Itinéraire dans Maps</span>
             </a>
             <p className="maternity-page-maps-hint">
-              Ouvre Google Maps dans un nouvel onglet pour un itinéraire
-              vers l&apos;adresse ci-dessus (position actuelle →
-              destination).
+              Ouvre Google Maps dans un nouvel onglet pour un itinéraire vers
+              l&apos;adresse ci-dessus (position actuelle → destination).
             </p>
           </div>
         )}
@@ -161,10 +175,18 @@ export function MaternityView() {
 
       {/* Boutons footer */}
       <p className="settings-back-wrap maternity-page-actions">
-        <Link to="/parametres" className="btn btn-secondary settings-back-link" data-testid="maternity-settings-link">
+        <Link
+          to="/parametres"
+          className="btn btn-secondary settings-back-link"
+          data-testid="maternity-settings-link"
+        >
           Parametres
         </Link>
-        <Link to="/" className="btn btn-ghost settings-back-link mobile-home-link" data-testid="maternity-home-link">
+        <Link
+          to="/"
+          className="btn btn-ghost settings-back-link mobile-home-link"
+          data-testid="maternity-home-link"
+        >
           Accueil
         </Link>
       </p>

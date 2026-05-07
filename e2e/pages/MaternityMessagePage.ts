@@ -75,9 +75,11 @@ export class MessagePage {
     await copyBtn.click();
 
     const confirmation = this.page.locator('[data-testid="copy-confirmation"]');
-    await expect(confirmation).toBeVisible({ timeout: TIMEOUTS.NORMAL }).catch(() => {
-      // Confirmation optionnelle
-    });
+    await expect(confirmation)
+      .toBeVisible({ timeout: TIMEOUTS.NORMAL })
+      .catch(() => {
+        // Confirmation optionnelle
+      });
   }
 
   async getWhatsAppLink() {

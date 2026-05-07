@@ -47,7 +47,10 @@ export class SettingsPage {
   }
 
   async toggleHighContrast() {
-    return await toggleCheckbox(this.page, '[data-testid="high-contrast-toggle"]');
+    return await toggleCheckbox(
+      this.page,
+      '[data-testid="high-contrast-toggle"]'
+    );
   }
 
   async toggleLargeMode() {
@@ -59,18 +62,25 @@ export class SettingsPage {
   }
 
   async toggleVoiceCommands() {
-    return await toggleCheckbox(this.page, '[data-testid="voice-commands-toggle"]');
+    return await toggleCheckbox(
+      this.page,
+      '[data-testid="voice-commands-toggle"]'
+    );
   }
 
   async snooze(minutes: 30 | 60) {
-    const snoozeBtn = this.page.locator(`[data-testid="snooze-${minutes}-btn"]`);
+    const snoozeBtn = this.page.locator(
+      `[data-testid="snooze-${minutes}-btn"]`
+    );
     await expect(snoozeBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
     await snoozeBtn.click();
   }
 
   async cancelSnooze() {
     const cancelBtn = this.page.locator('[data-testid="cancel-snooze-btn"]');
-    if (await cancelBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
+    if (
+      await cancelBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
+    ) {
       await cancelBtn.click();
     }
   }
@@ -84,9 +94,11 @@ export class SettingsPage {
 
   async clearAllData() {
     const deleteBtn = this.page.locator('[data-testid="clear-data-btn"]');
-    if (await deleteBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
+    if (
+      await deleteBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
+    ) {
       await deleteBtn.click();
-      
+
       // Gérer la confirmation
       this.page.once('dialog', dialog => {
         dialog.accept();

@@ -7,15 +7,15 @@
 import { test, expect } from '@playwright/test';
 import { ROUTES } from './config';
 
-test.describe('Gestion d'erreurs - API manquantes', () => {
-  test('@errors l'app fonctionne sans API Notification', async ({ page }) => {
+test.describe('Gestion d’erreurs - API manquantes', () => {
+  test('@errors l’app fonctionne sans API Notification', async ({ page }) => {
     // Supprimer l'API Notification
     await page.addInitScript(() => {
       delete (window as any).Notification;
     });
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
@@ -23,17 +23,17 @@ test.describe('Gestion d'erreurs - API manquantes', () => {
     const btn = page.locator('[data-testid="toggle-contraction-btn"]');
     await expect(btn).toBeVisible();
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
-  test('@errors l'app fonctionne sans API Vibration', async ({ page }) => {
+  test('@errors l’app fonctionne sans API Vibration', async ({ page }) => {
     await page.addInitScript(() => {
       delete (navigator as any).vibrate;
     });
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
@@ -44,17 +44,17 @@ test.describe('Gestion d'erreurs - API manquantes', () => {
     await page.waitForTimeout(300);
     await btn.click();
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
-  test('@errors l'app fonctionne sans WakeLock API', async ({ page }) => {
+  test('@errors l’app fonctionne sans WakeLock API', async ({ page }) => {
     await page.addInitScript(() => {
       delete (navigator as any).wakeLock;
     });
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
@@ -64,17 +64,17 @@ test.describe('Gestion d'erreurs - API manquantes', () => {
     await page.waitForTimeout(300);
     await btn.click();
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
-  test('@errors l'app fonctionne sans Clipboard API', async ({ page }) => {
+  test('@errors l’app fonctionne sans Clipboard API', async ({ page }) => {
     await page.addInitScript(() => {
       delete (navigator as any).clipboard;
     });
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     await page.goto(ROUTES.MESSAGE);
     await page.waitForLoadState('networkidle');
@@ -86,19 +86,23 @@ test.describe('Gestion d'erreurs - API manquantes', () => {
     await page.waitForTimeout(300);
 
     // Le feedback d'erreur doit s'afficher proprement (pas de crash)
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 });
 
-test.describe('Gestion d'erreurs - localStorage indisponible', () => {
-  test('@errors l'app se charge si localStorage lance une exception', async ({ page }) => {
+test.describe('Gestion d’erreurs - localStorage indisponible', () => {
+  test('@errors l’app se charge si localStorage lance une exception', async ({
+    page,
+  }) => {
     await page.addInitScript(() => {
       // Simuler localStorage qui rejette les opérations
       Object.defineProperty(window, 'localStorage', {
         value: {
           getItem: () => null,
-          setItem: () => { throw new DOMException('QuotaExceededError'); },
+          setItem: () => {
+            throw new DOMException('QuotaExceededError');
+          },
           removeItem: () => {},
           clear: () => {},
           length: 0,
@@ -110,7 +114,7 @@ test.describe('Gestion d'erreurs - localStorage indisponible', () => {
     });
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
@@ -121,10 +125,12 @@ test.describe('Gestion d'erreurs - localStorage indisponible', () => {
   });
 });
 
-test.describe('Gestion d'erreurs - Routes invalides', () => {
-  test('@errors une route inconnue redirige ou affiche un état correct', async ({ page }) => {
+test.describe('Gestion d’erreurs - Routes invalides', () => {
+  test('@errors une route inconnue redirige ou affiche un état correct', async ({
+    page,
+  }) => {
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     await page.goto('/route-qui-nexiste-pas');
     await page.waitForLoadState('domcontentloaded');
@@ -133,7 +139,7 @@ test.describe('Gestion d'erreurs - Routes invalides', () => {
     const body = page.locator('body');
     await expect(body).not.toBeEmpty();
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
@@ -144,7 +150,7 @@ test.describe('Gestion d'erreurs - Routes invalides', () => {
   });
 });
 
-test.describe('Gestion d'erreurs - Valeurs limites dans les formulaires', () => {
+test.describe('Gestion d’erreurs - Valeurs limites dans les formulaires', () => {
   test('@errors maxIntervalMin : valeur minimum (1)', async ({ page }) => {
     await page.goto(ROUTES.SETTINGS);
     await page.waitForLoadState('networkidle');
@@ -182,42 +188,52 @@ test.describe('Gestion d'erreurs - Valeurs limites dans les formulaires', () => 
     await expect(input).toHaveValue('10');
   });
 
-  test('@errors note de contraction : texte vide ne plante pas', async ({ page }) => {
+  test('@errors note de contraction : texte vide ne plante pas', async ({
+    page,
+  }) => {
     const now = Date.now();
     const fakeRecords = [
       { id: 'r1', start: now - 60000, end: now - 59000, note: '' },
     ];
-    await page.addInitScript(([key, records]) => {
-      localStorage.setItem(key, JSON.stringify(records));
-    }, ['mc_records', fakeRecords] as [string, typeof fakeRecords]);
+    await page.addInitScript(
+      ([key, records]) => {
+        localStorage.setItem(key, JSON.stringify(records));
+      },
+      ['mc_records', fakeRecords] as [string, typeof fakeRecords]
+    );
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
-  test('@errors note de contraction : texte très long (240 chars)', async ({ page }) => {
+  test('@errors note de contraction : texte très long (240 chars)', async ({
+    page,
+  }) => {
     const now = Date.now();
     const longNote = 'A'.repeat(240);
     const fakeRecords = [
       { id: 'r1', start: now - 60000, end: now - 59000, note: longNote },
     ];
-    await page.addInitScript(([key, records]) => {
-      localStorage.setItem(key, JSON.stringify(records));
-    }, ['mc_records', fakeRecords] as [string, typeof fakeRecords]);
+    await page.addInitScript(
+      ([key, records]) => {
+        localStorage.setItem(key, JSON.stringify(records));
+      },
+      ['mc_records', fakeRecords] as [string, typeof fakeRecords]
+    );
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
 
     // L'historique doit toujours s'afficher
@@ -225,8 +241,10 @@ test.describe('Gestion d'erreurs - Valeurs limites dans les formulaires', () => 
   });
 });
 
-test.describe('Gestion d'erreurs - Double-clic et race conditions', () => {
-  test('@errors double-clic rapide sur le bouton timer ne crée pas deux entrées', async ({ page }) => {
+test.describe('Gestion d’erreurs - Double-clic et race conditions', () => {
+  test('@errors double-clic rapide sur le bouton timer ne crée pas deux entrées', async ({
+    page,
+  }) => {
     await page.goto(ROUTES.HOME);
     await page.evaluate(() => localStorage.clear());
     await page.reload();
@@ -251,7 +269,9 @@ test.describe('Gestion d'erreurs - Double-clic et race conditions', () => {
     expect(validRecords.length).toBeLessThanOrEqual(1);
   });
 
-  test('@errors clic start puis reload n'enregistre pas de contraction incomplète', async ({ page }) => {
+  test('@errors clic start puis reload n’enregistre pas de contraction incomplète', async ({
+    page,
+  }) => {
     await page.goto(ROUTES.HOME);
     await page.evaluate(() => localStorage.clear());
     await page.reload();
@@ -273,15 +293,18 @@ test.describe('Gestion d'erreurs - Double-clic et race conditions', () => {
   });
 });
 
-test.describe('Gestion d'erreurs - Édition de contractions', () => {
-  test('@errors éditer une contraction avec end avant start affiche une erreur', async ({ page }) => {
+test.describe('Gestion d’erreurs - Édition de contractions', () => {
+  test('@errors éditer une contraction avec end avant start affiche une erreur', async ({
+    page,
+  }) => {
     const now = Date.now();
-    const fakeRecords = [
-      { id: 'r1', start: now - 60000, end: now - 59000 },
-    ];
-    await page.addInitScript(([key, records]) => {
-      localStorage.setItem(key, JSON.stringify(records));
-    }, ['mc_records', fakeRecords] as [string, typeof fakeRecords]);
+    const fakeRecords = [{ id: 'r1', start: now - 60000, end: now - 59000 }];
+    await page.addInitScript(
+      ([key, records]) => {
+        localStorage.setItem(key, JSON.stringify(records));
+      },
+      ['mc_records', fakeRecords] as [string, typeof fakeRecords]
+    );
 
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');

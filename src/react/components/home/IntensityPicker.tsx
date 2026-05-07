@@ -11,89 +11,103 @@ interface IntensityPickerProps {
  * Sélecteur d'intensité des contractions avec icônes modernes
  * Niveaux de 1 (léger) à 5 (très intense)
  */
-export function IntensityPicker({ value, onChange, disabled = false, compact = false }: IntensityPickerProps) {
+export function IntensityPicker({
+  value,
+  onChange,
+  disabled = false,
+  compact = false,
+}: IntensityPickerProps) {
   const [hovered, setHovered] = useState<number | null>(null);
 
-  const intensities = useMemo(() => [
-    {
-      level: 1,
-      label: 'Léger',
-      description: 'Peu perceptible',
-      color: '#80c878',
-      icon: (
-        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
-          <circle cx="12" cy="12" r="2" />
-          <circle cx="12" cy="12" r="5" opacity="0.25" />
-        </svg>
-      ),
-    },
-    {
-      level: 2,
-      label: 'Modéré',
-      description: 'Gérable',
-      color: '#a8d678',
-      icon: (
-        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
-          <circle cx="12" cy="12" r="2.5" />
-          <circle cx="12" cy="12" r="5" opacity="0.25" />
-          <circle cx="12" cy="12" r="8" opacity="0.15" />
-        </svg>
-      ),
-    },
-    {
-      level: 3,
-      label: 'Soutenu',
-      description: 'Requiert de la concentration',
-      color: '#ffd04b',
-      icon: (
-        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
-          <circle cx="12" cy="12" r="3" />
-          <circle cx="12" cy="12" r="5.5" opacity="0.25" />
-          <circle cx="12" cy="12" r="8.5" opacity="0.15" />
-          <circle cx="12" cy="12" r="11.5" opacity="0.08" />
-        </svg>
-      ),
-    },
-    {
-      level: 4,
-      label: 'Fort',
-      description: 'Difficile à supporter',
-      color: '#ff9d4b',
-      icon: (
-        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
-          <circle cx="12" cy="12" r="3.5" />
-          <circle cx="12" cy="12" r="6" opacity="0.25" />
-          <circle cx="12" cy="12" r="9" opacity="0.15" />
-          <circle cx="12" cy="12" r="12" opacity="0.1" />
-        </svg>
-      ),
-    },
-    {
-      level: 5,
-      label: 'Très fort',
-      description: 'Maximum',
-      color: '#ff5e4b',
-      icon: (
-        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
-          <circle cx="12" cy="12" r="4" />
-          <circle cx="12" cy="12" r="6.5" opacity="0.25" />
-          <circle cx="12" cy="12" r="9.5" opacity="0.15" />
-          <circle cx="12" cy="12" r="12.5" opacity="0.1" />
-        </svg>
-      ),
-    },
-  ], []);
+  const intensities = useMemo(
+    () => [
+      {
+        level: 1,
+        label: 'Léger',
+        description: 'Peu perceptible',
+        color: '#80c878',
+        icon: (
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+            <circle cx="12" cy="12" r="2" />
+            <circle cx="12" cy="12" r="5" opacity="0.25" />
+          </svg>
+        ),
+      },
+      {
+        level: 2,
+        label: 'Modéré',
+        description: 'Gérable',
+        color: '#a8d678',
+        icon: (
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+            <circle cx="12" cy="12" r="2.5" />
+            <circle cx="12" cy="12" r="5" opacity="0.25" />
+            <circle cx="12" cy="12" r="8" opacity="0.15" />
+          </svg>
+        ),
+      },
+      {
+        level: 3,
+        label: 'Soutenu',
+        description: 'Requiert de la concentration',
+        color: '#ffd04b',
+        icon: (
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+            <circle cx="12" cy="12" r="3" />
+            <circle cx="12" cy="12" r="5.5" opacity="0.25" />
+            <circle cx="12" cy="12" r="8.5" opacity="0.15" />
+            <circle cx="12" cy="12" r="11.5" opacity="0.08" />
+          </svg>
+        ),
+      },
+      {
+        level: 4,
+        label: 'Fort',
+        description: 'Difficile à supporter',
+        color: '#ff9d4b',
+        icon: (
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+            <circle cx="12" cy="12" r="3.5" />
+            <circle cx="12" cy="12" r="6" opacity="0.25" />
+            <circle cx="12" cy="12" r="9" opacity="0.15" />
+            <circle cx="12" cy="12" r="12" opacity="0.1" />
+          </svg>
+        ),
+      },
+      {
+        level: 5,
+        label: 'Très fort',
+        description: 'Maximum',
+        color: '#ff5e4b',
+        icon: (
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+            <circle cx="12" cy="12" r="4" />
+            <circle cx="12" cy="12" r="6.5" opacity="0.25" />
+            <circle cx="12" cy="12" r="9.5" opacity="0.15" />
+            <circle cx="12" cy="12" r="12.5" opacity="0.1" />
+          </svg>
+        ),
+      },
+    ],
+    []
+  );
 
-  const handleSelect = useCallback((level: number) => {
-    if (!disabled) {
-      onChange(level);
-    }
-  }, [disabled, onChange]);
+  const handleSelect = useCallback(
+    (level: number) => {
+      if (!disabled) {
+        onChange(level);
+      }
+    },
+    [disabled, onChange]
+  );
 
   return (
-    <div className={`intensity-picker ${compact ? 'intensity-picker--compact' : ''}`} data-testid="intensity-picker">
+    <div
+      className={`intensity-picker ${compact ? 'intensity-picker--compact' : ''}`}
+      data-testid="intensity-picker"
+    >
       <div className="intensity-scale">
-        {intensities.map((intensity) => {
+        {intensities.map(intensity => {
           const isSelected = value === intensity.level;
           const isHovered = hovered === intensity.level;
 
@@ -109,15 +123,15 @@ export function IntensityPicker({ value, onChange, disabled = false, compact = f
               onFocus={() => setHovered(intensity.level)}
               onBlur={() => setHovered(null)}
               disabled={disabled}
-              style={{
-                '--intensity-color': intensity.color,
-              } as React.CSSProperties}
+              style={
+                {
+                  '--intensity-color': intensity.color,
+                } as React.CSSProperties
+              }
               aria-label={`Intensité ${intensity.level} : ${intensity.label}`}
               aria-pressed={isSelected}
             >
-              <span className="intensity-option-icon">
-                {intensity.icon}
-              </span>
+              <span className="intensity-option-icon">{intensity.icon}</span>
               <span className="intensity-option-label">{intensity.level}</span>
               {isHovered && !compact && (
                 <span className="intensity-option-tooltip">
@@ -132,9 +146,19 @@ export function IntensityPicker({ value, onChange, disabled = false, compact = f
       {/* Légende de l'échelle */}
       <div className="intensity-legend">
         <span className="intensity-legend-start">Léger</span>
-        <svg className="intensity-legend-bar" viewBox="0 0 200 8" preserveAspectRatio="none">
+        <svg
+          className="intensity-legend-bar"
+          viewBox="0 0 200 8"
+          preserveAspectRatio="none"
+        >
           <defs>
-            <linearGradient id="intensityGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient
+              id="intensityGradient"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
               <stop offset="0%" stopColor="#80c878" />
               <stop offset="25%" stopColor="#a8d678" />
               <stop offset="50%" stopColor="#ffd04b" />

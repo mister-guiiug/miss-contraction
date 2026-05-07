@@ -25,7 +25,7 @@ export function Banners() {
 
   // Vérifier le bandeau export nudge
   useEffect(() => {
-    const all = records.filter((r) => r.end > r.start);
+    const all = records.filter(r => r.end > r.start);
     if (all.length === 0) {
       setShowExportNudge(false);
       return;
@@ -33,7 +33,8 @@ export function Banners() {
 
     let dismissedAt = 0;
     try {
-      dismissedAt = Number(localStorage.getItem(KEY_EXPORT_NUDGE_DISMISSED)) || 0;
+      dismissedAt =
+        Number(localStorage.getItem(KEY_EXPORT_NUDGE_DISMISSED)) || 0;
     } catch {
       dismissedAt = 0;
     }
@@ -64,7 +65,7 @@ export function Banners() {
     // Mise à jour chaque seconde
     undoTimerRef.current = setInterval(() => {
       remaining -= 1;
-      setUndoState((prev) => ({ ...prev, remainingTime: remaining }));
+      setUndoState(prev => ({ ...prev, remainingTime: remaining }));
     }, 1000);
 
     // Masquer après 30s
@@ -123,7 +124,8 @@ export function Banners() {
     return (
       <div className="app-banner app-banner--accent" id="banner-pre-alert">
         <p className="app-banner-text" id="banner-pre-alert-text">
-          Rythme qui se resserre — restez attentive aux consignes de votre sage-femme.
+          Rythme qui se resserre — restez attentive aux consignes de votre
+          sage-femme.
         </p>
         <button
           type="button"
@@ -164,7 +166,8 @@ export function Banners() {
     return (
       <div className="app-banner app-banner--muted" id="banner-export-nudge">
         <span className="app-banner-text">
-          Pensez à exporter une sauvegarde (Partager / Exporter) avant un changement de téléphone.
+          Pensez à exporter une sauvegarde (Partager / Exporter) avant un
+          changement de téléphone.
         </span>
         <button
           type="button"

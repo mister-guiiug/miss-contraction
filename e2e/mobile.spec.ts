@@ -35,7 +35,9 @@ test.describe('Mobile - Interactions tactiles', () => {
     await page.waitForTimeout(300);
   });
 
-  test('@mobile la zone de tap est suffisamment grande (>= 44px)', async ({ page }) => {
+  test('@mobile la zone de tap est suffisamment grande (>= 44px)', async ({
+    page,
+  }) => {
     const btn = page.locator('[data-testid="toggle-contraction-btn"]');
     await expect(btn).toBeVisible();
 
@@ -49,7 +51,7 @@ test.describe('Mobile - Interactions tactiles', () => {
     }
   });
 
-  test('@mobile swipe scroll dans l'historique', async ({ page }) => {
+  test('@mobile swipe scroll dans l’historique', async ({ page }) => {
     // Injecter des contractions pour avoir du contenu à scroller
     const now = Date.now();
     const records = Array.from({ length: 20 }, (_, i) => ({
@@ -57,9 +59,12 @@ test.describe('Mobile - Interactions tactiles', () => {
       start: now - (20 - i) * 300000,
       end: now - (20 - i) * 300000 + 30000,
     }));
-    await page.evaluate(([key, recs]) => {
-      localStorage.setItem(key, JSON.stringify(recs));
-    }, ['mc_records', records] as [string, typeof records]);
+    await page.evaluate(
+      ([key, recs]) => {
+        localStorage.setItem(key, JSON.stringify(recs));
+      },
+      ['mc_records', records] as [string, typeof records]
+    );
 
     await page.reload();
     await page.waitForLoadState('networkidle');
@@ -76,20 +81,24 @@ test.describe('Mobile - Interactions tactiles', () => {
     const btn = page.locator('[data-testid="toggle-contraction-btn"]');
     // Bouton peut être hors écran après scroll, mais no crash
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    page.on('pageerror', e => errors.push(e.message));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 });
 
 test.describe('Mobile - APIs mobiles mockées', () => {
-  test('@mobile vibration API mockée - contraction enregistrée sans erreur', async ({ page }) => {
+  test('@mobile vibration API mockée - contraction enregistrée sans erreur', async ({
+    page,
+  }) => {
     const vibrateCalls: number[][] = [];
 
     await page.addInitScript(() => {
       (navigator as any).vibrate = (pattern: number | number[]) => {
         (window as any).__vibrateCalls = (window as any).__vibrateCalls || [];
-        (window as any).__vibrateCalls.push(Array.isArray(pattern) ? pattern : [pattern]);
+        (window as any).__vibrateCalls.push(
+          Array.isArray(pattern) ? pattern : [pattern]
+        );
         return true;
       };
     });
@@ -108,12 +117,14 @@ test.describe('Mobile - APIs mobiles mockées', () => {
     // Vérifier que vibrate a été appelé (si activé dans les settings)
     // Ce test vérifie surtout qu'aucune erreur n'est levée
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    page.on('pageerror', e => errors.push(e.message));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
-  test('@mobile WakeLock API mockée - pas d'erreur au démarrage timer', async ({ page }) => {
+  test('@mobile WakeLock API mockée - pas d’erreur au démarrage timer', async ({
+    page,
+  }) => {
     await page.addInitScript(() => {
       (navigator as any).wakeLock = {
         request: async () => ({
@@ -134,8 +145,8 @@ test.describe('Mobile - APIs mobiles mockées', () => {
     await btn.tap();
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    page.on('pageerror', e => errors.push(e.message));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 });
@@ -146,11 +157,15 @@ test.describe('Mobile - Orientation', () => {
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
 
-    await expect(page.locator('[data-testid="toggle-contraction-btn"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="toggle-contraction-btn"]')
+    ).toBeVisible();
     await expect(page.locator('[data-testid="stats-section"]')).toBeVisible();
   });
 
-  test('@mobile mode paysage : layout intact sans overflow', async ({ page }) => {
+  test('@mobile mode paysage : layout intact sans overflow', async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 844, height: 390 });
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
@@ -198,7 +213,9 @@ test.describe('Mobile - Navigation tactile', () => {
     await page.waitForLoadState('networkidle');
 
     await expect(page.locator('[data-testid="settings-view"]')).toBeVisible();
-    await expect(page.locator('[data-testid="settings-save-btn"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="settings-save-btn"]')
+    ).toBeVisible();
   });
 });
 
@@ -235,18 +252,23 @@ test.describe('Mobile - PWA readiness', () => {
     const smallInputs = await page.evaluate(() => {
       const inputs = document.querySelectorAll('input, textarea');
       const small: string[] = [];
-      inputs.forEach((input) => {
+      inputs.forEach(input => {
         const style = window.getComputedStyle(input);
         const fontSize = parseFloat(style.fontSize);
         if (fontSize < 16) {
-          small.push(`${input.tagName}[${input.getAttribute('data-testid') || 'no-testid'}]: ${fontSize}px`);
+          small.push(
+            `${input.tagName}[${input.getAttribute('data-testid') || 'no-testid'}]: ${fontSize}px`
+          );
         }
       });
       return small;
     });
 
     if (smallInputs.length > 0) {
-      console.warn('Inputs avec font-size < 16px (peut causer zoom iOS):', smallInputs);
+      console.warn(
+        'Inputs avec font-size < 16px (peut causer zoom iOS):',
+        smallInputs
+      );
     }
     // On avertit mais ne fail pas — dépend du design choice
   });

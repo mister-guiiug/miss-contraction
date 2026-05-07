@@ -16,14 +16,20 @@ test.describe('Alertes & Notifications', () => {
     });
   });
 
-  test('alerte visuelle - badge change d\'état', async ({ page }) => {
-    const startButton = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+  test("alerte visuelle - badge change d'état", async ({ page }) => {
+    const startButton = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
 
     // Créer plusieurs contractions pour atteindre le seuil
     for (let i = 0; i < 4; i++) {
       await startButton.click();
       await page.waitForTimeout(100);
-      const stopButton = page.locator('button').filter({ hasText: /Fin|Stop/ }).first();
+      const stopButton = page
+        .locator('button')
+        .filter({ hasText: /Fin|Stop/ })
+        .first();
       await stopButton.click();
       await page.waitForTimeout(200);
     }
@@ -32,18 +38,22 @@ test.describe('Alertes & Notifications', () => {
     const badge = page.locator('.threshold-badge, [data-state]');
     if (await badge.isVisible({ timeout: 500 }).catch(() => false)) {
       const state = await badge.getAttribute('data-state');
-      // L'état ne devrait plus être 'empty' ou 'calm'
+      // L"état ne devrait plus être ’empty" ou 'calm'
       expect(state).toBeDefined();
     }
   });
 
-  test('alerte pré-notification - bandeau d\'avertissement', async ({ page }) => {
+  test("alerte pré-notification - bandeau d'avertissement", async ({
+    page,
+  }) => {
     // Configurer les seuils bas
     await page.goto('/parametres');
     const maxIntervalInput = page.locator('input[name="maxIntervalMin"]');
     if (await maxIntervalInput.isVisible({ timeout: 500 }).catch(() => false)) {
       await maxIntervalInput.fill('1');
-      const submitButton = page.locator('button:has-text("Enregistrer"), [type="submit"]');
+      const submitButton = page.locator(
+        'button:has-text("Enregistrer"), [type="submit"]'
+      );
       if (await submitButton.isVisible({ timeout: 500 }).catch(() => false)) {
         await submitButton.click();
       }
@@ -52,11 +62,17 @@ test.describe('Alertes & Notifications', () => {
     await page.goto('/');
 
     // Créer contractions rapides
-    const startButton = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+    const startButton = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
     for (let i = 0; i < 3; i++) {
       await startButton.click();
       await page.waitForTimeout(50);
-      const stopButton = page.locator('button').filter({ hasText: /Fin|Stop/ }).first();
+      const stopButton = page
+        .locator('button')
+        .filter({ hasText: /Fin|Stop/ })
+        .first();
       await stopButton.click();
       await page.waitForTimeout(100);
     }
@@ -68,15 +84,17 @@ test.describe('Alertes & Notifications', () => {
     }
   });
 
-  test('notification navigateur - déclenche une notification', async ({ page }) => {
+  test('notification navigateur - déclenche une notification', async ({
+    page,
+  }) => {
     // Écouter la notification
     let notificationFired = false;
-    
+
     await page.evaluate(() => {
       const originalShow = Notification.prototype.show;
       (window as any).__notificationFired = false;
-      
-      Notification.prototype.show = function() {
+
+      Notification.prototype.show = function () {
         (window as any).__notificationFired = true;
         if (originalShow) originalShow.call(this);
       };
@@ -87,7 +105,9 @@ test.describe('Alertes & Notifications', () => {
     const maxIntervalInput = page.locator('input[name="maxIntervalMin"]');
     if (await maxIntervalInput.isVisible({ timeout: 500 }).catch(() => false)) {
       await maxIntervalInput.fill('1');
-      const submitButton = page.locator('button:has-text("Enregistrer"), [type="submit"]');
+      const submitButton = page.locator(
+        'button:has-text("Enregistrer"), [type="submit"]'
+      );
       if (await submitButton.isVisible({ timeout: 500 }).catch(() => false)) {
         await submitButton.click();
       }
@@ -96,17 +116,25 @@ test.describe('Alertes & Notifications', () => {
     await page.goto('/');
 
     // Créer contractions rapides pour atteindre le seuil
-    const startButton = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+    const startButton = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
     for (let i = 0; i < 4; i++) {
       await startButton.click();
       await page.waitForTimeout(50);
-      const stopButton = page.locator('button').filter({ hasText: /Fin|Stop/ }).first();
+      const stopButton = page
+        .locator('button')
+        .filter({ hasText: /Fin|Stop/ })
+        .first();
       await stopButton.click();
       await page.waitForTimeout(150);
     }
 
     // Vérifier si une notification a été créée
-    notificationFired = await page.evaluate(() => (window as any).__notificationFired);
+    notificationFired = await page.evaluate(
+      () => (window as any).__notificationFired
+    );
     expect(typeof notificationFired).toBe('boolean');
   });
 
@@ -121,22 +149,27 @@ test.describe('Alertes & Notifications', () => {
   test('vibration - haptic feedback activé', async ({ page }) => {
     // Vérifier que vibration est activée dans les paramètres
     await page.goto('/parametres');
-    const vibrationToggle = page.locator('input[type="checkbox"][name="hapticFeedback"]');
+    const vibrationToggle = page.locator(
+      'input[type="checkbox"][name="hapticFeedback"]'
+    );
     if (await vibrationToggle.isVisible({ timeout: 500 }).catch(() => false)) {
       const isChecked = await vibrationToggle.isChecked();
       expect(typeof isChecked).toBe('boolean');
     }
   });
 
-  test('snooze d\'alerte - 30 minutes', async ({ page }) => {
+  test("snooze d'alerte - 30 minutes", async ({ page }) => {
     await page.goto('/parametres');
 
-    const snoozeButton = page.locator('button').filter({ hasText: /30|Snooze/ }).first();
+    const snoozeButton = page
+      .locator('button')
+      .filter({ hasText: /30|Snooze/ })
+      .first();
     if (await snoozeButton.isVisible({ timeout: 500 }).catch(() => false)) {
       // Vérifier le timestamp du snooze
       const beforeSnooze = Date.now();
       await snoozeButton.click();
-      
+
       // Vérifier que le snooze est enregistré
       const snoozeUntil = await page.evaluate(() => {
         return localStorage.getItem('mc_snooze_until_ms');
@@ -152,14 +185,17 @@ test.describe('Alertes & Notifications', () => {
     }
   });
 
-  test('snooze d\'alerte - 1 heure', async ({ page }) => {
+  test("snooze d'alerte - 1 heure", async ({ page }) => {
     await page.goto('/parametres');
 
-    const snoozeButton = page.locator('button').filter({ hasText: /60|1h|1 h/ }).first();
+    const snoozeButton = page
+      .locator('button')
+      .filter({ hasText: /60|1h|1 h/ })
+      .first();
     if (await snoozeButton.isVisible({ timeout: 500 }).catch(() => false)) {
       const beforeSnooze = Date.now();
       await snoozeButton.click();
-      
+
       const snoozeUntil = await page.evaluate(() => {
         return localStorage.getItem('mc_snooze_until_ms');
       });
@@ -178,13 +214,19 @@ test.describe('Alertes & Notifications', () => {
     await page.goto('/parametres');
 
     // Activer un snooze
-    const snoozeButton = page.locator('button').filter({ hasText: /30|Snooze/ }).first();
+    const snoozeButton = page
+      .locator('button')
+      .filter({ hasText: /30|Snooze/ })
+      .first();
     if (await snoozeButton.isVisible({ timeout: 500 }).catch(() => false)) {
       await snoozeButton.click();
       await page.waitForTimeout(500);
 
       // Chercher le bouton d'annulation
-      const cancelButton = page.locator('button').filter({ hasText: /Annuler|Cancel|Réactiver/ }).first();
+      const cancelButton = page
+        .locator('button')
+        .filter({ hasText: /Annuler|Cancel|Réactiver/ })
+        .first();
       if (await cancelButton.isVisible({ timeout: 500 }).catch(() => false)) {
         await cancelButton.click();
 
@@ -198,16 +240,25 @@ test.describe('Alertes & Notifications', () => {
     }
   });
 
-  test('alerte contraction ouverte - détecte une contraction jamais terminée', async ({ page }) => {
-    const startButton = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+  test('alerte contraction ouverte - détecte une contraction jamais terminée', async ({
+    page,
+  }) => {
+    const startButton = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
     await startButton.click();
     await page.waitForTimeout(2000);
 
     // Attendre quelques secondes sans terminer
     // Chercher l'alerte
-    const openContractionAlert = page.locator('[role="alert"], .alert, .warning').filter({ hasText: /contraction|ouverte|jamais terminée|never closed/ });
-    
-    if (await openContractionAlert.isVisible({ timeout: 5000 }).catch(() => false)) {
+    const openContractionAlert = page
+      .locator('[role="alert"], .alert, .warning')
+      .filter({ hasText: /contraction|ouverte|jamais terminée|never closed/ });
+
+    if (
+      await openContractionAlert.isVisible({ timeout: 5000 }).catch(() => false)
+    ) {
       await expect(openContractionAlert).toBeVisible();
     }
   });
@@ -218,7 +269,9 @@ test.describe('Alertes & Notifications', () => {
     const input = page.locator('input[name="maxIntervalMin"]');
     if (await input.isVisible({ timeout: 500 }).catch(() => false)) {
       await input.fill('2');
-      const submitButton = page.locator('button:has-text("Enregistrer"), [type="submit"]');
+      const submitButton = page.locator(
+        'button:has-text("Enregistrer"), [type="submit"]'
+      );
       if (await submitButton.isVisible({ timeout: 500 }).catch(() => false)) {
         await submitButton.click();
       }
@@ -239,7 +292,9 @@ test.describe('Alertes & Notifications', () => {
     const input = page.locator('input[name="minDurationSec"]');
     if (await input.isVisible({ timeout: 500 }).catch(() => false)) {
       await input.fill('40');
-      const submitButton = page.locator('button:has-text("Enregistrer"), [type="submit"]');
+      const submitButton = page.locator(
+        'button:has-text("Enregistrer"), [type="submit"]'
+      );
       if (await submitButton.isVisible({ timeout: 500 }).catch(() => false)) {
         await submitButton.click();
       }
@@ -253,13 +308,17 @@ test.describe('Alertes & Notifications', () => {
     }
   });
 
-  test('seuil personnalisable - nombre de contractions consécutives', async ({ page }) => {
+  test('seuil personnalisable - nombre de contractions consécutives', async ({
+    page,
+  }) => {
     await page.goto('/parametres');
 
     const input = page.locator('input[name="consecutiveCount"]');
     if (await input.isVisible({ timeout: 500 }).catch(() => false)) {
       await input.fill('5');
-      const submitButton = page.locator('button:has-text("Enregistrer"), [type="submit"]');
+      const submitButton = page.locator(
+        'button:has-text("Enregistrer"), [type="submit"]'
+      );
       if (await submitButton.isVisible({ timeout: 500 }).catch(() => false)) {
         await submitButton.click();
       }

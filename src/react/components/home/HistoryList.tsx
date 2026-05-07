@@ -1,4 +1,9 @@
-import { useState, useCallback, type Dispatch, type SetStateAction } from 'react';
+import {
+  useState,
+  useCallback,
+  type Dispatch,
+  type SetStateAction,
+} from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { formatDateTime } from '../../../utils/formatStats';
 import { formatDuration } from '../../../utils/formatDuration';
@@ -10,21 +15,23 @@ type EditDialogState = {
 
 export function HistoryList() {
   const { records, deleteRecord, updateRecord, clearRecords } = useAppStore();
-  const [editDialog, setEditDialog] = useState<EditDialogState>({ record: null });
+  const [editDialog, setEditDialog] = useState<EditDialogState>({
+    record: null,
+  });
 
   const validRecords = [...records]
-    .filter((r) => r.end > r.start)
+    .filter(r => r.end > r.start)
     .sort((a, b) => b.start - a.start);
 
   const handleClearAll = useCallback(() => {
-    if (confirm('Effacer tout l\'historique sur cet appareil ?')) {
+    if (confirm("Effacer tout l'historique sur cet appareil ?")) {
       clearRecords();
     }
   }, [clearRecords]);
 
   const handleDelete = useCallback(
     (id: string) => {
-      if (confirm('Supprimer cette contraction de l\'historique ?')) {
+      if (confirm("Supprimer cette contraction de l'historique ?")) {
         deleteRecord(id);
       }
     },
@@ -47,10 +54,20 @@ export function HistoryList() {
 
   return (
     <>
-      <section className="card" aria-labelledby="history-heading" data-testid="history-list">
+      <section
+        className="card"
+        aria-labelledby="history-heading"
+        data-testid="history-list"
+      >
         <div className="section-head">
-          <h2 id="history-heading" className="section-title">Historique</h2>
-          <div className="section-actions" role="group" aria-label="Actions historique">
+          <h2 id="history-heading" className="section-title">
+            Historique
+          </h2>
+          <div
+            className="section-actions"
+            role="group"
+            aria-label="Actions historique"
+          >
             <button
               type="button"
               className="btn btn-ghost btn-small"
@@ -68,14 +85,23 @@ export function HistoryList() {
             Aucune contraction enregistrée pour le moment.
           </p>
         ) : (
-          <ul className="timeline" id="history-list" role="list" data-testid="history-items">
+          <ul
+            className="timeline"
+            id="history-list"
+            role="list"
+            data-testid="history-items"
+          >
             {validRecords.map((rec, index) => (
               <HistoryItem
                 key={rec.id}
                 record={rec}
                 occurrenceNum={validRecords.length - index}
                 isLatest={index === 0}
-                previousRecord={index < validRecords.length - 1 ? validRecords[index + 1] : undefined}
+                previousRecord={
+                  index < validRecords.length - 1
+                    ? validRecords[index + 1]
+                    : undefined
+                }
                 onEdit={handleEdit}
                 onDelete={handleDelete}
               />
@@ -116,21 +142,35 @@ function HistoryItem({
     : '—';
 
   const intensityHtml = record.intensity ? (
-    <span className={`timeline-intensity timeline-intensity--${record.intensity}`} title={`Intensité ${record.intensity}`}>
+    <span
+      className={`timeline-intensity timeline-intensity--${record.intensity}`}
+      title={`Intensité ${record.intensity}`}
+    >
       <span className="sr-only">Intensité</span> {record.intensity}
     </span>
   ) : null;
 
   return (
-    <li className={`timeline-item ${isLatest ? 'timeline-item--latest' : ''}`} data-testid={`history-item-${record.id}`}>
+    <li
+      className={`timeline-item ${isLatest ? 'timeline-item--latest' : ''}`}
+      data-testid={`history-item-${record.id}`}
+    >
       <div className="timeline-marker" aria-hidden="true" />
 
       <div className="timeline-body">
         <div className="timeline-time-row">
-          <span className="timeline-num" title={`Contraction n°${occurrenceNum}`} data-testid="occurrence-num">
+          <span
+            className="timeline-num"
+            title={`Contraction n°${occurrenceNum}`}
+            data-testid="occurrence-num"
+          >
             {occurrenceNum}
           </span>
-          <time className="timeline-time" dateTime={new Date(record.start).toISOString()} data-testid="record-time">
+          <time
+            className="timeline-time"
+            dateTime={new Date(record.start).toISOString()}
+            data-testid="record-time"
+          >
             {formatDateTime(record.start)}
           </time>
           {intensityHtml}
@@ -140,13 +180,19 @@ function HistoryItem({
           <span className="timeline-stat" data-testid="record-duration">
             Durée <strong>{formatDuration(duration)}</strong>
           </span>
-          <span className="timeline-sep" aria-hidden="true">·</span>
+          <span className="timeline-sep" aria-hidden="true">
+            ·
+          </span>
           <span className="timeline-stat" data-testid="record-interval">
             Écart <strong>{intervalPrev}</strong>
           </span>
         </p>
 
-        {record.note && <p className="timeline-note" data-testid="record-note">{record.note}</p>}
+        {record.note && (
+          <p className="timeline-note" data-testid="record-note">
+            {record.note}
+          </p>
+        )}
 
         <div className="timeline-actions">
           <button
@@ -189,7 +235,9 @@ function EditDialog({
   const [start, setStart] = useState(toDatetimeLocalValue(record.start));
   const [end, setEnd] = useState(toDatetimeLocalValue(record.end));
   const [note, setNote] = useState(record.note ?? '');
-  const [intensity, setIntensity] = useState<number | undefined>(record.intensity);
+  const [intensity, setIntensity] = useState<number | undefined>(
+    record.intensity
+  );
   const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -223,8 +271,22 @@ function EditDialog({
   return (
     <dialog className="edit-dialog" open data-testid="edit-dialog">
       <form className="edit-dialog-form" onSubmit={handleSubmit}>
-        <h3 id="edit-dialog-title" className="edit-dialog-title" data-testid="edit-dialog-title">Modifier la contraction</h3>
-        {error && <p className="edit-dialog-error" role="alert" data-testid="edit-dialog-error">{error}</p>}
+        <h3
+          id="edit-dialog-title"
+          className="edit-dialog-title"
+          data-testid="edit-dialog-title"
+        >
+          Modifier la contraction
+        </h3>
+        {error && (
+          <p
+            className="edit-dialog-error"
+            role="alert"
+            data-testid="edit-dialog-error"
+          >
+            {error}
+          </p>
+        )}
 
         <label className="field">
           <span>Début</span>
@@ -233,7 +295,7 @@ function EditDialog({
             id="edit-start"
             data-testid="edit-start-input"
             value={start}
-            onChange={(e) => setStart(e.target.value)}
+            onChange={e => setStart(e.target.value)}
             step="1"
             required
           />
@@ -246,7 +308,7 @@ function EditDialog({
             id="edit-end"
             data-testid="edit-end-input"
             value={end}
-            onChange={(e) => setEnd(e.target.value)}
+            onChange={e => setEnd(e.target.value)}
             step="1"
             required
           />
@@ -254,9 +316,17 @@ function EditDialog({
 
         <div className="field">
           <span className="field-label">Intensité de la douleur</span>
-          <div className="intensity-picker" id="edit-intensity-picker" data-testid="edit-intensity-picker">
-            {[1, 2, 3, 4, 5].map((value) => (
-              <label key={value} className={`btn-intensity ${intensity === value ? 'selected' : ''}`} data-testid={`edit-intensity-option-${value}`}>
+          <div
+            className="intensity-picker"
+            id="edit-intensity-picker"
+            data-testid="edit-intensity-picker"
+          >
+            {[1, 2, 3, 4, 5].map(value => (
+              <label
+                key={value}
+                className={`btn-intensity ${intensity === value ? 'selected' : ''}`}
+                data-testid={`edit-intensity-option-${value}`}
+              >
                 <input
                   type="radio"
                   name="intensity"
@@ -289,30 +359,68 @@ function EditDialog({
             maxLength={240}
             placeholder="Ex. plus intense, repos…"
             value={note}
-            onChange={(e) => setNote(e.target.value)}
+            onChange={e => setNote(e.target.value)}
           />
         </label>
 
-        <div className="quick-notes" id="edit-quick-notes" data-testid="edit-quick-notes">
-          <button type="button" className="btn btn-ghost btn-tiny" data-note="Ballon" data-testid="quick-note-balloon" onClick={() => addQuickNote(setNote, 'Ballon')}>
+        <div
+          className="quick-notes"
+          id="edit-quick-notes"
+          data-testid="edit-quick-notes"
+        >
+          <button
+            type="button"
+            className="btn btn-ghost btn-tiny"
+            data-note="Ballon"
+            data-testid="quick-note-balloon"
+            onClick={() => addQuickNote(setNote, 'Ballon')}
+          >
             🎈 Ballon
           </button>
-          <button type="button" className="btn btn-ghost btn-tiny" data-note="Marche" data-testid="quick-note-walk" onClick={() => addQuickNote(setNote, 'Marche')}>
+          <button
+            type="button"
+            className="btn btn-ghost btn-tiny"
+            data-note="Marche"
+            data-testid="quick-note-walk"
+            onClick={() => addQuickNote(setNote, 'Marche')}
+          >
             🚶 Marche
           </button>
-          <button type="button" className="btn btn-ghost btn-tiny" data-note="Repos" data-testid="quick-note-rest" onClick={() => addQuickNote(setNote, 'Repos')}>
+          <button
+            type="button"
+            className="btn btn-ghost btn-tiny"
+            data-note="Repos"
+            data-testid="quick-note-rest"
+            onClick={() => addQuickNote(setNote, 'Repos')}
+          >
             🛌 Repos
           </button>
-          <button type="button" className="btn btn-ghost btn-tiny" data-note="Douche" data-testid="quick-note-shower" onClick={() => addQuickNote(setNote, 'Douche')}>
+          <button
+            type="button"
+            className="btn btn-ghost btn-tiny"
+            data-note="Douche"
+            data-testid="quick-note-shower"
+            onClick={() => addQuickNote(setNote, 'Douche')}
+          >
             🚿 Douche
           </button>
         </div>
 
         <div className="edit-dialog-buttons">
-          <button type="button" className="btn btn-secondary" id="edit-dialog-cancel" data-testid="edit-dialog-cancel-btn" onClick={onClose}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            id="edit-dialog-cancel"
+            data-testid="edit-dialog-cancel-btn"
+            onClick={onClose}
+          >
             Annuler
           </button>
-          <button type="submit" className="btn btn-primary" data-testid="edit-dialog-save-btn">
+          <button
+            type="submit"
+            className="btn btn-primary"
+            data-testid="edit-dialog-save-btn"
+          >
             Enregistrer
           </button>
         </div>
@@ -328,7 +436,7 @@ function toDatetimeLocalValue(ms: number): string {
 }
 
 function addQuickNote(setNote: Dispatch<SetStateAction<string>>, tag: string) {
-  setNote((prev) => {
+  setNote(prev => {
     const cur = prev.trim();
     if (!cur) {
       return tag;

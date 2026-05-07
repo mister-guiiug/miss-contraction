@@ -18,7 +18,9 @@ test.describe('LocalStorage - Persistance des contractions', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  test('@storage @critical les contractions persistent après rechargement', async ({ page }) => {
+  test('@storage @critical les contractions persistent après rechargement', async ({
+    page,
+  }) => {
     // Créer une contraction via l'interface
     const btn = page.locator('[data-testid="toggle-contraction-btn"]');
     await expect(btn).toBeVisible();
@@ -28,7 +30,7 @@ test.describe('LocalStorage - Persistance des contractions', () => {
     await page.waitForTimeout(300);
 
     // Vérifier que localStorage contient les données
-    const records = await page.evaluate((key) => {
+    const records = await page.evaluate(key => {
       const raw = localStorage.getItem(key);
       return raw ? JSON.parse(raw) : null;
     }, RECORDS_KEY);
@@ -46,7 +48,7 @@ test.describe('LocalStorage - Persistance des contractions', () => {
     await page.reload();
     await page.waitForLoadState('networkidle');
 
-    const afterReload = await page.evaluate((key) => {
+    const afterReload = await page.evaluate(key => {
       const raw = localStorage.getItem(key);
       return raw ? JSON.parse(raw) : null;
     }, RECORDS_KEY);
@@ -55,7 +57,9 @@ test.describe('LocalStorage - Persistance des contractions', () => {
     expect(afterReload[0].id).toBe(records[0].id);
   });
 
-  test('@storage les contractions s'affichent bien dans l'historique après rechargement', async ({ page }) => {
+  test('@storage les contractions s’affichent bien dans l’historique après rechargement', async ({
+    page,
+  }) => {
     // Injecter 3 contractions directement dans localStorage
     const now = Date.now();
     const fakeRecords = [
@@ -64,9 +68,12 @@ test.describe('LocalStorage - Persistance des contractions', () => {
       { id: 'r3', start: now - 120000, end: now - 118000 },
     ];
 
-    await page.evaluate(([key, records]) => {
-      localStorage.setItem(key, JSON.stringify(records));
-    }, [RECORDS_KEY, fakeRecords] as [string, typeof fakeRecords]);
+    await page.evaluate(
+      ([key, records]) => {
+        localStorage.setItem(key, JSON.stringify(records));
+      },
+      [RECORDS_KEY, fakeRecords] as [string, typeof fakeRecords]
+    );
 
     await page.reload();
     await page.waitForLoadState('networkidle');
@@ -76,7 +83,9 @@ test.describe('LocalStorage - Persistance des contractions', () => {
     await expect(items).toHaveCount(3);
   });
 
-  test('@storage les paramètres persistent après rechargement', async ({ page }) => {
+  test('@storage les paramètres persistent après rechargement', async ({
+    page,
+  }) => {
     await page.goto(ROUTES.SETTINGS);
     await page.waitForLoadState('networkidle');
 
@@ -90,7 +99,7 @@ test.describe('LocalStorage - Persistance des contractions', () => {
     await page.waitForTimeout(500);
 
     // Vérifier dans localStorage
-    const savedSettings = await page.evaluate((key) => {
+    const savedSettings = await page.evaluate(key => {
       const raw = localStorage.getItem(key);
       return raw ? JSON.parse(raw) : null;
     }, SETTINGS_KEY);
@@ -105,14 +114,19 @@ test.describe('LocalStorage - Persistance des contractions', () => {
     await expect(afterReloadInput).toHaveValue('7');
   });
 
-  test('@storage effacer l'historique vide bien le localStorage', async ({ page }) => {
+  test('@storage effacer l’historique vide bien le localStorage', async ({
+    page,
+  }) => {
     // Injecter des contractions
     const fakeRecords = [
       { id: 'r1', start: Date.now() - 60000, end: Date.now() - 59000 },
     ];
-    await page.evaluate(([key, records]) => {
-      localStorage.setItem(key, JSON.stringify(records));
-    }, [RECORDS_KEY, fakeRecords] as [string, typeof fakeRecords]);
+    await page.evaluate(
+      ([key, records]) => {
+        localStorage.setItem(key, JSON.stringify(records));
+      },
+      [RECORDS_KEY, fakeRecords] as [string, typeof fakeRecords]
+    );
 
     await page.reload();
     await page.waitForLoadState('networkidle');
@@ -122,30 +136,34 @@ test.describe('LocalStorage - Persistance des contractions', () => {
     await expect(clearBtn).toBeVisible();
 
     // Intercepter le dialog de confirmation
-    page.once('dialog', (dialog) => dialog.accept());
+    page.once('dialog', dialog => dialog.accept());
     await clearBtn.click();
     await page.waitForTimeout(300);
 
     // Vérifier que localStorage est vide (ou tableau vide)
-    const records = await page.evaluate((key) => {
+    const records = await page.evaluate(key => {
       const raw = localStorage.getItem(key);
       return raw ? JSON.parse(raw) : null;
     }, RECORDS_KEY);
 
-    expect(records === null || (Array.isArray(records) && records.length === 0)).toBe(true);
+    expect(
+      records === null || (Array.isArray(records) && records.length === 0)
+    ).toBe(true);
   });
 });
 
 test.describe('LocalStorage - Données corrompues', () => {
-  test('@storage l'app récupère sur données JSON corrompues', async ({ page }) => {
+  test('@storage l’app récupère sur données JSON corrompues', async ({
+    page,
+  }) => {
     // Injecter du JSON invalide dans localStorage
-    await page.addInitScript((key) => {
+    await page.addInitScript(key => {
       localStorage.setItem(key, 'corrupted json{{{');
     }, RECORDS_KEY);
 
     // L'app doit charger sans planter
     const errors: string[] = [];
-    page.on('pageerror', (err) => errors.push(err.message));
+    page.on('pageerror', err => errors.push(err.message));
 
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
@@ -155,17 +173,17 @@ test.describe('LocalStorage - Données corrompues', () => {
     await expect(btn).toBeVisible();
 
     // Aucune erreur JS critique
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
-  test('@storage l'app récupère sur settings corrompues', async ({ page }) => {
-    await page.addInitScript((key) => {
+  test('@storage l’app récupère sur settings corrompues', async ({ page }) => {
+    await page.addInitScript(key => {
       localStorage.setItem(key, '{"invalid":true,"missing_fields":true}');
     }, SETTINGS_KEY);
 
     const errors: string[] = [];
-    page.on('pageerror', (err) => errors.push(err.message));
+    page.on('pageerror', err => errors.push(err.message));
 
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
@@ -173,20 +191,25 @@ test.describe('LocalStorage - Données corrompues', () => {
     const btn = page.locator('[data-testid="toggle-contraction-btn"]');
     await expect(btn).toBeVisible();
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
-  test('@storage les contractions avec end <= start sont ignorées', async ({ page }) => {
+  test('@storage les contractions avec end <= start sont ignorées', async ({
+    page,
+  }) => {
     const now = Date.now();
     const badRecords = [
       { id: 'bad1', start: now - 1000, end: now - 2000 }, // end < start : invalide
       { id: 'good1', start: now - 3000, end: now - 2000 }, // valide
     ];
 
-    await page.addInitScript(([key, records]) => {
-      localStorage.setItem(key, JSON.stringify(records));
-    }, [RECORDS_KEY, badRecords] as [string, typeof badRecords]);
+    await page.addInitScript(
+      ([key, records]) => {
+        localStorage.setItem(key, JSON.stringify(records));
+      },
+      [RECORDS_KEY, badRecords] as [string, typeof badRecords]
+    );
 
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
@@ -204,9 +227,15 @@ test.describe('LocalStorage - Persistence des paramètres maternité', () => {
 
     const { maternity } = TEST_DATA;
 
-    await page.locator('[data-testid="maternity-label-input"]').fill(maternity.name);
-    await page.locator('[data-testid="maternity-phone-input"]').fill(maternity.phone);
-    await page.locator('[data-testid="maternity-address-textarea"]').fill(maternity.address);
+    await page
+      .locator('[data-testid="maternity-label-input"]')
+      .fill(maternity.name);
+    await page
+      .locator('[data-testid="maternity-phone-input"]')
+      .fill(maternity.phone);
+    await page
+      .locator('[data-testid="maternity-address-textarea"]')
+      .fill(maternity.address);
 
     const saveBtn = page.locator('[data-testid="settings-save-btn"]');
     await saveBtn.click();
@@ -217,8 +246,12 @@ test.describe('LocalStorage - Persistence des paramètres maternité', () => {
     await page.waitForLoadState('networkidle');
 
     // Vérifier les infos affichées
-    await expect(page.locator('[data-testid="maternity-label"]')).toContainText(maternity.name);
-    await expect(page.locator('[data-testid="maternity-phone"]')).toContainText(maternity.phone.replace(/\s/g, '').replace(/\s/g, ''));
+    await expect(page.locator('[data-testid="maternity-label"]')).toContainText(
+      maternity.name
+    );
+    await expect(page.locator('[data-testid="maternity-phone"]')).toContainText(
+      maternity.phone.replace(/\s/g, '').replace(/\s/g, '')
+    );
   });
 
   test('@storage le message personnalisé persist', async ({ page }) => {

@@ -6,7 +6,11 @@ import { Link } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
-import { setSnoozeUntilMs, clearSnoozeUntil, loadSettings } from '../../storage';
+import {
+  setSnoozeUntilMs,
+  clearSnoozeUntil,
+  loadSettings,
+} from '../../storage';
 import { HighContrastToggle } from '../components/settings/HighContrastToggle';
 import { ViewLayout } from '../components/layout/ViewLayout';
 
@@ -14,7 +18,8 @@ export function SettingsView() {
   const { settings, updateSettings, saveSettings } = useAppStore();
   const [formData, setFormData] = useState(settings);
   const [saveStatus, setSaveStatus] = useState('');
-  const [notifyPermission, setNotifyPermission] = useState<NotificationPermission>('default');
+  const [notifyPermission, setNotifyPermission] =
+    useState<NotificationPermission>('default');
 
   // Recharger les settings depuis localStorage au montage
   // pour synchroniser avec les modifications faits par le code vanilla
@@ -31,14 +36,21 @@ export function SettingsView() {
   }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
 
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : type === 'number' ? Number(value) : value,
+      [name]:
+        type === 'checkbox'
+          ? checked
+          : type === 'number'
+            ? Number(value)
+            : value,
     }));
   };
 
@@ -78,12 +90,11 @@ export function SettingsView() {
       lead={
         <>
           Ajustez l'alerte, le numero de la maternite et l'affichage.{' '}
-          <strong className="settings-page-hint">Pensez a enregistrer</strong> pour appliquer les
-          changements.
+          <strong className="settings-page-hint">Pensez a enregistrer</strong>{' '}
+          pour appliquer les changements.
         </>
       }
     >
-
       <nav className="settings-toc" aria-label="Aller à une section">
         <ul className="settings-toc-list">
           <li>
@@ -114,7 +125,12 @@ export function SettingsView() {
         </ul>
       </nav>
 
-      <form className="form settings-form" id="form-settings" onSubmit={handleSubmit} data-testid="settings-form">
+      <form
+        className="form settings-form"
+        id="form-settings"
+        onSubmit={handleSubmit}
+        data-testid="settings-form"
+      >
         {/* Section Alertes */}
         <section
           className="card settings-card"
@@ -126,11 +142,13 @@ export function SettingsView() {
             Alertes
           </h2>
           <p className="settings-intro">
-            L'alerte se déclenche lorsque les <strong id="lbl-n">{formData.consecutiveCount}</strong>{' '}
-            dernières contractions sont espacées d'au plus{' '}
-            <strong id="lbl-interval">{formData.maxIntervalMin}</strong> minutes et durent chacune au
-            moins <strong id="lbl-dur">{formData.minDurationSec}</strong> secondes — à valider avec
-            votre sage-femme.
+            L'alerte se déclenche lorsque les{' '}
+            <strong id="lbl-n">{formData.consecutiveCount}</strong> dernières
+            contractions sont espacées d'au plus{' '}
+            <strong id="lbl-interval">{formData.maxIntervalMin}</strong> minutes
+            et durent chacune au moins{' '}
+            <strong id="lbl-dur">{formData.minDurationSec}</strong> secondes — à
+            valider avec votre sage-femme.
           </p>
           <h3 className="settings-subheading">Seuil</h3>
           <div className="settings-field-grid">
@@ -188,7 +206,9 @@ export function SettingsView() {
                 checked={formData.preAlertEnabled}
                 onChange={handleChange}
               />
-              <span>Pré-alerte si le rythme se resserre (avant le seuil complet)</span>
+              <span>
+                Pré-alerte si le rythme se resserre (avant le seuil complet)
+              </span>
             </label>
             <div className="field row settings-notify-row">
               <button
@@ -235,7 +255,11 @@ export function SettingsView() {
                   Annuler le report
                 </button>
               </div>
-              <p className="snooze-status" id="snooze-status" data-testid="snooze-status">
+              <p
+                className="snooze-status"
+                id="snooze-status"
+                data-testid="snooze-status"
+              >
                 {saveStatus}
               </p>
             </div>
@@ -253,8 +277,8 @@ export function SettingsView() {
             Maternité
           </h2>
           <p className="settings-intro settings-intro--tight">
-            Utilisés sur la page dédiée « Maternité » et sur le bandeau d'appel rapide en bas de
-            l'écran lorsque le numéro est renseigné.
+            Utilisés sur la page dédiée « Maternité » et sur le bandeau d'appel
+            rapide en bas de l'écran lorsque le numéro est renseigné.
           </p>
           <label className="field field--wide">
             <span>Libellé de la maternité</span>
@@ -301,7 +325,12 @@ export function SettingsView() {
         </section>
 
         {/* Section Statistiques */}
-        <section className="card settings-card" id="settings-section-stats" aria-labelledby="stats-heading" data-testid="settings-section-stats">
+        <section
+          className="card settings-card"
+          id="settings-section-stats"
+          aria-labelledby="stats-heading"
+          data-testid="settings-section-stats"
+        >
           <h2 id="stats-heading" className="section-title">
             Statistiques et affichage
           </h2>
@@ -335,7 +364,12 @@ export function SettingsView() {
         </section>
 
         {/* Section Confort */}
-        <section className="card settings-card" id="settings-section-confort" aria-labelledby="comfort-heading" data-testid="settings-section-comfort">
+        <section
+          className="card settings-card"
+          id="settings-section-confort"
+          aria-labelledby="comfort-heading"
+          data-testid="settings-section-comfort"
+        >
           <h2 id="comfort-heading" className="section-title">
             Confort et saisie
           </h2>
@@ -384,17 +418,25 @@ export function SettingsView() {
               checked={formData.voiceCommandsEnabled}
               onChange={handleChange}
             />
-            <span>Afficher le bouton de commande vocale sur l'accueil (expérimental)</span>
+            <span>
+              Afficher le bouton de commande vocale sur l'accueil (expérimental)
+            </span>
           </label>
         </section>
 
         {/* Section Modules */}
-        <section className="card settings-card" id="settings-section-modules" aria-labelledby="features-heading" data-testid="settings-section-modules">
+        <section
+          className="card settings-card"
+          id="settings-section-modules"
+          aria-labelledby="features-heading"
+          data-testid="settings-section-modules"
+        >
           <h2 id="features-heading" className="section-title">
             Options du menu
           </h2>
           <p className="settings-intro settings-intro--tight">
-            Masquez ce que vous n'utilisez pas : les entrées disparaissent du menu latéral.
+            Masquez ce que vous n'utilisez pas : les entrées disparaissent du
+            menu latéral.
           </p>
           <label className="field field-check">
             <input
@@ -405,7 +447,9 @@ export function SettingsView() {
               checked={formData.moduleVoiceCommands}
               onChange={handleChange}
             />
-            <span>Module commande vocale (réglages dans « Confort et saisie »)</span>
+            <span>
+              Module commande vocale (réglages dans « Confort et saisie »)
+            </span>
           </label>
           <label className="field field-check">
             <input
@@ -422,17 +466,34 @@ export function SettingsView() {
       </form>
 
       {saveStatus && (
-        <p className="settings-save-feedback" role="status" aria-live="polite" data-testid="settings-save-feedback">
+        <p
+          className="settings-save-feedback"
+          role="status"
+          aria-live="polite"
+          data-testid="settings-save-feedback"
+        >
           {saveStatus}
         </p>
       )}
 
-      <div className="settings-sticky-actions" aria-label="Enregistrer ou quitter">
+      <div
+        className="settings-sticky-actions"
+        aria-label="Enregistrer ou quitter"
+      >
         <div className="settings-sticky-row">
-          <button type="submit" form="form-settings" className="btn btn-primary settings-save-btn" data-testid="settings-save-btn">
+          <button
+            type="submit"
+            form="form-settings"
+            className="btn btn-primary settings-save-btn"
+            data-testid="settings-save-btn"
+          >
             Enregistrer
           </button>
-          <Link to="/" className="settings-back-inline mobile-home-link" data-testid="settings-back-link">
+          <Link
+            to="/"
+            className="settings-back-inline mobile-home-link"
+            data-testid="settings-back-link"
+          >
             Accueil
           </Link>
         </div>

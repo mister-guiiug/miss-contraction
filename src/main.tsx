@@ -1,3 +1,4 @@
+import './tailwind.css';
 import './styles.css';
 import './enhanced-styles.css';
 import './enhanced-ui.css';

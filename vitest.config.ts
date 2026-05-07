@@ -1,8 +1,8 @@
 import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+import { baseTestOptions } from '@mister-guiiug/dev-wpa-config/vitest-base';
 
 export default defineConfig({
-  test: {
-    environment: 'jsdom',
-    include: ['src/**/*.test.ts'],
-  },
+  plugins: [react()],
+  test: baseTestOptions,
 });

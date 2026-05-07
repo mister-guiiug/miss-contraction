@@ -16,7 +16,12 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
       id: 'waters',
       label: 'Rupture des eaux',
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
           <path d="M12 2.69V12" />
         </svg>
@@ -26,7 +31,12 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
       id: 'shower',
       label: 'Douche chaude',
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
           <path d="M12 12v9" />
           <path d="M8 17v4" />
@@ -38,7 +48,12 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
       id: 'ball',
       label: 'Ballon de gymnastique',
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <circle cx="12" cy="12" r="10" />
           <path d="M12 2a10 10 0 0 1 10 10" />
           <path d="M12 22a10 10 0 0 0-10-10" />
@@ -50,7 +65,12 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
       id: 'medication',
       label: 'Médicament pris',
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <rect x="4" y="4" width="16" height="16" rx="2" />
           <path d="M9 9h6" />
           <path d="M9 12h6" />
@@ -64,7 +84,12 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
       id: 'rest',
       label: 'Pause / Repos',
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <circle cx="12" cy="12" r="10" />
           <path d="M10 15V9" />
           <path d="M14 15V9" />
@@ -89,7 +114,7 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
 
   return (
     <div className="quick-notes">
-      {predefinedNotes.map((note) => (
+      {predefinedNotes.map(note => (
         <button
           key={note.id}
           type="button"
@@ -102,11 +127,14 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
       ))}
 
       {customNoteOpen ? (
-        <div className="note-tag note-tag--custom" style={{ padding: '0.35rem 0.5rem' }}>
+        <div
+          className="note-tag note-tag--custom"
+          style={{ padding: '0.35rem 0.5rem' }}
+        >
           <input
             type="text"
             value={customNote}
-            onChange={(e) => setCustomNote(e.target.value)}
+            onChange={e => setCustomNote(e.target.value)}
             placeholder="Note personnelle..."
             className="note-custom-input"
             style={{
@@ -119,7 +147,7 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
               color: 'inherit',
             }}
             autoFocus
-            onKeyDown={(e) => {
+            onKeyDown={e => {
               if (e.key === 'Enter') {
                 handleCustomSubmit();
               } else if (e.key === 'Escape') {
@@ -140,7 +168,14 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
               display: 'flex',
             }}
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              width="16"
+              height="16"
+            >
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </button>
@@ -151,7 +186,12 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
           className="note-tag note-tag--custom"
           onClick={() => setCustomNoteOpen(true)}
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>

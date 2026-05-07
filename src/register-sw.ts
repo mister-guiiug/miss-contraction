@@ -30,8 +30,8 @@ export function registerServiceWorker(): void {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .getRegistrations()
-        .then((registrations) => {
-          registrations.forEach((registration) => {
+        .then(registrations => {
+          registrations.forEach(registration => {
             registration.unregister();
           });
         })

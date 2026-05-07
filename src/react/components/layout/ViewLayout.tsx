@@ -25,7 +25,9 @@ export function ViewLayout({
   id,
   dataTestId,
 }: ViewLayoutProps) {
-  const rootClassName = ['view', 'view-layout', className].filter(Boolean).join(' ');
+  const rootClassName = ['view', 'view-layout', className]
+    .filter(Boolean)
+    .join(' ');
   const headerClasses = ['view-layout__header', headerClassName]
     .filter(Boolean)
     .join(' ');
@@ -38,7 +40,9 @@ export function ViewLayout({
       {(title || lead) && (
         <header className={headerClasses}>
           {title ? <h2 className="view-layout__title">{title}</h2> : null}
-          {lead ? <div className="subtitle view-layout__lead">{lead}</div> : null}
+          {lead ? (
+            <div className="subtitle view-layout__lead">{lead}</div>
+          ) : null}
         </header>
       )}
 

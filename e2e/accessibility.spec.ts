@@ -1,7 +1,7 @@
 /**
  * Tests E2E - Accessibilité avec axe-core
  * Scans automatiques et assertions d'accessibilité WCAG 2.1
- * 
+ *
  * Tags:
  * @a11y - Tests d'accessibilité
  * @wcag - Tests de conformité WCAG
@@ -38,7 +38,7 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
   test('@a11y @wcag SettingsView - pas de violations', async ({ page }) => {
     await page.goto(ROUTES.SETTINGS);
     await injectAxe(page);
-    
+
     try {
       await checkA11y(page);
     } catch (e) {
@@ -51,11 +51,17 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
   test('@a11y @wcag TableView - pas de violations', async ({ page }) => {
     // Créer quelques contractions d'abord
     await page.goto(ROUTES.HOME);
-    const startBtn = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+    const startBtn = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
     for (let i = 0; i < 2; i++) {
       await startBtn.click();
       await page.waitForTimeout(200);
-      const stopBtn = page.locator('button').filter({ hasText: /Fin|Stop/ }).first();
+      const stopBtn = page
+        .locator('button')
+        .filter({ hasText: /Fin|Stop/ })
+        .first();
       await stopBtn.click();
       await page.waitForTimeout(300);
     }
@@ -98,7 +104,9 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
     }
   });
 
-  test('@a11y navigation clavier - tous les boutons accessibles au clavier', async ({ page }) => {
+  test('@a11y navigation clavier - tous les boutons accessibles au clavier', async ({
+    page,
+  }) => {
     await page.goto(ROUTES.HOME);
 
     const buttons = await page.locator('button').all();
@@ -108,7 +116,7 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
       // Vérifier que le bouton a un tabindex ou est naturellement focusable
       const tabindex = await btn.getAttribute('tabindex');
       const isButton = await btn.evaluate(el => el.tagName === 'BUTTON');
-      
+
       if (isButton || (tabindex && parseInt(tabindex) >= 0)) {
         focusableCount++;
       }
@@ -143,7 +151,9 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
     expect(labeledCount / inputs.length).toBeGreaterThan(0.5);
   });
 
-  test('@a11y structure - headings hiérarchiques correctes', async ({ page }) => {
+  test('@a11y structure - headings hiérarchiques correctes', async ({
+    page,
+  }) => {
     await page.goto(ROUTES.HOME);
 
     const headings = await page.locator('h1, h2, h3, h4, h5, h6').all();
@@ -167,9 +177,9 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
 
     // Vérifier que la page n'a pas de "visibility: hidden" sur du contenu important
     const hiddenElements = await page.locator(':visible').evaluate(() => {
-      return Array.from(document.querySelectorAll('*'))
-        .filter(el => getComputedStyle(el).visibility === 'hidden')
-        .length;
+      return Array.from(document.querySelectorAll('*')).filter(
+        el => getComputedStyle(el).visibility === 'hidden'
+      ).length;
     });
 
     // Aucun élément visible ne doit être marqué comme hidden
@@ -199,7 +209,9 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
     }
   });
 
-  test('@a11y focus visible - gestion du focus au clavier', async ({ page }) => {
+  test('@a11y focus visible - gestion du focus au clavier', async ({
+    page,
+  }) => {
     await page.goto(ROUTES.HOME);
 
     // Simuler la navigation au clavier
@@ -212,10 +224,14 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
 
     // Un élément doit être en focus
     expect(focusedElement).toBeTruthy();
-    expect(['BUTTON', 'A', 'INPUT', 'TEXTAREA', 'SELECT']).toContain(focusedElement);
+    expect(['BUTTON', 'A', 'INPUT', 'TEXTAREA', 'SELECT']).toContain(
+      focusedElement
+    );
   });
 
-  test('@a11y aria-live regions - pour les mises à jour dynamiques', async ({ page }) => {
+  test('@a11y aria-live regions - pour les mises à jour dynamiques', async ({
+    page,
+  }) => {
     await page.goto(ROUTES.HOME);
 
     const ariaLiveRegions = await page.locator('[aria-live]').count();
@@ -224,12 +240,16 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
     expect(ariaLiveRegions).toBeGreaterThanOrEqual(0);
   });
 
-  test('@a11y couleur non unique - info pas basée sur couleur seule', async ({ page }) => {
+  test('@a11y couleur non unique - info pas basée sur couleur seule', async ({
+    page,
+  }) => {
     await page.goto(ROUTES.HOME);
 
     // Vérifier que les badges/alertes ont du texte, pas juste de la couleur
-    const badgeTitles = await page.locator('[data-testid="threshold-badge"]').allTextContents();
-    
+    const badgeTitles = await page
+      .locator('[data-testid="threshold-badge"]')
+      .allTextContents();
+
     // Le badge doit avoir du texte, pas juste une couleur
     expect(badgeTitles.length).toBeGreaterThan(0);
     expect(badgeTitles[0]?.trim().length).toBeGreaterThan(0);
@@ -239,7 +259,7 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
     await page.goto(ROUTES.HOME);
 
     const lang = await page.locator('html').getAttribute('lang');
-    
+
     // La langue doit être définie
     expect(lang).toBeTruthy();
     expect(lang).toMatch(/^[a-z]{2}(-[A-Z]{2})?$/);
@@ -248,8 +268,10 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
   test('@a11y viewport - meta viewport configuré', async ({ page }) => {
     await page.goto(ROUTES.HOME);
 
-    const viewport = await page.locator('meta[name="viewport"]').getAttribute('content');
-    
+    const viewport = await page
+      .locator('meta[name="viewport"]')
+      .getAttribute('content');
+
     expect(viewport).toContain('width=device-width');
     expect(viewport).toContain('initial-scale=1');
   });

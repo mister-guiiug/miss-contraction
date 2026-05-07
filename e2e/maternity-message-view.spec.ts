@@ -12,29 +12,43 @@ test.describe('MaternityView - Maternité', () => {
 
     // Configurer les infos de maternité d'abord
     await page.goto('/parametres');
-    
-    const nameInput = page.locator('input[name="maternityLabel"], label:has-text("Libellé") ~ input').first();
+
+    const nameInput = page
+      .locator(
+        'input[name="maternityLabel"], label:has-text("Libellé") ~ input'
+      )
+      .first();
     if (await nameInput.isVisible({ timeout: 500 }).catch(() => false)) {
       await nameInput.fill('Maternité Sainte-Marie');
     }
 
-    const phoneInput = page.locator('input[name="maternityPhone"], input[type="tel"]').first();
+    const phoneInput = page
+      .locator('input[name="maternityPhone"], input[type="tel"]')
+      .first();
     if (await phoneInput.isVisible({ timeout: 500 }).catch(() => false)) {
       await phoneInput.fill('01 23 45 67 89');
     }
 
-    const addressInput = page.locator('input[name="maternityAddress"], label:has-text("Adresse") ~ input').first();
+    const addressInput = page
+      .locator(
+        'input[name="maternityAddress"], label:has-text("Adresse") ~ input'
+      )
+      .first();
     if (await addressInput.isVisible({ timeout: 500 }).catch(() => false)) {
       await addressInput.fill('123 Rue de la Santé, 75000 Paris');
     }
 
-    const submitButton = page.locator('button:has-text("Enregistrer"), [type="submit"]');
+    const submitButton = page.locator(
+      'button:has-text("Enregistrer"), [type="submit"]'
+    );
     if (await submitButton.isVisible({ timeout: 500 }).catch(() => false)) {
       await submitButton.click();
     }
 
     // Naviguer vers la maternité
-    const maternityNav = page.locator('a[href="/maternite"], a[href*="maternity"]').first();
+    const maternityNav = page
+      .locator('a[href="/maternite"], a[href*="maternity"]')
+      .first();
     if (await maternityNav.isVisible({ timeout: 1000 }).catch(() => false)) {
       await maternityNav.click();
     } else {
@@ -50,20 +64,24 @@ test.describe('MaternityView - Maternité', () => {
   });
 
   test('affiche le nom de la maternité', async ({ page }) => {
-    const heading = page.locator('h2, h3').filter({ hasText: /Maternité|Contacter/ });
+    const heading = page
+      .locator('h2, h3')
+      .filter({ hasText: /Maternité|Contacter/ });
     if (await heading.isVisible({ timeout: 500 }).catch(() => false)) {
       await expect(heading).toBeVisible();
     }
   });
 
   test('affiche le numéro de téléphone', async ({ page }) => {
-    const phone = page.locator('a[href^="tel:"], text=/\\d{2}\\s\\d{2}\\s\\d{2}\\s\\d{2}\\s\\d{2}/');
+    const phone = page.locator(
+      'a[href^="tel:"], text=/\\d{2}\\s\\d{2}\\s\\d{2}\\s\\d{2}\\s\\d{2}/'
+    );
     if (await phone.isVisible({ timeout: 500 }).catch(() => false)) {
       await expect(phone).toBeVisible();
     }
   });
 
-  test('affiche l\'adresse', async ({ page }) => {
+  test("affiche l'adresse", async ({ page }) => {
     const address = page.locator('text=/Rue|rue|avenue|Avenue/');
     if (await address.isVisible({ timeout: 500 }).catch(() => false)) {
       await expect(address).toBeVisible();
@@ -86,13 +104,21 @@ test.describe('MaternityView - Maternité', () => {
     }
   });
 
-  test('consignes d\'admission affichées', async ({ page }) => {
+  test("consignes d'admission affichées", async ({ page }) => {
     // Ajouter les consignes d'abord
     await page.goto('/parametres');
-    const instructionsInput = page.locator('textarea[name="maternityAdmissionInstructions"]').first();
-    if (await instructionsInput.isVisible({ timeout: 500 }).catch(() => false)) {
-      await instructionsInput.fill('Apporter pièce d\'identité\nArriver avec dossier');
-      const submitButton = page.locator('button:has-text("Enregistrer"), [type="submit"]');
+    const instructionsInput = page
+      .locator('textarea[name="maternityAdmissionInstructions"]')
+      .first();
+    if (
+      await instructionsInput.isVisible({ timeout: 500 }).catch(() => false)
+    ) {
+      await instructionsInput.fill(
+        "Apporter pièce d'identité\nArriver avec dossier"
+      );
+      const submitButton = page.locator(
+        'button:has-text("Enregistrer"), [type="submit"]'
+      );
       if (await submitButton.isVisible({ timeout: 500 }).catch(() => false)) {
         await submitButton.click();
       }
@@ -125,7 +151,9 @@ test.describe('MessageView - Message SMS/WhatsApp', () => {
     await page.evaluate(() => localStorage.clear());
 
     // Naviguer vers le message
-    const messageNav = page.locator('a[href="/message"], a[href*="sms"]').first();
+    const messageNav = page
+      .locator('a[href="/message"], a[href*="sms"]')
+      .first();
     if (await messageNav.isVisible({ timeout: 1000 }).catch(() => false)) {
       await messageNav.click();
     } else {
@@ -158,7 +186,10 @@ test.describe('MessageView - Message SMS/WhatsApp', () => {
   });
 
   test('message - copier le texte', async ({ page }) => {
-    const copyButton = page.locator('button').filter({ hasText: /Copier|Copy|Clipboard/ }).first();
+    const copyButton = page
+      .locator('button')
+      .filter({ hasText: /Copier|Copy|Clipboard/ })
+      .first();
     if (await copyButton.isVisible({ timeout: 500 }).catch(() => false)) {
       await copyButton.click();
       // Vérifier qu'une confirmation s'affiche
@@ -170,7 +201,10 @@ test.describe('MessageView - Message SMS/WhatsApp', () => {
   });
 
   test('message - partager via WhatsApp', async ({ page }) => {
-    const whatsappButton = page.locator('a[href*="whatsapp"], button').filter({ hasText: /WhatsApp|Whatsapp/ }).first();
+    const whatsappButton = page
+      .locator('a[href*="whatsapp"], button')
+      .filter({ hasText: /WhatsApp|Whatsapp/ })
+      .first();
     if (await whatsappButton.isVisible({ timeout: 500 }).catch(() => false)) {
       const href = await whatsappButton.getAttribute('href');
       if (href) {
@@ -180,7 +214,10 @@ test.describe('MessageView - Message SMS/WhatsApp', () => {
   });
 
   test('message - partager via SMS', async ({ page }) => {
-    const smsButton = page.locator('a[href*="sms"], button').filter({ hasText: /SMS|Text/ }).first();
+    const smsButton = page
+      .locator('a[href*="sms"], button')
+      .filter({ hasText: /SMS|Text/ })
+      .first();
     if (await smsButton.isVisible({ timeout: 500 }).catch(() => false)) {
       const href = await smsButton.getAttribute('href');
       if (href) {

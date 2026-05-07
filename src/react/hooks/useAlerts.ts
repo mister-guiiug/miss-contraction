@@ -1,6 +1,9 @@
 import { useMemo, useState, useCallback } from 'react';
 import type { AppSettings, ContractionRecord } from '../../storage';
-import { computeThresholdBadge, type ThresholdBadgeKind } from '../../statsHelpers';
+import {
+  computeThresholdBadge,
+  type ThresholdBadgeKind,
+} from '../../statsHelpers';
 import { loadSnoozeUntil } from '../../storage';
 
 interface AlertState {
@@ -32,7 +35,12 @@ export function useAlerts(
       !preAlertBannerDismissed &&
       !isSnoozed
     );
-  }, [settings.preAlertEnabled, thresholdKind, preAlertBannerDismissed, isSnoozed]);
+  }, [
+    settings.preAlertEnabled,
+    thresholdKind,
+    preAlertBannerDismissed,
+    isSnoozed,
+  ]);
 
   const dismissPreAlertBanner = useCallback(() => {
     setPreAlertBannerDismissed(true);
@@ -51,5 +59,7 @@ export function shouldShowPreAlertBanner(
   thresholdKind: ThresholdBadgeKind,
   isSnoozed: boolean
 ): boolean {
-  return settings.preAlertEnabled && thresholdKind === 'approaching' && !isSnoozed;
+  return (
+    settings.preAlertEnabled && thresholdKind === 'approaching' && !isSnoozed
+  );
 }

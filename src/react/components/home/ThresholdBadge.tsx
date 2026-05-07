@@ -17,11 +17,12 @@ export function ThresholdBadge() {
 
     // Filtrer selon la fenêtre de statistiques
     const now = Date.now();
-    const windowMs = settings.statsWindowMinutes === 'all'
-      ? Infinity
-      : Number(settings.statsWindowMinutes) * 60 * 1000;
+    const windowMs =
+      settings.statsWindowMinutes === 'all'
+        ? Infinity
+        : Number(settings.statsWindowMinutes) * 60 * 1000;
 
-    const filtered = records.filter((r) => now - r.start <= windowMs);
+    const filtered = records.filter(r => now - r.start <= windowMs);
 
     // Vérifier les contractions consécutives sous le seuil
     let consecutiveCount = 0;

@@ -1,12 +1,19 @@
 import { useMemo } from 'react';
-import type { ContractionRecord, AppSettings, StatsWindowKey } from '../../storage';
+import type {
+  ContractionRecord,
+  AppSettings,
+  StatsWindowKey,
+} from '../../storage';
 import {
   filterRecordsByStatsWindow,
   getRecentIntervalsMs,
   computeThresholdBadge,
   type ThresholdBadgeKind,
 } from '../../statsHelpers';
-import { formatStatsClock, formatContractionsPerHour } from '../../utils/formatStats';
+import {
+  formatStatsClock,
+  formatContractionsPerHour,
+} from '../../utils/formatStats';
 import { formatDuration } from '../../utils/formatDuration';
 
 interface StatsData {
@@ -50,7 +57,7 @@ export function useStats(
     windowLabel,
   } = useMemo(() => {
     const now = Date.now();
-    const allValid = records.filter((r) => r.end > r.start);
+    const allValid = records.filter(r => r.end > r.start);
     const sorted = [...allValid].sort((a, b) => a.start - b.start);
     const done = filterRecordsByStatsWindow(
       sorted,
@@ -85,7 +92,8 @@ export function useStats(
           : '—';
 
       avgDuration = meanDur != null ? formatStatsClock(meanDur) : '—';
-      avgFrequency = meanInterval != null ? formatStatsClock(meanInterval) : '—';
+      avgFrequency =
+        meanInterval != null ? formatStatsClock(meanInterval) : '—';
 
       lastHourCount = countContractionsStartingInLastHour(allValid, now);
       perHourFromMean =
@@ -122,18 +130,22 @@ export function useStats(
     };
   }, [records, settings]);
 
-  return { data: {
-    qtyPerHour,
-    avgDuration,
-    avgFrequency,
-    lastHourCount,
-    perHourFromMean,
-    lastInterval,
-    lastDuration,
-    thresholdKind,
-    intervals,
-    recordsForChart,
-  }, windowLabel, isEmpty };
+  return {
+    data: {
+      qtyPerHour,
+      avgDuration,
+      avgFrequency,
+      lastHourCount,
+      perHourFromMean,
+      lastInterval,
+      lastDuration,
+      thresholdKind,
+      intervals,
+      recordsForChart,
+    },
+    windowLabel,
+    isEmpty,
+  };
 }
 
 function meanStartIntervalMs(done: ContractionRecord[]): number | null {
@@ -159,7 +171,7 @@ function countContractionsStartingInLastHour(
   nowMs: number
 ): number {
   const t0 = nowMs - 60 * 60 * 1000;
-  return done.filter((r) => r.start >= t0).length;
+  return done.filter(r => r.start >= t0).length;
 }
 
 function statsWindowLabel(key: StatsWindowKey): string {

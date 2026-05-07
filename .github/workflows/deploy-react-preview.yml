@@ -1,3 +1,5 @@
+# Preview React déployée sur GitHub Pages depuis la branche react-migration.
+# Utilise la composite action setup-pwa pour le boilerplate.
 name: Déployer preview React sur GitHub Pages
 
 on:
@@ -9,6 +11,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  packages: read
 
 concurrency:
   group: pages-react-preview
@@ -20,12 +23,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - uses: mister-guiiug/dev-wpa-config/.github/actions/setup-pwa@v1
         with:
-          node-version: '22'
-          cache: npm
-
-      - run: npm ci
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - run: npm run build
         env:

@@ -2,10 +2,10 @@
 
 ## 📱 Environnements
 
-| Type | URL | Branche | Platform |
-|------|-----|---------|----------|
-| **Production** | `https://mister-guiiug.github.io/miss-contraction/` | `main` | GitHub Pages |
-| **Développement React** | `https://miss-contraction-dev.netlify.app` | `react-migration` | Netlify |
+| Type                    | URL                                                 | Branche           | Platform     |
+| ----------------------- | --------------------------------------------------- | ----------------- | ------------ |
+| **Production**          | `https://mister-guiiug.github.io/miss-contraction/` | `main`            | GitHub Pages |
+| **Développement React** | `https://miss-contraction-dev.netlify.app`          | `react-migration` | Netlify      |
 
 ## 🚀 Configuration Netlify
 
@@ -28,6 +28,7 @@ REACT_PREVIEW = true
 ## 🔄 Déploiement automatique
 
 Chaque push sur la branche `react-migration` déclenche automatiquement un déploiement sur :
+
 - **https://miss-contraction-dev.netlify.app**
 
 ## 🛠️ Commandes utiles
@@ -46,16 +47,18 @@ netlify deploy
 
 ## 🧪 Tester la preview React
 
+L'application est désormais **entièrement React 19 + react-router-dom 7 + Zustand 5 + Tailwind 4** sur les deux environnements (main / react-migration). Netlify reste utilisé comme **environnement de pré-production** pour valider les évolutions avant publication sur GitHub Pages.
+
 1. Allez sur **https://miss-contraction-dev.netlify.app**
-2. Naviguez vers **/#/parametres** pour voir la vue Settings en React
-3. Les autres vues restent en vanilla (Home, Table, Maternity, etc.)
+2. Vérifiez les routes : `/#/`, `/#/maternite`, `/#/parametres`, `/#/historique`, `/#/sage-femme`, `/#/message`
+3. Testez les notifications, alertes, export JSON et le mode hors-ligne (PWA)
 
-## 📊 Comparaison Vanilla vs React
+## 📊 Différences entre les environnements
 
-| Fonctionnalité | Vanilla (GitHub Pages) | React (Netlify) |
-|----------------|------------------------|-----------------|
-| Vue Settings | ✅ Template strings | ✅ Composants React |
-| État global | localStorage | Zustand + localStorage |
-| Routing | Hash routing maison | React Router + Hash |
-| CSS | Identique | Identique |
-| PWA | ✅ Oui | ✅ Oui |
+| Critère                     | Production (GitHub Pages, branche `main`) | Dev (Netlify, branche `react-migration`)    |
+| --------------------------- | ----------------------------------------- | ------------------------------------------- |
+| Base path                   | `/miss-contraction/`                      | `/` (racine du sous-domaine)                |
+| Build script                | `npm run build`                           | `npm run build:netlify` (`REACT_PREVIEW=1`) |
+| Manifest PWA `id` / `scope` | `/miss-contraction/`                      | `/`                                         |
+| Stack applicative           | identique                                 | identique                                   |
+| Backend                     | aucun (localStorage)                      | aucun (localStorage)                        |

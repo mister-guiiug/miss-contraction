@@ -8,11 +8,17 @@ import { IntensityPicker } from './IntensityPicker';
  * Timer principal amélioré avec sélecteur d'intensité intégré
  */
 export function TimerSectionWithIntensity() {
-  const { activeStart, settings, startContraction, endContraction } = useAppStore();
+  const { activeStart, settings, startContraction, endContraction } =
+    useAppStore();
   const { formatted, progress, isRunning } = useContractionTimer(activeStart);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const [ripplePosition, setRipplePosition] = useState<{ x: number; y: number } | null>(null);
-  const [currentIntensity, setCurrentIntensity] = useState<number | undefined>(undefined);
+  const [ripplePosition, setRipplePosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+  const [currentIntensity, setCurrentIntensity] = useState<number | undefined>(
+    undefined
+  );
 
   useWakeLock(settings.keepAwakeDuringContraction, isRunning);
 
@@ -37,49 +43,72 @@ export function TimerSectionWithIntensity() {
     }
   }, [isRunning, currentIntensity]);
 
-  const handleToggle = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    // Créer l'effet ripple
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    setRipplePosition({ x, y });
+  const handleToggle = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      // Créer l'effet ripple
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      setRipplePosition({ x, y });
 
-    // Retirer le ripple après l'animation
-    setTimeout(() => setRipplePosition(null), 600);
+      // Retirer le ripple après l'animation
+      setTimeout(() => setRipplePosition(null), 600);
 
-    if (isRunning) {
-      // Enregistrer l'intensité avant de terminer
-      vibrate([35, 50, 35], settings.vibrationEnabled);
-      endContraction(undefined, currentIntensity);
-    } else {
-      vibrate(40, settings.vibrationEnabled);
-      startContraction();
-    }
-  }, [isRunning, settings.vibrationEnabled, startContraction, endContraction, currentIntensity]);
+      if (isRunning) {
+        // Enregistrer l'intensité avant de terminer
+        vibrate([35, 50, 35], settings.vibrationEnabled);
+        endContraction(undefined, currentIntensity);
+      } else {
+        vibrate(40, settings.vibrationEnabled);
+        startContraction();
+      }
+    },
+    [
+      isRunning,
+      settings.vibrationEnabled,
+      startContraction,
+      endContraction,
+      currentIntensity,
+    ]
+  );
 
-  const handleIntensityChange = useCallback((intensity: number) => {
-    setCurrentIntensity(intensity);
-    // Feedback haptique léger au changement d'intensité
-    if (settings.vibrationEnabled) {
-      vibrate(20, true);
-    }
-  }, [settings.vibrationEnabled]);
+  const handleIntensityChange = useCallback(
+    (intensity: number) => {
+      setCurrentIntensity(intensity);
+      // Feedback haptique léger au changement d'intensité
+      if (settings.vibrationEnabled) {
+        vibrate(20, true);
+      }
+    },
+    [settings.vibrationEnabled]
+  );
 
   const circumference = 2 * Math.PI * 90;
   const offset = circumference * (1 - progress);
 
   return (
-    <section className="card panel panel-cta" aria-labelledby="action-heading" data-testid="timer-section-with-intensity">
-      <h2 id="action-heading" className="cta-heading">Enregistrer une contraction</h2>
+    <section
+      className="card panel panel-cta"
+      aria-labelledby="action-heading"
+      data-testid="timer-section-with-intensity"
+    >
+      <h2 id="action-heading" className="cta-heading">
+        Enregistrer une contraction
+      </h2>
       <p className="cta-hint">
-        Touchez le gros bouton au <strong>début</strong> d'une contraction, puis à la <strong>fin</strong>.
+        Touchez le gros bouton au <strong>début</strong> d'une contraction, puis
+        à la <strong>fin</strong>.
       </p>
 
       {isRunning && (
         <div className="timer" id="timer-block" data-testid="timer-display">
           <p className="timer-label">Contraction en cours</p>
           <div className="timer-circle-container">
-            <svg className="timer-circle" viewBox="0 0 200 200" aria-hidden="true">
+            <svg
+              className="timer-circle"
+              viewBox="0 0 200 200"
+              aria-hidden="true"
+            >
               <circle className="timer-circle-bg" cx="100" cy="100" r="90" />
               <circle
                 className="timer-circle-progress"
@@ -93,12 +122,16 @@ export function TimerSectionWithIntensity() {
               />
             </svg>
             <div className="timer-pulse" />
-            <p className="timer-value" data-testid="timer-value">{formatted}</p>
+            <p className="timer-value" data-testid="timer-value">
+              {formatted}
+            </p>
           </div>
 
           {/* Sélecteur d'intensité pendant contraction */}
           <div className="timer-intensity-section">
-            <p className="timer-intensity-label">Intensité de cette contraction :</p>
+            <p className="timer-intensity-label">
+              Intensité de cette contraction :
+            </p>
             <div data-testid="intensity-selector">
               <IntensityPicker
                 value={currentIntensity}

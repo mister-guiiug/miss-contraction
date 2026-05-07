@@ -1,7 +1,7 @@
 /**
  * Tests E2E - HomeView (Refactorisé)
  * Utilisant Page Objects, helpers, tags @critical et assertions robustes
- * 
+ *
  * Tags:
  * @critical - Tests critiques pour le fonctionnement de base
  * @smoke - Tests rapides pour vérifier que rien n'est cassé
@@ -9,7 +9,12 @@
 
 import { test, expect } from '@playwright/test';
 import { HomePage } from '../pages/HomePage';
-import { setupTest, createMultipleContractions, expectNoJSErrors, waitForContractionInHistory } from '../helpers';
+import {
+  setupTest,
+  createMultipleContractions,
+  expectNoJSErrors,
+  waitForContractionInHistory,
+} from '../helpers';
 import { TIMEOUTS } from '../config';
 
 test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
@@ -21,11 +26,15 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
     await homePage.goto();
   });
 
-  test('@critical @smoke affiche les sections principales', async ({ page }) => {
+  test('@critical @smoke affiche les sections principales', async ({
+    page,
+  }) => {
     const errorHandler = expectNoJSErrors(page);
 
     // Vérifier que la vue est présente
-    await expect(page.locator('[data-testid="view-home"]')).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
+    await expect(page.locator('[data-testid="view-home"]')).toBeVisible({
+      timeout: TIMEOUTS.ELEMENT_READY,
+    });
 
     errorHandler.verify();
   });
@@ -33,7 +42,7 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
   test('@critical chronomètre - démarre une contraction', async ({ page }) => {
     const startBtn = await homePage.getStartButton();
     await expect(startBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
-    
+
     await homePage.startContraction();
 
     const stopBtn = await homePage.getStopButton();
@@ -61,7 +70,7 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
     const time1 = timerText;
     await page.waitForTimeout(500);
     const time2 = await homePage.getTimerDisplay();
-    
+
     // Vérifier que le temps a changé (ou au moins que c'est un format valide)
     expect(time1).toBeDefined();
     expect(time2).toBeDefined();
@@ -76,10 +85,14 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
     try {
       await homePage.selectIntensity(3);
       // Vérifier que le bouton est marqué comme actif
-      const activeBtn = page.locator('[data-testid="intensity-3"][aria-pressed="true"]');
-      await expect(activeBtn).toBeVisible({ timeout: TIMEOUTS.SHORT }).catch(() => {
-        // Pas d'aria-pressed, c'est ok
-      });
+      const activeBtn = page.locator(
+        '[data-testid="intensity-3"][aria-pressed="true"]'
+      );
+      await expect(activeBtn)
+        .toBeVisible({ timeout: TIMEOUTS.SHORT })
+        .catch(() => {
+          // Pas d'aria-pressed, c'est ok
+        });
     } catch {
       // Intensité optionnelle
     }
@@ -164,7 +177,9 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
     expect(newCount).toBeGreaterThan(initialCount);
   });
 
-  test('@smoke annulation (undo) - supprime la dernière contraction', async ({ page }) => {
+  test('@smoke annulation (undo) - supprime la dernière contraction', async ({
+    page,
+  }) => {
     await homePage.createContraction(500);
     const countBefore = await homePage.getHistoryEntries();
 
@@ -183,19 +198,21 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
 
   test('@critical responsive mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
-    
+
     const startBtn = await homePage.getStartButton();
     await expect(startBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
   });
 
   test('@critical responsive desktop', async ({ page }) => {
     await page.setViewportSize({ width: 1920, height: 1080 });
-    
+
     const startBtn = await homePage.getStartButton();
     await expect(startBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
   });
 
-  test('@critical persistance - contractions après rechargement', async ({ page }) => {
+  test('@critical persistance - contractions après rechargement', async ({
+    page,
+  }) => {
     await homePage.createContraction(500);
     const countBefore = await homePage.getHistoryEntries();
     expect(countBefore).toBeGreaterThan(0);
@@ -208,7 +225,7 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
     expect(countAfter).toBe(countBefore);
   });
 
-  test('@smoke pas d\'erreurs JavaScript', async ({ page }) => {
+  test("@smoke pas d'erreurs JavaScript", async ({ page }) => {
     const errorHandler = expectNoJSErrors(page);
 
     // Interagir avec plusieurs éléments

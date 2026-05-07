@@ -2,7 +2,7 @@
 
 **Date**: 29 avril 2026  
 **Base**: Infrastructure E2E 100% en place  
-**Objectif**: Franchir le niveau professionnel → production-grade avec monitoring  
+**Objectif**: Franchir le niveau professionnel → production-grade avec monitoring
 
 ---
 
@@ -11,7 +11,9 @@
 ### 🏆 TIER 1: Critical Impact (faire en priorité)
 
 #### 1️⃣ **CI/CD Pipeline Complet** ⏱️ 2h
+
 GitHub Actions workflow qui:
+
 - ✅ Exécute `test:e2e:critical` sur chaque PR
 - ✅ Exécute suite complète sur `main` branch
 - ✅ Publie rapports HTML dans GitHub Pages
@@ -21,6 +23,7 @@ GitHub Actions workflow qui:
 **Gain**: Détecte les régressions avant merge, historique visible
 
 **Fichiers à créer**:
+
 ```
 .github/workflows/
 ├── e2e-critical.yml (sur PR: ~30s)
@@ -31,7 +34,9 @@ GitHub Actions workflow qui:
 ---
 
 #### 2️⃣ **Tests d'Intégration localStorage** ⏱️ 1h
+
 Tests spécifiques pour la persistance:
+
 ```typescript
 describe('localStorage Integration @storage', () => {
   test('persist contractions after reload', async () => {
@@ -63,6 +68,7 @@ describe('localStorage Integration @storage', () => {
 ---
 
 #### 3️⃣ **Performance Tests** ⏱️ 1.5h
+
 Mesurer et tracker les Core Web Vitals:
 
 ```typescript
@@ -90,6 +96,7 @@ describe('Performance Metrics @performance', () => {
 ---
 
 #### 4️⃣ **Tests d'Erreur et Edge Cases** ⏱️ 2h
+
 Couvrir les scénarios problématiques:
 
 ```typescript
@@ -110,7 +117,7 @@ describe('Error Handling @errors', () => {
   test('handle missing localStorage', async () => {
     await page.evaluate(() => {
       Object.defineProperty(window, 'localStorage', {
-        value: { getItem: () => null }
+        value: { getItem: () => null },
       });
     });
     // Should use defaults, not crash
@@ -130,6 +137,7 @@ describe('Error Handling @errors', () => {
 ---
 
 #### 5️⃣ **E2E User Journeys Complets** ⏱️ 2h
+
 Scénarios réalistes end-to-end:
 
 ```typescript
@@ -160,6 +168,7 @@ describe('User Journey: From Symptoms to Maternity Call @journey', () => {
 ### 🎯 TIER 2: High Value (3-4 semaines)
 
 #### 6️⃣ **Visual Regression Avancé** ⏱️ 2h
+
 Améliorer les snapshots existants:
 
 ```typescript
@@ -167,8 +176,8 @@ Améliorer les snapshots existants:
 expect(page).toHaveScreenshot('home-empty.png', {
   maxDiffPixels: 100,
   mask: [
-    page.locator('[data-testid="timer-value"]'),  // Timer changes
-    page.locator('[data-testid="record-time"]'),  // Timestamps
+    page.locator('[data-testid="timer-value"]'), // Timer changes
+    page.locator('[data-testid="record-time"]'), // Timestamps
   ],
 });
 
@@ -190,6 +199,7 @@ for (const theme of ['light', 'dark', 'high-contrast', 'large-text']) {
 ---
 
 #### 7️⃣ **API Mocking et Stubbing** ⏱️ 1.5h
+
 Tester sans dépendre du réseau:
 
 ```typescript
@@ -202,16 +212,18 @@ page.evaluate(() => {
       this.title = title;
       this.options = options;
       // Trigger custom event for testing
-      window.dispatchEvent(new CustomEvent('notification-created', {
-        detail: { title, options }
-      }));
+      window.dispatchEvent(
+        new CustomEvent('notification-created', {
+          detail: { title, options },
+        })
+      );
     }
   };
 });
 
 // Mock Geolocation for Maps tests
 await page.evaluate(() => {
-  navigator.geolocation.getCurrentPosition = (success) => {
+  navigator.geolocation.getCurrentPosition = success => {
     success({ coords: { latitude: 48.8566, longitude: 2.3522 } });
   };
 });
@@ -222,6 +234,7 @@ await page.evaluate(() => {
 ---
 
 #### 8️⃣ **Load & Stress Testing** ⏱️ 2h
+
 Tester la stabilité sous charge:
 
 ```typescript
@@ -251,6 +264,7 @@ describe('Load Testing @load', () => {
 ---
 
 #### 9️⃣ **Mobile-Specific Tests** ⏱️ 1.5h
+
 Tests spécifiques mobiles:
 
 ```typescript
@@ -260,7 +274,7 @@ describe('Mobile Experience @mobile', () => {
   test('vibration feedback works', async () => {
     const vibrated = await page.evaluate(() => {
       let called = false;
-      navigator.vibrate = () => (called = true, true);
+      navigator.vibrate = () => ((called = true), true);
       // Trigger contraction start
       return called;
     });
@@ -270,7 +284,7 @@ describe('Mobile Experience @mobile', () => {
   test('screen stays on during contraction', async () => {
     const wakeLocked = await page.evaluate(() => {
       let locked = false;
-      navigator.wakeLock.request = async () => (locked = true, {});
+      navigator.wakeLock.request = async () => ((locked = true), {});
       return locked;
     });
     expect(wakeLocked).toBe(true);
@@ -291,6 +305,7 @@ describe('Mobile Experience @mobile', () => {
 ---
 
 #### 🔟 **Snapshot Testing pour Logic** ⏱️ 1h
+
 Tester la logique métier avec snapshots:
 
 ```typescript
@@ -319,21 +334,22 @@ describe('Business Logic Snapshots @snapshot', () => {
 ### 💡 TIER 3: Polish & Optimization
 
 #### 1️⃣1️⃣ **Test Reporting Dashboard** ⏱️ 3h
+
 Créer un dashboard pour tracker les résultats:
 
 ```html
 <!-- e2e/dashboard.html -->
 <div class="test-dashboard">
   <div class="metrics">
-    <stat label="Passage Rate" value="98.5%" trend="↑"/>
-    <stat label="Avg Duration" value="32s" trend="→"/>
-    <stat label="Flaky Tests" value="0" trend="↓"/>
+    <stat label="Passage Rate" value="98.5%" trend="↑" />
+    <stat label="Avg Duration" value="32s" trend="→" />
+    <stat label="Flaky Tests" value="0" trend="↓" />
   </div>
-  
+
   <div class="timeline">
     <!-- Graphique des succès/échecs par jour -->
   </div>
-  
+
   <div class="coverage">
     <!-- Matrice couverture par feature -->
   </div>
@@ -345,6 +361,7 @@ Créer un dashboard pour tracker les résultats:
 ---
 
 #### 1️⃣2️⃣ **Parallel Execution** ⏱️ 1h
+
 Accélérer l'exécution:
 
 ```typescript
@@ -364,6 +381,7 @@ fullyParallel: {
 ---
 
 #### 1️⃣3️⃣ **Flakiness Detection** ⏱️ 1.5h
+
 Identifier les tests instables:
 
 ```typescript
@@ -382,6 +400,7 @@ for (let i = 0; i < 3; i++) {
 ---
 
 #### 1️⃣4️⃣ **Custom Reporters** ⏱️ 2h
+
 Reporters spécialisés:
 
 ```typescript
@@ -395,10 +414,7 @@ class SlackReporter implements Reporter {
       postToSlack({
         channel: '#testing',
         text: `❌ Test failed: ${test.title}`,
-        attachments: [
-          { image_url: result.screenshot },
-          { text: result.error }
-        ]
+        attachments: [{ image_url: result.screenshot }, { text: result.error }],
       });
     }
   }
@@ -410,6 +426,7 @@ class SlackReporter implements Reporter {
 ---
 
 #### 1️⃣5️⃣ **Test Documentation Auto-Generated** ⏱️ 1h
+
 Générer docs des tests depuis le code:
 
 ```typescript
@@ -440,6 +457,7 @@ test('user can start contraction', async () => {
 ### 🌟 TIER 4: Advanced (Nice to Have)
 
 #### 1️⃣6️⃣ **Contract Testing** ⏱️ 2h
+
 Tester les contrats entre frontend/backend (si API existe):
 
 ```typescript
@@ -447,14 +465,14 @@ describe('API Contracts @contract', () => {
   test('GET /api/notifications matches schema', async () => {
     const response = await fetch('/api/notifications');
     const data = await response.json();
-    
+
     expect(data).toMatchSchema({
       type: 'array',
       items: {
         id: 'string',
         title: 'string',
-        timestamp: 'number'
-      }
+        timestamp: 'number',
+      },
     });
   });
 });
@@ -465,6 +483,7 @@ describe('API Contracts @contract', () => {
 ---
 
 #### 1️⃣7️⃣ **Cross-Browser Compatibility Matrix** ⏱️ 1h
+
 Tester sur navigateurs réels:
 
 ```typescript
@@ -488,6 +507,7 @@ for (const cap of capabilities) {
 ---
 
 #### 1️⃣8️⃣ **Chaos Engineering** ⏱️ 2h
+
 Injecter des défaillances intentionnelles:
 
 ```typescript
@@ -514,6 +534,7 @@ describe('Resilience @chaos', () => {
 ### 📈 TIER 5: Monitoring en Production
 
 #### 1️⃣9️⃣ **Synthetic Monitoring** ⏱️ 3h
+
 Tests en production 24/7:
 
 ```typescript
@@ -522,21 +543,21 @@ Tests en production 24/7:
 
 test('production heartbeat', async () => {
   const start = Date.now();
-  
+
   await page.goto('https://miss-contraction.app');
   await page.click('[data-testid="toggle-contraction-btn"]');
   await page.waitForTimeout(1000);
-  
+
   const duration = Date.now() - start;
-  
+
   // Envoyer les métriques
   await metrics.record({
     test: 'production-heartbeat',
     duration,
     timestamp: new Date(),
-    status: 'pass'
+    status: 'pass',
   });
-  
+
   expect(duration).toBeLessThan(5000);
 });
 ```
@@ -546,6 +567,7 @@ test('production heartbeat', async () => {
 ---
 
 #### 2️⃣0️⃣ **Real User Monitoring (RUM)** ⏱️ 2h
+
 Tracker l'expérience réelle des utilisateurs:
 
 ```typescript
@@ -565,6 +587,7 @@ export function initRUM() {
 ## 🎯 Roadmap Recommandée
 
 ### Semaine 1 (TIER 1)
+
 ```
 Jour 1-2: CI/CD Pipeline (GitHub Actions)
 Jour 3: localStorage Integration Tests
@@ -573,6 +596,7 @@ Jour 5: Error Handling Tests + User Journeys
 ```
 
 ### Semaine 2-3 (TIER 2)
+
 ```
 Jour 1-2: Visual Regression Avancé
 Jour 3: API Mocking
@@ -581,6 +605,7 @@ Jour 5: Mobile-Specific Tests
 ```
 
 ### Semaine 4+ (TIER 3-5)
+
 ```
 Snapshot Testing, Dashboard, Flakiness Detection, etc.
 ```
@@ -589,13 +614,13 @@ Snapshot Testing, Dashboard, Flakiness Detection, etc.
 
 ## 💰 Effort Estimation
 
-| Tier | Impact | Effort | ROI | Timeline |
-|------|--------|--------|-----|----------|
-| 1 | 🔴 Critical | 8-9h | ⭐⭐⭐⭐⭐ | 1-2 jours |
-| 2 | 🟠 High | 10-12h | ⭐⭐⭐⭐ | 3-4 jours |
-| 3 | 🟡 Medium | 8-10h | ⭐⭐⭐ | 2-3 jours |
-| 4 | 🟢 Nice | 12-15h | ⭐⭐ | 3-4 jours |
-| 5 | 🔵 Premium | 5-7h | ⭐⭐⭐ | Continu |
+| Tier | Impact      | Effort | ROI        | Timeline  |
+| ---- | ----------- | ------ | ---------- | --------- |
+| 1    | 🔴 Critical | 8-9h   | ⭐⭐⭐⭐⭐ | 1-2 jours |
+| 2    | 🟠 High     | 10-12h | ⭐⭐⭐⭐   | 3-4 jours |
+| 3    | 🟡 Medium   | 8-10h  | ⭐⭐⭐     | 2-3 jours |
+| 4    | 🟢 Nice     | 12-15h | ⭐⭐       | 3-4 jours |
+| 5    | 🔵 Premium  | 5-7h   | ⭐⭐⭐     | Continu   |
 
 ---
 
@@ -604,30 +629,35 @@ Snapshot Testing, Dashboard, Flakiness Detection, etc.
 Quelle amélioration tu veux faire en priorité?
 
 ### Option A: CI/CD Complet (TIER 1)
+
 **Raison**: Détecte les bugs avant production, pierre angulaire pour scaling  
 **Impact**: 🔴 Critique  
 **Effort**: 2h  
 **Timeline**: Aujourd'hui
 
 ### Option B: Tests Intégration localStorage (TIER 1)
+
 **Raison**: Garantit la persistance des données (feature core)  
 **Impact**: 🔴 Critique  
 **Effort**: 1h  
 **Timeline**: Immédiat
 
 ### Option C: Performance Tests (TIER 1)
+
 **Raison**: Détecte les ralentissements avant qu'ils affectent les utilisateurs  
 **Impact**: 🔴 Critique  
 **Effort**: 1.5h  
 **Timeline**: Immédiat
 
 ### Option D: Full Feature Set (TIER 1+2)
+
 **Raison**: Solution complète et professionnelle  
 **Impact**: 🔴🔴🔴 Très critique  
 **Effort**: 20-25h  
 **Timeline**: 4-5 jours
 
 ### Option E: Autre
+
 **Proposition personnalisée**: Dis-moi ce qui est le plus important pour toi!
 
 ---

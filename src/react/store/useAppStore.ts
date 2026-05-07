@@ -5,7 +5,12 @@
 
 import { create } from 'zustand';
 import type { AppSettings, ContractionRecord } from '../../storage';
-import { loadSettings, saveSettings, loadRecords, saveRecords } from '../../storage';
+import {
+  loadSettings,
+  saveSettings,
+  loadRecords,
+  saveRecords,
+} from '../../storage';
 
 interface AppState {
   // État
@@ -38,27 +43,27 @@ export const useAppStore = create<AppState>((set, get) => ({
   alertLatch: false,
 
   // Actions
-  setRecords: (records) => {
+  setRecords: records => {
     set({ records });
     saveRecords(records);
   },
 
-  addRecord: (record) => {
+  addRecord: record => {
     const newRecords = [...get().records, record];
     set({ records: newRecords });
     saveRecords(newRecords);
   },
 
   updateRecord: (id, updates) => {
-    const newRecords = get().records.map((r) =>
+    const newRecords = get().records.map(r =>
       r.id === id ? { ...r, ...updates } : r
     );
     set({ records: newRecords });
     saveRecords(newRecords);
   },
 
-  deleteRecord: (id) => {
-    const newRecords = get().records.filter((r) => r.id !== id);
+  deleteRecord: id => {
+    const newRecords = get().records.filter(r => r.id !== id);
     set({ records: newRecords });
     saveRecords(newRecords);
   },
@@ -68,7 +73,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     saveRecords([]);
   },
 
-  updateSettings: (partialSettings) => {
+  updateSettings: partialSettings => {
     const newSettings = { ...get().settings, ...partialSettings };
     set({ settings: newSettings });
   },
@@ -100,14 +105,14 @@ export const useAppStore = create<AppState>((set, get) => ({
     saveRecords([...records, newRecord]);
   },
 
-  setAlertLatch: (latched) => {
+  setAlertLatch: latched => {
     set({ alertLatch: latched });
   },
 }));
 
 // Synchroniser avec localStorage (modifications vanilla)
 if (typeof window !== 'undefined') {
-  window.addEventListener('storage', (e) => {
+  window.addEventListener('storage', e => {
     if (e.key === 'mc_settings_v1') {
       useAppStore.setState({ settings: loadSettings() });
     }
@@ -119,5 +124,5 @@ if (typeof window !== 'undefined') {
 
 // Hook pour recharger les settings depuis localStorage
 export function useRefreshSettings() {
-  return useAppStore((s) => s.updateSettings);
+  return useAppStore(s => s.updateSettings);
 }

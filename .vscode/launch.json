@@ -2,20 +2,53 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Chrome — launch (npm run dev)",
       "type": "chrome",
       "request": "launch",
-      "name": "PWA — Chrome (dev)",
       "url": "http://localhost:5173/",
       "webRoot": "${workspaceFolder}",
-      "preLaunchTask": "dev: Vite"
+      "preLaunchTask": "dev",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///src/*": "${webRoot}/src/*"
+      }
     },
     {
+      "name": "Edge — launch (npm run dev)",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:5173/",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "dev",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///src/*": "${webRoot}/src/*"
+      }
+    },
+    {
+      "name": "Chrome — attach (serveur déjà lancé)",
       "type": "chrome",
       "request": "launch",
-      "name": "PWA — Chrome (preview build)",
+      "url": "http://localhost:5173/",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true
+    },
+    {
+      "name": "Edge — attach (serveur déjà lancé)",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:5173/",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true
+    },
+    {
+      "name": "Chrome — preview build (npm run preview)",
+      "type": "chrome",
+      "request": "launch",
       "url": "http://localhost:4173/miss-contraction/",
       "webRoot": "${workspaceFolder}",
-      "preLaunchTask": "preview: Vite"
+      "preLaunchTask": "preview",
+      "sourceMaps": true
     }
   ]
 }

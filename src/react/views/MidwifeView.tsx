@@ -59,12 +59,21 @@ function formatDuration(ms: number): string {
 }
 
 function parseMidwifeMode(val: string): MidwifeMode {
-  if (val === '6' || val === '10' || val === '12' || val === '20' || val === 'all')
+  if (
+    val === '6' ||
+    val === '10' ||
+    val === '12' ||
+    val === '20' ||
+    val === 'all'
+  )
     return val;
   return '12';
 }
 
-function sliceForMidwife(records: ContractionRecord[], mode: MidwifeMode): ContractionRecord[] {
+function sliceForMidwife(
+  records: ContractionRecord[],
+  mode: MidwifeMode
+): ContractionRecord[] {
   if (mode === 'all' || records.length === 0) return records;
   const n = Number(mode);
   if (!Number.isFinite(n) || n < 1) return records;
@@ -90,7 +99,7 @@ export function MidwifeView() {
   // Filtrer et trier les records valides
   const validRecords = useMemo(() => {
     return [...records]
-      .filter((r) => r.end > r.start)
+      .filter(r => r.end > r.start)
       .sort((a, b) => a.start - b.start);
   }, [records]);
 
@@ -121,7 +130,7 @@ export function MidwifeView() {
     lines.push('Miss Contraction — Résumé pour la sage-femme');
     lines.push(`Généré le ${headerFmt.format(new Date())}`);
     lines.push('');
-    lines.push('Seuils configurés dans l\'application :');
+    lines.push("Seuils configurés dans l'application :");
     lines.push(
       `— ${settings.consecutiveCount} contractions consécutives, écart entre débuts ≤ ${settings.maxIntervalMin} min, durée ≥ ${settings.minDurationSec} s chacune.`
     );
@@ -137,7 +146,9 @@ export function MidwifeView() {
     }
     lines.push('');
     const modeLabel =
-      mode === 'all' ? 'tout l\'historique' : `les ${mode} dernières contractions`;
+      mode === 'all'
+        ? "tout l'historique"
+        : `les ${mode} dernières contractions`;
     lines.push(
       `Période du tableau et des moyennes : ${modeLabel} (${selectedRecords.length} contraction(s)).`
     );
@@ -183,7 +194,9 @@ export function MidwifeView() {
       setCopyFeedback('Texte copié dans le presse-papiers.');
       setTimeout(() => setCopyFeedback(''), 3500);
     } catch {
-      setCopyFeedback('Copie impossible — utilisez « Imprimer ou PDF » ou copiez le texte affiché.');
+      setCopyFeedback(
+        'Copie impossible — utilisez « Imprimer ou PDF » ou copiez le texte affiché.'
+      );
       setTimeout(() => setCopyFeedback(''), 4500);
     }
   };
@@ -192,7 +205,8 @@ export function MidwifeView() {
     window.print();
   };
 
-  const modeLabel = mode === 'all' ? `Tout l'historique` : `Les ${mode} dernières contractions`;
+  const modeLabel =
+    mode === 'all' ? `Tout l'historique` : `Les ${mode} dernières contractions`;
 
   return (
     <ViewLayout
@@ -201,12 +215,12 @@ export function MidwifeView() {
       title="Resume sage-femme"
       lead={
         <span className="no-print">
-          Synthese courte des <strong>dernieres contractions</strong>, des <strong>moyennes</strong>{' '}
-          sur la periode choisie et, si elle a eu lieu, de l'<strong>heure du premier seuil atteint</strong>.
+          Synthese courte des <strong>dernieres contractions</strong>, des{' '}
+          <strong>moyennes</strong> sur la periode choisie et, si elle a eu
+          lieu, de l'<strong>heure du premier seuil atteint</strong>.
         </span>
       }
     >
-
       <section className="card midwife-card">
         <h2 className="section-title no-print">Contenu du résumé</h2>
 
@@ -214,7 +228,7 @@ export function MidwifeView() {
           <span>Contractions listées (ordre chronologique)</span>
           <select
             value={mode}
-            onChange={(e) => setMode(parseMidwifeMode(e.target.value))}
+            onChange={e => setMode(parseMidwifeMode(e.target.value))}
             className="midwife-select"
             aria-describedby="midwife-count-hint"
           >
@@ -235,7 +249,8 @@ export function MidwifeView() {
         <div
           className="midwife-print-root"
           aria-live="polite"
-          dangerouslySetInnerHTML={{ __html: `
+          dangerouslySetInnerHTML={{
+            __html: `
             <div class="midwife-doc">
               <p class="midwife-doc-title">Miss Contraction — Résumé pour la sage-femme</p>
               <p class="midwife-doc-meta">Généré le ${new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date())}</p>
@@ -245,17 +260,22 @@ export function MidwifeView() {
               </section>
               <section class="midwife-doc-section">
                 <h3 class="midwife-doc-h">Premier seuil atteint (tout l'historique)</h3>
-                <p>${stats.firstEnd != null
-                  ? dateTimeFmtLong.format(stats.firstEnd)
-                  : 'Aucun groupe enregistré ne remplit encore ces critères.'}</p>
+                <p>${
+                  stats.firstEnd != null
+                    ? dateTimeFmtLong.format(stats.firstEnd)
+                    : 'Aucun groupe enregistré ne remplit encore ces critères.'
+                }</p>
                 <p class="midwife-doc-note">Instant retenu : fin de la dernière contraction du premier groupe qui satisfait simultanément l'intervalle et la durée configurés.</p>
               </section>
-              ${selectedRecords.length === 0 ? `
+              ${
+                selectedRecords.length === 0
+                  ? `
                 <section class="midwife-doc-section">
                   <h3 class="midwife-doc-h">${modeLabel}</h3>
                   <p class="midwife-empty">Aucune contraction dans cette sélection.</p>
                 </section>
-              ` : `
+              `
+                  : `
                 <section class="midwife-doc-section">
                   <h3 class="midwife-doc-h">Moyennes — ${modeLabel} (${selectedRecords.length})</h3>
                   <ul class="midwife-doc-stats">
@@ -278,53 +298,99 @@ export function MidwifeView() {
                         </tr>
                       </thead>
                       <tbody>
-                        ${selectedRecords.map((r, i) => {
-                          const intervalMs = i > 0 ? r.start - selectedRecords[i - 1]!.start : null;
-                          const intervalStr = intervalMs != null ? formatDuration(intervalMs) : '—';
-                          const note = r.note?.trim();
-                          const intensity = r.intensity ? `[Int. ${r.intensity}] ` : '';
-                          return `<tr>
+                        ${selectedRecords
+                          .map((r, i) => {
+                            const intervalMs =
+                              i > 0
+                                ? r.start - selectedRecords[i - 1]!.start
+                                : null;
+                            const intervalStr =
+                              intervalMs != null
+                                ? formatDuration(intervalMs)
+                                : '—';
+                            const note = r.note?.trim();
+                            const intensity = r.intensity
+                              ? `[Int. ${r.intensity}] `
+                              : '';
+                            return `<tr>
                             <td>${i + 1}</td>
                             <td>${dateTimeFmt.format(r.start)}</td>
                             <td>${formatDuration(r.end - r.start)}</td>
                             <td>${intervalStr}</td>
                             <td>${intensity}${note || '—'}</td>
                           </tr>`;
-                        }).join('')}
+                          })
+                          .join('')}
                       </tbody>
                     </table>
                   </div>
                 </section>
-              `}
+              `
+              }
               <p class="midwife-doc-disclaimer">Données indicatives — ne remplacent pas un avis médical.</p>
             </div>
-          `}}
+          `,
+          }}
         />
 
         {copyFeedback && (
-          <p className="midwife-copy-feedback no-print" role="status" aria-live="polite">
+          <p
+            className="midwife-copy-feedback no-print"
+            role="status"
+            aria-live="polite"
+          >
             {copyFeedback}
           </p>
         )}
 
-        <div className="midwife-actions no-print" role="group" aria-label="Copier ou imprimer le résumé">
-          <button type="button" className="btn btn-secondary" onClick={handleCopy}>
+        <div
+          className="midwife-actions no-print"
+          role="group"
+          aria-label="Copier ou imprimer le résumé"
+        >
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleCopy}
+          >
             Copier le texte
           </button>
-          <button type="button" className="btn btn-primary" onClick={handlePrint}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handlePrint}
+          >
             Imprimer ou PDF
           </button>
         </div>
 
         <p className="midwife-print-hint no-print">
-          Dans la boîte d'impression, choisissez <strong>Enregistrer au format PDF</strong> si
-          vous voulez un fichier.
+          Dans la boîte d'impression, choisissez{' '}
+          <strong>Enregistrer au format PDF</strong> si vous voulez un fichier.
         </p>
       </section>
 
       <div className="midwife-nav-footer no-print">
         <Link to="/historique" className="midwife-table-link">
-          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="8" y1="6" x2="21" y2="6" />
+            <line x1="8" y1="12" x2="21" y2="12" />
+            <line x1="8" y1="18" x2="21" y2="18" />
+            <line x1="3" y1="6" x2="3.01" y2="6" />
+            <line x1="3" y1="12" x2="3.01" y2="12" />
+            <line x1="3" y1="18" x2="3.01" y2="18" />
+          </svg>
           Tableau détaillé
         </Link>
         <Link to="/" className="btn btn-secondary mobile-home-link">

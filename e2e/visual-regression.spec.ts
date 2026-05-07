@@ -32,9 +32,12 @@ async function injectContractions(page: Page, count = 5) {
     intensity: (i % 5) + 1,
     note: i % 2 === 0 ? `Note ${i}` : '',
   }));
-  await page.evaluate(([key, recs]) => {
-    localStorage.setItem(key, JSON.stringify(recs));
-  }, ['mc_records', records] as [string, typeof records]);
+  await page.evaluate(
+    ([key, recs]) => {
+      localStorage.setItem(key, JSON.stringify(recs));
+    },
+    ['mc_records', records] as [string, typeof records]
+  );
 }
 
 // === Tests par viewport ===
@@ -58,9 +61,12 @@ for (const viewport of VIEWPORTS) {
       await page.reload();
       await page.waitForLoadState('networkidle');
 
-      await expect(page).toHaveScreenshot(`home-with-data-${viewport.name}.png`, {
-        maxDiffPixels: 200,
-      });
+      await expect(page).toHaveScreenshot(
+        `home-with-data-${viewport.name}.png`,
+        {
+          maxDiffPixels: 200,
+        }
+      );
     });
 
     test(`@visual settings - ${viewport.name}`, async ({ page }) => {
@@ -125,7 +131,10 @@ test.describe('Régression visuelle - Thèmes', () => {
     });
   });
 
-  test('@visual thème sombre (prefers-color-scheme: dark)', async ({ page, browser }) => {
+  test('@visual thème sombre (prefers-color-scheme: dark)', async ({
+    page,
+    browser,
+  }) => {
     // Ouvrir une page avec la préférence dark
     const context = await browser.newContext({ colorScheme: 'dark' });
     const darkPage = await context.newPage();
@@ -200,10 +209,9 @@ test.describe('Régression visuelle - États UI', () => {
     const historyItems = page.locator('[data-testid="history-items"]');
     await expect(historyItems).toBeVisible();
 
-    await expect(page.locator('[data-testid="history-items"]')).toHaveScreenshot(
-      'history-list-5items.png',
-      { maxDiffPixels: 150 }
-    );
+    await expect(
+      page.locator('[data-testid="history-items"]')
+    ).toHaveScreenshot('history-list-5items.png', { maxDiffPixels: 150 });
   });
 
   test('@visual stats section avec données', async ({ page }) => {
@@ -224,39 +232,43 @@ test.describe('Régression visuelle - États UI', () => {
   test('@visual paramètres remplis', async ({ page }) => {
     await page.goto(ROUTES.SETTINGS);
     await page.evaluate(() => {
-      localStorage.setItem('mc_settings', JSON.stringify({
-        maxIntervalMin: 5,
-        minDurationSec: 30,
-        consecutiveCount: 4,
-        maternityLabel: 'Clinique du Test',
-        maternityPhone: '0600000000',
-        maternityAddress: '1 rue du Test',
-      }));
+      localStorage.setItem(
+        'mc_settings',
+        JSON.stringify({
+          maxIntervalMin: 5,
+          minDurationSec: 30,
+          consecutiveCount: 4,
+          maternityLabel: 'Clinique du Test',
+          maternityPhone: '0600000000',
+          maternityAddress: '1 rue du Test',
+        })
+      );
     });
     await page.reload();
     await page.waitForLoadState('networkidle');
 
-    await expect(page.locator('[data-testid="settings-view"]')).toHaveScreenshot(
-      'settings-filled.png',
-      { maxDiffPixels: 150 }
-    );
+    await expect(
+      page.locator('[data-testid="settings-view"]')
+    ).toHaveScreenshot('settings-filled.png', { maxDiffPixels: 150 });
   });
 
   test('@visual maternité configurée', async ({ page }) => {
     await page.goto(ROUTES.MATERNITY);
     await page.evaluate(() => {
-      localStorage.setItem('mc_settings', JSON.stringify({
-        maternityLabel: 'Clinique du Soleil',
-        maternityPhone: '0601020304',
-        maternityAddress: '42 avenue du Test, 75001 Paris',
-      }));
+      localStorage.setItem(
+        'mc_settings',
+        JSON.stringify({
+          maternityLabel: 'Clinique du Soleil',
+          maternityPhone: '0601020304',
+          maternityAddress: '42 avenue du Test, 75001 Paris',
+        })
+      );
     });
     await page.reload();
     await page.waitForLoadState('networkidle');
 
-    await expect(page.locator('[data-testid="maternity-view"]')).toHaveScreenshot(
-      'maternity-configured.png',
-      { maxDiffPixels: 150 }
-    );
+    await expect(
+      page.locator('[data-testid="maternity-view"]')
+    ).toHaveScreenshot('maternity-configured.png', { maxDiffPixels: 150 });
   });
 });

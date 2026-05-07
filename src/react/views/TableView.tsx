@@ -49,17 +49,20 @@ export function TableView() {
   // Filtrer et trier les records valides
   const validRecords = useMemo(() => {
     return [...records]
-      .filter((r) => r.end > r.start)
+      .filter(r => r.end > r.start)
       .sort((a, b) => a.start - b.start);
   }, [records]);
 
   // Calculer les intervalles et fréquences pour chaque ligne
   const tableData = useMemo(() => {
     return validRecords.map((record, index) => {
-      const intervalMs = index > 0 ? record.start - validRecords[index - 1].start : null;
+      const intervalMs =
+        index > 0 ? record.start - validRecords[index - 1].start : null;
       const intervalStr = intervalMs != null ? formatDuration(intervalMs) : '—';
       const freqStr =
-        intervalMs != null && intervalMs > 0 ? formatContractionsPerHour(intervalMs) : '—';
+        intervalMs != null && intervalMs > 0
+          ? formatContractionsPerHour(intervalMs)
+          : '—';
 
       return {
         ...record,
@@ -78,24 +81,38 @@ export function TableView() {
       title="Tableau des contractions"
       lead={
         <>
-          Historique detaille : pour chaque contraction, la <strong>duree</strong>,
-          l'<strong>intervalle</strong> depuis le debut de la precedente, et la{' '}
-          <strong>frequence</strong> estimee en contractions par heure.
+          Historique detaille : pour chaque contraction, la{' '}
+          <strong>duree</strong>, l'<strong>intervalle</strong> depuis le debut
+          de la precedente, et la <strong>frequence</strong> estimee en
+          contractions par heure.
         </>
       }
     >
-
-      <section className="card" aria-labelledby="table-heading" data-testid="table-section">
+      <section
+        className="card"
+        aria-labelledby="table-heading"
+        data-testid="table-section"
+      >
         <h2 id="table-heading" className="section-title">
           Contractions (ordre chronologique)
         </h2>
 
         {validRecords.length === 0 ? (
-          <p className="empty" id="history-table-empty" data-testid="table-empty">
+          <p
+            className="empty"
+            id="history-table-empty"
+            data-testid="table-empty"
+          >
             Aucune contraction à afficher.
           </p>
         ) : (
-          <div className="history-table-wrap" role="region" aria-label="Tableau défilable sur petit écran" tabIndex={0} data-testid="table-wrapper">
+          <div
+            className="history-table-wrap"
+            role="region"
+            aria-label="Tableau défilable sur petit écran"
+            tabIndex={0}
+            data-testid="table-wrapper"
+          >
             <table className="history-table" data-testid="contractions-table">
               <thead>
                 <tr>
@@ -108,15 +125,20 @@ export function TableView() {
                 </tr>
               </thead>
               <tbody>
-                {tableData.map((row) => (
+                {tableData.map(row => (
                   <tr key={row.id} data-testid={`table-row-${row.id}`}>
                     <th scope="row">{row.index}</th>
-                    <td data-testid="table-cell-date">{dateTimeFmt.format(row.start)}</td>
+                    <td data-testid="table-cell-date">
+                      {dateTimeFmt.format(row.start)}
+                    </td>
                     <td data-testid="table-cell-duration">{row.durationStr}</td>
                     <td data-testid="table-cell-interval">{row.intervalStr}</td>
                     <td data-testid="table-cell-frequency">{row.freqStr}</td>
-                    <td className="history-table-note" data-testid="table-cell-note">
-                      {(row.note?.trim() || '—')}
+                    <td
+                      className="history-table-note"
+                      data-testid="table-cell-note"
+                    >
+                      {row.note?.trim() || '—'}
                       {row.intensity && ` [Int. ${row.intensity}]`}
                     </td>
                   </tr>
@@ -127,15 +149,19 @@ export function TableView() {
         )}
 
         <p className="table-footnote">
-          <strong>Intervalle</strong> : écart entre le début de cette contraction
-          et celui de la ligne précédente. <strong>Fréquence</strong> : ≈ nombre
-          de contractions par heure si le rythme restait identique à cet
-          intervalle.
+          <strong>Intervalle</strong> : écart entre le début de cette
+          contraction et celui de la ligne précédente.{' '}
+          <strong>Fréquence</strong> : ≈ nombre de contractions par heure si le
+          rythme restait identique à cet intervalle.
         </p>
       </section>
 
       <p className="settings-back-wrap mobile-home-only">
-        <Link to="/" className="btn btn-secondary settings-back-link" data-testid="table-back-link">
+        <Link
+          to="/"
+          className="btn btn-secondary settings-back-link"
+          data-testid="table-back-link"
+        >
           Retour a l'accueil
         </Link>
       </p>
