@@ -10,7 +10,9 @@ export class Shell {
 
   async navigateToHome() {
     const navBtn = this.page.locator(SELECTORS.NAV_HOME);
-    if (await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
+    if (
+      await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
+    ) {
       await navBtn.click();
     } else {
       await this.page.goto(ROUTES.HOME);
@@ -20,7 +22,9 @@ export class Shell {
 
   async navigateToSettings() {
     const navBtn = this.page.locator(SELECTORS.NAV_SETTINGS);
-    if (await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
+    if (
+      await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
+    ) {
       await navBtn.click();
     } else {
       await this.page.goto(ROUTES.SETTINGS);
@@ -30,7 +34,9 @@ export class Shell {
 
   async navigateToTable() {
     const navBtn = this.page.locator(SELECTORS.NAV_TABLE);
-    if (await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
+    if (
+      await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
+    ) {
       await navBtn.click();
     } else {
       await this.page.goto(ROUTES.TABLE);
@@ -40,7 +46,9 @@ export class Shell {
 
   async navigateToMaternity() {
     const navBtn = this.page.locator(SELECTORS.NAV_MATERNITY);
-    if (await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
+    if (
+      await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
+    ) {
       await navBtn.click();
     } else {
       await this.page.goto(ROUTES.MATERNITY);
@@ -50,7 +58,9 @@ export class Shell {
 
   async navigateToMessage() {
     const navBtn = this.page.locator(SELECTORS.NAV_MESSAGE);
-    if (await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
+    if (
+      await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
+    ) {
       await navBtn.click();
     } else {
       await this.page.goto(ROUTES.MESSAGE);

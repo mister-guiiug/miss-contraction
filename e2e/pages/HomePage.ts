@@ -4,7 +4,11 @@
 
 import { Page, expect } from '@playwright/test';
 import { SELECTORS, TIMEOUTS } from '../config';
-import { createContraction, getDisplayedStats, getThresholdBadgeState } from '../helpers';
+import {
+  createContraction,
+  getDisplayedStats,
+  getThresholdBadgeState,
+} from '../helpers';
 
 export class HomePage {
   constructor(private page: Page) {}
@@ -53,13 +57,17 @@ export class HomePage {
   }
 
   async selectIntensity(level: number) {
-    const intensityBtn = this.page.locator(`[data-testid="intensity-${level}"]`);
+    const intensityBtn = this.page.locator(
+      `[data-testid="intensity-${level}"]`
+    );
     await expect(intensityBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
     await intensityBtn.click();
   }
 
   async selectQuickNote(noteText: string) {
-    const noteBtn = this.page.locator(`[data-testid="quick-note"][data-note="${noteText}"]`);
+    const noteBtn = this.page.locator(
+      `[data-testid="quick-note"][data-note="${noteText}"]`
+    );
     await expect(noteBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
     await noteBtn.click();
   }
@@ -76,7 +84,9 @@ export class HomePage {
 
   async clickUndo() {
     const undoBtn = this.page.locator('[data-testid="undo-btn"]');
-    if (await undoBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
+    if (
+      await undoBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
+    ) {
       await undoBtn.click();
       await this.page.waitForTimeout(300);
     }
@@ -84,6 +94,8 @@ export class HomePage {
 
   async isEmptyStateVisible() {
     const emptyState = this.page.locator('[data-testid="empty-state"]');
-    return await emptyState.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false);
+    return await emptyState
+      .isVisible({ timeout: TIMEOUTS.SHORT })
+      .catch(() => false);
   }
 }

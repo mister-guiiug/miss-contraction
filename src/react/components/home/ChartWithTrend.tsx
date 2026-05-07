@@ -14,11 +14,12 @@ export function ChartWithTrend({ thresholdMinutes = 5 }: ChartWithTrendProps) {
   const { bars, trendPath, thresholdPercent } = useMemo(() => {
     // Filtrer selon la fenêtre de statistiques
     const now = Date.now();
-    const windowMs = settings.statsWindowMinutes === 'all'
-      ? Infinity
-      : Number(settings.statsWindowMinutes) * 60 * 1000;
+    const windowMs =
+      settings.statsWindowMinutes === 'all'
+        ? Infinity
+        : Number(settings.statsWindowMinutes) * 60 * 1000;
 
-    const filtered = records.filter((r) => now - r.start <= windowMs);
+    const filtered = records.filter(r => now - r.start <= windowMs);
 
     // Prendre les 10 derniers pour le graphique
     const recent = filtered.slice(-10);
@@ -40,7 +41,12 @@ export function ChartWithTrend({ thresholdMinutes = 5 }: ChartWithTrendProps) {
         hour: '2-digit',
         minute: '2-digit',
       });
-      return { interval, heightPercent, time, intensity: recent[i + 1].intensity };
+      return {
+        interval,
+        heightPercent,
+        time,
+        intensity: recent[i + 1].intensity,
+      };
     });
 
     // Générer le chemin SVG de tendance (courbe de Bézier lissée)
@@ -94,11 +100,17 @@ export function ChartWithTrend({ thresholdMinutes = 5 }: ChartWithTrendProps) {
             className="chart-threshold-line"
             style={{ bottom: `${thresholdPercent}%` }}
           >
-            <span className="chart-threshold-label">Seuil {thresholdMinutes} min</span>
+            <span className="chart-threshold-label">
+              Seuil {thresholdMinutes} min
+            </span>
           </div>
 
           {/* Courbe de tendance SVG */}
-          <svg className="chart-trend-line" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <svg
+            className="chart-trend-line"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
             <path className="chart-trend-path" d={trendPath} />
             {bars.length > 0 && (
               <circle
@@ -121,7 +133,10 @@ export function ChartWithTrend({ thresholdMinutes = 5 }: ChartWithTrendProps) {
                   <div>{Math.round(bar.interval)}m</div>
                   <div className="chart-bar-label">{bar.time}</div>
                   {bar.intensity && (
-                    <div className="chart-bar-intensity" style={{ backgroundColor: 'transparent' }}>
+                    <div
+                      className="chart-bar-intensity"
+                      style={{ backgroundColor: 'transparent' }}
+                    >
                       {bar.intensity}
                     </div>
                   )}

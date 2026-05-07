@@ -13,19 +13,28 @@ test.describe('Export & Import', () => {
     await page.evaluate(() => localStorage.clear());
 
     // Créer quelques contractions
-    const startButton = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+    const startButton = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
     for (let i = 0; i < 3; i++) {
       await startButton.click();
       await page.waitForTimeout(200);
-      const stopButton = page.locator('button').filter({ hasText: /Fin|Stop/ }).first();
+      const stopButton = page
+        .locator('button')
+        .filter({ hasText: /Fin|Stop/ })
+        .first();
       await stopButton.click();
       await page.waitForTimeout(300);
     }
   });
 
   test('export - télécharge un fichier JSON', async ({ page }) => {
-    const exportButton = page.locator('button').filter({ hasText: /Export|Sauvegarder|Télécharger/ }).first();
-    
+    const exportButton = page
+      .locator('button')
+      .filter({ hasText: /Export|Sauvegarder|Télécharger/ })
+      .first();
+
     if (await exportButton.isVisible({ timeout: 500 }).catch(() => false)) {
       const downloadPromise = page.waitForEvent('download');
       await exportButton.click();
@@ -70,17 +79,22 @@ test.describe('Export & Import', () => {
     await page.evaluate(() => localStorage.clear());
 
     // Importer les données
-    const importButton = page.locator('button').filter({ hasText: /Import|Importer|Charger/ }).first();
-    
+    const importButton = page
+      .locator('button')
+      .filter({ hasText: /Import|Importer|Charger/ })
+      .first();
+
     if (await importButton.isVisible({ timeout: 500 }).catch(() => false)) {
       // Créer un fichier JSON de test
       const jsonData = JSON.stringify(originalData);
-      
+
       // Simuler l'import
       await page.evaluate(json => {
         const data = JSON.parse(json);
-        if (data.records) localStorage.setItem('mc_records', JSON.stringify(data.records));
-        if (data.settings) localStorage.setItem('mc_settings', JSON.stringify(data.settings));
+        if (data.records)
+          localStorage.setItem('mc_records', JSON.stringify(data.records));
+        if (data.settings)
+          localStorage.setItem('mc_settings', JSON.stringify(data.settings));
       }, jsonData);
 
       // Vérifier que les données sont restaurées
@@ -118,9 +132,14 @@ test.describe('Export & Import', () => {
 
   test('sauvegarde - notification de rappel', async ({ page }) => {
     // Chercher le bouton de rappel de sauvegarde
-    const saveReminderButton = page.locator('button').filter({ hasText: /Sauvegarder|Exporter/ }).first();
-    
-    if (await saveReminderButton.isVisible({ timeout: 500 }).catch(() => false)) {
+    const saveReminderButton = page
+      .locator('button')
+      .filter({ hasText: /Sauvegarder|Exporter/ })
+      .first();
+
+    if (
+      await saveReminderButton.isVisible({ timeout: 500 }).catch(() => false)
+    ) {
       await expect(saveReminderButton).toBeVisible();
     }
   });
@@ -168,7 +187,9 @@ test.describe('Navigation & Routing', () => {
 
   test('navigation - sage-femme', async ({ page }) => {
     await page.goto('/sage-femme');
-    const midwifeView = page.locator('[class*="midwife"], [class*="sage"]').first();
+    const midwifeView = page
+      .locator('[class*="midwife"], [class*="sage"]')
+      .first();
     if (await midwifeView.isVisible({ timeout: 500 }).catch(() => false)) {
       await expect(midwifeView).toBeVisible();
     }
@@ -177,7 +198,7 @@ test.describe('Navigation & Routing', () => {
   test('redirect - /settings vers /parametres', async ({ page }) => {
     await page.goto('/settings');
     await page.waitForLoadState('networkidle');
-    
+
     const currentUrl = page.url();
     expect(currentUrl).toContain('/parametres');
   });
@@ -185,7 +206,7 @@ test.describe('Navigation & Routing', () => {
   test('redirect - /tableau vers /historique', async ({ page }) => {
     await page.goto('/tableau');
     await page.waitForLoadState('networkidle');
-    
+
     const currentUrl = page.url();
     expect(currentUrl).toContain('/historique');
   });
@@ -193,7 +214,7 @@ test.describe('Navigation & Routing', () => {
   test('redirect - /table vers /historique', async ({ page }) => {
     await page.goto('/table');
     await page.waitForLoadState('networkidle');
-    
+
     const currentUrl = page.url();
     expect(currentUrl).toContain('/historique');
   });
@@ -201,7 +222,7 @@ test.describe('Navigation & Routing', () => {
   test('redirect - /maternity vers /maternite', async ({ page }) => {
     await page.goto('/maternity');
     await page.waitForLoadState('networkidle');
-    
+
     const currentUrl = page.url();
     expect(currentUrl).toContain('/maternite');
   });
@@ -209,7 +230,7 @@ test.describe('Navigation & Routing', () => {
   test('redirect - /sagefemme vers /sage-femme', async ({ page }) => {
     await page.goto('/sagefemme');
     await page.waitForLoadState('networkidle');
-    
+
     const currentUrl = page.url();
     expect(currentUrl).toContain('/sage-femme');
   });
@@ -217,7 +238,7 @@ test.describe('Navigation & Routing', () => {
   test('redirect - /messages vers /message', async ({ page }) => {
     await page.goto('/messages');
     await page.waitForLoadState('networkidle');
-    
+
     const currentUrl = page.url();
     expect(currentUrl).toContain('/message');
   });
@@ -225,7 +246,7 @@ test.describe('Navigation & Routing', () => {
   test('redirect - /sms vers /message', async ({ page }) => {
     await page.goto('/sms');
     await page.waitForLoadState('networkidle');
-    
+
     const currentUrl = page.url();
     expect(currentUrl).toContain('/message');
   });
@@ -241,7 +262,10 @@ test.describe('Navigation & Routing', () => {
   test('navigation menu - liens cliquables', async ({ page }) => {
     await page.goto('/');
 
-    const homeLink = page.locator('a[href="/"], a').filter({ hasText: /Accueil|Home/ }).first();
+    const homeLink = page
+      .locator('a[href="/"], a')
+      .filter({ hasText: /Accueil|Home/ })
+      .first();
     if (await homeLink.isVisible({ timeout: 500 }).catch(() => false)) {
       await homeLink.click();
       const currentUrl = page.url();
@@ -251,7 +275,7 @@ test.describe('Navigation & Routing', () => {
 
   test('document title - change selon la page', async ({ page }) => {
     await page.goto('/');
-    let title = await page.title();
+    const title = await page.title();
     expect(title).toBeTruthy();
 
     await page.goto('/parametres');
@@ -291,12 +315,18 @@ test.describe('Navigation & Routing', () => {
   });
 
   test('lien direct - accessible via URL', async ({ page }) => {
-    const routes = ['/', '/parametres', '/historique', '/maternite', '/message'];
+    const routes = [
+      '/',
+      '/parametres',
+      '/historique',
+      '/maternite',
+      '/message',
+    ];
 
     for (const route of routes) {
       await page.goto(route);
       await page.waitForLoadState('networkidle');
-      
+
       const currentUrl = page.url();
       // Vérifier que la route est bien accessible
       expect(currentUrl).toBeTruthy();

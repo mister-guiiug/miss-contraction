@@ -11,9 +11,10 @@ const THRESHOLD_ICONS: Record<string, string> = {
 };
 
 const THRESHOLD_LABELS: Record<string, string> = {
-  match: 'Les dernières contractions correspondent à vos seuils d\'alerte.',
-  approaching: 'Rythme soutenu — restez attentive aux consignes de votre sage-femme.',
-  calm: 'En dehors du schéma d\'alerte configuré (pour l\'instant).',
+  match: "Les dernières contractions correspondent à vos seuils d'alerte.",
+  approaching:
+    'Rythme soutenu — restez attentive aux consignes de votre sage-femme.',
+  calm: "En dehors du schéma d'alerte configuré (pour l'instant).",
   empty: 'Pas encore assez de données pour comparer aux seuils.',
 };
 
@@ -22,32 +23,59 @@ export function StatsSection() {
   const { data, windowLabel, isEmpty } = useStats(records, settings);
 
   return (
-    <section className="card" aria-labelledby="summary-heading" data-testid="stats-section">
-      <h2 id="summary-heading" className="section-title">Indicateurs récents</h2>
-      <div className="stats-enhanced" role="group" aria-label="Synthèse des contractions" data-testid="stats-cards">
+    <section
+      className="card"
+      aria-labelledby="summary-heading"
+      data-testid="stats-section"
+    >
+      <h2 id="summary-heading" className="section-title">
+        Indicateurs récents
+      </h2>
+      <div
+        className="stats-enhanced"
+        role="group"
+        aria-label="Synthèse des contractions"
+        data-testid="stats-cards"
+      >
         <div className="stat-card" data-testid="stat-card-quantity">
           <span className="stat-card-icon" aria-hidden="true" />
-          <span className="stat-card-value" aria-live="polite" data-testid="stat-value-qty">
+          <span
+            className="stat-card-value"
+            aria-live="polite"
+            data-testid="stat-value-qty"
+          >
             {data.qtyPerHour}
           </span>
           <span className="stat-card-label">Quantité / h</span>
         </div>
         <div className="stat-card" data-testid="stat-card-duration">
           <span className="stat-card-icon" aria-hidden="true" />
-          <span className="stat-card-value" aria-live="polite" data-testid="stat-value-duration">
+          <span
+            className="stat-card-value"
+            aria-live="polite"
+            data-testid="stat-value-duration"
+          >
             {data.avgDuration}
           </span>
           <span className="stat-card-label">Durée moyenne</span>
         </div>
         <div className="stat-card" data-testid="stat-card-frequency">
           <span className="stat-card-icon" aria-hidden="true" />
-          <span className="stat-card-value" aria-live="polite" data-testid="stat-value-frequency">
+          <span
+            className="stat-card-value"
+            aria-live="polite"
+            data-testid="stat-value-frequency"
+          >
             {data.avgFrequency}
           </span>
           <span className="stat-card-label">Fréquence moyenne</span>
         </div>
       </div>
-      <p className="stats-window-label" id="stats-window-label" data-testid="stats-window-label">
+      <p
+        className="stats-window-label"
+        id="stats-window-label"
+        data-testid="stats-window-label"
+      >
         {windowLabel}
       </p>
       <p
@@ -59,10 +87,16 @@ export function StatsSection() {
         <span className="badge-icon" aria-hidden="true">
           {THRESHOLD_ICONS[data.thresholdKind] ?? ''}
         </span>
-        <span data-testid="threshold-message">{THRESHOLD_LABELS[data.thresholdKind] ?? ''}</span>
+        <span data-testid="threshold-message">
+          {THRESHOLD_LABELS[data.thresholdKind] ?? ''}
+        </span>
       </p>
       {!isEmpty && (
-        <dl className="summary summary-extra" id="summary-extra" data-testid="stats-details">
+        <dl
+          className="summary summary-extra"
+          id="summary-extra"
+          data-testid="stats-details"
+        >
           <dt>Contractions (dernière heure)</dt>
           <dd>{data.lastHourCount}</dd>
           <dt>Estimation détaillée</dt>
@@ -74,9 +108,16 @@ export function StatsSection() {
         </dl>
       )}
 
-      <div className="section-divider" role="separator" aria-orientation="horizontal" />
+      <div
+        className="section-divider"
+        role="separator"
+        aria-orientation="horizontal"
+      />
 
-      <IntervalChart intervals={data.intervals} recordsForChart={data.recordsForChart} />
+      <IntervalChart
+        intervals={data.intervals}
+        recordsForChart={data.recordsForChart}
+      />
     </section>
   );
 }
@@ -105,14 +146,24 @@ function IntervalChart({
             : '—';
 
           return (
-            <li key={i} className="interval-item" data-testid={`interval-item-${i}`}>
+            <li
+              key={i}
+              className="interval-item"
+              data-testid={`interval-item-${i}`}
+            >
               <span className="interval-time">{timeLabel}</span>
               <span className="interval-sep">›</span>
-              <span className="interval-value" data-testid={`interval-value-${i}`}>
+              <span
+                className="interval-value"
+                data-testid={`interval-value-${i}`}
+              >
                 {formatDuration(ms)}
               </span>
               {intensity && (
-                <span className={`interval-intensity interval-intensity--${intensity}`} data-testid={`interval-intensity-${i}`}>
+                <span
+                  className={`interval-intensity interval-intensity--${intensity}`}
+                  data-testid={`interval-intensity-${i}`}
+                >
                   {intensity}
                 </span>
               )}

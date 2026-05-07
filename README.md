@@ -107,21 +107,42 @@ Une fois installée, l'application fonctionne **hors ligne** pour les fonctions 
 
 ### Environnements
 
-| Environnement | URL | Branche | Technologie |
-|---------------|-----|---------|-------------|
-| **Production** | [mister-guiiug.github.io/miss-contraction](https://mister-guiiug.github.io/miss-contraction/) | `main` | Vanilla TypeScript |
-| **Développement** | [miss-contraction-dev.netlify.app](https://miss-contraction-dev.netlify.app) | `react-migration` | React 19 + TypeScript |
+| Environnement     | URL                                                                                           | Branche           |
+| ----------------- | --------------------------------------------------------------------------------------------- | ----------------- |
+| **Production**    | [mister-guiiug.github.io/miss-contraction](https://mister-guiiug.github.io/miss-contraction/) | `main`            |
+| **Développement** | [miss-contraction-dev.netlify.app](https://miss-contraction-dev.netlify.app)                  | `react-migration` |
 
-### Migration React en cours
+Voir [NETLIFY.md](NETLIFY.md) pour les détails du déploiement Netlify.
 
-L'application est progressivement migrée de Vanilla TypeScript vers React 19. La branche `react-migration` contient la version hybride :
+### Stack
 
-- ✅ **Vue Settings** - Migrée vers React avec Zustand pour l'état global
-- 🔄 **Autres vues** - Restent en Vanilla (Home, Table, Maternity, etc.)
+| Couche            | Technologie                                                                                                                                                                                           |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework         | [React 19](https://react.dev/) + [react-router-dom 7](https://reactrouter.com/)                                                                                                                       |
+| Build             | [Vite 7](https://vitejs.dev/) (cible ES2025)                                                                                                                                                          |
+| Style             | [Tailwind CSS 4](https://tailwindcss.com/) + CSS classique                                                                                                                                            |
+| State             | [Zustand 5](https://zustand-demo.pmnd.rs/)                                                                                                                                                            |
+| Validation        | [Zod 3](https://zod.dev/)                                                                                                                                                                             |
+| Tests             | [Vitest 3](https://vitest.dev/) (jsdom) + [Testing Library](https://testing-library.com/) + [Playwright](https://playwright.dev/) + [@axe-core/playwright](https://github.com/dequelabs/axe-core-npm) |
+| Monitoring        | [@sentry/react](https://docs.sentry.io/platforms/javascript/guides/react/) + [web-vitals 4](https://web.dev/vitals/)                                                                                  |
+| Configs partagées | [`@mister-guiiug/dev-wpa-config`](../dev-wpa-config/README.md) (ESLint, Prettier, TS, Vitest)                                                                                                                  |
+| PWA               | [`vite-plugin-pwa 1.2`](https://vite-pwa-org.netlify.app/) (Workbox)                                                                                                                                  |
 
-Le développement se fait sur la branche `react-migration` et est déployé automatiquement sur Netlify pour tester les nouvelles fonctionnalités React avant de les fusionner dans la production.
+### Scripts utiles
 
-Voir [NETLIFY.md](NETLIFY.md) pour plus de détails sur le déploiement.
+```bash
+npm run dev                # Vite dev server
+npm run build              # tsc -b && vite build
+npm run build:analyze      # avec rollup-plugin-visualizer (dist/stats.html)
+npm run build:netlify      # build pour Netlify (REACT_PREVIEW=1, base /)
+npm run preview            # prévisualisation locale
+npm run lint               # ESLint flat config
+npm run format             # Prettier --write
+npm run type-check         # tsc --noEmit (strict)
+npm run test               # Vitest (jsdom + Testing Library)
+npm run test:e2e           # Playwright (24+ tests catégorisés via tags @critical, @smoke, @a11y, @performance, etc.)
+npm run test:e2e:a11y      # tests d'accessibilité avec @axe-core/playwright
+```
 
 ---
 

@@ -1,6 +1,10 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type PluginOption } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import { visualizer } from 'rollup-plugin-visualizer';
+
+const analyze = process.env.ANALYZE === '1';
 
 const GTM_ID = 'GTM-M2GSG3V4';
 const GA_ID = 'G-B44CK4VR08';
@@ -15,7 +19,9 @@ const GA_COOKIE_DOMAIN = 'mister-guiiug.github.io';
 // Netlify Dev : https://miss-contraction-dev.netlify.app
 export default defineConfig(({ command }) => {
   // Détection de l'environnement de build
-  const isNetlify = process.env.NETLIFY === 'true' || process.env.NETLIFY_BUILD_BASE !== undefined;
+  const isNetlify =
+    process.env.NETLIFY === 'true' ||
+    process.env.NETLIFY_BUILD_BASE !== undefined;
   const isReactPreview = process.env.REACT_PREVIEW === '1';
 
   // Base path selon l'environnement
@@ -77,6 +83,14 @@ export default defineConfig(({ command }) => {
               return 'zustand';
             }
 
+            // Tailwind runtime
+            if (
+              norm.includes('/tailwindcss/') ||
+              norm.includes('/@tailwindcss/')
+            ) {
+              return 'tailwind';
+            }
+
             return 'vendor';
           },
         },
@@ -84,6 +98,7 @@ export default defineConfig(({ command }) => {
     },
     plugins: [
       react(),
+      tailwindcss(),
       {
         name: 'google-tag-manager',
         transformIndexHtml() {
@@ -134,7 +149,9 @@ export default defineConfig(({ command }) => {
             }
             const raw = req.originalUrl ?? '';
             const pathOnly = raw.split('?')[0] ?? '';
-            const targetPath = isReactPreview ? '/miss-contraction-react' : '/miss-contraction';
+            const targetPath = isReactPreview
+              ? '/miss-contraction-react'
+              : '/miss-contraction';
             if (pathOnly === targetPath) {
               const qs = raw.includes('?') ? `?${raw.split('?')[1]}` : '';
               res.statusCode = 302;
@@ -154,7 +171,9 @@ export default defineConfig(({ command }) => {
             }
             const raw = req.originalUrl ?? '';
             const pathOnly = raw.split('?')[0] ?? '';
-            const targetPath = isReactPreview ? '/miss-contraction-react' : '/miss-contraction';
+            const targetPath = isReactPreview
+              ? '/miss-contraction-react'
+              : '/miss-contraction';
             if (pathOnly === targetPath) {
               const qs = raw.includes('?') ? `?${raw.split('?')[1]}` : '';
               res.statusCode = 302;
@@ -178,7 +197,11 @@ export default defineConfig(({ command }) => {
           globPatterns: ['**/*.{js,css,html,ico,svg,png,woff2,webmanifest}'],
         },
         manifest: {
-          id: isNetlify ? '/' : isReactPreview ? '/miss-contraction-react/' : '/miss-contraction/',
+          id: isNetlify
+            ? '/'
+            : isReactPreview
+              ? '/miss-contraction-react/'
+              : '/miss-contraction/',
           name: 'Miss Contraction',
           short_name: 'Miss Contraction',
           description:
@@ -187,8 +210,16 @@ export default defineConfig(({ command }) => {
           background_color: '#fdf4fb',
           display: 'standalone',
           orientation: 'portrait',
-          scope: isNetlify ? '/' : isReactPreview ? '/miss-contraction-react/' : '/miss-contraction/',
-          start_url: isNetlify ? '/' : isReactPreview ? '/miss-contraction-react/' : '/miss-contraction/',
+          scope: isNetlify
+            ? '/'
+            : isReactPreview
+              ? '/miss-contraction-react/'
+              : '/miss-contraction/',
+          start_url: isNetlify
+            ? '/'
+            : isReactPreview
+              ? '/miss-contraction-react/'
+              : '/miss-contraction/',
           lang: 'fr',
           dir: 'ltr',
           categories: ['health', 'lifestyle'],
@@ -197,37 +228,61 @@ export default defineConfig(({ command }) => {
               name: 'Accueil',
               short_name: 'Accueil',
               description: 'Saisie des contractions et historique',
-              url: isNetlify ? '/#/' : isReactPreview ? '/miss-contraction-react/#/' : '/miss-contraction/#/',
+              url: isNetlify
+                ? '/#/'
+                : isReactPreview
+                  ? '/miss-contraction-react/#/'
+                  : '/miss-contraction/#/',
             },
             {
               name: 'Appeler la maternité',
               short_name: 'Maternité',
               description: 'Numéro, adresse et appel rapide',
-              url: isNetlify ? '/#/maternite' : isReactPreview ? '/miss-contraction-react/#/maternite' : '/miss-contraction/#/maternite',
+              url: isNetlify
+                ? '/#/maternite'
+                : isReactPreview
+                  ? '/miss-contraction-react/#/maternite'
+                  : '/miss-contraction/#/maternite',
             },
             {
               name: 'Paramètres et alerte',
               short_name: 'Réglages',
               description: "Seuils d'alerte et notifications",
-              url: isNetlify ? '/#/parametres' : isReactPreview ? '/miss-contraction-react/#/parametres' : '/miss-contraction/#/parametres',
+              url: isNetlify
+                ? '/#/parametres'
+                : isReactPreview
+                  ? '/miss-contraction-react/#/parametres'
+                  : '/miss-contraction/#/parametres',
             },
             {
               name: 'Message maternité',
               short_name: 'Message',
               description: 'Modèle SMS / WhatsApp pour prévenir',
-              url: isNetlify ? '/#/message' : isReactPreview ? '/miss-contraction-react/#/message' : '/miss-contraction/#/message',
+              url: isNetlify
+                ? '/#/message'
+                : isReactPreview
+                  ? '/miss-contraction-react/#/message'
+                  : '/miss-contraction/#/message',
             },
             {
               name: 'Tableau des contractions',
               short_name: 'Tableau',
               description: 'Durée, intervalle et fréquence',
-              url: isNetlify ? '/#/historique' : isReactPreview ? '/miss-contraction-react/#/historique' : '/miss-contraction/#/historique',
+              url: isNetlify
+                ? '/#/historique'
+                : isReactPreview
+                  ? '/miss-contraction-react/#/historique'
+                  : '/miss-contraction/#/historique',
             },
             {
               name: 'Résumé sage-femme',
               short_name: 'Résumé SF',
               description: 'Synthèse imprimable pour la maternité',
-              url: isNetlify ? '/#/sage-femme' : isReactPreview ? '/miss-contraction-react/#/sage-femme' : '/miss-contraction/#/sage-femme',
+              url: isNetlify
+                ? '/#/sage-femme'
+                : isReactPreview
+                  ? '/miss-contraction-react/#/sage-femme'
+                  : '/miss-contraction/#/sage-femme',
             },
           ],
           icons: [
@@ -252,6 +307,16 @@ export default defineConfig(({ command }) => {
           ],
         },
       }),
+      ...(analyze
+        ? [
+            visualizer({
+              filename: 'dist/stats.html',
+              gzipSize: true,
+              brotliSize: true,
+              open: !process.env.CI,
+            }) as PluginOption,
+          ]
+        : []),
     ],
   };
 });
