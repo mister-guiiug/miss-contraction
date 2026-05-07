@@ -28,14 +28,19 @@ test.describe('PWA - Progressive Web App', () => {
 
   test('service worker - enregistré', async ({ page }) => {
     const swActive = await page.evaluate(() => {
-      return navigator.serviceWorker ? navigator.serviceWorker.controller !== null : false;
+      return navigator.serviceWorker
+        ? navigator.serviceWorker.controller !== null
+        : false;
     });
 
     // Le SW peut ne pas être activé immédiatement, donc on vérifie juste que c'est possible
     expect(typeof swActive).toBe('boolean');
   });
 
-  test('offline support - app fonctionne sans réseau', async ({ page, context }) => {
+  test('offline support - app fonctionne sans réseau', async ({
+    page,
+    context,
+  }) => {
     // Mettre offline
     await context.setOffline(true);
 
@@ -60,12 +65,16 @@ test.describe('PWA - Progressive Web App', () => {
   });
 
   test('theme color - défini', async ({ page }) => {
-    const themeColor = await page.locator('meta[name="theme-color"]').getAttribute('content');
+    const themeColor = await page
+      .locator('meta[name="theme-color"]')
+      .getAttribute('content');
     expect(themeColor).toBeTruthy();
   });
 
   test('viewport - configuré pour mobile', async ({ page }) => {
-    const viewport = await page.locator('meta[name="viewport"]').getAttribute('content');
+    const viewport = await page
+      .locator('meta[name="viewport"]')
+      .getAttribute('content');
     expect(viewport).toContain('width=device-width');
     expect(viewport).toContain('initial-scale=1');
   });
@@ -97,14 +106,15 @@ test.describe('Accessibilité', () => {
 
   test('boutons - ont des labels accessibles', async ({ page }) => {
     const buttons = await page.locator('button').all();
-    
+
     for (const button of buttons.slice(0, 5)) {
       if (await button.isVisible()) {
         const ariaLabel = await button.getAttribute('aria-label');
         const textContent = await button.textContent();
-        
+
         // Au moins aria-label OU du texte visible
-        const hasLabel = ariaLabel || (textContent && textContent.trim().length > 0);
+        const hasLabel =
+          ariaLabel || (textContent && textContent.trim().length > 0);
         expect(hasLabel).toBe(true);
       }
     }
@@ -114,16 +124,18 @@ test.describe('Accessibilité', () => {
     await page.goto('/parametres');
 
     const inputs = await page.locator('input, textarea, select').all();
-    
+
     for (const input of inputs.slice(0, 5)) {
       if (await input.isVisible()) {
         const id = await input.getAttribute('id');
         const ariaLabel = await input.getAttribute('aria-label');
         const ariaLabelledBy = await input.getAttribute('aria-labelledby');
-        
+
         if (id) {
           const label = page.locator(`label[for="${id}"]`);
-          const hasLabel = await label.isVisible({ timeout: 500 }).catch(() => false);
+          const hasLabel = await label
+            .isVisible({ timeout: 500 })
+            .catch(() => false);
           expect(hasLabel || ariaLabel || ariaLabelledBy).toBeTruthy();
         } else {
           expect(ariaLabel || ariaLabelledBy).toBeTruthy();
@@ -158,12 +170,12 @@ test.describe('Accessibilité', () => {
 
   test('images - alt text', async ({ page }) => {
     const images = await page.locator('img').all();
-    
+
     for (const img of images) {
       if (await img.isVisible()) {
         const alt = await img.getAttribute('alt');
         const ariaLabel = await img.getAttribute('aria-label');
-        
+
         // Au moins alt OU aria-label
         expect(alt || ariaLabel).toBeTruthy();
       }
@@ -218,7 +230,9 @@ test.describe('Performance', () => {
   });
 
   test('bundle size - optimisé', async ({ page }) => {
-    const mainScript = await page.locator('script[src*="main"], script[type="module"]').first();
+    const mainScript = await page
+      .locator('script[src*="main"], script[type="module"]')
+      .first();
     if (await mainScript.isVisible({ timeout: 500 }).catch(() => false)) {
       const src = await mainScript.getAttribute('src');
       expect(src).toBeTruthy();
@@ -226,8 +240,11 @@ test.describe('Performance', () => {
   });
 
   test('interactions - responsive (< 100ms)', async ({ page }) => {
-    const startButton = page.locator('button').filter({ hasText: /Début|Start/ }).first();
-    
+    const startButton = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
+
     const startTime = Date.now();
     await startButton.click();
     const clickTime = Date.now() - startTime;
@@ -243,7 +260,7 @@ test.describe('Stabilité & Robustesse', () => {
     await page.evaluate(() => localStorage.clear());
   });
 
-  test('pas d\'erreurs JavaScript à la page', async ({ page }) => {
+  test("pas d'erreurs JavaScript à la page", async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', error => {
       errors.push(error.message);
@@ -255,7 +272,7 @@ test.describe('Stabilité & Robustesse', () => {
     expect(errors.length).toBe(0);
   });
 
-  test('pas d\'erreurs réseau non gérées', async ({ page }) => {
+  test("pas d'erreurs réseau non gérées", async ({ page }) => {
     const failedRequests: string[] = [];
     page.on('requestfailed', request => {
       // Ignorer les erreurs prévisibles (e.g., 404 des assets optionnels)
@@ -271,16 +288,22 @@ test.describe('Stabilité & Robustesse', () => {
     expect(failedRequests.length).toBeLessThan(2);
   });
 
-  test('localStorage - pas d\'erreurs de quota', async ({ page }) => {
+  test("localStorage - pas d'erreurs de quota", async ({ page }) => {
     const errors: string[] = [];
 
     // Créer beaucoup de contractions
-    const startButton = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+    const startButton = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
     for (let i = 0; i < 50; i++) {
       try {
         await startButton.click();
         await page.waitForTimeout(50);
-        const stopButton = page.locator('button').filter({ hasText: /Fin|Stop/ }).first();
+        const stopButton = page
+          .locator('button')
+          .filter({ hasText: /Fin|Stop/ })
+          .first();
         await stopButton.click();
         await page.waitForTimeout(50);
       } catch (e) {
@@ -291,7 +314,7 @@ test.describe('Stabilité & Robustesse', () => {
     expect(errors.length).toBe(0);
   });
 
-  test('récupération d\'erreur - parse JSON cassé', async ({ page }) => {
+  test("récupération d'erreur - parse JSON cassé", async ({ page }) => {
     // Simuler un localStorage corrompu
     await page.evaluate(() => {
       localStorage.setItem('mc_records', '{invalid json}');
@@ -301,7 +324,10 @@ test.describe('Stabilité & Robustesse', () => {
     await page.reload();
 
     // Vérifier que la page ne crash pas
-    const startButton = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+    const startButton = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
     if (await startButton.isVisible({ timeout: 1000 }).catch(() => false)) {
       await expect(startButton).toBeVisible();
     }
@@ -312,7 +338,7 @@ test.describe('Stabilité & Robustesse', () => {
     await page.evaluate(() => {
       let size = 0;
       const maxSize = 5 * 1024 * 1024; // 5MB limit
-      
+
       try {
         while (size < maxSize * 0.9) {
           const key = `test_${size}`;
@@ -329,19 +355,28 @@ test.describe('Stabilité & Robustesse', () => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    const startButton = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+    const startButton = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
     if (await startButton.isVisible({ timeout: 500 }).catch(() => false)) {
       await expect(startButton).toBeVisible();
     }
   });
 
   test('stabilité - multiples interactions rapides', async ({ page }) => {
-    const startButton = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+    const startButton = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
 
     // Cliquer rapidement plusieurs fois
     for (let i = 0; i < 10; i++) {
       await startButton.click({ timeout: 100 }).catch(() => {});
-      const stopButton = page.locator('button').filter({ hasText: /Fin|Stop/ }).first();
+      const stopButton = page
+        .locator('button')
+        .filter({ hasText: /Fin|Stop/ })
+        .first();
       await stopButton.click({ timeout: 100 }).catch(() => {});
     }
 
@@ -352,11 +387,17 @@ test.describe('Stabilité & Robustesse', () => {
 
   test('page ne se freeze pas', async ({ page }) => {
     // Créer plusieurs contractions
-    const startButton = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+    const startButton = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
     for (let i = 0; i < 3; i++) {
       await startButton.click();
       await page.waitForTimeout(100);
-      const stopButton = page.locator('button').filter({ hasText: /Fin|Stop/ }).first();
+      const stopButton = page
+        .locator('button')
+        .filter({ hasText: /Fin|Stop/ })
+        .first();
       await stopButton.click();
       await page.waitForTimeout(100);
     }
@@ -376,10 +417,16 @@ test.describe('Stabilité & Robustesse', () => {
   test('memory leak - pas de croissance excessive', async ({ page }) => {
     // Créer et supprimer beaucoup d'éléments
     for (let i = 0; i < 20; i++) {
-      const startButton = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+      const startButton = page
+        .locator('button')
+        .filter({ hasText: /Début|Start/ })
+        .first();
       await startButton.click();
       await page.waitForTimeout(50);
-      const stopButton = page.locator('button').filter({ hasText: /Fin|Stop/ }).first();
+      const stopButton = page
+        .locator('button')
+        .filter({ hasText: /Fin|Stop/ })
+        .first();
       await stopButton.click();
       await page.waitForTimeout(50);
     }
@@ -388,7 +435,10 @@ test.describe('Stabilité & Robustesse', () => {
     await page.evaluate(() => localStorage.clear());
 
     // La page devrait rester responsive
-    const startButton = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+    const startButton = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
     if (await startButton.isVisible({ timeout: 500 }).catch(() => false)) {
       await expect(startButton).toBeVisible();
     }

@@ -12,7 +12,10 @@ import {
 } from './statsHelpers';
 import type { ContractionRecord, AppSettings } from './storage';
 import { formatDuration } from './utils/formatDuration';
-import { formatStatsClock, formatContractionsPerHour } from './utils/formatStats';
+import {
+  formatStatsClock,
+  formatContractionsPerHour,
+} from './utils/formatStats';
 
 // ============================================================
 // Fixtures
@@ -64,11 +67,7 @@ const REGULAR_5MIN = [
 ];
 
 // Scénario 2 : contractions espacées (pas d'alerte)
-const SPARSE = [
-  makeRecord(90, 50),
-  makeRecord(60, 55),
-  makeRecord(30, 60),
-];
+const SPARSE = [makeRecord(90, 50), makeRecord(60, 55), makeRecord(30, 60)];
 
 // Scénario 3 : contractions rapprochées courtes (durée insuffisante)
 const SHORT_CONTRACTIONS = [
@@ -81,10 +80,7 @@ const SHORT_CONTRACTIONS = [
 const SINGLE = [makeRecord(5, 60)];
 
 // Scénario 5 : approaching (2 contractions proches)
-const APPROACHING = [
-  makeRecord(12, 60),
-  makeRecord(6, 60),
-];
+const APPROACHING = [makeRecord(12, 60), makeRecord(6, 60)];
 
 // ============================================================
 // Snapshots - filterRecordsByStatsWindow
@@ -93,12 +89,12 @@ const APPROACHING = [
 describe('Snapshot: filterRecordsByStatsWindow', () => {
   it('filtre "all" retourne tout le tableau (snapshot)', () => {
     const result = filterRecordsByStatsWindow(REGULAR_5MIN, 'all', BASE_TIME);
-    expect(result.map((r) => r.id)).toMatchSnapshot();
+    expect(result.map(r => r.id)).toMatchSnapshot();
   });
 
   it('filtre "30" retourne les 30 dernières minutes (snapshot)', () => {
     const result = filterRecordsByStatsWindow(REGULAR_5MIN, '30', BASE_TIME);
-    expect(result.map((r) => r.id)).toMatchSnapshot();
+    expect(result.map(r => r.id)).toMatchSnapshot();
   });
 
   it('filtre "60" retourne les 60 dernières minutes (snapshot)', () => {
@@ -109,17 +105,13 @@ describe('Snapshot: filterRecordsByStatsWindow', () => {
       makeRecord(5, 60),
     ];
     const result = filterRecordsByStatsWindow(all, '60', BASE_TIME);
-    expect(result.map((r) => r.id)).toMatchSnapshot();
+    expect(result.map(r => r.id)).toMatchSnapshot();
   });
 
   it('filtre "120" retourne les 2 dernières heures (snapshot)', () => {
-    const all = [
-      makeRecord(150, 60),
-      makeRecord(90, 60),
-      makeRecord(45, 60),
-    ];
+    const all = [makeRecord(150, 60), makeRecord(90, 60), makeRecord(45, 60)];
     const result = filterRecordsByStatsWindow(all, '120', BASE_TIME);
-    expect(result.map((r) => r.id)).toMatchSnapshot();
+    expect(result.map(r => r.id)).toMatchSnapshot();
   });
 });
 
@@ -215,7 +207,10 @@ describe('Snapshot: computeThresholdBadge - settings variés', () => {
 // ============================================================
 
 describe('Snapshot: formatDuration', () => {
-  const cases = [0, 30_000, 45_000, 60_000, 90_000, 120_000, 180_000, 240_000, 300_000, 3_600_000, 7_200_000];
+  const cases = [
+    0, 30_000, 45_000, 60_000, 90_000, 120_000, 180_000, 240_000, 300_000,
+    3_600_000, 7_200_000,
+  ];
 
   for (const ms of cases) {
     it(`formatDuration(${ms}ms) (snapshot)`, () => {
@@ -229,7 +224,9 @@ describe('Snapshot: formatDuration', () => {
 // ============================================================
 
 describe('Snapshot: formatStatsClock', () => {
-  const cases = [0, 30_000, 45_000, 60_000, 90_000, 120_000, 180_000, 300_000, 3_600_000];
+  const cases = [
+    0, 30_000, 45_000, 60_000, 90_000, 120_000, 180_000, 300_000, 3_600_000,
+  ];
 
   for (const ms of cases) {
     it(`formatStatsClock(${ms}ms) (snapshot)`, () => {

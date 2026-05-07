@@ -38,9 +38,7 @@ export function HighContrastToggle() {
         checked={highContrast}
         onChange={handleToggle}
       />
-      <span>
-        Mode contraste élevé (pour une meilleure lisibilité)
-      </span>
+      <span>Mode contraste élevé (pour une meilleure lisibilité)</span>
     </label>
   );
 }

@@ -19,12 +19,19 @@ export function TimelineCompact() {
     if (lastFive.length >= 3) {
       const intervals: number[] = [];
       for (let i = 1; i < lastFive.length; i++) {
-        const interval = (lastFive[i].start - lastFive[i - 1].start) / 1000 / 60;
+        const interval =
+          (lastFive[i].start - lastFive[i - 1].start) / 1000 / 60;
         intervals.push(interval);
       }
 
-      const avg1 = intervals.slice(0, Math.floor(intervals.length / 2)).reduce((a, b) => a + b, 0) / Math.ceil(intervals.length / 2);
-      const avg2 = intervals.slice(Math.floor(intervals.length / 2)).reduce((a, b) => a + b, 0) / Math.ceil(intervals.length / 2);
+      const avg1 =
+        intervals
+          .slice(0, Math.floor(intervals.length / 2))
+          .reduce((a, b) => a + b, 0) / Math.ceil(intervals.length / 2);
+      const avg2 =
+        intervals
+          .slice(Math.floor(intervals.length / 2))
+          .reduce((a, b) => a + b, 0) / Math.ceil(intervals.length / 2);
 
       if (avg2 < avg1 * 0.85) {
         return { lastFive, trend: 'faster' as const };
@@ -49,7 +56,9 @@ export function TimelineCompact() {
     const seconds = Math.floor((endMs - startMs) / 1000);
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return mins > 0 ? `${mins}:${secs.toString().padStart(2, '0')}` : `${secs}s`;
+    return mins > 0
+      ? `${mins}:${secs.toString().padStart(2, '0')}`
+      : `${secs}s`;
   };
 
   const getIntensityColor = (intensity?: number) => {
@@ -65,7 +74,7 @@ export function TimelineCompact() {
   };
 
   const trendLabel = {
-    faster: 'S\'accélère ↗',
+    faster: "S'accélère ↗",
     slower: 'Ralentit ↘',
     stable: 'Stable →',
   };
@@ -90,8 +99,12 @@ export function TimelineCompact() {
       <div className="timeline-compact">
         {lastFive.map((record, index) => (
           <div key={record.id || index} className="timeline-compact-item">
-            <div className="timeline-compact-time">{formatTime(record.start)}</div>
-            <div className="timeline-compact-duration">{formatDuration(record.start, record.end)}</div>
+            <div className="timeline-compact-time">
+              {formatTime(record.start)}
+            </div>
+            <div className="timeline-compact-duration">
+              {formatDuration(record.start, record.end)}
+            </div>
             {record.intensity && (
               <div
                 className="timeline-compact-intensity"

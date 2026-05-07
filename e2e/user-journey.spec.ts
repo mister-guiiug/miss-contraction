@@ -15,7 +15,9 @@ test.describe('Parcours - Première utilisation', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  test('@journey @critical parcours complet : configuration → contractions → alerte', async ({ page }) => {
+  test('@journey @critical parcours complet : configuration → contractions → alerte', async ({
+    page,
+  }) => {
     // === ÉTAPE 1 : Configuration initiale ===
     await page.goto(ROUTES.SETTINGS);
     await page.waitForLoadState('networkidle');
@@ -25,9 +27,15 @@ test.describe('Parcours - Première utilisation', () => {
     await page.locator('[data-testid="consecutive-count-input"]').fill('3');
 
     const { maternity } = TEST_DATA;
-    await page.locator('[data-testid="maternity-label-input"]').fill(maternity.name);
-    await page.locator('[data-testid="maternity-phone-input"]').fill(maternity.phone);
-    await page.locator('[data-testid="maternity-address-textarea"]').fill(maternity.address);
+    await page
+      .locator('[data-testid="maternity-label-input"]')
+      .fill(maternity.name);
+    await page
+      .locator('[data-testid="maternity-phone-input"]')
+      .fill(maternity.phone);
+    await page
+      .locator('[data-testid="maternity-address-textarea"]')
+      .fill(maternity.address);
 
     await page.locator('[data-testid="settings-save-btn"]').click();
     await page.waitForTimeout(500);
@@ -63,7 +71,9 @@ test.describe('Parcours - Première utilisation', () => {
     await page.goto(ROUTES.TABLE);
     await page.waitForLoadState('networkidle');
 
-    await expect(page.locator('[data-testid="contractions-table"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="contractions-table"]')
+    ).toBeVisible();
     const rows = page.locator('[data-testid^="table-row-"]');
     await expect(rows).toHaveCount(3);
 
@@ -72,17 +82,23 @@ test.describe('Parcours - Première utilisation', () => {
     await page.waitForLoadState('networkidle');
 
     await expect(page.locator('[data-testid="maternity-view"]')).toBeVisible();
-    await expect(page.locator('[data-testid="maternity-label"]')).toContainText(maternity.name);
+    await expect(page.locator('[data-testid="maternity-label"]')).toContainText(
+      maternity.name
+    );
 
     // === ÉTAPE 7 : Vue message ===
     await page.goto(ROUTES.MESSAGE);
     await page.waitForLoadState('networkidle');
 
     await expect(page.locator('[data-testid="message-view"]')).toBeVisible();
-    await expect(page.locator('[data-testid="message-textarea"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="message-textarea"]')
+    ).toBeVisible();
   });
 
-  test('@journey parcours mobile simplifié : démarrer, noter, arrêter', async ({ page }) => {
+  test('@journey parcours mobile simplifié : démarrer, noter, arrêter', async ({
+    page,
+  }) => {
     const btn = page.locator('[data-testid="toggle-contraction-btn"]');
     await expect(btn).toBeVisible();
 
@@ -98,7 +114,9 @@ test.describe('Parcours - Première utilisation', () => {
     await page.waitForTimeout(300);
 
     // La contraction est enregistrée
-    await expect(page.locator('[data-testid="history-items"] li')).toHaveCount(1);
+    await expect(page.locator('[data-testid="history-items"] li')).toHaveCount(
+      1
+    );
   });
 });
 
@@ -137,9 +155,12 @@ test.describe('Parcours - Gestion des notes et intensité', () => {
     // Injecter une contraction
     const now = Date.now();
     const fakeRecords = [{ id: 'r1', start: now - 60000, end: now - 59000 }];
-    await page.evaluate(([key, records]) => {
-      localStorage.setItem(key, JSON.stringify(records));
-    }, ['mc_records', fakeRecords] as [string, typeof fakeRecords]);
+    await page.evaluate(
+      ([key, records]) => {
+        localStorage.setItem(key, JSON.stringify(records));
+      },
+      ['mc_records', fakeRecords] as [string, typeof fakeRecords]
+    );
 
     await page.reload();
     await page.waitForLoadState('networkidle');
@@ -177,9 +198,12 @@ test.describe('Parcours - Gestion des notes et intensité', () => {
       { id: 'r1', start: now - 120000, end: now - 119000 },
       { id: 'r2', start: now - 60000, end: now - 59000 },
     ];
-    await page.evaluate(([key, records]) => {
-      localStorage.setItem(key, JSON.stringify(records));
-    }, ['mc_records', fakeRecords] as [string, typeof fakeRecords]);
+    await page.evaluate(
+      ([key, records]) => {
+        localStorage.setItem(key, JSON.stringify(records));
+      },
+      ['mc_records', fakeRecords] as [string, typeof fakeRecords]
+    );
 
     await page.reload();
     await page.waitForLoadState('networkidle');
@@ -188,8 +212,10 @@ test.describe('Parcours - Gestion des notes et intensité', () => {
     await expect(items).toHaveCount(2);
 
     // Supprimer la première
-    const deleteBtn = page.locator('[data-testid^="delete-record-btn-"]').first();
-    page.once('dialog', (dialog) => dialog.accept());
+    const deleteBtn = page
+      .locator('[data-testid^="delete-record-btn-"]')
+      .first();
+    page.once('dialog', dialog => dialog.accept());
     await deleteBtn.click();
     await page.waitForTimeout(300);
 
@@ -198,9 +224,11 @@ test.describe('Parcours - Gestion des notes et intensité', () => {
 });
 
 test.describe('Parcours - Navigation complète', () => {
-  test('@journey @critical navigation entre toutes les vues sans erreur', async ({ page }) => {
+  test('@journey @critical navigation entre toutes les vues sans erreur', async ({
+    page,
+  }) => {
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     const routes = [
       ROUTES.HOME,
@@ -219,11 +247,13 @@ test.describe('Parcours - Navigation complète', () => {
       await expect(page.locator('body')).not.toBeEmpty();
     }
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
-  test('@journey la navigation retour fonctionne depuis les vues secondaires', async ({ page }) => {
+  test('@journey la navigation retour fonctionne depuis les vues secondaires', async ({
+    page,
+  }) => {
     // Paramètres → Retour
     await page.goto(ROUTES.SETTINGS);
     await page.waitForLoadState('networkidle');
@@ -239,19 +269,27 @@ test.describe('Parcours - Navigation complète', () => {
     await expect(tableBackLink).toBeVisible();
     await tableBackLink.click();
     await page.waitForLoadState('networkidle');
-    await expect(page.locator('[data-testid="toggle-contraction-btn"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="toggle-contraction-btn"]')
+    ).toBeVisible();
   });
 });
 
 test.describe('Parcours - Scénario urgence', () => {
-  test('@journey @critical appel maternité depuis vue maternité configurée', async ({ page }) => {
+  test('@journey @critical appel maternité depuis vue maternité configurée', async ({
+    page,
+  }) => {
     // Configurer la maternité
     await page.goto(ROUTES.SETTINGS);
     await page.waitForLoadState('networkidle');
 
     const { maternity } = TEST_DATA;
-    await page.locator('[data-testid="maternity-label-input"]').fill(maternity.name);
-    await page.locator('[data-testid="maternity-phone-input"]').fill(maternity.phone);
+    await page
+      .locator('[data-testid="maternity-label-input"]')
+      .fill(maternity.name);
+    await page
+      .locator('[data-testid="maternity-phone-input"]')
+      .fill(maternity.phone);
     await page.locator('[data-testid="settings-save-btn"]').click();
     await page.waitForTimeout(500);
 
@@ -274,23 +312,28 @@ test.describe('Parcours - Scénario urgence', () => {
     await expect(textarea).toBeVisible();
 
     // Les boutons d'envoi sont présents
-    await expect(page.locator('[data-testid="message-whatsapp-btn"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="message-whatsapp-btn"]')
+    ).toBeVisible();
     await expect(page.locator('[data-testid="message-sms-btn"]')).toBeVisible();
   });
 });
 
 test.describe('Parcours - Undo (annulation)', () => {
-  test('@journey annuler la suppression d'une contraction', async ({ page }) => {
+  test('@journey annuler la suppression d’une contraction', async ({
+    page,
+  }) => {
     await page.goto(ROUTES.HOME);
     await page.evaluate(() => localStorage.clear());
 
     const now = Date.now();
-    const fakeRecords = [
-      { id: 'r1', start: now - 60000, end: now - 59000 },
-    ];
-    await page.evaluate(([key, records]) => {
-      localStorage.setItem(key, JSON.stringify(records));
-    }, ['mc_records', fakeRecords] as [string, typeof fakeRecords]);
+    const fakeRecords = [{ id: 'r1', start: now - 60000, end: now - 59000 }];
+    await page.evaluate(
+      ([key, records]) => {
+        localStorage.setItem(key, JSON.stringify(records));
+      },
+      ['mc_records', fakeRecords] as [string, typeof fakeRecords]
+    );
 
     await page.reload();
     await page.waitForLoadState('networkidle');
@@ -299,8 +342,10 @@ test.describe('Parcours - Undo (annulation)', () => {
     await expect(items).toHaveCount(1);
 
     // Supprimer
-    const deleteBtn = page.locator('[data-testid^="delete-record-btn-"]').first();
-    page.once('dialog', (dialog) => dialog.accept());
+    const deleteBtn = page
+      .locator('[data-testid^="delete-record-btn-"]')
+      .first();
+    page.once('dialog', dialog => dialog.accept());
     await deleteBtn.click();
     await page.waitForTimeout(300);
 

@@ -14,11 +14,15 @@ export class TablePage {
   }
 
   async getRowCount() {
-    return await this.page.locator('[data-testid="contraction-table-row"]').count();
+    return await this.page
+      .locator('[data-testid="contraction-table-row"]')
+      .count();
   }
 
   async getTableHeaders() {
-    return await this.page.locator('th, [role="columnheader"]').allTextContents();
+    return await this.page
+      .locator('th, [role="columnheader"]')
+      .allTextContents();
   }
 
   async editContraction(rowIndex: number) {
@@ -57,7 +61,7 @@ export class TablePage {
   async updateNoteInModal(newNote: string) {
     const modal = this.page.locator('[data-testid="edit-contraction-modal"]');
     const noteInput = modal.locator('[data-testid="contraction-note-input"]');
-    
+
     await expect(noteInput).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
     await noteInput.fill(newNote);
 
@@ -76,8 +80,10 @@ export class TablePage {
 
   async export() {
     const exportBtn = this.page.locator(SELECTORS.EXPORT_BTN);
-    
-    if (await exportBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
+
+    if (
+      await exportBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
+    ) {
       const downloadPromise = this.page.waitForEvent('download');
       await exportBtn.click();
       return await downloadPromise;
@@ -88,11 +94,15 @@ export class TablePage {
 
   async hasEmptyState() {
     const emptyMsg = this.page.locator('[data-testid="empty-table-message"]');
-    return await emptyMsg.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false);
+    return await emptyMsg
+      .isVisible({ timeout: TIMEOUTS.SHORT })
+      .catch(() => false);
   }
 
   async getRowData(rowIndex: number) {
-    const row = this.page.locator('[data-testid="contraction-table-row"]').nth(rowIndex);
+    const row = this.page
+      .locator('[data-testid="contraction-table-row"]')
+      .nth(rowIndex);
     return {
       time: await row.locator('[data-col="time"]').textContent(),
       duration: await row.locator('[data-col="duration"]').textContent(),

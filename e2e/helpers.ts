@@ -21,13 +21,13 @@ export async function createContraction(page: Page, durationMs = 500) {
   const startBtn = page.locator(SELECTORS.START_BTN);
   await expect(startBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
   await startBtn.click();
-  
+
   await page.waitForTimeout(durationMs);
-  
+
   const stopBtn = page.locator(SELECTORS.STOP_BTN);
   await expect(stopBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
   await stopBtn.click();
-  
+
   await page.waitForTimeout(200); // Attendre que localStorage se mette à jour
 }
 
@@ -57,7 +57,9 @@ export async function navigateTo(page: Page, route: string) {
 
   if (navTestId) {
     const navBtn = page.locator(`[data-testid="${navTestId}"]`);
-    if (await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
+    if (
+      await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
+    ) {
       await navBtn.click();
       await page.waitForLoadState('networkidle');
       return;
@@ -93,12 +95,14 @@ export async function saveSettings(page: Page) {
   const saveBtn = page.locator(SELECTORS.SAVE_BTN);
   if (await saveBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
     await saveBtn.click();
-    
+
     // Attendre la confirmation
     const confirmMsg = page.locator('text=/Enregistré|Sauvegardé/i');
-    await expect(confirmMsg).toBeVisible({ timeout: TIMEOUTS.NORMAL }).catch(() => {
-      // La confirmation n'est pas obligatoire
-    });
+    await expect(confirmMsg)
+      .toBeVisible({ timeout: TIMEOUTS.NORMAL })
+      .catch(() => {
+        // La confirmation n'est pas obligatoire
+      });
   }
 }
 
@@ -107,19 +111,19 @@ export async function saveSettings(page: Page) {
  */
 export async function expectNoJSErrors(page: Page) {
   const errors: string[] = [];
-  
+
   const errorHandler = (error: Error) => {
     errors.push(error.message);
   };
 
   page.on('pageerror', errorHandler);
-  
+
   return {
     errors,
     cleanup: () => page.off('pageerror', errorHandler),
     verify: () => {
       expect(errors).toHaveLength(0);
-    }
+    },
   };
 }
 
@@ -139,15 +143,23 @@ export async function waitForContractionInHistory(page: Page) {
  */
 export async function getDisplayedStats(page: Page) {
   const statsSection = page.locator(SELECTORS.STATS_SECTION);
-  
-  if (!await statsSection.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
+
+  if (
+    !(await statsSection
+      .isVisible({ timeout: TIMEOUTS.SHORT })
+      .catch(() => false))
+  ) {
     return null;
   }
 
   return {
     qtyPerHour: await statsSection.locator('[data-stat="qty"]').textContent(),
-    avgDuration: await statsSection.locator('[data-stat="duration"]').textContent(),
-    avgFrequency: await statsSection.locator('[data-stat="frequency"]').textContent(),
+    avgDuration: await statsSection
+      .locator('[data-stat="duration"]')
+      .textContent(),
+    avgFrequency: await statsSection
+      .locator('[data-stat="frequency"]')
+      .textContent(),
   };
 }
 
@@ -157,7 +169,9 @@ export async function getDisplayedStats(page: Page) {
 export async function getThresholdBadgeState(page: Page) {
   const badge = page.locator(SELECTORS.THRESHOLD_BADGE);
 
-  if (!await badge.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
+  if (
+    !(await badge.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false))
+  ) {
     return null;
   }
 
@@ -183,7 +197,7 @@ export async function verifyLocalStoragePersistence(
   key: string,
   expectedValue: any
 ) {
-  const value = await page.evaluate((k) => {
+  const value = await page.evaluate(k => {
     const stored = localStorage.getItem(k);
     return stored ? JSON.parse(stored) : null;
   }, key);
@@ -194,7 +208,7 @@ export async function verifyLocalStoragePersistence(
   await page.reload();
   await waitForPageReady(page);
 
-  const reloadedValue = await page.evaluate((k) => {
+  const reloadedValue = await page.evaluate(k => {
     const stored = localStorage.getItem(k);
     return stored ? JSON.parse(stored) : null;
   }, key);

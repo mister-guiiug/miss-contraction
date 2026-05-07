@@ -5,6 +5,7 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ## HomeView
 
 ### Boutons principaux
+
 ```tsx
 // src/react/components/home/TimerSectionWithIntensity.tsx
 <button data-testid="start-contraction-btn">Début</button>
@@ -12,6 +13,7 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ```
 
 ### Affichage Timer
+
 ```tsx
 // src/react/components/home/TimerSectionWithIntensity.tsx
 <span data-testid="timer-display">{formatted}</span>
@@ -19,6 +21,7 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ```
 
 ### Intensité
+
 ```tsx
 // src/react/components/home/IntensityPicker.tsx
 <button data-testid="intensity-1" aria-pressed={intensity === 1}>1</button>
@@ -29,21 +32,21 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ```
 
 ### Badge Seuil
+
 ```tsx
 // src/react/components/home/ThresholdBadge.tsx
-<div 
-  data-testid="threshold-badge" 
-  data-state={state}
->
-  {icon}{message}
+<div data-testid="threshold-badge" data-state={state}>
+  {icon}
+  {message}
 </div>
 ```
 
 ### Notes Rapides
+
 ```tsx
 // src/react/components/home/QuickNotes.tsx
-<button 
-  data-testid="quick-note" 
+<button
+  data-testid="quick-note"
   data-note="Contraction forte"
   onClick={() => onNoteSelect('Contraction forte')}
 >
@@ -52,6 +55,7 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ```
 
 ### Stats
+
 ```tsx
 // src/react/components/home/StatsSection.tsx
 <section data-testid="stats-section">
@@ -68,6 +72,7 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ```
 
 ### Fenêtre temporelle
+
 ```tsx
 // src/react/components/home/StatsSection.tsx
 <button data-testid="time-window-30">30 min</button>
@@ -77,6 +82,7 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ```
 
 ### Historique
+
 ```tsx
 // src/react/components/home/HistoryList.tsx
 <div data-testid="history-list">
@@ -89,14 +95,14 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ```
 
 ### État vide
+
 ```tsx
 // src/react/components/home/EmptyState.tsx
-<div data-testid="empty-state">
-  Pas encore de contractions enregistrées
-</div>
+<div data-testid="empty-state">Pas encore de contractions enregistrées</div>
 ```
 
 ### Vue principale
+
 ```tsx
 // src/react/views/HomeView.tsx
 <div id="view-home" data-testid="view-home">
@@ -107,74 +113,78 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ## SettingsView
 
 ### Inputs Seuils
+
 ```tsx
 // src/react/views/SettingsView.tsx
-<input 
+<input
   data-testid="max-interval-input"
-  name="maxIntervalMin" 
-  type="number" 
+  name="maxIntervalMin"
+  type="number"
 />
-<input 
+<input
   data-testid="min-duration-input"
-  name="minDurationSec" 
-  type="number" 
+  name="minDurationSec"
+  type="number"
 />
-<input 
+<input
   data-testid="consecutive-count-input"
-  name="consecutiveCount" 
-  type="number" 
+  name="consecutiveCount"
+  type="number"
 />
 ```
 
 ### Inputs Maternité
+
 ```tsx
-<input 
+<input
   data-testid="maternity-name-input"
-  name="maternityLabel" 
-  type="text" 
+  name="maternityLabel"
+  type="text"
 />
-<input 
+<input
   data-testid="maternity-phone-input"
-  name="maternityPhone" 
-  type="tel" 
+  name="maternityPhone"
+  type="tel"
 />
-<input 
+<input
   data-testid="maternity-address-input"
-  name="maternityAddress" 
-  type="text" 
+  name="maternityAddress"
+  type="text"
 />
 ```
 
 ### Toggles
+
 ```tsx
-<input 
+<input
   data-testid="theme-toggle"
-  name="theme" 
-  type="checkbox" 
+  name="theme"
+  type="checkbox"
 />
-<input 
+<input
   data-testid="high-contrast-toggle"
-  name="highContrast" 
-  type="checkbox" 
+  name="highContrast"
+  type="checkbox"
 />
-<input 
+<input
   data-testid="large-mode-toggle"
-  name="largeMode" 
-  type="checkbox" 
+  name="largeMode"
+  type="checkbox"
 />
-<input 
+<input
   data-testid="vibration-toggle"
-  name="hapticFeedback" 
-  type="checkbox" 
+  name="hapticFeedback"
+  type="checkbox"
 />
-<input 
+<input
   data-testid="voice-commands-toggle"
-  name="voiceCommands" 
-  type="checkbox" 
+  name="voiceCommands"
+  type="checkbox"
 />
 ```
 
 ### Snooze
+
 ```tsx
 <button data-testid="snooze-30-btn">Snooze 30 min</button>
 <button data-testid="snooze-60-btn">Snooze 1h</button>
@@ -182,11 +192,13 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ```
 
 ### Notification
+
 ```tsx
 <button data-testid="request-notification-btn">Activer notifications</button>
 ```
 
 ### Actions
+
 ```tsx
 <button data-testid="save-settings-btn">Enregistrer</button>
 <button data-testid="clear-data-btn">Effacer toutes les données</button>
@@ -194,6 +206,7 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ```
 
 ### Vue
+
 ```tsx
 <div data-testid="view-settings">
 ```
@@ -203,6 +216,7 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ## TableView
 
 ### Tableau
+
 ```tsx
 // src/react/views/TableView.tsx
 <table data-testid="contractions-table">
@@ -232,6 +246,7 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ```
 
 ### Modale Édition
+
 ```tsx
 <div data-testid="edit-contraction-modal" role="dialog">
   <input data-testid="contraction-note-input" />
@@ -241,18 +256,19 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ```
 
 ### Message Vide
+
 ```tsx
-<div data-testid="empty-table-message">
-  Pas de contractions enregistrées
-</div>
+<div data-testid="empty-table-message">Pas de contractions enregistrées</div>
 ```
 
 ### Export
+
 ```tsx
 <button data-testid="export-btn">Exporter</button>
 ```
 
 ### Vue
+
 ```tsx
 <div data-testid="view-table">
 ```
@@ -262,10 +278,11 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ## MaternityView
 
 ### Affichage Infos
+
 ```tsx
 // src/react/views/MaternityView.tsx
 <div data-testid="maternity-name">{maternityLabel}</div>
-<a 
+<a
   data-testid="maternity-phone-link"
   href={`tel:${phone}`}
 >
@@ -276,14 +293,15 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ```
 
 ### Boutons Action
+
 ```tsx
-<a 
+<a
   data-testid="maternity-phone-link"
   href={`tel:...`}
 >
   Appeler
 </a>
-<a 
+<a
   data-testid="maternity-directions-link"
   href="https://www.google.com/maps/..."
 >
@@ -292,6 +310,7 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ```
 
 ### Vue
+
 ```tsx
 <div data-testid="view-maternity">
 ```
@@ -301,25 +320,27 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ## MessageView
 
 ### Textarea
+
 ```tsx
 // src/react/views/MessageView.tsx
-<textarea 
+<textarea
   data-testid="message-textarea"
   value={message}
-  onChange={(e) => setMessage(e.target.value)}
+  onChange={e => setMessage(e.target.value)}
 />
 ```
 
 ### Boutons Partage
+
 ```tsx
 <button data-testid="copy-message-btn">Copier</button>
-<a 
+<a
   data-testid="share-whatsapp-link"
   href={`https://wa.me/?text=...`}
 >
   Partager WhatsApp
 </a>
-<a 
+<a
   data-testid="share-sms-link"
   href={`sms:?body=...`}
 >
@@ -328,11 +349,13 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ```
 
 ### Confirmation
+
 ```tsx
 <div data-testid="copy-confirmation">Copié !</div>
 ```
 
 ### Vue
+
 ```tsx
 <div data-testid="view-message">
 ```
@@ -342,14 +365,25 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 ## Navigation & Shell
 
 ### Navigation
+
 ```tsx
 // src/react/components/layout/BottomNav.tsx
 <nav data-testid="main-navigation">
-  <a data-testid="nav-home" href="/">Accueil</a>
-  <a data-testid="nav-settings" href="/parametres">Paramètres</a>
-  <a data-testid="nav-table" href="/historique">Historique</a>
-  <a data-testid="nav-maternity" href="/maternite">Maternité</a>
-  <a data-testid="nav-message" href="/message">Message</a>
+  <a data-testid="nav-home" href="/">
+    Accueil
+  </a>
+  <a data-testid="nav-settings" href="/parametres">
+    Paramètres
+  </a>
+  <a data-testid="nav-table" href="/historique">
+    Historique
+  </a>
+  <a data-testid="nav-maternity" href="/maternite">
+    Maternité
+  </a>
+  <a data-testid="nav-message" href="/message">
+    Message
+  </a>
 </nav>
 ```
 
@@ -407,8 +441,8 @@ export function StartButton({ onClick }) {
 // Après
 export function StartButton({ onClick }) {
   return (
-    <button 
-      className="start-btn" 
+    <button
+      className="start-btn"
       data-testid="start-contraction-btn"
       aria-label="Démarrer une contraction"
       onClick={onClick}

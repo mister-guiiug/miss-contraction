@@ -10,9 +10,9 @@ const MATERNITY_MESSAGE_STORAGE_KEY = 'mc_maternity_message_v1';
 
 const DEFAULT_MATERNITY_MESSAGE =
   'Coucou,\n\n' +
-  'C\'est le grand jour pour nous : je pars à la maternité. Les contractions se suivent bien, et c\'est cohérent avec ce qu\'on s\'était dit avec la sage-femme.\n\n' +
-  'J\'ai un peu les papillons, mais je me sens prête. Pense fort à nous — je t\'envoie des nouvelles dès que je peux.\n\n' +
-  'Je t\'embrasse';
+  "C'est le grand jour pour nous : je pars à la maternité. Les contractions se suivent bien, et c'est cohérent avec ce qu'on s'était dit avec la sage-femme.\n\n" +
+  "J'ai un peu les papillons, mais je me sens prête. Pense fort à nous — je t'envoie des nouvelles dès que je peux.\n\n" +
+  "Je t'embrasse";
 
 function loadMaternityMessageDraft(): string {
   try {
@@ -97,8 +97,11 @@ export function MessageView() {
       title="Message a la maternite"
       lead="Modele de SMS ou WhatsApp pour prevenir vos proches. Adaptez le texte, puis copiez-le ou ouvrez directement une application."
     >
-
-      <section className="card" aria-labelledby="message-heading" data-testid="message-section">
+      <section
+        className="card"
+        aria-labelledby="message-heading"
+        data-testid="message-section"
+      >
         <h2 id="message-heading" className="section-title">
           Votre message
         </h2>
@@ -107,7 +110,7 @@ export function MessageView() {
           <span>Personnalisez le texte avant envoi</span>
           <textarea
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={e => setMessage(e.target.value)}
             className="msg-textarea"
             data-testid="message-textarea"
             rows={10}
@@ -118,22 +121,51 @@ export function MessageView() {
         </label>
 
         {feedback && (
-          <p className="msg-feedback" role="status" aria-live="polite" data-testid="message-feedback">
+          <p
+            className="msg-feedback"
+            role="status"
+            aria-live="polite"
+            data-testid="message-feedback"
+          >
             {feedback}
           </p>
         )}
 
-        <div className="msg-actions" role="group" aria-label="Envoyer ou copier le message">
-          <button type="button" className="btn btn-secondary" data-testid="message-reset-btn" onClick={handleReset}>
+        <div
+          className="msg-actions"
+          role="group"
+          aria-label="Envoyer ou copier le message"
+        >
+          <button
+            type="button"
+            className="btn btn-secondary"
+            data-testid="message-reset-btn"
+            onClick={handleReset}
+          >
             Réinitialiser le modèle
           </button>
-          <button type="button" className="btn btn-secondary" data-testid="message-copy-btn" onClick={handleCopy}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            data-testid="message-copy-btn"
+            onClick={handleCopy}
+          >
             Copier
           </button>
-          <button type="button" className="btn btn-primary" data-testid="message-whatsapp-btn" onClick={handleWhatsApp}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            data-testid="message-whatsapp-btn"
+            onClick={handleWhatsApp}
+          >
             Ouvrir WhatsApp
           </button>
-          <button type="button" className="btn btn-secondary" data-testid="message-sms-btn" onClick={handleSms}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            data-testid="message-sms-btn"
+            onClick={handleSms}
+          >
             Ouvrir SMS
           </button>
         </div>
@@ -147,7 +179,11 @@ export function MessageView() {
       </section>
 
       <p className="settings-back-wrap mobile-home-only">
-        <Link to="/" className="btn btn-secondary settings-back-link" data-testid="message-back-link">
+        <Link
+          to="/"
+          className="btn btn-secondary settings-back-link"
+          data-testid="message-back-link"
+        >
           Retour a l'accueil
         </Link>
       </p>

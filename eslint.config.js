@@ -1,31 +1,18 @@
-import js from '@eslint/js';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
+import baseConfig from '@mister-guiiug/dev-wpa-config/eslint-react';
 
-export default tseslint.config(
-  { ignores: ['dist', 'node_modules', 'dev-dist'] },
+/**
+ * Override : pour les tests Playwright (e2e/) on autorise `any` et on relâche
+ * complètement la règle no-unused-vars (les tests ont souvent des variables
+ * de setup intentionnelles non utilisées et le pattern fixture { page } qui
+ * n'est pas toujours consommé).
+ */
+export default [
+  ...baseConfig,
   {
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ['**/*.{ts,tsx}'],
-    languageOptions: {
-      ecmaVersion: 2022,
-      globals: globals.browser,
-    },
-    plugins: {
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
-    },
+    files: ['e2e/**/*.{ts,tsx}'],
     rules: {
-      ...reactHooks.configs.recommended.rules,
-      // Keep core hooks safety rules, but disable strict React Compiler rules
-      // that are too aggressive for the current codebase patterns.
-      'react-hooks/set-state-in-effect': 'off',
-      'react-hooks/purity': 'off',
-      'react-hooks/immutability': 'off',
-      'react-hooks/preserve-manual-memoization': 'off',
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
     },
-  }
-);
+  },
+];

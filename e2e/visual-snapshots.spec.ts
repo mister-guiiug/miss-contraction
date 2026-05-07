@@ -1,7 +1,7 @@
 /**
  * Tests E2E - Snapshots visuels
  * Tests de régression visuelle avec comparaison d'images
- * 
+ *
  * Tags:
  * @visual - Tests visuels/snapshots
  */
@@ -19,13 +19,16 @@ test.describe('Snapshots Visuels - Régression Design', () => {
 
   test('@visual HomeView - layout principal', async ({ page }) => {
     // Masquer les éléments volatiles (timer en cours)
-    await page.locator('[data-testid="volatile"]').evaluate(els => {
-      els.forEach((el: Element) => {
-        (el as HTMLElement).style.opacity = '0.5';
+    await page
+      .locator('[data-testid="volatile"]')
+      .evaluate(els => {
+        els.forEach((el: Element) => {
+          (el as HTMLElement).style.opacity = '0.5';
+        });
+      })
+      .catch(() => {
+        // Pas d'éléments volatiles, c'est ok
       });
-    }).catch(() => {
-      // Pas d'éléments volatiles, c'est ok
-    });
 
     await expect(page).toHaveScreenshot('home-view-empty.png', {
       maxDiffPixels: 100,
@@ -35,11 +38,17 @@ test.describe('Snapshots Visuels - Régression Design', () => {
 
   test('@visual HomeView - avec contractions', async ({ page }) => {
     // Créer quelques contractions
-    const startBtn = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+    const startBtn = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
     for (let i = 0; i < 2; i++) {
       await startBtn.click();
       await page.waitForTimeout(200);
-      const stopBtn = page.locator('button').filter({ hasText: /Fin|Stop/ }).first();
+      const stopBtn = page
+        .locator('button')
+        .filter({ hasText: /Fin|Stop/ })
+        .first();
       await stopBtn.click();
       await page.waitForTimeout(300);
     }
@@ -70,11 +79,17 @@ test.describe('Snapshots Visuels - Régression Design', () => {
   test('@visual TableView - avec données', async ({ page }) => {
     // Créer quelques contractions
     await page.goto(ROUTES.HOME);
-    const startBtn = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+    const startBtn = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
     for (let i = 0; i < 3; i++) {
       await startBtn.click();
       await page.waitForTimeout(200);
-      const stopBtn = page.locator('button').filter({ hasText: /Fin|Stop/ }).first();
+      const stopBtn = page
+        .locator('button')
+        .filter({ hasText: /Fin|Stop/ })
+        .first();
       await stopBtn.click();
       await page.waitForTimeout(300);
     }
@@ -107,8 +122,11 @@ test.describe('Snapshots Visuels - Régression Design', () => {
 
   test('@visual mobile - HomeView sur téléphone', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
-    
-    const startBtn = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+
+    const startBtn = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
     await expect(startBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
 
     await expect(page).toHaveScreenshot('home-view-mobile.png', {
@@ -137,7 +155,9 @@ test.describe('Snapshots Visuels - Régression Design', () => {
     });
   });
 
-  test('@visual high contrast - HomeView en contraste élevé', async ({ page }) => {
+  test('@visual high contrast - HomeView en contraste élevé', async ({
+    page,
+  }) => {
     // Activer le contraste élevé
     await page.evaluate(() => {
       document.documentElement.classList.add('high-contrast');
@@ -162,8 +182,11 @@ test.describe('Snapshots Visuels - Régression Design', () => {
   test('@visual badge transitions - états du badge', async ({ page }) => {
     // États du badge: empty, calm, approaching, match
     // Créer lentement pour voir les transitions
-    const startBtn = page.locator('button').filter({ hasText: /Début|Start/ }).first();
-    
+    const startBtn = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
+
     // État initial (empty)
     await expect(page).toHaveScreenshot('badge-state-empty.png', {
       maxDiffPixels: 50,
@@ -172,19 +195,24 @@ test.describe('Snapshots Visuels - Régression Design', () => {
     // Créer une contraction (calm)
     await startBtn.click();
     await page.waitForTimeout(300);
-    const stopBtn = page.locator('button').filter({ hasText: /Fin|Stop/ }).first();
+    const stopBtn = page
+      .locator('button')
+      .filter({ hasText: /Fin|Stop/ })
+      .first();
     await stopBtn.click();
     await page.waitForTimeout(500);
 
     const badge = page.locator('[data-testid="threshold-badge"]');
     const state = await badge.getAttribute('data-state');
-    
+
     if (state !== 'empty') {
-      await expect(page).toHaveScreenshot(`badge-state-${state}.png`, {
-        maxDiffPixels: 50,
-      }).catch(() => {
-        // Les snapshots de badge peuvent ne pas être critiques
-      });
+      await expect(page)
+        .toHaveScreenshot(`badge-state-${state}.png`, {
+          maxDiffPixels: 50,
+        })
+        .catch(() => {
+          // Les snapshots de badge peuvent ne pas être critiques
+        });
     }
   });
 });
@@ -199,7 +227,10 @@ test.describe('Snapshots Responsif - Breakpoints', () => {
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
 
-    const startBtn = page.locator('button').filter({ hasText: /Début|Start/ }).first();
+    const startBtn = page
+      .locator('button')
+      .filter({ hasText: /Début|Start/ })
+      .first();
     await expect(startBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
 
     await expect(page).toHaveScreenshot('responsive-320.png', {

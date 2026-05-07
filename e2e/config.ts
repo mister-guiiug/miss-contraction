@@ -4,11 +4,11 @@
  */
 
 export const TIMEOUTS = {
-  SHORT: 300,           // Animations rapides
-  NORMAL: 1000,         // Interactions standard
-  LONG: 5000,          // Chargement réseau
-  ELEMENT_READY: 2000,  // Attendre qu'un élément soit prêt
-  PAGE_LOAD: 3000,     // Attendre le chargement page
+  SHORT: 300, // Animations rapides
+  NORMAL: 1000, // Interactions standard
+  LONG: 5000, // Chargement réseau
+  ELEMENT_READY: 2000, // Attendre qu'un élément soit prêt
+  PAGE_LOAD: 3000, // Attendre le chargement page
 } as const;
 
 export const SELECTORS = {
@@ -66,7 +66,7 @@ export const TEST_DATA = {
     name: 'Maternité Test Saint-Louis',
     phone: '01 23 45 67 89',
     address: '123 Rue de la Santé, 75000 Paris',
-    instructions: 'Arriver avec dossier complet\nAppeler avant d\'arriver'
+    instructions: "Arriver avec dossier complet\nAppeler avant d'arriver",
   },
   settings: {
     maxIntervalMin: 3,
@@ -74,5 +74,5 @@ export const TEST_DATA = {
     consecutiveCount: 3,
   },
   contractionDurations: [500, 450, 520, 480],
-  message: 'Test message pour WhatsApp et SMS'
+  message: 'Test message pour WhatsApp et SMS',
 } as const;
