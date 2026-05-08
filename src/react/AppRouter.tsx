@@ -15,13 +15,15 @@ import { TableView } from './views/TableView';
 import { MidwifeView } from './views/MidwifeView';
 import { ChecklistView } from './views/ChecklistView';
 import { AboutView } from './views/AboutView';
-import { ROUTE_META } from '../routes';
+import { getDocumentTitle, type AppRoute } from '../routes';
+import { useAppStore } from './store/useAppStore';
 
 function DocumentTitle() {
   const location = useLocation();
+  const language = useAppStore(state => state.settings.language);
 
   useEffect(() => {
-    const routeMap: Record<string, keyof typeof ROUTE_META> = {
+    const routeMap: Record<string, AppRoute> = {
       '/': 'home',
       '/parametres': 'settings',
       '/historique': 'table',
@@ -33,8 +35,8 @@ function DocumentTitle() {
     };
 
     const route = routeMap[location.pathname] ?? 'home';
-    document.title = ROUTE_META[route].documentTitle;
-  }, [location.pathname]);
+    document.title = getDocumentTitle(route, language);
+  }, [language, location.pathname]);
 
   return null;
 }

@@ -1,50 +1,69 @@
 import { useState, useEffect } from 'react';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { AppFooter } from '../components/layout/AppFooter';
+import { t } from '../../i18n';
+import { useAppStore } from '../store/useAppStore';
 
 interface ChecklistItem {
   id: string;
-  label: string;
   category: 'mama' | 'baby' | 'partner' | 'docs';
   checked: boolean;
 }
 
 const DEFAULT_ITEMS: ChecklistItem[] = [
-  {
-    id: '1',
-    label: 'Dossier médical & carte vitale',
-    category: 'docs',
-    checked: false,
-  },
-  { id: '2', label: 'Projet de naissance', category: 'docs', checked: false },
-  { id: '3', label: 'Livret de famille', category: 'docs', checked: false },
-  { id: '4', label: 'Pyjamas & Bodies (x5)', category: 'baby', checked: false },
-  { id: '5', label: 'Bonnets & Chaussons', category: 'baby', checked: false },
-  { id: '6', label: 'Gigoteuse', category: 'baby', checked: false },
-  { id: '7', label: 'Tenues confortables', category: 'mama', checked: false },
-  {
-    id: '8',
-    label: "Soutiens-gorge d'allaitement",
-    category: 'mama',
-    checked: false,
-  },
-  { id: '9', label: 'Trousse de toilette', category: 'mama', checked: false },
-  { id: '10', label: 'Snacks & Boissons', category: 'partner', checked: false },
-  {
-    id: '11',
-    label: 'Chargeur de téléphone long',
-    category: 'partner',
-    checked: false,
-  },
-  {
-    id: '12',
-    label: 'Appareil photo / Caméra',
-    category: 'partner',
-    checked: false,
-  },
+  { id: '1', category: 'docs', checked: false },
+  { id: '2', category: 'docs', checked: false },
+  { id: '3', category: 'docs', checked: false },
+  { id: '4', category: 'baby', checked: false },
+  { id: '5', category: 'baby', checked: false },
+  { id: '6', category: 'baby', checked: false },
+  { id: '7', category: 'mama', checked: false },
+  { id: '8', category: 'mama', checked: false },
+  { id: '9', category: 'mama', checked: false },
+  { id: '10', category: 'partner', checked: false },
+  { id: '11', category: 'partner', checked: false },
+  { id: '12', category: 'partner', checked: false },
 ];
 
+const CHECKLIST_LABELS = {
+  fr: {
+    '1': 'Dossier medical et carte vitale',
+    '2': 'Projet de naissance',
+    '3': 'Livret de famille',
+    '4': 'Pyjamas et bodies (x5)',
+    '5': 'Bonnets et chaussons',
+    '6': 'Gigoteuse',
+    '7': 'Tenues confortables',
+    '8': "Soutiens-gorge d'allaitement",
+    '9': 'Trousse de toilette',
+    '10': 'Snacks et boissons',
+    '11': 'Chargeur de telephone long',
+    '12': 'Appareil photo ou camera',
+  },
+  en: {
+    '1': 'Medical records and health card',
+    '2': 'Birth plan',
+    '3': 'Family record book',
+    '4': 'Pajamas and bodysuits (x5)',
+    '5': 'Hats and booties',
+    '6': 'Sleep sack',
+    '7': 'Comfortable outfits',
+    '8': 'Nursing bras',
+    '9': 'Toiletry bag',
+    '10': 'Snacks and drinks',
+    '11': 'Long phone charger',
+    '12': 'Camera',
+  },
+} as const;
+
+function getChecklistLabel(language: string, id: string): string {
+  const dictionary =
+    language === 'fr' ? CHECKLIST_LABELS.fr : CHECKLIST_LABELS.en;
+  return dictionary[id as keyof typeof dictionary] ?? id;
+}
+
 export function ChecklistView() {
+  const language = useAppStore(state => state.settings.language);
   const [items, setItems] = useState<ChecklistItem[]>(() => {
     const saved = localStorage.getItem('mc_checklist');
     if (!saved) return DEFAULT_ITEMS;
@@ -69,17 +88,21 @@ export function ChecklistView() {
   };
 
   const categories = [
-    { id: 'docs', label: 'Papiers & Documents', icon: '📄' },
-    { id: 'mama', label: 'Pour Maman', icon: '🤰' },
-    { id: 'baby', label: 'Pour Bébé', icon: '👶' },
-    { id: 'partner', label: 'Pour le Partenaire / Accompagnant', icon: '👫' },
+    { id: 'docs', label: t(language, 'checklist.category.docs'), icon: '📄' },
+    { id: 'mama', label: t(language, 'checklist.category.mama'), icon: '🤰' },
+    { id: 'baby', label: t(language, 'checklist.category.baby'), icon: '👶' },
+    {
+      id: 'partner',
+      label: t(language, 'checklist.category.partner'),
+      icon: '👫',
+    },
   ];
 
   return (
     <ViewLayout
       id="view-checklist"
-      title="Valise maternité"
-      lead="Préparez sereinement votre départ pour la maternité avec cette liste essentielle."
+      title={t(language, 'checklist.title')}
+      lead={t(language, 'checklist.lead')}
       footer={<AppFooter />}
     >
       {categories.map(cat => (
@@ -98,7 +121,7 @@ export function ChecklistView() {
                     checked={item.checked}
                     onChange={() => toggleItem(item.id)}
                   />
-                  <span>{item.label}</span>
+                  <span>{getChecklistLabel(language, item.id)}</span>
                 </label>
               ))}
           </div>
@@ -109,18 +132,16 @@ export function ChecklistView() {
         className="card panel panel-cta"
         style={{ textAlign: 'center', marginTop: '1rem' }}
       >
-        <p className="cta-hint">
-          Cette liste est enregistrée localement sur votre téléphone.
-        </p>
+        <p className="cta-hint">{t(language, 'checklist.savedLocal')}</p>
         <button
           className="btn btn-secondary btn-small"
           onClick={() => {
-            if (confirm('Réinitialiser la liste ?')) {
+            if (confirm(t(language, 'checklist.confirmReset'))) {
               setItems(DEFAULT_ITEMS);
             }
           }}
         >
-          Réinitialiser la liste
+          {t(language, 'checklist.reset')}
         </button>
       </div>
     </ViewLayout>
