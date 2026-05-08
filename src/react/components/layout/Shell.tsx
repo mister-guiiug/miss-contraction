@@ -276,7 +276,10 @@ function Breadcrumb() {
       ) : (
         <ol className="top-bar-bc-list">
           <li className="top-bar-bc-step">
-            <Link className="top-bar-bc-link" to={getRoutePath('home', language)}>
+            <Link
+              className="top-bar-bc-link"
+              to={getRoutePath('home', language)}
+            >
               {homeLabel}
             </Link>
           </li>

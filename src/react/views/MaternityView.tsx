@@ -62,8 +62,12 @@ export function MaternityView() {
 
         <div className="maternity-page-phone-block">
           <div className="maternity-page-phone-head">
-            <p className="maternity-page-subheading">{t(language, 'maternity.number')}</p>
-            <span className="maternity-page-readonly-badge">{t(language, 'maternity.readonly')}</span>
+            <p className="maternity-page-subheading">
+              {t(language, 'maternity.number')}
+            </p>
+            <span className="maternity-page-readonly-badge">
+              {t(language, 'maternity.readonly')}
+            </span>
           </div>
 
           {hasPhone ? (
@@ -116,8 +120,12 @@ export function MaternityView() {
         {/* Bloc Adresse */}
         <div className="maternity-page-address-block">
           <div className="maternity-page-address-head">
-            <p className="maternity-page-address-heading">{t(language, 'maternity.address')}</p>
-            <span className="maternity-page-readonly-badge">{t(language, 'maternity.readonly')}</span>
+            <p className="maternity-page-address-heading">
+              {t(language, 'maternity.address')}
+            </p>
+            <span className="maternity-page-readonly-badge">
+              {t(language, 'maternity.readonly')}
+            </span>
           </div>
 
           {hasAddress ? (
@@ -167,7 +175,9 @@ export function MaternityView() {
               </span>
               <span>{t(language, 'maternity.maps')}</span>
             </a>
-            <p className="maternity-page-maps-hint">{t(language, 'maternity.mapsHint')}</p>
+            <p className="maternity-page-maps-hint">
+              {t(language, 'maternity.mapsHint')}
+            </p>
           </div>
         )}
       </section>

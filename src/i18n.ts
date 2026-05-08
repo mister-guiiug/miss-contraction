@@ -80,18 +80,18 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
       'Projet open-source sous licence MIT, heberge sur GitHub.',
     'about.supportTitle': 'Soutenir le projet',
     'about.storyTitle': 'Pourquoi Miss Contraction ?',
-    'about.storyIntro': 'Miss Contraction est nee d\'un besoin reel.',
+    'about.storyIntro': "Miss Contraction est nee d'un besoin reel.",
     'about.storySisterPregnancy':
       'Ma belle-soeur, enceinte, a commence a avoir des contractions tres tot.',
     'about.storyProblem':
-      'Les solutions existantes demandaient trop : inscription, donnees personnelles, ou paiement pour acceder a l\'essentiel.',
+      "Les solutions existantes demandaient trop : inscription, donnees personnelles, ou paiement pour acceder a l'essentiel.",
     'about.storyNeeds':
-      'Dans ces moments-la, on a besoin d\'une seule chose : un outil simple, immediat, pour mesurer les contractions.',
+      "Dans ces moments-la, on a besoin d'une seule chose : un outil simple, immediat, pour mesurer les contractions.",
     'about.storySolution': 'Miss Contraction fait exactement cela.',
     'about.storyFeatures1': 'Pas de compte.',
     'about.storyFeatures2': 'Pas de donnees personnelles.',
     'about.storyFeatures3': 'Pas de paiement.',
-    'about.storyEssence': 'Juste l\'essentiel, accessible instantanement.',
+    'about.storyEssence': "Juste l'essentiel, accessible instantanement.",
     'about.pwaTitle': 'Application web (PWA)',
     'about.pwaText':
       "Si l'application semble bloquee sur une ancienne version, forcez le rechargement pour appliquer la derniere mise a jour.",
@@ -129,7 +129,8 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'stats.detailEstimation': 'Estimation detaillee',
     'stats.lastInterval': 'Dernier intervalle',
     'stats.lastDuration': 'Derniere duree',
-    'stats.intervalsTitle': 'Intervalles entre debuts (derniers enregistrements)',
+    'stats.intervalsTitle':
+      'Intervalles entre debuts (derniers enregistrements)',
     'stats.threshold.match':
       "Les dernieres contractions correspondent a vos seuils d'alerte.",
     'stats.threshold.approaching':
@@ -159,8 +160,8 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'history.delete': 'Supprimer',
     'history.editAria': 'Modifier cette contraction',
     'history.deleteAria': 'Supprimer cette contraction',
-    'history.confirmClear': 'Effacer tout l\'historique sur cet appareil ?',
-    'history.confirmDelete': 'Supprimer cette contraction de l\'historique ?',
+    'history.confirmClear': "Effacer tout l'historique sur cet appareil ?",
+    'history.confirmDelete': "Supprimer cette contraction de l'historique ?",
     'history.editTitle': 'Modifier la contraction',
     'history.errorInvalidDates': 'Verifiez les dates saisies.',
     'history.errorEndAfterStart': 'La fin doit etre apres le debut.',
@@ -347,10 +348,8 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
       'Latest contractions match your configured alert thresholds.',
     'stats.threshold.approaching':
       'Sustained rhythm - stay attentive to your midwife guidance.',
-    'stats.threshold.calm':
-      'Currently outside your configured alert pattern.',
-    'stats.threshold.empty':
-      'Not enough data yet to compare with thresholds.',
+    'stats.threshold.calm': 'Currently outside your configured alert pattern.',
+    'stats.threshold.empty': 'Not enough data yet to compare with thresholds.',
 
     'empty.title': 'Ready to track your contractions?',
     'empty.text':
@@ -441,8 +440,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'checklist.category.mama': 'For mom',
     'checklist.category.baby': 'For baby',
     'checklist.category.partner': 'For partner',
-    'checklist.savedLocal':
-      'This checklist is saved locally on your device.',
+    'checklist.savedLocal': 'This checklist is saved locally on your device.',
     'checklist.reset': 'Reset checklist',
     'checklist.confirmReset': 'Reset checklist?',
 

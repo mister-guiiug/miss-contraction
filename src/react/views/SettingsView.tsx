@@ -191,12 +191,17 @@ export function SettingsView() {
               name="language"
               data-testid="language-select"
               value={formData.language}
-              onChange={(e) => {
+              onChange={e => {
                 const newLanguage = e.target.value;
-                setFormData(prev => ({ ...prev, language: newLanguage as any }));
+                setFormData(prev => ({
+                  ...prev,
+                  language: newLanguage as any,
+                }));
                 updateSettings({ language: newLanguage as any });
                 saveSettings();
-                setSaveStatus(t(newLanguage as any, 'settings.language.changed'));
+                setSaveStatus(
+                  t(newLanguage as any, 'settings.language.changed')
+                );
                 setTimeout(() => setSaveStatus(''), 2000);
               }}
             >

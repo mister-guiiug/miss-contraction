@@ -180,7 +180,7 @@ export function AboutView() {
             <p>{t(language, 'about.storyEssence')}</p>
             <p>
               {language === 'fr'
-                ? 'Si vous aimez ce projet et souhaitez le soutenir, vous pouvez m\'offrir un café via'
+                ? "Si vous aimez ce projet et souhaitez le soutenir, vous pouvez m'offrir un café via"
                 : 'If you like this project and want to support it, you can buy me a coffee via'}{' '}
               <a href={COFFEE_URL} target="_blank" rel="noopener noreferrer">
                 {COFFEE_URL}

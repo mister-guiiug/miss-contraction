@@ -58,7 +58,10 @@ export function AppRoutes() {
         <Route path="/historico" element={<TableView />} />
         <Route path="/geschiedenis" element={<TableView />} />
         {/* Legacy aliases */}
-        <Route path="/tableau" element={<Navigate to="/historique" replace />} />
+        <Route
+          path="/tableau"
+          element={<Navigate to="/historique" replace />}
+        />
         <Route path="/table" element={<Navigate to="/historique" replace />} />
 
         {/* Midwife - all language variants */}
@@ -70,7 +73,10 @@ export function AppRoutes() {
         <Route path="/parteira" element={<MidwifeView />} />
         <Route path="/vroedvrouw" element={<MidwifeView />} />
         {/* Legacy aliases */}
-        <Route path="/sagefemme" element={<Navigate to="/sage-femme" replace />} />
+        <Route
+          path="/sagefemme"
+          element={<Navigate to="/sage-femme" replace />}
+        />
 
         {/* Maternity - all language variants */}
         <Route path="/maternite" element={<MaternityView />} />
