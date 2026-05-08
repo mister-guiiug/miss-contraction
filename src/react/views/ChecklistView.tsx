@@ -10,18 +10,38 @@ interface ChecklistItem {
 }
 
 const DEFAULT_ITEMS: ChecklistItem[] = [
-  { id: '1', label: 'Dossier médical & carte vitale', category: 'docs', checked: false },
+  {
+    id: '1',
+    label: 'Dossier médical & carte vitale',
+    category: 'docs',
+    checked: false,
+  },
   { id: '2', label: 'Projet de naissance', category: 'docs', checked: false },
   { id: '3', label: 'Livret de famille', category: 'docs', checked: false },
   { id: '4', label: 'Pyjamas & Bodies (x5)', category: 'baby', checked: false },
   { id: '5', label: 'Bonnets & Chaussons', category: 'baby', checked: false },
   { id: '6', label: 'Gigoteuse', category: 'baby', checked: false },
   { id: '7', label: 'Tenues confortables', category: 'mama', checked: false },
-  { id: '8', label: 'Soutiens-gorge d\'allaitement', category: 'mama', checked: false },
+  {
+    id: '8',
+    label: "Soutiens-gorge d'allaitement",
+    category: 'mama',
+    checked: false,
+  },
   { id: '9', label: 'Trousse de toilette', category: 'mama', checked: false },
   { id: '10', label: 'Snacks & Boissons', category: 'partner', checked: false },
-  { id: '11', label: 'Chargeur de téléphone long', category: 'partner', checked: false },
-  { id: '12', label: 'Appareil photo / Caméra', category: 'partner', checked: false },
+  {
+    id: '11',
+    label: 'Chargeur de téléphone long',
+    category: 'partner',
+    checked: false,
+  },
+  {
+    id: '12',
+    label: 'Appareil photo / Caméra',
+    category: 'partner',
+    checked: false,
+  },
 ];
 
 export function ChecklistView() {
@@ -41,9 +61,11 @@ export function ChecklistView() {
   }, [items]);
 
   const toggleItem = (id: string) => {
-    setItems(prev => prev.map(item =>
-      item.id === id ? { ...item, checked: !item.checked } : item
-    ));
+    setItems(prev =>
+      prev.map(item =>
+        item.id === id ? { ...item, checked: !item.checked } : item
+      )
+    );
   };
 
   const categories = [
@@ -83,7 +105,10 @@ export function ChecklistView() {
         </div>
       ))}
 
-      <div className="card panel panel-cta" style={{ textAlign: 'center', marginTop: '1rem' }}>
+      <div
+        className="card panel panel-cta"
+        style={{ textAlign: 'center', marginTop: '1rem' }}
+      >
         <p className="cta-hint">
           Cette liste est enregistrée localement sur votre téléphone.
         </p>

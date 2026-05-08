@@ -72,10 +72,7 @@ export function AppRoutes() {
         <Route path="/messages" element={<Navigate to="/message" replace />} />
         <Route path="/sms" element={<Navigate to="/message" replace />} />
         <Route path="/valise" element={<ChecklistView />} />
-        <Route
-          path="/checklist"
-          element={<Navigate to="/valise" replace />}
-        />
+        <Route path="/checklist" element={<Navigate to="/valise" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Shell>
