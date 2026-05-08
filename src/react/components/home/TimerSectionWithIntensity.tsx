@@ -155,7 +155,9 @@ export function TimerSectionWithIntensity({
 
           {/* Sélecteur d'intensité pendant contraction */}
           <div className="timer-intensity-section">
-            <p className="timer-intensity-label">{t(language, 'timer.intensity')}</p>
+            <p className="timer-intensity-label">
+              {t(language, 'timer.intensity')}
+            </p>
             <div data-testid="intensity-selector">
               <IntensityPicker
                 value={currentIntensity}

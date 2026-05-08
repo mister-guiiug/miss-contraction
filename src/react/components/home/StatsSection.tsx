@@ -58,7 +58,9 @@ export function StatsSection() {
           >
             {data.avgDuration}
           </span>
-          <span className="stat-card-label">{t(language, 'stats.avgDuration')}</span>
+          <span className="stat-card-label">
+            {t(language, 'stats.avgDuration')}
+          </span>
         </div>
         <div className="stat-card" data-testid="stat-card-frequency">
           <span className="stat-card-icon" aria-hidden="true" />
@@ -69,7 +71,9 @@ export function StatsSection() {
           >
             {data.avgFrequency}
           </span>
-          <span className="stat-card-label">{t(language, 'stats.avgFrequency')}</span>
+          <span className="stat-card-label">
+            {t(language, 'stats.avgFrequency')}
+          </span>
         </div>
       </div>
       <p
@@ -89,7 +93,10 @@ export function StatsSection() {
           {THRESHOLD_ICONS[data.thresholdKind] ?? ''}
         </span>
         <span data-testid="threshold-message">
-          {t(language, THRESHOLD_KEYS[data.thresholdKind] ?? 'stats.threshold.empty')}
+          {t(
+            language,
+            THRESHOLD_KEYS[data.thresholdKind] ?? 'stats.threshold.empty'
+          )}
         </span>
       </p>
       {!isEmpty && (

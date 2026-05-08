@@ -37,7 +37,6 @@ export function TableView() {
   const { records, setRecords, settings } = useAppStore();
   const language = settings.language;
 
-
   // Recharger les records depuis localStorage au montage
   // pour synchroniser avec les ajouts faits par le code vanilla
   useEffect(() => {

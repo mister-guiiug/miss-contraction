@@ -1,12 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import { formatDate, formatCurrency, formatNumber } from '../i18n.config';
+import { SUPPORTED_LANGUAGES, type AppLanguage } from '../i18n';
+
+function isAppLanguage(language: string): language is AppLanguage {
+  return (SUPPORTED_LANGUAGES as readonly string[]).includes(language);
+}
 
 /**
  * Hook personnalisé pour utiliser i18n avec formatters intégrés
  */
 export function useI18n() {
   const { t, i18n } = useTranslation();
-  const language = i18n.language as any;
+  const language = isAppLanguage(i18n.language) ? i18n.language : 'en';
 
   return {
     /**

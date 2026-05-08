@@ -17,7 +17,11 @@ export function BottomNav({ onMenuClick, isMenuOpen = false }: BottomNavProps) {
   const language = useAppStore(state => state.settings.language);
 
   const navItems = [
-    { href: getRoutePath('home', language), label: t(language, 'bottom.home'), icon: HomeIcon },
+    {
+      href: getRoutePath('home', language),
+      label: t(language, 'bottom.home'),
+      icon: HomeIcon,
+    },
     {
       href: getRoutePath('table', language),
       label: t(language, 'bottom.history'),
@@ -37,7 +41,7 @@ export function BottomNav({ onMenuClick, isMenuOpen = false }: BottomNavProps) {
   ];
 
   const isMenuRoute =
-    location.pathname === getRoutePath('message', language) || 
+    location.pathname === getRoutePath('message', language) ||
     location.pathname === getRoutePath('midwife', language);
 
   return (
