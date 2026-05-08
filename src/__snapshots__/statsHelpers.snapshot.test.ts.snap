@@ -1,0 +1,132 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Snapshot: computeThresholdBadge - settings variés > durée minimale 60s (contractions de 60s OK) (snapshot) 1`] = `"match"`;
+
+exports[`Snapshot: computeThresholdBadge - settings variés > durée minimale 90s (contractions de 60s insuffisantes) (snapshot) 1`] = `"approaching"`;
+
+exports[`Snapshot: computeThresholdBadge - settings variés > règle 4-1-1 (intervalleMax=4min) (snapshot) 1`] = `"calm"`;
+
+exports[`Snapshot: computeThresholdBadge - settings variés > règle 5-1-1 avec 4 contractions consécutives requises (snapshot) 1`] = `"match"`;
+
+exports[`Snapshot: computeThresholdBadge - tous les états > état "approaching" : rythme qui se resserre (snapshot) 1`] = `"approaching"`;
+
+exports[`Snapshot: computeThresholdBadge - tous les états > état "calm" : contractions courtes, durée insuffisante (snapshot) 1`] = `"approaching"`;
+
+exports[`Snapshot: computeThresholdBadge - tous les états > état "calm" : contractions espacées (snapshot) 1`] = `"calm"`;
+
+exports[`Snapshot: computeThresholdBadge - tous les états > état "empty" : aucun enregistrement (snapshot) 1`] = `"empty"`;
+
+exports[`Snapshot: computeThresholdBadge - tous les états > état "match" : règle 5-1-1 atteinte (snapshot) 1`] = `"match"`;
+
+exports[`Snapshot: computeThresholdBadge - tous les états > état pour une seule contraction (snapshot) 1`] = `"calm"`;
+
+exports[`Snapshot: filterRecordsByStatsWindow > filtre "30" retourne les 30 dernières minutes (snapshot) 1`] = `
+[
+  "rec_20",
+  "rec_15",
+  "rec_10",
+  "rec_5",
+  "rec_0",
+]
+`;
+
+exports[`Snapshot: filterRecordsByStatsWindow > filtre "60" retourne les 60 dernières minutes (snapshot) 1`] = `
+[
+  "rec_45",
+  "rec_20",
+  "rec_5",
+]
+`;
+
+exports[`Snapshot: filterRecordsByStatsWindow > filtre "120" retourne les 2 dernières heures (snapshot) 1`] = `
+[
+  "rec_90",
+  "rec_45",
+]
+`;
+
+exports[`Snapshot: filterRecordsByStatsWindow > filtre "all" retourne tout le tableau (snapshot) 1`] = `
+[
+  "rec_20",
+  "rec_15",
+  "rec_10",
+  "rec_5",
+  "rec_0",
+]
+`;
+
+exports[`Snapshot: formatContractionsPerHour > intervalle de 5 min → ~12/h (snapshot) 1`] = `"≈ 12 / h"`;
+
+exports[`Snapshot: formatContractionsPerHour > intervalle de 10 min → ~6/h (snapshot) 1`] = `"≈ 6,0 / h"`;
+
+exports[`Snapshot: formatContractionsPerHour > intervalle invalide (0) → "—" (snapshot) 1`] = `"—"`;
+
+exports[`Snapshot: formatContractionsPerHour > intervalle invalide (négatif) → "—" (snapshot) 1`] = `"—"`;
+
+exports[`Snapshot: formatDuration > formatDuration(0ms) (snapshot) 1`] = `"0 s"`;
+
+exports[`Snapshot: formatDuration > formatDuration(30000ms) (snapshot) 1`] = `"30 s"`;
+
+exports[`Snapshot: formatDuration > formatDuration(45000ms) (snapshot) 1`] = `"45 s"`;
+
+exports[`Snapshot: formatDuration > formatDuration(60000ms) (snapshot) 1`] = `"60 s"`;
+
+exports[`Snapshot: formatDuration > formatDuration(90000ms) (snapshot) 1`] = `"90 s"`;
+
+exports[`Snapshot: formatDuration > formatDuration(120000ms) (snapshot) 1`] = `"2 min 0 s"`;
+
+exports[`Snapshot: formatDuration > formatDuration(180000ms) (snapshot) 1`] = `"3 min 0 s"`;
+
+exports[`Snapshot: formatDuration > formatDuration(240000ms) (snapshot) 1`] = `"4 min 0 s"`;
+
+exports[`Snapshot: formatDuration > formatDuration(300000ms) (snapshot) 1`] = `"5 min 0 s"`;
+
+exports[`Snapshot: formatDuration > formatDuration(3600000ms) (snapshot) 1`] = `"60 min 0 s"`;
+
+exports[`Snapshot: formatDuration > formatDuration(7200000ms) (snapshot) 1`] = `"120 min 0 s"`;
+
+exports[`Snapshot: formatStatsClock > formatStatsClock(-1) retourne "—" (snapshot) 1`] = `"—"`;
+
+exports[`Snapshot: formatStatsClock > formatStatsClock(0ms) (snapshot) 1`] = `"00:00"`;
+
+exports[`Snapshot: formatStatsClock > formatStatsClock(30000ms) (snapshot) 1`] = `"00:30"`;
+
+exports[`Snapshot: formatStatsClock > formatStatsClock(45000ms) (snapshot) 1`] = `"00:45"`;
+
+exports[`Snapshot: formatStatsClock > formatStatsClock(60000ms) (snapshot) 1`] = `"01:00"`;
+
+exports[`Snapshot: formatStatsClock > formatStatsClock(90000ms) (snapshot) 1`] = `"01:30"`;
+
+exports[`Snapshot: formatStatsClock > formatStatsClock(120000ms) (snapshot) 1`] = `"02:00"`;
+
+exports[`Snapshot: formatStatsClock > formatStatsClock(180000ms) (snapshot) 1`] = `"03:00"`;
+
+exports[`Snapshot: formatStatsClock > formatStatsClock(300000ms) (snapshot) 1`] = `"05:00"`;
+
+exports[`Snapshot: formatStatsClock > formatStatsClock(3600000ms) (snapshot) 1`] = `"60:00"`;
+
+exports[`Snapshot: formatStatsClock > formatStatsClock(NaN) retourne "—" (snapshot) 1`] = `"—"`;
+
+exports[`Snapshot: getRecentIntervalsMs > intervalles limités à 3 (snapshot) 1`] = `
+[
+  300000,
+  300000,
+  300000,
+]
+`;
+
+exports[`Snapshot: getRecentIntervalsMs > intervalles pour 5 contractions régulières (snapshot) 1`] = `
+[
+  300000,
+  300000,
+  300000,
+  300000,
+]
+`;
+
+exports[`Snapshot: getRecentIntervalsMs > intervalles pour contractions espacées (snapshot) 1`] = `
+[
+  1800000,
+  1800000,
+]
+`;
