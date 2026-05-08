@@ -39,6 +39,7 @@
     "check:vscode:tasks": "node scripts/sync-vscode-tasks.mjs --check"
   },
   "devDependencies": {
+    "@mister-guiiug/dev-wpa-config": "^1.2.0",
     "@axe-core/playwright": "^4.8.0",
     "@eslint/js": "^9.39.4",
     "@playwright/test": "^1.49.1",
