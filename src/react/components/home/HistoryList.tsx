@@ -8,7 +8,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { formatDateTime } from '../../../utils/formatStats';
 import { formatDuration } from '../../../utils/formatDuration';
 import type { ContractionRecord } from '../../../storage';
-import { t } from '../../../i18n';
+import { t, type AppLanguage } from '../../../i18n';
 
 type EditDialogState = {
   record: ContractionRecord | null;
@@ -141,7 +141,7 @@ function HistoryItem({
   previousRecord?: ContractionRecord;
   onEdit: (rec: ContractionRecord) => void;
   onDelete: (id: string) => void;
-  language: ReturnType<typeof useAppStore>['settings']['language'];
+  language: AppLanguage;
 }) {
   const duration = record.end - record.start;
   const intervalPrev = previousRecord
@@ -241,7 +241,7 @@ function EditDialog({
   record: ContractionRecord;
   onSave: (updates: Partial<ContractionRecord>) => void;
   onClose: () => void;
-  language: ReturnType<typeof useAppStore>['settings']['language'];
+  language: AppLanguage;
 }) {
   const [start, setStart] = useState(toDatetimeLocalValue(record.start));
   const [end, setEnd] = useState(toDatetimeLocalValue(record.end));
