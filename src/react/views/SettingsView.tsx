@@ -11,7 +11,7 @@ import {
   clearSnoozeUntil,
   loadSettings,
 } from '../../storage';
-import { LANGUAGE_LABELS, t } from '../../i18n';
+import { LANGUAGE_LABELS, t, type AppLanguage } from '../../i18n';
 import { HighContrastToggle } from '../components/settings/HighContrastToggle';
 import { ViewLayout } from '../components/layout/ViewLayout';
 
@@ -192,16 +192,14 @@ export function SettingsView() {
               data-testid="language-select"
               value={formData.language}
               onChange={e => {
-                const newLanguage = e.target.value;
+                const newLanguage = e.target.value as AppLanguage;
                 setFormData(prev => ({
                   ...prev,
-                  language: newLanguage as any,
+                  language: newLanguage,
                 }));
-                updateSettings({ language: newLanguage as any });
+                updateSettings({ language: newLanguage });
                 saveSettings();
-                setSaveStatus(
-                  t(newLanguage as any, 'settings.language.changed')
-                );
+                setSaveStatus(t(newLanguage, 'settings.language.changed'));
                 setTimeout(() => setSaveStatus(''), 2000);
               }}
             >
