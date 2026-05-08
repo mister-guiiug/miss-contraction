@@ -99,7 +99,10 @@ export function IntensityPicker({
               aria-label={`Intensité ${intensity.level} : ${intensity.label}`}
               aria-pressed={isSelected}
             >
-              <span className="intensity-option-icon" style={{ fontSize: '1.5rem' }}>
+              <span
+                className="intensity-option-icon"
+                style={{ fontSize: '1.5rem' }}
+              >
                 {intensity.emoji}
               </span>
               <span className="intensity-option-label">{intensity.level}</span>
