@@ -8,6 +8,7 @@ import {
 } from '../../../theme';
 import type { AppRoute } from '../../../routes';
 import { getBreadcrumbLabel } from '../../../routes';
+import { getRoutePath, getRouteFromPath } from '../../../routes-i18n';
 import { useAppStore } from '../../store/useAppStore';
 import { t, type AppLanguage } from '../../../i18n';
 
@@ -25,25 +26,25 @@ function getNavSections(language: AppLanguage) {
       links: [
         {
           route: 'home',
-          href: '/',
+          href: getRoutePath('home', language),
           label: t(language, 'shell.nav.home'),
           icon: 'home',
         },
         {
           route: 'table',
-          href: '/historique',
+          href: getRoutePath('table', language),
           label: t(language, 'shell.nav.table'),
           icon: 'table',
         },
         {
           route: 'midwife',
-          href: '/sage-femme',
+          href: getRoutePath('midwife', language),
           label: t(language, 'shell.nav.midwife'),
           icon: 'document',
         },
         {
           route: 'checklist',
-          href: '/valise',
+          href: getRoutePath('checklist', language),
           label: t(language, 'shell.nav.checklist'),
           icon: 'checklist',
         },
@@ -55,13 +56,13 @@ function getNavSections(language: AppLanguage) {
       links: [
         {
           route: 'maternity',
-          href: '/maternite',
+          href: getRoutePath('maternity', language),
           label: t(language, 'shell.nav.maternity'),
           icon: 'phone',
         },
         {
           route: 'message',
-          href: '/message',
+          href: getRoutePath('message', language),
           label: t(language, 'shell.nav.message'),
           icon: 'message',
         },
@@ -73,13 +74,13 @@ function getNavSections(language: AppLanguage) {
       links: [
         {
           route: 'settings',
-          href: '/parametres',
+          href: getRoutePath('settings', language),
           label: t(language, 'shell.nav.settings'),
           icon: 'settings',
         },
         {
           route: 'about',
-          href: '/a-propos',
+          href: getRoutePath('about', language),
           label: t(language, 'shell.nav.about'),
           icon: 'about',
         },
@@ -255,18 +256,8 @@ function DrawerLink({
 function Breadcrumb() {
   const location = useLocation();
   const language = useAppStore(state => state.settings.language);
-  const routeMap: Record<string, AppRoute> = {
-    '/': 'home',
-    '/historique': 'table',
-    '/sage-femme': 'midwife',
-    '/maternite': 'maternity',
-    '/message': 'message',
-    '/parametres': 'settings',
-    '/valise': 'checklist',
-    '/a-propos': 'about',
-  };
+  const route = getRouteFromPath(location.pathname, language);
 
-  const route = routeMap[location.pathname] || 'home';
   const homeLabel = getBreadcrumbLabel('home', language);
   const currentLabel = getBreadcrumbLabel(route, language);
 
@@ -285,7 +276,7 @@ function Breadcrumb() {
       ) : (
         <ol className="top-bar-bc-list">
           <li className="top-bar-bc-step">
-            <Link className="top-bar-bc-link" to="/">
+            <Link className="top-bar-bc-link" to={getRoutePath('home', language)}>
               {homeLabel}
             </Link>
           </li>
