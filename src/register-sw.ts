@@ -4,6 +4,11 @@ const UPDATE_BANNER_ID = 'sw-update-banner';
 
 let updateSWFn: ((reloadPage?: boolean) => Promise<void>) | undefined;
 
+/** Force the waiting Service Worker to activate and reload. */
+export function forceSwUpdate(): void {
+  updateSWFn?.(true);
+}
+
 function showUpdateBanner(): void {
   if (document.getElementById(UPDATE_BANNER_ID)) return;
 

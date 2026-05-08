@@ -9,7 +9,8 @@ export type AppRoute =
   | 'table'
   | 'maternity'
   | 'midwife'
-  | 'checklist';
+  | 'checklist'
+  | 'about';
 
 /**
  * Registre des routes : ajouter ici pour étendre la navigation.
@@ -42,6 +43,10 @@ export const ROUTE_META: Record<
   checklist: {
     documentTitle: 'Valise maternité — Miss Contraction',
     breadcrumb: 'Valise maternité',
+  },
+  about: {
+    documentTitle: 'À propos — Miss Contraction',
+    breadcrumb: 'À propos',
   },
 };
 
