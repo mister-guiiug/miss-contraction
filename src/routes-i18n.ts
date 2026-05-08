@@ -10,7 +10,10 @@ import type { AppRoute } from './routes';
  * Route paths for each language
  * Example: { fr: { home: '/', settings: '/parametres' }, en: { home: '/', settings: '/settings' } }
  */
-export const routePathsByLanguage: Record<AppLanguage, Record<AppRoute, string>> = {
+export const routePathsByLanguage: Record<
+  AppLanguage,
+  Record<AppRoute, string>
+> = {
   fr: {
     home: '/',
     settings: '/parametres',
@@ -90,7 +93,11 @@ export const routePathsByLanguage: Record<AppLanguage, Record<AppRoute, string>>
  * @returns The route path for the given language
  */
 export function getRoutePath(route: AppRoute, language: AppLanguage): string {
-  return routePathsByLanguage[language]?.[route] ?? routePathsByLanguage.en[route] ?? '/';
+  return (
+    routePathsByLanguage[language]?.[route] ??
+    routePathsByLanguage.en[route] ??
+    '/'
+  );
 }
 
 /**
@@ -111,7 +118,10 @@ export function getAllRoutePathsForRoute(route: AppRoute): string[] {
  * Reverse map: find route name from a path and language
  * Used for parsing current location
  */
-export function getRouteFromPath(path: string, language: AppLanguage): AppRoute {
+export function getRouteFromPath(
+  path: string,
+  language: AppLanguage
+): AppRoute {
   const routes = routePathsByLanguage[language];
   for (const [route, routePath] of Object.entries(routes)) {
     if (routePath === path) {

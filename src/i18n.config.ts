@@ -3,6 +3,8 @@ import { initReactI18next } from 'react-i18next';
 import type { AppLanguage } from './i18n';
 import { MESSAGES as oldMessages } from './i18n';
 
+type TranslationResources = Record<string, string>;
+
 /**
  * Configuration i18next avec gestion des dates et devises
  * Migré de la solution maison vers i18next
@@ -10,13 +12,13 @@ import { MESSAGES as oldMessages } from './i18n';
 
 // Convertir la structure existante en ressources i18next
 const resources: Record<string, { translation: Record<string, string> }> = {
-  fr: { translation: oldMessages.fr as any },
-  en: { translation: oldMessages.en as any },
-  es: { translation: oldMessages.es as any },
-  de: { translation: oldMessages.de as any },
-  it: { translation: oldMessages.it as any },
-  pt: { translation: oldMessages.pt as any },
-  nl: { translation: oldMessages.nl as any },
+  fr: { translation: oldMessages.fr as TranslationResources },
+  en: { translation: oldMessages.en as TranslationResources },
+  es: { translation: oldMessages.es as TranslationResources },
+  de: { translation: oldMessages.de as TranslationResources },
+  it: { translation: oldMessages.it as TranslationResources },
+  pt: { translation: oldMessages.pt as TranslationResources },
+  nl: { translation: oldMessages.nl as TranslationResources },
 };
 
 // Formatters natifs pour dates et devises

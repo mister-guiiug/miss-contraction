@@ -173,7 +173,9 @@ export function MessageView() {
           </button>
         </div>
 
-        <p className="msg-hint" id="msg-hint-block">{t(language, 'message.hint')}</p>
+        <p className="msg-hint" id="msg-hint-block">
+          {t(language, 'message.hint')}
+        </p>
       </section>
 
       <p className="settings-back-wrap mobile-home-only">
