@@ -26,7 +26,7 @@ export const LANGUAGE_LABELS: Record<AppLanguage, string> = {
   nl: 'Nederlands',
 };
 
-const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
+export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
   fr: {
     'app.name': 'Miss Contraction',
     'route.home': 'Accueil',
