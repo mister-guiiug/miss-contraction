@@ -26,67 +26,35 @@ export function IntensityPicker({
         label: 'Léger',
         description: 'Peu perceptible',
         color: '#80c878',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
-            <circle cx="12" cy="12" r="2" />
-            <circle cx="12" cy="12" r="5" opacity="0.25" />
-          </svg>
-        ),
+        emoji: '😊',
       },
       {
         level: 2,
         label: 'Modéré',
         description: 'Gérable',
         color: '#a8d678',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
-            <circle cx="12" cy="12" r="2.5" />
-            <circle cx="12" cy="12" r="5" opacity="0.25" />
-            <circle cx="12" cy="12" r="8" opacity="0.15" />
-          </svg>
-        ),
+        emoji: '🙂',
       },
       {
         level: 3,
         label: 'Soutenu',
         description: 'Requiert de la concentration',
         color: '#ffd04b',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
-            <circle cx="12" cy="12" r="3" />
-            <circle cx="12" cy="12" r="5.5" opacity="0.25" />
-            <circle cx="12" cy="12" r="8.5" opacity="0.15" />
-            <circle cx="12" cy="12" r="11.5" opacity="0.08" />
-          </svg>
-        ),
+        emoji: '😐',
       },
       {
         level: 4,
         label: 'Fort',
         description: 'Difficile à supporter',
         color: '#ff9d4b',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
-            <circle cx="12" cy="12" r="3.5" />
-            <circle cx="12" cy="12" r="6" opacity="0.25" />
-            <circle cx="12" cy="12" r="9" opacity="0.15" />
-            <circle cx="12" cy="12" r="12" opacity="0.1" />
-          </svg>
-        ),
+        emoji: '😣',
       },
       {
         level: 5,
         label: 'Très fort',
         description: 'Maximum',
         color: '#ff5e4b',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
-            <circle cx="12" cy="12" r="4" />
-            <circle cx="12" cy="12" r="6.5" opacity="0.25" />
-            <circle cx="12" cy="12" r="9.5" opacity="0.15" />
-            <circle cx="12" cy="12" r="12.5" opacity="0.1" />
-          </svg>
-        ),
+        emoji: '😫',
       },
     ],
     []
@@ -131,7 +99,9 @@ export function IntensityPicker({
               aria-label={`Intensité ${intensity.level} : ${intensity.label}`}
               aria-pressed={isSelected}
             >
-              <span className="intensity-option-icon">{intensity.icon}</span>
+              <span className="intensity-option-icon" style={{ fontSize: '1.5rem' }}>
+                {intensity.emoji}
+              </span>
               <span className="intensity-option-label">{intensity.level}</span>
               {isHovered && !compact && (
                 <span className="intensity-option-tooltip">
