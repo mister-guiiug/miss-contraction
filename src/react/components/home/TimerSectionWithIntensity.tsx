@@ -29,8 +29,7 @@ export function TimerSectionWithIntensity({
     return records[records.length - 1].end;
   }, [records]);
 
-  const { formatted: restFormatted, seconds: restSeconds } =
-    useRestTimer(lastEnd);
+  const { formatted: restFormatted } = useRestTimer(lastEnd);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [ripplePosition, setRipplePosition] = useState<{
     x: number;
