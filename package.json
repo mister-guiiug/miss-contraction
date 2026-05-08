@@ -34,7 +34,9 @@
     "test:snapshots:update": "vitest run --reporter=verbose --update",
     "test:all": "npm run test && npm run test:e2e",
     "icons": "node scripts/generate-pwa-icons.mjs",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "sync:vscode:tasks": "node scripts/sync-vscode-tasks.mjs",
+    "check:vscode:tasks": "node scripts/sync-vscode-tasks.mjs --check"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.8.0",
