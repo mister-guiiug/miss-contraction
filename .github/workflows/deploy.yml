@@ -1,0 +1,19 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  packages: read
+
+jobs:
+  deploy:
+    uses: mister-guiiug/dev-wpa-config/.github/workflows/pwa-deploy.yml@v1
+    secrets: inherit
+    with:
+      use-base-path: true
