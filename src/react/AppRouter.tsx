@@ -14,6 +14,7 @@ import { MessageView } from './views/MessageView';
 import { TableView } from './views/TableView';
 import { MidwifeView } from './views/MidwifeView';
 import { ChecklistView } from './views/ChecklistView';
+import { AboutView } from './views/AboutView';
 import { ROUTE_META } from '../routes';
 
 function DocumentTitle() {
@@ -28,9 +29,10 @@ function DocumentTitle() {
       '/maternite': 'maternity',
       '/message': 'message',
       '/valise': 'checklist',
+      '/a-propos': 'about',
     };
 
-    const route = routeMap[location.pathname] || 'home';
+    const route = routeMap[location.pathname] ?? 'home';
     document.title = ROUTE_META[route].documentTitle;
   }, [location.pathname]);
 
@@ -73,6 +75,7 @@ export function AppRoutes() {
         <Route path="/sms" element={<Navigate to="/message" replace />} />
         <Route path="/valise" element={<ChecklistView />} />
         <Route path="/checklist" element={<Navigate to="/valise" replace />} />
+        <Route path="/a-propos" element={<AboutView />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Shell>
