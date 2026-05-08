@@ -4,6 +4,7 @@
  */
 import { Link, useLocation } from 'react-router-dom';
 import { useAppStore } from '../../store/useAppStore';
+import { getRoutePath } from '../../../routes-i18n';
 import { t } from '../../../i18n';
 
 interface BottomNavProps {
@@ -16,27 +17,28 @@ export function BottomNav({ onMenuClick, isMenuOpen = false }: BottomNavProps) {
   const language = useAppStore(state => state.settings.language);
 
   const navItems = [
-    { href: '/', label: t(language, 'bottom.home'), icon: HomeIcon },
+    { href: getRoutePath('home', language), label: t(language, 'bottom.home'), icon: HomeIcon },
     {
-      href: '/historique',
+      href: getRoutePath('table', language),
       label: t(language, 'bottom.history'),
       icon: ListIcon,
     },
     {
-      href: '/maternite',
+      href: getRoutePath('maternity', language),
       label: t(language, 'bottom.maternity'),
       icon: PhoneIcon,
       isCta: true,
     },
     {
-      href: '/parametres',
+      href: getRoutePath('settings', language),
       label: t(language, 'bottom.settings'),
       icon: SettingsIcon,
     },
   ];
 
   const isMenuRoute =
-    location.pathname === '/message' || location.pathname === '/sage-femme';
+    location.pathname === getRoutePath('message', language) || 
+    location.pathname === getRoutePath('midwife', language);
 
   return (
     <nav className="bottom-nav">
