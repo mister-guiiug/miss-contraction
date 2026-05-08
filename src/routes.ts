@@ -8,7 +8,8 @@ export type AppRoute =
   | 'message'
   | 'table'
   | 'maternity'
-  | 'midwife';
+  | 'midwife'
+  | 'checklist';
 
 /**
  * Registre des routes : ajouter ici pour étendre la navigation.
@@ -37,6 +38,10 @@ export const ROUTE_META: Record<
   midwife: {
     documentTitle: 'Résumé sage-femme — Miss Contraction',
     breadcrumb: 'Résumé sage-femme',
+  },
+  checklist: {
+    documentTitle: 'Valise maternité — Miss Contraction',
+    breadcrumb: 'Valise maternité',
   },
 };
 
