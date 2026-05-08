@@ -5,6 +5,7 @@ import { useRestTimer } from '../../hooks/useRestTimer';
 import { useWakeLock, vibrate } from '../../hooks/useWakeLock';
 import { IntensityPicker } from './IntensityPicker';
 import { QuickNotes } from './QuickNotes';
+import { interpolate, t } from '../../../i18n';
 
 interface TimerSectionProps {
   onNoteSelect?: (note: string) => void;
@@ -22,6 +23,7 @@ export function TimerSectionWithIntensity({
 }: TimerSectionProps) {
   const { records, activeStart, settings, startContraction, endContraction } =
     useAppStore();
+  const language = settings.language;
   const { formatted, progress, isRunning } = useContractionTimer(activeStart);
 
   const lastEnd = useMemo(() => {
@@ -113,23 +115,20 @@ export function TimerSectionWithIntensity({
       data-testid="timer-section-with-intensity"
     >
       <h2 id="action-heading" className="cta-heading">
-        Enregistrer une contraction
+        {t(language, 'timer.title')}
       </h2>
-      <p className="cta-hint">
-        Touchez le gros bouton au <strong>début</strong> d'une contraction, puis
-        à la <strong>fin</strong>.
-      </p>
+      <p className="cta-hint">{t(language, 'timer.hint')}</p>
 
       {!isRunning && lastEnd && (
         <div className="rest-timer" data-testid="rest-timer">
-          <p className="rest-timer-label">Repos depuis :</p>
+          <p className="rest-timer-label">{t(language, 'timer.restSince')}</p>
           <p className="rest-timer-value">{restFormatted}</p>
         </div>
       )}
 
       {isRunning && (
         <div className="timer" id="timer-block" data-testid="timer-display">
-          <p className="timer-label">Contraction en cours</p>
+          <p className="timer-label">{t(language, 'timer.running')}</p>
           <div className="timer-circle-container">
             <svg
               className="timer-circle"
@@ -156,9 +155,7 @@ export function TimerSectionWithIntensity({
 
           {/* Sélecteur d'intensité pendant contraction */}
           <div className="timer-intensity-section">
-            <p className="timer-intensity-label">
-              Intensité de cette contraction :
-            </p>
+            <p className="timer-intensity-label">{t(language, 'timer.intensity')}</p>
             <div data-testid="intensity-selector">
               <IntensityPicker
                 value={currentIntensity}
@@ -181,7 +178,7 @@ export function TimerSectionWithIntensity({
           aria-live="polite"
           style={{ position: 'relative', overflow: 'hidden' }}
         >
-          {isRunning ? 'Fin de contraction' : 'Début de contraction'}
+          {isRunning ? t(language, 'timer.end') : t(language, 'timer.start')}
           {ripplePosition && (
             <span
               className="ripple"
@@ -200,7 +197,11 @@ export function TimerSectionWithIntensity({
 
       <p className="hint" id="status-hint" data-testid="timer-hint">
         {isRunning
-          ? `Appuyez à la fin. Intensité${currentIntensity ? ` : ${currentIntensity}/5` : ''}`
+          ? currentIntensity
+            ? interpolate(t(language, 'timer.statusWithIntensity'), {
+                intensity: currentIntensity,
+              })
+            : t(language, 'timer.status')
           : ''}
       </p>
     </section>

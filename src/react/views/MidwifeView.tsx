@@ -9,6 +9,7 @@ import { findFirstThresholdMatchEndMs } from '../../statsHelpers';
 import { loadRecords } from '../../storage';
 import type { ContractionRecord } from '../../storage';
 import { ViewLayout } from '../components/layout/ViewLayout';
+import { t } from '../../i18n';
 
 function meanStartIntervalMs(done: ContractionRecord[]): number | null {
   if (done.length < 2) return null;
@@ -82,12 +83,9 @@ function sliceForMidwife(
 
 export function MidwifeView() {
   const { records, settings, setRecords } = useAppStore();
+  const language = settings.language;
   const [mode, setMode] = useState<MidwifeMode>('12');
   const [copyFeedback, setCopyFeedback] = useState('');
-
-  useEffect(() => {
-    document.title = 'Résumé sage-femme - Miss Contraction';
-  }, []);
 
   // Recharger les records depuis localStorage au montage
   // pour synchroniser avec les ajouts faits par le code vanilla
@@ -186,16 +184,22 @@ export function MidwifeView() {
     lines.push('—');
     lines.push('Données indicatives — ne remplacent pas un avis médical.');
     return lines.join('\n');
-  }, [mode, selectedRecords, stats, settings]);
+  }, [language, mode, selectedRecords, stats, settings]);
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(plainText);
-      setCopyFeedback('Texte copié dans le presse-papiers.');
+      setCopyFeedback(
+        language === 'fr'
+          ? 'Texte copie dans le presse-papiers.'
+          : 'Text copied to clipboard.'
+      );
       setTimeout(() => setCopyFeedback(''), 3500);
     } catch {
       setCopyFeedback(
-        'Copie impossible — utilisez « Imprimer ou PDF » ou copiez le texte affiché.'
+        language === 'fr'
+          ? 'Copie impossible - utilisez Imprimer ou PDF ou copiez le texte affiche.'
+          : 'Copy failed - use Print or PDF, or copy the displayed text manually.'
       );
       setTimeout(() => setCopyFeedback(''), 4500);
     }
@@ -206,37 +210,67 @@ export function MidwifeView() {
   };
 
   const modeLabel =
-    mode === 'all' ? `Tout l'historique` : `Les ${mode} dernières contractions`;
+    mode === 'all'
+      ? language === 'fr'
+        ? "Tout l'historique"
+        : 'Full history'
+      : language === 'fr'
+        ? `Les ${mode} dernieres contractions`
+        : `Last ${mode} contractions`;
 
   return (
     <ViewLayout
       className="midwife-page"
       dataTestId="midwife-view"
-      title="Resume sage-femme"
+      title={t(language, 'route.midwife')}
       lead={
         <span className="no-print">
-          Synthese courte des <strong>dernieres contractions</strong>, des{' '}
-          <strong>moyennes</strong> sur la periode choisie et, si elle a eu
-          lieu, de l'<strong>heure du premier seuil atteint</strong>.
+          {language === 'fr' ? 'Synthese courte des ' : 'Short summary of '}
+          <strong>
+            {language === 'fr'
+              ? 'dernieres contractions'
+              : 'latest contractions'}
+          </strong>
+          {language === 'fr' ? ', des ' : ', with '}
+          <strong>{language === 'fr' ? 'moyennes' : 'averages'}</strong>
+          {language === 'fr'
+            ? ' sur la periode choisie et, si elle existe, de l heure du premier seuil atteint.'
+            : ' over the selected period and, when available, the first threshold match time.'}
         </span>
       }
     >
       <section className="card midwife-card">
-        <h2 className="section-title no-print">Contenu du résumé</h2>
+        <h2 className="section-title no-print">
+          {language === 'fr' ? 'Contenu du resume' : 'Summary content'}
+        </h2>
 
         <label className="field field--wide midwife-field no-print">
-          <span>Contractions listées (ordre chronologique)</span>
+          <span>
+            {language === 'fr'
+              ? 'Contractions listees (ordre chronologique)'
+              : 'Listed contractions (chronological order)'}
+          </span>
           <select
             value={mode}
             onChange={e => setMode(parseMidwifeMode(e.target.value))}
             className="midwife-select"
             aria-describedby="midwife-count-hint"
           >
-            <option value="6">6 dernières</option>
-            <option value="10">10 dernières</option>
-            <option value="12">12 dernières</option>
-            <option value="20">20 dernières</option>
-            <option value="all">Tout l'historique</option>
+            <option value="6">
+              {language === 'fr' ? '6 dernieres' : 'Last 6'}
+            </option>
+            <option value="10">
+              {language === 'fr' ? '10 dernieres' : 'Last 10'}
+            </option>
+            <option value="12">
+              {language === 'fr' ? '12 dernieres' : 'Last 12'}
+            </option>
+            <option value="20">
+              {language === 'fr' ? '20 dernieres' : 'Last 20'}
+            </option>
+            <option value="all">
+              {language === 'fr' ? "Tout l'historique" : 'Full history'}
+            </option>
           </select>
         </label>
 
@@ -346,21 +380,25 @@ export function MidwifeView() {
         <div
           className="midwife-actions no-print"
           role="group"
-          aria-label="Copier ou imprimer le résumé"
+          aria-label={
+            language === 'fr'
+              ? 'Copier ou imprimer le resume'
+              : 'Copy or print summary'
+          }
         >
           <button
             type="button"
             className="btn btn-secondary"
             onClick={handleCopy}
           >
-            Copier le texte
+            {language === 'fr' ? 'Copier le texte' : 'Copy text'}
           </button>
           <button
             type="button"
             className="btn btn-primary"
             onClick={handlePrint}
           >
-            Imprimer ou PDF
+            {language === 'fr' ? 'Imprimer ou PDF' : 'Print or PDF'}
           </button>
         </div>
 
@@ -391,10 +429,10 @@ export function MidwifeView() {
             <line x1="3" y1="12" x2="3.01" y2="12" />
             <line x1="3" y1="18" x2="3.01" y2="18" />
           </svg>
-          Tableau détaillé
+          {language === 'fr' ? 'Tableau detaille' : 'Detailed table'}
         </Link>
         <Link to="/" className="btn btn-secondary mobile-home-link">
-          Accueil
+          {t(language, 'route.home')}
         </Link>
       </div>
     </ViewLayout>

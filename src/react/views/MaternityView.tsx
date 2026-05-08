@@ -7,9 +7,11 @@ import { useEffect } from 'react';
 import { useAppStore, useRefreshSettings } from '../store/useAppStore';
 import { loadSettings } from '../../storage';
 import { ViewLayout } from '../components/layout/ViewLayout';
+import { interpolate, t } from '../../i18n';
 
 export function MaternityView() {
   const { settings } = useAppStore();
+  const language = settings.language;
   const updateSettings = useRefreshSettings();
   const { maternityLabel, maternityPhone, maternityAddress } = settings;
 
@@ -40,8 +42,8 @@ export function MaternityView() {
     <ViewLayout
       className="maternity-page"
       dataTestId="maternity-view"
-      title="Maternite"
-      lead="Libelle, numero et adresse sont modifiables dans les parametres. Appel et itineraire en un geste."
+      title={t(language, 'maternity.title')}
+      lead={t(language, 'maternity.lead')}
     >
       <section
         className="card card--maternity-call"
@@ -49,7 +51,7 @@ export function MaternityView() {
         data-testid="maternity-call-section"
       >
         <h2 id="maternity-call-heading" className="section-title">
-          Contacter la maternité
+          {t(language, 'maternity.contact')}
         </h2>
 
         {hasLabel && (
@@ -60,8 +62,8 @@ export function MaternityView() {
 
         <div className="maternity-page-phone-block">
           <div className="maternity-page-phone-head">
-            <p className="maternity-page-subheading">Numéro</p>
-            <span className="maternity-page-readonly-badge">Lecture seule</span>
+            <p className="maternity-page-subheading">{t(language, 'maternity.number')}</p>
+            <span className="maternity-page-readonly-badge">{t(language, 'maternity.readonly')}</span>
           </div>
 
           {hasPhone ? (
@@ -77,7 +79,7 @@ export function MaternityView() {
                   className={`maternity-page-dial${hasPhone ? ' maternity-page-dial--ready' : ''}`}
                   href={telHref}
                   data-testid="maternity-call-btn"
-                  aria-label={`Appeler ${destName} au ${phone}`}
+                  aria-label={`${interpolate(t(language, 'maternity.call'), { destName })} ${phone}`}
                 >
                   <span className="maternity-page-dial-ring" aria-hidden="true">
                     <svg
@@ -95,7 +97,7 @@ export function MaternityView() {
                     </svg>
                   </span>
                   <span className="maternity-page-dial-label">
-                    Appeler {destName}
+                    {interpolate(t(language, 'maternity.call'), { destName })}
                   </span>
                 </a>
               </div>
@@ -105,8 +107,8 @@ export function MaternityView() {
               className="maternity-page-phone-placeholder"
               data-testid="maternity-phone-placeholder"
             >
-              Aucun numéro enregistré. Indiquez-le dans les{' '}
-              <Link to="/parametres">paramètres</Link>.
+              {t(language, 'maternity.noNumber')}{' '}
+              <Link to="/parametres">{t(language, 'route.settings')}</Link>.
             </p>
           )}
         </div>
@@ -114,8 +116,8 @@ export function MaternityView() {
         {/* Bloc Adresse */}
         <div className="maternity-page-address-block">
           <div className="maternity-page-address-head">
-            <p className="maternity-page-address-heading">Adresse</p>
-            <span className="maternity-page-readonly-badge">Lecture seule</span>
+            <p className="maternity-page-address-heading">{t(language, 'maternity.address')}</p>
+            <span className="maternity-page-readonly-badge">{t(language, 'maternity.readonly')}</span>
           </div>
 
           {hasAddress ? (
@@ -130,8 +132,8 @@ export function MaternityView() {
               className="maternity-page-address-placeholder"
               data-testid="maternity-address-placeholder"
             >
-              Aucune adresse enregistrée. Indiquez-la dans les{' '}
-              <Link to="/parametres">paramètres</Link>.
+              {t(language, 'maternity.noAddress')}{' '}
+              <Link to="/parametres">{t(language, 'route.settings')}</Link>.
             </p>
           )}
         </div>
@@ -163,12 +165,9 @@ export function MaternityView() {
                   <circle cx="12" cy="10" r="3" />
                 </svg>
               </span>
-              <span>Itinéraire dans Maps</span>
+              <span>{t(language, 'maternity.maps')}</span>
             </a>
-            <p className="maternity-page-maps-hint">
-              Ouvre Google Maps dans un nouvel onglet pour un itinéraire vers
-              l&apos;adresse ci-dessus (position actuelle → destination).
-            </p>
+            <p className="maternity-page-maps-hint">{t(language, 'maternity.mapsHint')}</p>
           </div>
         )}
       </section>
@@ -180,14 +179,14 @@ export function MaternityView() {
           className="btn btn-secondary settings-back-link"
           data-testid="maternity-settings-link"
         >
-          Parametres
+          {t(language, 'maternity.settings')}
         </Link>
         <Link
           to="/"
           className="btn btn-ghost settings-back-link mobile-home-link"
           data-testid="maternity-home-link"
         >
-          Accueil
+          {t(language, 'route.home')}
         </Link>
       </p>
     </ViewLayout>

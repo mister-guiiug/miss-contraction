@@ -8,6 +8,8 @@ import {
 } from '../../../theme';
 import type { AppRoute } from '../../../routes';
 import { getBreadcrumbLabel } from '../../../routes';
+import { useAppStore } from '../../store/useAppStore';
+import { t, type AppLanguage } from '../../../i18n';
 
 interface ShellProps {
   children: ReactNode;
@@ -15,69 +17,76 @@ interface ShellProps {
 
 const iconSrc = `${import.meta.env.BASE_URL}icons/icon-192.png`;
 
-const NAV_SECTIONS = [
-  {
-    id: 'drawer-lbl-suivi',
-    label: 'Suivi des contractions',
-    links: [
-      { route: 'home', href: '/', label: 'Accueil', icon: 'home' },
-      {
-        route: 'table',
-        href: '/historique',
-        label: 'Tableau des contractions',
-        icon: 'table',
-      },
-      {
-        route: 'midwife',
-        href: '/sage-femme',
-        label: 'Résumé sage-femme',
-        icon: 'document',
-      },
-      {
-        route: 'checklist',
-        href: '/valise',
-        label: 'Valise maternité',
-        icon: 'checklist',
-      },
-    ],
-  },
-  {
-    id: 'drawer-lbl-mat',
-    label: 'Maternité',
-    links: [
-      {
-        route: 'maternity',
-        href: '/maternite',
-        label: 'Appeler la maternité',
-        icon: 'phone',
-      },
-      {
-        route: 'message',
-        href: '/message',
-        label: 'Message à la maternité',
-        icon: 'message',
-      },
-    ],
-  },
-  {
-    id: 'drawer-lbl-app',
-    label: 'Application',
-    links: [
-      {
-        route: 'settings',
-        href: '/parametres',
-        label: 'Paramètres et alerte',
-        icon: 'settings',
-      },
-      {
-        route: 'about',
-        href: '/a-propos',
-        label: 'À propos',
-        icon: 'about',
-      },
-    ],
-  },
-];
+function getNavSections(language: AppLanguage) {
+  return [
+    {
+      id: 'drawer-lbl-suivi',
+      label: t(language, 'shell.section.tracking'),
+      links: [
+        {
+          route: 'home',
+          href: '/',
+          label: t(language, 'shell.nav.home'),
+          icon: 'home',
+        },
+        {
+          route: 'table',
+          href: '/historique',
+          label: t(language, 'shell.nav.table'),
+          icon: 'table',
+        },
+        {
+          route: 'midwife',
+          href: '/sage-femme',
+          label: t(language, 'shell.nav.midwife'),
+          icon: 'document',
+        },
+        {
+          route: 'checklist',
+          href: '/valise',
+          label: t(language, 'shell.nav.checklist'),
+          icon: 'checklist',
+        },
+      ],
+    },
+    {
+      id: 'drawer-lbl-mat',
+      label: t(language, 'shell.section.maternity'),
+      links: [
+        {
+          route: 'maternity',
+          href: '/maternite',
+          label: t(language, 'shell.nav.maternity'),
+          icon: 'phone',
+        },
+        {
+          route: 'message',
+          href: '/message',
+          label: t(language, 'shell.nav.message'),
+          icon: 'message',
+        },
+      ],
+    },
+    {
+      id: 'drawer-lbl-app',
+      label: t(language, 'shell.section.application'),
+      links: [
+        {
+          route: 'settings',
+          href: '/parametres',
+          label: t(language, 'shell.nav.settings'),
+          icon: 'settings',
+        },
+        {
+          route: 'about',
+          href: '/a-propos',
+          label: t(language, 'shell.nav.about'),
+          icon: 'about',
+        },
+      ],
+    },
+  ];
+}
 
 function DrawerLink({
   route,
@@ -245,6 +254,7 @@ function DrawerLink({
 
 function Breadcrumb() {
   const location = useLocation();
+  const language = useAppStore(state => state.settings.language);
   const routeMap: Record<string, AppRoute> = {
     '/': 'home',
     '/historique': 'table',
@@ -257,11 +267,15 @@ function Breadcrumb() {
   };
 
   const route = routeMap[location.pathname] || 'home';
-  const homeLabel = getBreadcrumbLabel('home');
-  const currentLabel = getBreadcrumbLabel(route);
+  const homeLabel = getBreadcrumbLabel('home', language);
+  const currentLabel = getBreadcrumbLabel(route, language);
 
   return (
-    <nav className="top-bar-bc" id="top-bar-bc-nav" aria-label="Fil d'Ariane">
+    <nav
+      className="top-bar-bc"
+      id="top-bar-bc-nav"
+      aria-label={t(language, 'shell.breadcrumb')}
+    >
       {route === 'home' ? (
         <ol className="top-bar-bc-list top-bar-bc-list--home">
           <li className="top-bar-bc-step" aria-current="page">
@@ -334,13 +348,8 @@ function ThemeIcon({ preference }: { preference: ThemePreference }) {
   );
 }
 
-const THEME_LABELS: Record<ThemePreference, string> = {
-  light: 'Thème clair',
-  dark: 'Thème sombre',
-  system: 'Thème automatique',
-};
-
 export function Shell({ children }: ShellProps) {
+  const language = useAppStore(state => state.settings.language);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [themePreference, setThemePreference] =
     useState<ThemePreference>('system');
@@ -385,10 +394,17 @@ export function Shell({ children }: ShellProps) {
     };
   }, [isDrawerOpen]);
 
+  const themeLabels: Record<ThemePreference, string> = {
+    light: t(language, 'shell.theme.light'),
+    dark: t(language, 'shell.theme.dark'),
+    system: t(language, 'shell.theme.system'),
+  };
+  const navSections = getNavSections(language);
+
   return (
     <>
       <a className="skip-to-content" href="#main-content">
-        Aller au contenu principal
+        {t(language, 'shell.skipToContent')}
       </a>
 
       <div
@@ -401,7 +417,7 @@ export function Shell({ children }: ShellProps) {
       <nav
         className={`app-drawer ${isDrawerOpen ? 'is-open' : ''}`}
         id="app-drawer"
-        aria-label="Menu principal"
+        aria-label={t(language, 'shell.mainMenu')}
         aria-hidden={!isDrawerOpen}
       >
         <div className="drawer-header">
@@ -414,13 +430,15 @@ export function Shell({ children }: ShellProps) {
               alt=""
               decoding="async"
             />
-            <span className="drawer-header-title">Menu</span>
+            <span className="drawer-header-title">
+              {t(language, 'shell.menu')}
+            </span>
           </div>
           <button
             type="button"
             className="drawer-close"
             id="btn-drawer-close"
-            aria-label="Fermer le menu"
+            aria-label={t(language, 'shell.closeMenu')}
             onClick={closeDrawer}
           >
             <svg
@@ -440,7 +458,7 @@ export function Shell({ children }: ShellProps) {
         </div>
 
         <div className="drawer-scroll">
-          {NAV_SECTIONS.map(section => (
+          {navSections.map(section => (
             <div key={section.id}>
               <p className="drawer-section-label" id={section.id}>
                 {section.label}
@@ -483,8 +501,8 @@ export function Shell({ children }: ShellProps) {
             type="button"
             className={`btn-theme ${themeAnim ? 'btn-theme--anim' : ''}`}
             id="btn-theme"
-            aria-label={THEME_LABELS[themePreference]}
-            title={THEME_LABELS[themePreference]}
+            aria-label={themeLabels[themePreference]}
+            title={themeLabels[themePreference]}
             onClick={handleThemeClick}
           >
             <ThemeIcon preference={themePreference} />
@@ -495,7 +513,7 @@ export function Shell({ children }: ShellProps) {
             id="btn-menu"
             aria-expanded={isDrawerOpen}
             aria-controls="app-drawer"
-            aria-label="Ouvrir le menu"
+            aria-label={t(language, 'shell.openMenu')}
             onClick={toggleDrawer}
           >
             <span className="hamburger-box" aria-hidden="true">

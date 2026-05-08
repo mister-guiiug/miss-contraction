@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 
 import { useEffect, useState, useCallback } from 'react';
 import { ViewLayout } from '../components/layout/ViewLayout';
+import { useAppStore } from '../store/useAppStore';
+import { t } from '../../i18n';
 
 const MATERNITY_MESSAGE_STORAGE_KEY = 'mc_maternity_message_v1';
 
@@ -33,6 +35,7 @@ function persistMaternityMessage(text: string): void {
 }
 
 export function MessageView() {
+  const language = useAppStore(state => state.settings.language);
   const [message, setMessage] = useState(DEFAULT_MATERNITY_MESSAGE);
   const [feedback, setFeedback] = useState('');
 
@@ -53,23 +56,23 @@ export function MessageView() {
   const handleReset = useCallback(() => {
     setMessage(DEFAULT_MATERNITY_MESSAGE);
     persistMaternityMessage(DEFAULT_MATERNITY_MESSAGE);
-    setFeedback('Modèle par défaut restauré.');
+    setFeedback(t(language, 'message.feedback.defaultRestored'));
     setTimeout(() => setFeedback(''), 3000);
   }, []);
 
   // Copier dans le presse-papiers
   const handleCopy = useCallback(async () => {
     if (!message.trim()) {
-      setFeedback('Le message est vide.');
+      setFeedback(t(language, 'message.feedback.empty'));
       setTimeout(() => setFeedback(''), 3000);
       return;
     }
     try {
       await navigator.clipboard.writeText(message);
-      setFeedback('Message copié dans le presse-papiers.');
+      setFeedback(t(language, 'message.feedback.copied'));
       setTimeout(() => setFeedback(''), 3000);
     } catch {
-      setFeedback('Copie impossible — sélectionnez le texte manuellement.');
+      setFeedback(t(language, 'message.feedback.copyError'));
       setTimeout(() => setFeedback(''), 3000);
     }
   }, [message]);
@@ -94,8 +97,8 @@ export function MessageView() {
     <ViewLayout
       className="message-page"
       dataTestId="message-view"
-      title="Message a la maternite"
-      lead="Modele de SMS ou WhatsApp pour prevenir vos proches. Adaptez le texte, puis copiez-le ou ouvrez directement une application."
+      title={t(language, 'message.title')}
+      lead={t(language, 'message.lead')}
     >
       <section
         className="card"
@@ -103,11 +106,11 @@ export function MessageView() {
         data-testid="message-section"
       >
         <h2 id="message-heading" className="section-title">
-          Votre message
+          {t(language, 'message.yourMessage')}
         </h2>
 
         <label className="field">
-          <span>Personnalisez le texte avant envoi</span>
+          <span>{t(language, 'message.customize')}</span>
           <textarea
             value={message}
             onChange={e => setMessage(e.target.value)}
@@ -134,7 +137,7 @@ export function MessageView() {
         <div
           className="msg-actions"
           role="group"
-          aria-label="Envoyer ou copier le message"
+          aria-label={t(language, 'message.groupAria')}
         >
           <button
             type="button"
@@ -142,7 +145,7 @@ export function MessageView() {
             data-testid="message-reset-btn"
             onClick={handleReset}
           >
-            Réinitialiser le modèle
+            {t(language, 'message.reset')}
           </button>
           <button
             type="button"
@@ -150,7 +153,7 @@ export function MessageView() {
             data-testid="message-copy-btn"
             onClick={handleCopy}
           >
-            Copier
+            {t(language, 'message.copy')}
           </button>
           <button
             type="button"
@@ -158,7 +161,7 @@ export function MessageView() {
             data-testid="message-whatsapp-btn"
             onClick={handleWhatsApp}
           >
-            Ouvrir WhatsApp
+            {t(language, 'message.whatsapp')}
           </button>
           <button
             type="button"
@@ -166,16 +169,11 @@ export function MessageView() {
             data-testid="message-sms-btn"
             onClick={handleSms}
           >
-            Ouvrir SMS
+            {t(language, 'message.sms')}
           </button>
         </div>
 
-        <p className="msg-hint" id="msg-hint-block">
-          WhatsApp et SMS ouvrent l'application par défaut sur téléphone ; sur
-          ordinateur, WhatsApp Web peut s'ouvrir dans un nouvel onglet. Si le
-          lien SMS échoue (message très long), utilisez « Copier ». Vous pouvez
-          aussi coller le texte dans Signal, e-mail, etc.
-        </p>
+        <p className="msg-hint" id="msg-hint-block">{t(language, 'message.hint')}</p>
       </section>
 
       <p className="settings-back-wrap mobile-home-only">
@@ -184,7 +182,7 @@ export function MessageView() {
           className="btn btn-secondary settings-back-link"
           data-testid="message-back-link"
         >
-          Retour a l'accueil
+          {t(language, 'message.backHome')}
         </Link>
       </p>
     </ViewLayout>
