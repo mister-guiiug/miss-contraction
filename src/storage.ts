@@ -1,5 +1,11 @@
 export type StatsWindowKey = 'all' | '30' | '60' | '120';
 
+import {
+  detectBrowserLanguage,
+  isSupportedLanguage,
+  type AppLanguage,
+} from './i18n';
+
 export type ContractionRecord = {
   id: string;
   start: number;
@@ -11,6 +17,7 @@ export type ContractionRecord = {
 };
 
 export type AppSettings = {
+  language: AppLanguage;
   maxIntervalMin: number;
   minDurationSec: number;
   consecutiveCount: number;
@@ -48,6 +55,7 @@ export const KEY_SNOOZE_UNTIL = 'mc_snooze_until';
 export const KEY_EXPORT_NUDGE_DISMISSED = 'mc_export_nudge_dismissed_at';
 
 const defaultSettings: AppSettings = {
+  language: detectBrowserLanguage(),
   maxIntervalMin: 5,
   minDurationSec: 45,
   consecutiveCount: 3,
@@ -93,6 +101,9 @@ export function loadSettings(): AppSettings {
     if (!raw) return { ...defaultSettings };
     const o = JSON.parse(raw) as Partial<AppSettings>;
     return {
+      language: isSupportedLanguage(o.language)
+        ? o.language
+        : defaultSettings.language,
       maxIntervalMin: clampNum(
         o.maxIntervalMin,
         1,
