@@ -1,16 +1,36 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { useContractionTimer } from '../../hooks/useContractionTimer';
+import { useRestTimer } from '../../hooks/useRestTimer';
 import { useWakeLock, vibrate } from '../../hooks/useWakeLock';
 import { IntensityPicker } from './IntensityPicker';
+import { QuickNotes } from './QuickNotes';
+
+interface TimerSectionProps {
+  onNoteSelect?: (note: string) => void;
+  selectedNote?: string | null;
+  onClearNote?: () => void;
+}
 
 /**
  * Timer principal amélioré avec sélecteur d'intensité intégré
  */
-export function TimerSectionWithIntensity() {
-  const { activeStart, settings, startContraction, endContraction } =
+export function TimerSectionWithIntensity({
+  onNoteSelect,
+  selectedNote,
+  onClearNote,
+}: TimerSectionProps) {
+  const { records, activeStart, settings, startContraction, endContraction } =
     useAppStore();
   const { formatted, progress, isRunning } = useContractionTimer(activeStart);
+
+  const lastEnd = useMemo(() => {
+    if (records.length === 0) return null;
+    return records[records.length - 1].end;
+  }, [records]);
+
+  const { formatted: restFormatted, seconds: restSeconds } =
+    useRestTimer(lastEnd);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [ripplePosition, setRipplePosition] = useState<{
     x: number;
@@ -55,9 +75,10 @@ export function TimerSectionWithIntensity() {
       setTimeout(() => setRipplePosition(null), 600);
 
       if (isRunning) {
-        // Enregistrer l'intensité avant de terminer
+        // Enregistrer l'intensité et la note avant de terminer
         vibrate([35, 50, 35], settings.vibrationEnabled);
-        endContraction(undefined, currentIntensity);
+        endContraction(selectedNote || undefined, currentIntensity);
+        if (onClearNote) onClearNote();
       } else {
         vibrate(40, settings.vibrationEnabled);
         startContraction();
@@ -99,6 +120,13 @@ export function TimerSectionWithIntensity() {
         Touchez le gros bouton au <strong>début</strong> d'une contraction, puis
         à la <strong>fin</strong>.
       </p>
+
+      {!isRunning && lastEnd && (
+        <div className="rest-timer" data-testid="rest-timer">
+          <p className="rest-timer-label">Repos depuis :</p>
+          <p className="rest-timer-value">{restFormatted}</p>
+        </div>
+      )}
 
       {isRunning && (
         <div className="timer" id="timer-block" data-testid="timer-display">
@@ -165,6 +193,10 @@ export function TimerSectionWithIntensity() {
             />
           )}
         </button>
+      </div>
+
+      <div className="timer-quick-notes">
+        <QuickNotes onNoteSelect={onNoteSelect} />
       </div>
 
       <p className="hint" id="status-hint" data-testid="timer-hint">

@@ -1,10 +1,11 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import type { AppSettings, ContractionRecord } from '../../storage';
 import {
   computeThresholdBadge,
   type ThresholdBadgeKind,
 } from '../../statsHelpers';
 import { loadSnoozeUntil } from '../../storage';
+import { vibrate } from './useWakeLock';
 
 interface AlertState {
   thresholdKind: ThresholdBadgeKind;
@@ -23,6 +24,13 @@ export function useAlerts(
     () => computeThresholdBadge(records, settings),
     [records, settings]
   );
+
+  // Vibration si le seuil critique est atteint
+  useEffect(() => {
+    if (thresholdKind === 'match' && settings.vibrationEnabled) {
+      vibrate([100, 50, 100, 50, 100], true);
+    }
+  }, [thresholdKind, settings.vibrationEnabled]);
 
   const isSnoozed = useMemo(() => {
     return Date.now() < loadSnoozeUntil();

@@ -39,7 +39,6 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.8.0",
     "@eslint/js": "^9.39.4",
-    "@mister-guiiug/dev-wpa-config": "^1.0.1",
     "@playwright/test": "^1.49.1",
     "@sentry/vite-plugin": "^2.22.6",
     "@tailwindcss/vite": "^4.2.2",

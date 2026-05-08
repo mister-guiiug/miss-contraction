@@ -29,7 +29,7 @@ interface AppState {
   updateSettings: (settings: Partial<AppSettings>) => void;
   saveSettings: () => void;
 
-  startContraction: () => void;
+  startContraction: (note?: string) => void;
   endContraction: (note?: string, intensity?: number) => void;
 
   setAlertLatch: (latched: boolean) => void;
@@ -82,12 +82,12 @@ export const useAppStore = create<AppState>((set, get) => ({
     saveSettings(get().settings);
   },
 
-  startContraction: () => {
+  startContraction: (note) => {
     set({ activeStart: Date.now() });
   },
 
   endContraction: (note, intensity) => {
-    const { activeStart, records } = get();
+    const { activeStart, records, settings } = get();
     if (activeStart === null) return;
 
     const newRecord: ContractionRecord = {
