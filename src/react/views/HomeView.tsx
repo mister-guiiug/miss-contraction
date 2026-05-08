@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { TimerSectionWithIntensity } from '../components/home/TimerSectionWithIntensity';
 import { StatsSection } from '../components/home/StatsSection';
@@ -10,6 +10,7 @@ import { ThresholdBadge } from '../components/home/ThresholdBadge';
 import { QuickNotes } from '../components/home/QuickNotes';
 import { AppFooter } from '../components/layout/AppFooter';
 import { ViewLayout } from '../components/layout/ViewLayout';
+import { vibrate } from '../hooks/useWakeLock';
 
 export function HomeView() {
   const { records, setRecords, settings } = useAppStore();
@@ -34,11 +35,15 @@ export function HomeView() {
     );
   }, [settings.largeMode]);
 
-  const handleNoteSelect = (note: string) => {
-    setSelectedNote(note);
-    // Ici vous pourriez ajouter la logique pour associer la note à la dernière contraction
-    // ou l'ajouter à un état temporaire avant la prochaine contraction
-  };
+  const handleNoteSelect = useCallback(
+    (note: string) => {
+      setSelectedNote(note);
+      if (settings.vibrationEnabled) {
+        vibrate(20, true);
+      }
+    },
+    [settings.vibrationEnabled]
+  );
 
   const hasContractions = records.length > 0;
 
@@ -69,7 +74,26 @@ export function HomeView() {
       </div>
 
       <div data-testid="timer-section">
-        <TimerSectionWithIntensity />
+        <TimerSectionWithIntensity
+          onNoteSelect={handleNoteSelect}
+          selectedNote={selectedNote}
+          onClearNote={() => setSelectedNote(null)}
+        />
+        {selectedNote && (
+          <div
+            className="selected-note-feedback"
+            data-testid="selected-note-display"
+          >
+            <span>Note : {selectedNote}</span>
+            <button
+              className="btn-clear-note"
+              onClick={() => setSelectedNote(null)}
+              aria-label="Effacer la note"
+            >
+              ×
+            </button>
+          </div>
+        )}
       </div>
 
       <ThresholdBadge />
@@ -80,25 +104,6 @@ export function HomeView() {
         <>
           <TimelineCompact />
           <StatsSection />
-
-          {/* Section Quick Notes */}
-          <div className="card" data-testid="quick-notes-card">
-            <h3 className="section-title">Notes rapides</h3>
-            <p className="settings-intro" style={{ marginBottom: '0.5rem' }}>
-              Ajoutez une note à la contraction en cours ou à venir
-            </p>
-            <QuickNotes onNoteSelect={handleNoteSelect} />
-            {selectedNote && (
-              <p
-                className="hint"
-                style={{ marginTop: '0.5rem', color: 'var(--primary)' }}
-                data-testid="selected-note-display"
-              >
-                Note sélectionnée : {selectedNote}
-              </p>
-            )}
-          </div>
-
           <HistoryList />
         </>
       )}
