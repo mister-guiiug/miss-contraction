@@ -63,7 +63,14 @@ export function EmptyState() {
         vous ressentez la première contraction. L'application calculera
         automatiquement les intervalles et durées.
       </p>
-      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: '0.5rem',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+        }}
+      >
         <Link to="/parametres" className="btn btn-secondary btn-small">
           Configurer les alertes
         </Link>
