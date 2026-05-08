@@ -63,9 +63,21 @@ export function EmptyState() {
         vous ressentez la première contraction. L'application calculera
         automatiquement les intervalles et durées.
       </p>
-      <Link to="/parametres" className="btn btn-secondary btn-small">
-        Configurer les alertes
-      </Link>
+      <div
+        style={{
+          display: 'flex',
+          gap: '0.5rem',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+        }}
+      >
+        <Link to="/parametres" className="btn btn-secondary btn-small">
+          Configurer les alertes
+        </Link>
+        <Link to="/valise" className="btn btn-secondary btn-small">
+          Valise maternité
+        </Link>
+      </div>
     </div>
   );
 }
