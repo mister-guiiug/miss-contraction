@@ -3,8 +3,12 @@ import { VitePWA } from 'vite-plugin-pwa';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { readFileSync } from 'node:fs';
 
 const analyze = process.env.ANALYZE === '1';
+const { version } = JSON.parse(readFileSync('./package.json', 'utf-8')) as {
+  version: string;
+};
 
 const GTM_ID = 'GTM-M2GSG3V4';
 const GA_ID = 'G-B44CK4VR08';
@@ -41,6 +45,9 @@ export default defineConfig(({ command }) => {
 
   return {
     base: basePath,
+    define: {
+      __APP_VERSION__: JSON.stringify(version),
+    },
     build: {
       sourcemap: true,
       chunkSizeWarningLimit: 800,
