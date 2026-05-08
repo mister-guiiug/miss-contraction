@@ -3,6 +3,7 @@ import { registerSW } from 'virtual:pwa-register';
 const UPDATE_BANNER_ID = 'sw-update-banner';
 
 let updateSWFn: ((reloadPage?: boolean) => Promise<void>) | undefined;
+let isAutoUpdating = false;
 
 /** Force the waiting Service Worker to activate and reload. */
 export function forceSwUpdate(): void {
@@ -49,7 +50,19 @@ export function registerServiceWorker(): void {
 
   updateSWFn = registerSW({
     onNeedRefresh() {
-      showUpdateBanner();
+      if (isAutoUpdating) return;
+
+      // Try to activate the new Service Worker immediately.
+      isAutoUpdating = true;
+      updateSWFn
+        ?.call(undefined, true)
+        .catch(() => {
+          // Fallback: keep the manual update banner available.
+          showUpdateBanner();
+        })
+        .finally(() => {
+          isAutoUpdating = false;
+        });
     },
     onOfflineReady() {},
   });
