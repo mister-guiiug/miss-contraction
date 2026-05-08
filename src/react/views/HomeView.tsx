@@ -7,7 +7,6 @@ import { Banners } from '../components/home/Banners';
 import { EmptyState } from '../components/home/EmptyState';
 import { TimelineCompact } from '../components/home/TimelineCompact';
 import { ThresholdBadge } from '../components/home/ThresholdBadge';
-import { QuickNotes } from '../components/home/QuickNotes';
 import { AppFooter } from '../components/layout/AppFooter';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { vibrate } from '../hooks/useWakeLock';

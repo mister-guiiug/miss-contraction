@@ -6,6 +6,17 @@ import { useEffect, useRef } from 'react';
 export function useWakeLock(enabled: boolean, active: boolean) {
   const sentinelRef = useRef<WakeLockSentinel | null>(null);
 
+  const releaseSafe = async () => {
+    if (sentinelRef.current) {
+      try {
+        await sentinelRef.current.release();
+      } catch {
+        /* ignore */
+      }
+      sentinelRef.current = null;
+    }
+  };
+
   useEffect(() => {
     if (!enabled || !active || !navigator.wakeLock) {
       // Relâcher le wake lock si désactivé ou pas de contraction en cours
@@ -39,17 +50,6 @@ export function useWakeLock(enabled: boolean, active: boolean) {
       releaseSafe();
     };
   }, [enabled, active]);
-
-  const releaseSafe = async () => {
-    if (sentinelRef.current) {
-      try {
-        await sentinelRef.current.release();
-      } catch {
-        /* ignore */
-      }
-      sentinelRef.current = null;
-    }
-  };
 }
 
 /**

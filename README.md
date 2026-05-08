@@ -125,7 +125,7 @@ Voir [NETLIFY.md](NETLIFY.md) pour les détails du déploiement Netlify.
 | Validation        | [Zod 3](https://zod.dev/)                                                                                                                                                                             |
 | Tests             | [Vitest 3](https://vitest.dev/) (jsdom) + [Testing Library](https://testing-library.com/) + [Playwright](https://playwright.dev/) + [@axe-core/playwright](https://github.com/dequelabs/axe-core-npm) |
 | Monitoring        | [@sentry/react](https://docs.sentry.io/platforms/javascript/guides/react/) + [web-vitals 4](https://web.dev/vitals/)                                                                                  |
-| Configs partagées | [`@mister-guiiug/dev-wpa-config`](../dev-wpa-config/README.md) (ESLint, Prettier, TS, Vitest)                                                                                                                  |
+| Configs partagées | [`@mister-guiiug/dev-wpa-config`](../dev-wpa-config/README.md) (ESLint, Prettier, TS, Vitest)                                                                                                         |
 | PWA               | [`vite-plugin-pwa 1.2`](https://vite-pwa-org.netlify.app/) (Workbox)                                                                                                                                  |
 
 ### Scripts utiles
