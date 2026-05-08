@@ -3,8 +3,10 @@ import {
   devices,
   type PlaywrightTestConfig,
 } from '@playwright/test';
+import { basePlaywrightOptions } from '@mister-guiiug/dev-wpa-config/playwright-base';
 
 export default defineConfig({
+  ...basePlaywrightOptions,
   testDir: './e2e',
   testMatch: /.*\.spec\.ts$/, // Exclure les fichiers helpers, pages, etc.
 
