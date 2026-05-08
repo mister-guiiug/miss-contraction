@@ -3,7 +3,8 @@
  * Defines route paths for each supported language
  */
 
-import type { AppLanguage, AppRoute } from './i18n';
+import type { AppLanguage } from './i18n';
+import type { AppRoute } from './routes';
 
 /**
  * Route paths for each language

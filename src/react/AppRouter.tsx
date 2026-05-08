@@ -15,8 +15,8 @@ import { TableView } from './views/TableView';
 import { MidwifeView } from './views/MidwifeView';
 import { ChecklistView } from './views/ChecklistView';
 import { AboutView } from './views/AboutView';
-import { getDocumentTitle, type AppRoute } from '../routes';
-import { getRouteFromPath, legacyPathMap } from '../routes-i18n';
+import { getDocumentTitle } from '../routes';
+import { getRouteFromPath } from '../routes-i18n';
 import { useAppStore } from './store/useAppStore';
 import { I18nSyncProvider } from './providers/I18nSyncProvider';
 

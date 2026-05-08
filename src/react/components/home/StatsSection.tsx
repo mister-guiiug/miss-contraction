@@ -2,7 +2,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { useStats } from '../../hooks/useStats';
 import { formatDuration } from '../../../utils/formatDuration';
 import type { ContractionRecord } from '../../../storage';
-import { t } from '../../../i18n';
+import { t, type AppLanguage } from '../../../i18n';
 
 const THRESHOLD_ICONS: Record<string, string> = {
   match: '🏥',
@@ -131,7 +131,7 @@ function IntervalChart({
 }: {
   intervals: number[];
   recordsForChart: ContractionRecord[];
-  language: ReturnType<typeof useAppStore>['settings']['language'];
+  language: AppLanguage;
 }) {
   if (intervals.length === 0) return null;
 

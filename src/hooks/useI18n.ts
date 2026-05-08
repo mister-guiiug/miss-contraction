@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { formatDate, formatCurrency, formatNumber } from './i18n.config';
+import { formatDate, formatCurrency, formatNumber } from '../i18n.config';
 
 /**
  * Hook personnalisé pour utiliser i18n avec formatters intégrés
