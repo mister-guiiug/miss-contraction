@@ -1,22 +1,25 @@
 import { useMemo } from 'react';
 import { useAppStore } from '../../store/useAppStore';
+import { interpolate, t } from '../../../i18n';
+import { useNow } from '../../hooks/useNow';
 
 /**
  * Badge d'état du seuil avec animation et indicateur visuel
  */
 export function ThresholdBadge() {
   const { records, settings } = useAppStore();
+  const language = settings.language;
+  const now = useNow(1000);
 
   const { state, message } = useMemo(() => {
     if (records.length === 0) {
       return {
         state: 'empty' as const,
-        message: 'Aucune contraction enregistrée',
+        message: t(language, 'history.empty'),
       };
     }
 
     // Filtrer selon la fenêtre de statistiques
-    const now = Date.now();
     const windowMs =
       settings.statsWindowMinutes === 'all'
         ? Infinity
@@ -50,22 +53,24 @@ export function ThresholdBadge() {
     if (consecutiveCount >= settings.consecutiveCount) {
       return {
         state: 'match' as const,
-        message: `✓ Seuil atteint ! (${consecutiveCount}/${settings.consecutiveCount} contractions)`,
+        message: interpolate(t(language, 'timer.statusWithIntensity'), {
+          intensity: `${consecutiveCount}/${settings.consecutiveCount}`,
+        }),
       };
     }
 
     if (consecutiveCount >= Math.ceil(settings.consecutiveCount / 2)) {
       return {
         state: 'approaching' as const,
-        message: `Presque... (${consecutiveCount}/${settings.consecutiveCount} contractions sous le seuil)`,
+        message: `${t(language, 'stats.threshold.approaching')} (${consecutiveCount}/${settings.consecutiveCount})`,
       };
     }
 
     return {
       state: 'calm' as const,
-      message: `${consecutiveCount}/${settings.consecutiveCount} contractions sous le seuil`,
+      message: `${t(language, 'stats.threshold.calm')} (${consecutiveCount}/${settings.consecutiveCount})`,
     };
-  }, [records, settings]);
+  }, [language, now, records, settings]);
 
   return (
     <div

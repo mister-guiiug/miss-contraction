@@ -5,7 +5,7 @@ import { useRestTimer } from '../../hooks/useRestTimer';
 import { useWakeLock, vibrate } from '../../hooks/useWakeLock';
 import { IntensityPicker } from './IntensityPicker';
 import { QuickNotes } from './QuickNotes';
-import { BreathGuide } from './BreathGuide';
+import { interpolate, t } from '../../../i18n';
 
 interface TimerSectionProps {
   onNoteSelect?: (note: string) => void;
@@ -23,6 +23,7 @@ export function TimerSectionWithIntensity({
 }: TimerSectionProps) {
   const { records, activeStart, settings, startContraction, endContraction } =
     useAppStore();
+  const language = settings.language;
   const { formatted, progress, isRunning } = useContractionTimer(activeStart);
 
   const lastEnd = useMemo(() => {
@@ -54,15 +55,6 @@ export function TimerSectionWithIntensity({
     };
   }, [isRunning]);
 
-  // Réinitialiser l'intensité quand une contraction commence
-  useEffect(() => {
-    if (isRunning && currentIntensity === undefined) {
-      setCurrentIntensity(3); // Valeur par défaut
-    } else if (!isRunning) {
-      setCurrentIntensity(undefined);
-    }
-  }, [isRunning, currentIntensity]);
-
   const handleToggle = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       // Créer l'effet ripple
@@ -77,26 +69,11 @@ export function TimerSectionWithIntensity({
       if (isRunning) {
         // Enregistrer l'intensité et la note avant de terminer
         vibrate([35, 50, 35], settings.vibrationEnabled);
-
-        const durationMs = Date.now() - (activeStart || Date.now());
-        if (settings.voiceAnnounceDuration && 'speechSynthesis' in window) {
-          const sec = Math.round(durationMs / 1000);
-          let text = '';
-          if (sec < 60) {
-            text = `${sec} secondes`;
-          } else {
-            const m = Math.floor(sec / 60);
-            const s = sec % 60;
-            text = `${m} minute${m > 1 ? 's' : ''} ${s > 0 ? `${s} secondes` : ''}`;
-          }
-          const utterance = new SpeechSynthesisUtterance(text);
-          utterance.lang = 'fr-FR';
-          window.speechSynthesis.speak(utterance);
-        }
-
         endContraction(selectedNote || undefined, currentIntensity);
+        setCurrentIntensity(undefined);
         if (onClearNote) onClearNote();
       } else {
+        setCurrentIntensity(3);
         vibrate(40, settings.vibrationEnabled);
         startContraction();
       }
@@ -107,6 +84,8 @@ export function TimerSectionWithIntensity({
       startContraction,
       endContraction,
       currentIntensity,
+      onClearNote,
+      selectedNote,
     ]
   );
 
@@ -131,23 +110,20 @@ export function TimerSectionWithIntensity({
       data-testid="timer-section-with-intensity"
     >
       <h2 id="action-heading" className="cta-heading">
-        Enregistrer une contraction
+        {t(language, 'timer.title')}
       </h2>
-      <p className="cta-hint">
-        Touchez le gros bouton au <strong>début</strong> d'une contraction, puis
-        à la <strong>fin</strong>.
-      </p>
+      <p className="cta-hint">{t(language, 'timer.hint')}</p>
 
       {!isRunning && lastEnd && (
         <div className="rest-timer" data-testid="rest-timer">
-          <p className="rest-timer-label">Repos depuis :</p>
+          <p className="rest-timer-label">{t(language, 'timer.restSince')}</p>
           <p className="rest-timer-value">{restFormatted}</p>
         </div>
       )}
 
       {isRunning && (
         <div className="timer" id="timer-block" data-testid="timer-display">
-          <p className="timer-label">Contraction en cours</p>
+          <p className="timer-label">{t(language, 'timer.running')}</p>
           <div className="timer-circle-container">
             <svg
               className="timer-circle"
@@ -172,12 +148,10 @@ export function TimerSectionWithIntensity({
             </p>
           </div>
 
-          <BreathGuide />
-
           {/* Sélecteur d'intensité pendant contraction */}
           <div className="timer-intensity-section">
             <p className="timer-intensity-label">
-              Intensité de cette contraction :
+              {t(language, 'timer.intensity')}
             </p>
             <div data-testid="intensity-selector">
               <IntensityPicker
@@ -201,7 +175,7 @@ export function TimerSectionWithIntensity({
           aria-live="polite"
           style={{ position: 'relative', overflow: 'hidden' }}
         >
-          {isRunning ? 'Fin de contraction' : 'Début de contraction'}
+          {isRunning ? t(language, 'timer.end') : t(language, 'timer.start')}
           {ripplePosition && (
             <span
               className="ripple"
@@ -220,7 +194,11 @@ export function TimerSectionWithIntensity({
 
       <p className="hint" id="status-hint" data-testid="timer-hint">
         {isRunning
-          ? `Appuyez à la fin. Intensité${currentIntensity ? ` : ${currentIntensity}/5` : ''}`
+          ? currentIntensity
+            ? interpolate(t(language, 'timer.statusWithIntensity'), {
+                intensity: currentIntensity,
+              })
+            : t(language, 'timer.status')
           : ''}
       </p>
     </section>

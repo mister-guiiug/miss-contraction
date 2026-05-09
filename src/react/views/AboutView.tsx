@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { forceSwUpdate } from '../../register-sw';
+import { useAppStore } from '../store/useAppStore';
+import { t } from '../../i18n';
 
 const REPO_URL = 'https://github.com/mister-guiiug/miss-contraction';
 const COFFEE_URL = 'https://buymeacoffee.com/mister.guiiug';
@@ -93,6 +95,7 @@ function IconExternalLink() {
 
 export function AboutView() {
   const [reloading, setReloading] = useState(false);
+  const language = useAppStore(state => state.settings.language);
 
   function handleForceReload() {
     setReloading(true);
@@ -105,8 +108,8 @@ export function AboutView() {
 
   return (
     <ViewLayout
-      title="A propos"
-      lead="Informations sur l'application et gestion de la PWA"
+      title={t(language, 'about.title')}
+      lead={t(language, 'about.lead')}
       dataTestId="about-view"
     >
       <div className="about-view">
@@ -156,15 +159,45 @@ export function AboutView() {
           </div>
         </div>
 
+        {/* Story / Histoire */}
+        <section className="about-section" aria-labelledby="about-story-lbl">
+          <h3 id="about-story-lbl" className="about-section__title">
+            {t(language, 'about.storyTitle')}
+          </h3>
+          <div className="about-section__text" style={{ lineHeight: 1.6 }}>
+            <p>{t(language, 'about.storyIntro')}</p>
+            <p>{t(language, 'about.storySisterPregnancy')}</p>
+            <p>{t(language, 'about.storyProblem')}</p>
+            <p>{t(language, 'about.storyNeeds')}</p>
+            <p>
+              <strong>{t(language, 'about.storySolution')}</strong>
+            </p>
+            <ul style={{ margin: '0.5em 0 0.5em 1.2em', paddingLeft: 0 }}>
+              <li>{t(language, 'about.storyFeatures1')}</li>
+              <li>{t(language, 'about.storyFeatures2')}</li>
+              <li>{t(language, 'about.storyFeatures3')}</li>
+            </ul>
+            <p>{t(language, 'about.storyEssence')}</p>
+            <p>
+              {language === 'fr'
+                ? "Si vous aimez ce projet et souhaitez le soutenir, vous pouvez m'offrir un café via"
+                : 'If you like this project and want to support it, you can buy me a coffee via'}{' '}
+              <a href={COFFEE_URL} target="_blank" rel="noopener noreferrer">
+                {COFFEE_URL}
+              </a>
+            </p>
+          </div>
+        </section>
+
         {/* Version */}
         <section className="about-section" aria-labelledby="about-version-lbl">
           <h3 id="about-version-lbl" className="about-section__title">
-            Version
+            {t(language, 'about.versionDeployed')}
           </h3>
           <p className="about-version">
             <span className="about-version__tag">v{APP_VERSION}</span>
             <span className="about-version__note">
-              {'Deploye sur '}
+              {t(language, 'about.hostedOn')}
               <a
                 href="https://mister-guiiug.github.io/miss-contraction/"
                 target="_blank"
@@ -179,10 +212,10 @@ export function AboutView() {
         {/* Code source */}
         <section className="about-section" aria-labelledby="about-source-lbl">
           <h3 id="about-source-lbl" className="about-section__title">
-            Code source
+            {t(language, 'about.sourceTitle')}
           </h3>
           <p className="about-section__text">
-            Projet open-source sous licence MIT.
+            {t(language, 'about.sourceText')}
           </p>
           <a
             className="about-link-card"
@@ -216,7 +249,7 @@ export function AboutView() {
         {/* Soutien */}
         <section className="about-section" aria-labelledby="about-support-lbl">
           <h3 id="about-support-lbl" className="about-section__title">
-            Soutenir le projet
+            {t(language, 'about.supportTitle')}
           </h3>
           <a
             className="about-link-card about-link-card--coffee"
@@ -241,12 +274,9 @@ export function AboutView() {
         {/* PWA */}
         <section className="about-section" aria-labelledby="about-pwa-lbl">
           <h3 id="about-pwa-lbl" className="about-section__title">
-            Application web (PWA)
+            {t(language, 'about.pwaTitle')}
           </h3>
-          <p className="about-section__text">
-            Si l'application semble bloquee sur une ancienne version, forcez le
-            rechargement pour appliquer la derniere mise a jour.
-          </p>
+          <p className="about-section__text">{t(language, 'about.pwaText')}</p>
           <button
             type="button"
             className="btn btn-secondary about-reload-btn"
@@ -255,15 +285,16 @@ export function AboutView() {
             aria-busy={reloading}
           >
             <IconRefresh spinning={reloading} />
-            {reloading ? 'Rechargement...' : 'Forcer le rechargement de la PWA'}
+            {reloading
+              ? t(language, 'about.reloading')
+              : t(language, 'about.forceReload')}
           </button>
         </section>
 
         {/* Avertissement */}
         <p className="about-disclaimer">
           <IconAlert />
-          Cet outil ne remplace pas un avis medical. En cas de doute, appelez la
-          maternite ou le 15.
+          {t(language, 'about.disclaimer')}
         </p>
       </div>
     </ViewLayout>

@@ -8,8 +8,27 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { injectAxe, checkA11y, getViolations } from 'axe-playwright';
-import { ROUTES, TIMEOUTS } from '../config';
+import AxeBuilder from '@axe-core/playwright';
+import type { Page } from '@playwright/test';
+import { ROUTES, TIMEOUTS } from './config';
+
+async function injectAxe(_page: Page): Promise<void> {
+  // AxeBuilder injects axe-core during analyze(); keep API for existing tests.
+}
+
+async function getViolations(page: Page) {
+  const results = await new AxeBuilder({ page }).analyze();
+  return results.violations;
+}
+
+async function checkA11y(page: Page): Promise<void> {
+  const results = await new AxeBuilder({ page }).analyze();
+  if (results.violations.length > 0) {
+    throw new Error(
+      `Accessibility violations found: ${results.violations.length}`
+    );
+  }
+}
 
 test.describe('Accessibilité - WCAG 2.1 AA', () => {
   test.beforeEach(async ({ page }) => {

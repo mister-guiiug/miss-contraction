@@ -7,7 +7,7 @@ export function BreathGuide() {
     const cycleDuration = 4000; // Match CSS animation duration
 
     const interval = setInterval(() => {
-      setPhase((prev) => (prev === 'inhale' ? 'exhale' : 'inhale'));
+      setPhase(prev => prev === 'inhale' ? 'exhale' : 'inhale');
     }, cycleDuration);
 
     return () => clearInterval(interval);

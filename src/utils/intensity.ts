@@ -42,5 +42,5 @@ export const INTENSITY_DATA = [
 ];
 
 export function getIntensityInfo(level: number) {
-  return INTENSITY_DATA.find((i) => i.level === level) || INTENSITY_DATA[2];
+  return INTENSITY_DATA.find(i => i.level === level) || INTENSITY_DATA[2];
 }

@@ -7,7 +7,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { ROUTES, TIMEOUTS } from '../config';
+import { ROUTES, TIMEOUTS } from './config';
 
 test.describe('Snapshots Visuels - Régression Design', () => {
   test.beforeEach(async ({ page }) => {

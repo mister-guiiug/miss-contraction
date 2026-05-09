@@ -20,6 +20,7 @@ export function IntensityPicker({
 }: IntensityPickerProps) {
   const [hovered, setHovered] = useState<number | null>(null);
 
+
   const handleSelect = useCallback(
     (level: number) => {
       if (!disabled) {
@@ -35,7 +36,7 @@ export function IntensityPicker({
       data-testid="intensity-picker"
     >
       <div className="intensity-scale">
-        {INTENSITY_DATA.map((intensity) => {
+        {INTENSITY_DATA.map(intensity => {
           const isSelected = value === intensity.level;
           const isHovered = hovered === intensity.level;
 
