@@ -36,13 +36,8 @@ function persistMaternityMessage(text: string): void {
 
 export function MessageView() {
   const language = useAppStore(state => state.settings.language);
-  const [message, setMessage] = useState(DEFAULT_MATERNITY_MESSAGE);
+  const [message, setMessage] = useState(loadMaternityMessageDraft);
   const [feedback, setFeedback] = useState('');
-
-  // Charger le message au montage
-  useEffect(() => {
-    setMessage(loadMaternityMessageDraft());
-  }, []);
 
   // Sauvegarder automatiquement quand le message change (debounce)
   useEffect(() => {
@@ -58,7 +53,7 @@ export function MessageView() {
     persistMaternityMessage(DEFAULT_MATERNITY_MESSAGE);
     setFeedback(t(language, 'message.feedback.defaultRestored'));
     setTimeout(() => setFeedback(''), 3000);
-  }, []);
+  }, [language]);
 
   // Copier dans le presse-papiers
   const handleCopy = useCallback(async () => {
@@ -75,7 +70,7 @@ export function MessageView() {
       setFeedback(t(language, 'message.feedback.copyError'));
       setTimeout(() => setFeedback(''), 3000);
     }
-  }, [message]);
+  }, [language, message]);
 
   // Ouvrir WhatsApp
   const handleWhatsApp = useCallback(() => {

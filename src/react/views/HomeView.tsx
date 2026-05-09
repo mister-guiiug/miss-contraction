@@ -13,15 +13,9 @@ import { vibrate } from '../hooks/useWakeLock';
 import { t } from '../../i18n';
 
 export function HomeView() {
-  const { records, setRecords, settings } = useAppStore();
+  const { records, settings } = useAppStore();
   const [selectedNote, setSelectedNote] = useState<string | null>(null);
   const language = settings.language;
-
-  // Synchroniser avec localStorage (modifications vanilla)
-  useEffect(() => {
-    const freshRecords = [...records];
-    setRecords(freshRecords);
-  }, []);
 
   // Mettre à jour le titre de la page
   useEffect(() => {

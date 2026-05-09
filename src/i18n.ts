@@ -43,7 +43,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'shell.menu': 'Menu',
     'shell.closeMenu': 'Fermer le menu',
     'shell.openMenu': 'Ouvrir le menu',
-    'shell.breadcrumb': 'Fil d'Ariane',
+    'shell.breadcrumb': "Fil d'Ariane",
     'shell.theme.light': 'Thème clair',
     'shell.theme.dark': 'Thème sombre',
     'shell.theme.system': 'Thème automatique',
@@ -57,7 +57,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'shell.nav.checklist': 'Valise maternité',
     'shell.nav.maternity': 'Appeler la maternité',
     'shell.nav.message': 'Message à la maternité',
-    'shell.nav.settings': 'Paramètres et alerte',
+    'shell.nav.settings': 'Paramètres et alertes',
     'shell.nav.about': 'À propos',
 
     'bottom.home': 'Accueil',
@@ -67,7 +67,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'bottom.menu': 'Menu',
 
     'footer.disclaimer':
-      'Cet outil ne remplace pas un avis médical. Appelez la maternite ou le 15 en cas de doute.',
+      'Cet outil ne remplace pas un avis médical. Appelez la maternité ou le 15 en cas de doute.',
     'footer.about': 'À propos et version',
     'footer.coffee': 'Buy me a coffee',
 
@@ -98,14 +98,14 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'about.reloading': 'Rechargement...',
     'about.forceReload': 'Forcer le rechargement de la PWA',
     'about.disclaimer':
-      'Cet outil ne remplace pas un avis médical. En cas de doute, appelez la maternite ou le 15.',
+      'Cet outil ne remplace pas un avis médical. En cas de doute, appelez la maternité ou le 15.',
 
     'home.title': 'Suivi des contractions',
     'home.lead':
       'Enregistrez chaque contraction, surveillez le rythme et gardez vos repères essentiels à portée de main.',
     'home.aboutSummary': "À propos de l'application",
     'home.aboutText':
-      'Suivez la fréquence des contractions et recevez une alerte selon les seuils définis dans les parametres (à valider avec votre sage-femme).',
+      'Suivez la fréquence des contractions et recevez une alerte selon les seuils définis dans les paramètres (à valider avec votre sage-femme).',
     'home.note': 'Note',
     'home.clearNote': 'Effacer la note',
 
@@ -150,7 +150,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'quicknotes.placeholder': 'Note personnelle...',
 
     'history.title': 'Historique',
-    'history.actionsAria': 'Actions historique',
+    'history.actionsAria': "Actions de l'historique",
     'history.clear': "Effacer l'historique",
     'history.empty': 'Aucune contraction enregistrée pour le moment.',
     'history.duration': 'Durée',
@@ -185,13 +185,13 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'table.col.frequency': 'Fréquence',
     'table.col.note': 'Note',
     'table.footnote':
-      'Intervalle : ecart entre le debut de cette contraction et celui de la ligne precedente. Fréquence : nombre de contractions par heure si le rythme reste identique.',
+      'Intervalle : écart entre le début de cette contraction et celui de la ligne précédente. Fréquence : nombre de contractions par heure si le rythme reste identique.',
     'table.backHome': "Retour à l'accueil",
 
     'maternity.title': 'Maternité',
     'maternity.lead':
       'Libellé, numéro et adresse sont modifiables dans les paramètres. Appel et itinéraire en un geste.',
-    'maternity.contact': 'Contacter la maternite',
+    'maternity.contact': 'Contacter la maternité',
     'maternity.number': 'Numéro',
     'maternity.readonly': 'Lecture seule',
     'maternity.call': 'Appeler {destName}',
@@ -216,7 +216,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'message.whatsapp': 'Ouvrir WhatsApp',
     'message.sms': 'Ouvrir SMS',
     'message.hint':
-      'WhatsApp et SMS ouvrent l'application par défaut sur téléphone ; sur ordinateur, WhatsApp Web peut s'ouvrir dans un nouvel onglet. Si le lien SMS échoue, utilisez Copier.',
+      "WhatsApp et SMS ouvrent l'application par défaut sur téléphone ; sur ordinateur, WhatsApp Web peut s'ouvrir dans un nouvel onglet. Si le lien SMS échoue, utilisez Copier.",
     'message.backHome': "Retour à l'accueil",
     'message.feedback.defaultRestored': 'Modèle par défaut restauré.',
     'message.feedback.empty': 'Le message est vide.',
@@ -227,7 +227,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'checklist.title': 'Valise maternité',
     'checklist.lead':
       'Préparez sereinement votre départ pour la maternité avec cette liste essentielle.',
-    'checklist.category.docs': 'Papiers et Documents',
+    'checklist.category.docs': 'Papiers et documents',
     'checklist.category.mama': 'Pour maman',
     'checklist.category.baby': 'Pour bébé',
     'checklist.category.partner': 'Pour le partenaire',
@@ -239,8 +239,8 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'settings.language.title': 'Langue',
     'settings.language.label': "Langue de l'application",
     'settings.language.help':
-      'Le changement est applique immédiatement sur la navigation et les ecrans pris en charge.',
-    'settings.language.changed': 'Langue changee immédiatement !',
+      'Le changement est appliqué immédiatement sur la navigation et les écrans pris en charge.',
+    'settings.language.changed': 'Langue changée immédiatement !',
   },
   en: {
     'app.name': 'Miss Contraction',
@@ -300,7 +300,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'about.storyProblem':
       'Existing solutions demanded too much: registration, personal data, or payment to access the essentials.',
     'about.storyNeeds':
-      'In those moments, you need just one thing: a simple, immédiate tool to measure contractions.',
+      'In those moments, you need just one thing: a simple, immediate tool to measure contractions.',
     'about.storySolution': 'Miss Contraction does exactly that.',
     'about.storyFeatures1': 'No account.',
     'about.storyFeatures2': 'No personal data.',
@@ -429,7 +429,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'message.backHome': 'Back to home',
     'message.feedback.defaultRestored': 'Default template restored.',
     'message.feedback.empty': 'Message is empty.',
-    'message.feedback.copied': 'Message copiéd to clipboard.',
+    'message.feedback.copied': 'Message copied to clipboard.',
     'message.feedback.copyError':
       'Copy failed - select and copy text manually.',
 
@@ -447,8 +447,8 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'settings.language.title': 'Language',
     'settings.language.label': 'Application language',
     'settings.language.help':
-      'Changes are applied immédiately on navigation and supported screens.',
-    'settings.language.changed': 'Language changed immédiately!',
+      'Changes are applied immediately on navigation and supported screens.',
+    'settings.language.changed': 'Language changed immediately!',
   },
   es: {
     'app.name': 'Miss Contraction',

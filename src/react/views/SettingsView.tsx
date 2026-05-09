@@ -17,13 +17,14 @@ import { ViewLayout } from '../components/layout/ViewLayout';
 
 const SETTINGS_COPY = {
   fr: {
-    saved: 'Parametres enregistres !',
-    leadPrefix: "Ajustez l'alerte, le numero de la maternite et l'affichage.",
-    leadHint: 'Pensez a enregistrer',
+    saved: 'Paramètres enregistrés !',
+    leadPrefix:
+      "Ajustez les alertes, les coordonnées de la maternité et l'affichage.",
+    leadHint: 'Pensez à enregistrer',
     leadSuffix: 'pour appliquer les changements.',
-    tocAria: 'Aller a une section',
+    tocAria: 'Aller à une section',
     sectionAlerts: 'Alertes',
-    sectionMaternity: 'Maternite',
+    sectionMaternity: 'Maternité',
     sectionStats: 'Statistiques',
     sectionComfort: 'Confort',
     sectionModules: 'Options du menu',
@@ -50,24 +51,22 @@ export function SettingsView() {
   const { settings, updateSettings, saveSettings } = useAppStore();
   const language = settings.language;
   const copy = language === 'fr' ? SETTINGS_COPY.fr : SETTINGS_COPY.en;
-  const [formData, setFormData] = useState(settings);
+  const [formData, setFormData] = useState(() => loadSettings());
   const [saveStatus, setSaveStatus] = useState('');
   const [notifyPermission, setNotifyPermission] =
-    useState<NotificationPermission>('default');
+    useState<NotificationPermission>(() => {
+      if (typeof window !== 'undefined' && 'Notification' in window) {
+        return Notification.permission;
+      }
+      return 'default';
+    });
 
   // Recharger les settings depuis localStorage au montage
   // pour synchroniser avec les modifications faits par le code vanilla
   useEffect(() => {
     const freshSettings = loadSettings();
     updateSettings(freshSettings);
-    setFormData(freshSettings);
   }, [updateSettings]);
-
-  useEffect(() => {
-    if ('Notification' in window) {
-      setNotifyPermission(Notification.permission);
-    }
-  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -117,7 +116,7 @@ export function SettingsView() {
   const handleClearSnooze = () => {
     clearSnoozeUntil();
     setSaveStatus(
-      language === 'fr' ? 'Alertes reactivees' : 'Alerts re-enabled'
+      language === 'fr' ? 'Alertes réactivées' : 'Alerts re-enabled'
     );
     setTimeout(() => setSaveStatus(''), 3000);
   };
@@ -241,7 +240,7 @@ export function SettingsView() {
             <label className="field">
               <span>
                 {language === 'fr'
-                  ? 'Ecart max. entre debuts (min)'
+                  ? 'Écart max. entre débuts (min)'
                   : 'Max gap between starts (min)'}
               </span>
               <input
@@ -259,7 +258,7 @@ export function SettingsView() {
             <label className="field">
               <span>
                 {language === 'fr'
-                  ? 'Duree min. par contraction (s)'
+                  ? 'Durée min. par contraction (s)'
                   : 'Minimum duration per contraction (s)'}
               </span>
               <input
@@ -277,7 +276,7 @@ export function SettingsView() {
             <label className="field">
               <span>
                 {language === 'fr'
-                  ? 'Contractions consecutives'
+                  ? 'Contractions consécutives'
                   : 'Consecutive contractions'}
               </span>
               <input
@@ -308,7 +307,7 @@ export function SettingsView() {
               />
               <span>
                 {language === 'fr'
-                  ? 'Pre-alerte si le rythme se resserre (avant le seuil complet)'
+                  ? 'Pré-alerte si le rythme se resserre (avant le seuil complet)'
                   : 'Pre-alert when rhythm tightens (before full threshold)'}
               </span>
             </label>
@@ -395,7 +394,7 @@ export function SettingsView() {
           <label className="field field--wide">
             <span>
               {language === 'fr'
-                ? 'Libelle de la maternite'
+                ? 'Libellé de la maternité'
                 : 'Maternity label'}
             </span>
             <input
@@ -411,7 +410,7 @@ export function SettingsView() {
           </label>
           <label className="field field--wide">
             <span>
-              {language === 'fr' ? 'Numero de telephone' : 'Phone number'}
+              {language === 'fr' ? 'Numéro de téléphone' : 'Phone number'}
             </span>
             <input
               type="tel"
@@ -428,7 +427,7 @@ export function SettingsView() {
           <label className="field field--wide">
             <span>
               {language === 'fr'
-                ? 'Adresse de la maternite'
+                ? 'Adresse de la maternité'
                 : 'Maternity address'}
             </span>
             <textarea
@@ -461,7 +460,7 @@ export function SettingsView() {
           <label className="field field--wide">
             <span>
               {language === 'fr'
-                ? 'Fenetre pour moyennes et graphique (accueil)'
+                ? 'Fenêtre pour moyennes et graphique (accueil)'
                 : 'Window for averages and chart (home)'}
             </span>
             <select
@@ -472,16 +471,16 @@ export function SettingsView() {
               onChange={handleChange}
             >
               <option value="all">
-                {language === 'fr' ? 'Toutes les donnees' : 'All data'}
+                {language === 'fr' ? 'Toutes les données' : 'All data'}
               </option>
               <option value="30">
-                {language === 'fr' ? '30 dernieres minutes' : 'Last 30 minutes'}
+                {language === 'fr' ? '30 dernières minutes' : 'Last 30 minutes'}
               </option>
               <option value="60">
-                {language === 'fr' ? 'Derniere heure' : 'Last hour'}
+                {language === 'fr' ? 'Dernière heure' : 'Last hour'}
               </option>
               <option value="120">
-                {language === 'fr' ? 'Dernieres 2 heures' : 'Last 2 hours'}
+                {language === 'fr' ? 'Dernières 2 heures' : 'Last 2 hours'}
               </option>
             </select>
           </label>
@@ -516,7 +515,7 @@ export function SettingsView() {
           <label className="field">
             <span>
               {language === 'fr'
-                ? 'Rappel si fin non pressee apres (minutes)'
+                ? 'Rappel si fin non pressée après (minutes)'
                 : 'Reminder if end is not pressed after (minutes)'}
             </span>
             <input
@@ -542,7 +541,7 @@ export function SettingsView() {
             />
             <span>
               {language === 'fr'
-                ? "Garder l'ecran allume pendant une contraction en cours"
+                ? "Garder l'écran allumé pendant une contraction en cours"
                 : 'Keep screen awake during an active contraction'}
             </span>
           </label>
@@ -557,7 +556,7 @@ export function SettingsView() {
             />
             <span>
               {language === 'fr'
-                ? 'Vibration courte au debut et a la fin (mobile)'
+                ? 'Vibration courte au début et à la fin (mobile)'
                 : 'Short vibration at start and end (mobile)'}
             </span>
           </label>
@@ -572,7 +571,7 @@ export function SettingsView() {
             />
             <span>
               {language === 'fr'
-                ? "Afficher le bouton de commande vocale sur l'accueil (experimental)"
+                ? "Afficher le bouton de commande vocale sur l'accueil (expérimental)"
                 : 'Show voice command button on home screen (experimental)'}
             </span>
           </label>
@@ -603,7 +602,7 @@ export function SettingsView() {
             />
             <span>
               {language === 'fr'
-                ? 'Module commande vocale (reglages dans Confort et saisie)'
+                ? 'Module commande vocale (réglages dans Confort et saisie)'
                 : 'Voice command module (settings in Comfort and input)'}
             </span>
           </label>
@@ -618,7 +617,7 @@ export function SettingsView() {
             />
             <span>
               {language === 'fr'
-                ? 'Message a la maternite / proches (SMS, WhatsApp)'
+                ? 'Message à la maternité / proches (SMS, WhatsApp)'
                 : 'Message to maternity or contacts (SMS, WhatsApp)'}
             </span>
           </label>
