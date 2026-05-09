@@ -93,7 +93,7 @@ export function IntensityEditPopup({
     <div className="intensity-edit-overlay" onClick={onCancel}>
       <div
         className="intensity-edit-popup"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-labelledby="intensity-edit-title"
       >
@@ -105,7 +105,7 @@ export function IntensityEditPopup({
         </p>
 
         <div className="intensity-edit-grid">
-          {intensities.map(intensity => (
+          {intensities.map((intensity) => (
             <button
               key={intensity.level}
               type="button"

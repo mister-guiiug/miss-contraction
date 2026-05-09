@@ -97,7 +97,7 @@ export function MidwifeView() {
   // Filtrer et trier les records valides
   const validRecords = useMemo(() => {
     return [...records]
-      .filter(r => r.end > r.start)
+      .filter((r) => r.end > r.start)
       .sort((a, b) => a.start - b.start);
   }, [records]);
 
@@ -252,7 +252,7 @@ export function MidwifeView() {
           </span>
           <select
             value={mode}
-            onChange={e => setMode(parseMidwifeMode(e.target.value))}
+            onChange={(e) => setMode(parseMidwifeMode(e.target.value))}
             className="midwife-select"
             aria-describedby="midwife-count-hint"
           >
