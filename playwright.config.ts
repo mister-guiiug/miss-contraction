@@ -25,7 +25,7 @@ export default defineConfig({
     ['json', { outputFile: 'test-results/results.json' }],
     ['junit', { outputFile: 'test-results/junit.xml' }],
     ['list'], // Console output
-    process.env.CI ? ['github'] : [],
+    ...(process.env.CI ? [['github'] as const] : []),
   ].filter(Boolean) as unknown as PlaywrightTestConfig['reporter'],
 
   use: {
