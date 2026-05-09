@@ -40,6 +40,8 @@ export type AppSettings = {
   keepAwakeDuringContraction: boolean;
   /** Vibrations courtes au début / fin (si supporté). */
   vibrationEnabled: boolean;
+  /** Annoncer la durée de la contraction vocalement à la fin. */
+  voiceAnnounceDuration: boolean;
   /** Commande vocale expérimentale (début / fin). */
   voiceCommandsEnabled: boolean;
   /** Afficher le module commande vocale (menu / réglages / bouton). */
@@ -69,6 +71,7 @@ const defaultSettings: AppSettings = {
   largeMode: false,
   keepAwakeDuringContraction: true,
   vibrationEnabled: true,
+  voiceAnnounceDuration: false,
   voiceCommandsEnabled: false,
   moduleVoiceCommands: true,
   moduleMaternityMessage: true,
@@ -158,6 +161,10 @@ export function loadSettings(): AppSettings {
         typeof o.vibrationEnabled === 'boolean'
           ? o.vibrationEnabled
           : defaultSettings.vibrationEnabled,
+      voiceAnnounceDuration:
+        typeof o.voiceAnnounceDuration === 'boolean'
+          ? o.voiceAnnounceDuration
+          : defaultSettings.voiceAnnounceDuration,
       voiceCommandsEnabled:
         typeof o.voiceCommandsEnabled === 'boolean'
           ? o.voiceCommandsEnabled
