@@ -36,6 +36,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   largeMode: false,
   keepAwakeDuringContraction: true,
   vibrationEnabled: true,
+  voiceAnnounceDuration: false,
   voiceCommandsEnabled: false,
   moduleVoiceCommands: true,
   moduleMaternityMessage: true,

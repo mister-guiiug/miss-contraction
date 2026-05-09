@@ -25,6 +25,7 @@ interface StatsData {
   perHourFromMean: string;
   lastInterval: string;
   lastDuration: string;
+  humanSummary: string;
   thresholdKind: ThresholdBadgeKind;
   intervals: number[];
   recordsForChart: ContractionRecord[];
@@ -56,6 +57,7 @@ export function useStats(
     qtyPerHour,
     recordsForChart,
     thresholdKind,
+    humanSummary,
     windowLabel,
   } = useMemo(() => {
     const allValid = records.filter(r => r.end > r.start);
@@ -109,6 +111,37 @@ export function useStats(
       }
     }
 
+    // Calcul du résumé en langage naturel
+    let humanSummary = '';
+    if (!isEmpty) {
+      if (sorted.length >= 3) {
+        const last = sorted[sorted.length - 1]!;
+        const prev = sorted[sorted.length - 2]!;
+        const prev2 = sorted[sorted.length - 3]!;
+
+        const lastIntervalVal = last.start - prev.start;
+        const prevIntervalVal = prev.start - prev2.start;
+
+        if (lastIntervalVal < prevIntervalVal * 0.9) {
+          humanSummary = 'Les contractions se rapprochent.';
+        } else if (lastIntervalVal > prevIntervalVal * 1.1) {
+          humanSummary = 'Le rythme semble se calmer un peu.';
+        } else {
+          humanSummary = 'Le rythme est stable.';
+        }
+
+        if (
+          last.intensity &&
+          prev.intensity &&
+          last.intensity > prev.intensity
+        ) {
+          humanSummary += ' L’intensité augmente.';
+        }
+      } else {
+        humanSummary = 'Suivi en cours...';
+      }
+    }
+
     // Badge de seuil
     const thresholdKind = computeThresholdBadge(records, settings);
 
@@ -123,6 +156,7 @@ export function useStats(
       perHourFromMean,
       lastInterval,
       lastDuration,
+      humanSummary,
       thresholdKind,
       intervals,
       recordsForChart,
@@ -140,6 +174,7 @@ export function useStats(
       perHourFromMean,
       lastInterval,
       lastDuration,
+      humanSummary,
       thresholdKind,
       intervals,
       recordsForChart,
