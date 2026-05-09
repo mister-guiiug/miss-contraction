@@ -41,6 +41,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.8.0",
     "@eslint/js": "^9.39.4",
+    "@mister-guiiug/dev-wpa-config": "^1.2.0",
     "@playwright/test": "^1.49.1",
     "@sentry/vite-plugin": "^2.22.6",
     "@tailwindcss/vite": "^4.2.2",
@@ -66,13 +67,14 @@
     "vite": "^7.0.0",
     "vite-plugin-pwa": "^1.2.0",
     "vitest": "^3.2.4",
-    "web-vitals": "^4.2.0",
-    "@mister-guiiug/dev-wpa-config": "^1.0.0"
+    "web-vitals": "^4.2.0"
   },
   "dependencies": {
     "@sentry/react": "^8.45.0",
+    "i18next": "^26.0.10",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
+    "react-i18next": "^17.0.7",
     "react-router-dom": "^7.14.1",
     "tailwindcss": "^4.2.2",
     "zod": "^3.23.8",

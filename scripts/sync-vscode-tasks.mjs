@@ -46,7 +46,7 @@ async function run() {
   console.log('Updated .vscode/tasks.json from dev-wpa-config template.');
 }
 
-run().catch((error) => {
+run().catch(error => {
   console.error(error instanceof Error ? error.message : String(error));
   process.exit(1);
 });
