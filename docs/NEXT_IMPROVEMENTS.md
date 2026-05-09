@@ -223,7 +223,7 @@ page.evaluate(() => {
 
 // Mock Geolocation for Maps tests
 await page.evaluate(() => {
-  navigator.geolocation.getCurrentPosition = success => {
+  navigator.geolocation.getCurrentPosition = (success) => {
     success({ coords: { latitude: 48.8566, longitude: 2.3522 } });
   };
 });

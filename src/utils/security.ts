@@ -32,7 +32,9 @@ export function sanitizeInput(input: string, maxLength = 1000): string {
 export function generateSecureId(): string {
   const array = new Uint8Array(16);
   crypto.getRandomValues(array);
-  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
+    ''
+  );
 }
 
 /**
@@ -43,7 +45,7 @@ export async function hashString(text: string): Promise<string> {
   const data = encoder.encode(text);
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 /**
@@ -118,7 +120,7 @@ export class RateLimiter {
     const requests = this.requests.get(identifier) || [];
 
     // Nettoyer les anciennes requêtes
-    const validRequests = requests.filter(time => now - time < this.windowMs);
+    const validRequests = requests.filter((time) => now - time < this.windowMs);
 
     if (validRequests.length >= this.maxRequests) {
       return false;
@@ -148,5 +150,5 @@ export function isBotRequest(userAgent: string): boolean {
     /java/i,
   ];
 
-  return botPatterns.some(pattern => pattern.test(userAgent));
+  return botPatterns.some((pattern) => pattern.test(userAgent));
 }

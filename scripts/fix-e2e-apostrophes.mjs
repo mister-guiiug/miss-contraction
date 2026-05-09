@@ -69,7 +69,7 @@ function fixLine(line) {
   return { line: result.join(''), changed };
 }
 
-const files = readdirSync(E2E_DIR).filter(f => f.endsWith('.spec.ts'));
+const files = readdirSync(E2E_DIR).filter((f) => f.endsWith('.spec.ts'));
 let totalChanged = 0;
 for (const file of files) {
   const path = join(E2E_DIR, file);

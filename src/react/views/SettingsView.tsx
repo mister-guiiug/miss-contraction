@@ -76,7 +76,7 @@ export function SettingsView() {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]:
         type === 'checkbox'
@@ -559,6 +559,17 @@ export function SettingsView() {
                 ? 'Vibration courte au début et à la fin (mobile)'
                 : 'Short vibration at start and end (mobile)'}
             </span>
+          </label>
+          <label className="field field-check">
+            <input
+              type="checkbox"
+              name="voiceAnnounceDuration"
+              id="voice-announce-check"
+              data-testid="voice-announce-check"
+              checked={formData.voiceAnnounceDuration}
+              onChange={handleChange}
+            />
+            <span>Annoncer la durée vocalement à la fin d'une contraction</span>
           </label>
           <label className="field field-check">
             <input

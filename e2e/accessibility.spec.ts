@@ -134,7 +134,7 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
     for (const btn of buttons.slice(0, 10)) {
       // Vérifier que le bouton a un tabindex ou est naturellement focusable
       const tabindex = await btn.getAttribute('tabindex');
-      const isButton = await btn.evaluate(el => el.tagName === 'BUTTON');
+      const isButton = await btn.evaluate((el) => el.tagName === 'BUTTON');
 
       if (isButton || (tabindex && parseInt(tabindex) >= 0)) {
         focusableCount++;
@@ -179,7 +179,7 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
     let previousLevel = 0;
 
     for (const heading of headings) {
-      const tagName = await heading.evaluate(el => el.tagName);
+      const tagName = await heading.evaluate((el) => el.tagName);
       const level = parseInt(tagName[1]);
 
       // La hiérarchie ne doit pas sauter plus d'un niveau
@@ -197,7 +197,7 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
     // Vérifier que la page n'a pas de "visibility: hidden" sur du contenu important
     const hiddenElements = await page.locator(':visible').evaluate(() => {
       return Array.from(document.querySelectorAll('*')).filter(
-        el => getComputedStyle(el).visibility === 'hidden'
+        (el) => getComputedStyle(el).visibility === 'hidden'
       ).length;
     });
 
