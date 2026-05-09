@@ -1,5 +1,5 @@
 {
-  "extends": "@mister-guiiug/dev-wpa-config/tsconfig.app.json",
+  "extends": "@mister-guiiug/dev-wpa-config/tsconfig-app-react",
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
