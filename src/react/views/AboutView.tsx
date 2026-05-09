@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { forceSwUpdate } from '../../register-sw';
+import { useAppStore } from '../store/useAppStore';
+import { t } from '../../i18n';
 
 const REPO_URL = 'https://github.com/mister-guiiug/miss-contraction';
 const COFFEE_URL = 'https://buymeacoffee.com/mister.guiiug';
@@ -93,6 +95,7 @@ function IconExternalLink() {
 
 export function AboutView() {
   const [reloading, setReloading] = useState(false);
+  const language = useAppStore(state => state.settings.language);
 
   function handleForceReload() {
     setReloading(true);
@@ -105,20 +108,49 @@ export function AboutView() {
 
   return (
     <ViewLayout
-      title="A propos"
-      lead="Informations sur l'application et gestion de la PWA"
+      title={t(language, 'about.title')}
+      lead={t(language, 'about.lead')}
       dataTestId="about-view"
     >
       <div className="about-view">
-
         {/* Hero */}
         <div className="about-hero">
           <div className="about-hero__logo" aria-hidden="true">
-            <svg viewBox="0 0 48 48" width="48" height="48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="24" cy="24" r="22" fill="rgba(var(--accent-rgb),0.12)" stroke="rgba(var(--accent-rgb),0.35)" strokeWidth="1.5"/>
-              <path d="M24 14c-4.418 0-8 3.582-8 8 0 3.16 1.84 5.908 4.517 7.271L19 34h10l-1.517-4.729C30.16 27.908 32 25.16 32 22c0-4.418-3.582-8-8-8z" fill="rgba(var(--accent-rgb),0.7)"/>
-              <rect x="19" y="34" width="10" height="2" rx="1" fill="rgba(var(--accent-rgb),0.5)"/>
-              <rect x="20.5" y="37" width="7" height="2" rx="1" fill="rgba(var(--accent-rgb),0.35)"/>
+            <svg
+              viewBox="0 0 48 48"
+              width="48"
+              height="48"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="24"
+                cy="24"
+                r="22"
+                fill="rgba(var(--accent-rgb),0.12)"
+                stroke="rgba(var(--accent-rgb),0.35)"
+                strokeWidth="1.5"
+              />
+              <path
+                d="M24 14c-4.418 0-8 3.582-8 8 0 3.16 1.84 5.908 4.517 7.271L19 34h10l-1.517-4.729C30.16 27.908 32 25.16 32 22c0-4.418-3.582-8-8-8z"
+                fill="rgba(var(--accent-rgb),0.7)"
+              />
+              <rect
+                x="19"
+                y="34"
+                width="10"
+                height="2"
+                rx="1"
+                fill="rgba(var(--accent-rgb),0.5)"
+              />
+              <rect
+                x="20.5"
+                y="37"
+                width="7"
+                height="2"
+                rx="1"
+                fill="rgba(var(--accent-rgb),0.35)"
+              />
             </svg>
           </div>
           <div className="about-hero__body">
@@ -127,15 +159,45 @@ export function AboutView() {
           </div>
         </div>
 
+        {/* Story / Histoire */}
+        <section className="about-section" aria-labelledby="about-story-lbl">
+          <h3 id="about-story-lbl" className="about-section__title">
+            {t(language, 'about.storyTitle')}
+          </h3>
+          <div className="about-section__text" style={{ lineHeight: 1.6 }}>
+            <p>{t(language, 'about.storyIntro')}</p>
+            <p>{t(language, 'about.storySisterPregnancy')}</p>
+            <p>{t(language, 'about.storyProblem')}</p>
+            <p>{t(language, 'about.storyNeeds')}</p>
+            <p>
+              <strong>{t(language, 'about.storySolution')}</strong>
+            </p>
+            <ul style={{ margin: '0.5em 0 0.5em 1.2em', paddingLeft: 0 }}>
+              <li>{t(language, 'about.storyFeatures1')}</li>
+              <li>{t(language, 'about.storyFeatures2')}</li>
+              <li>{t(language, 'about.storyFeatures3')}</li>
+            </ul>
+            <p>{t(language, 'about.storyEssence')}</p>
+            <p>
+              {language === 'fr'
+                ? "Si vous aimez ce projet et souhaitez le soutenir, vous pouvez m'offrir un café via"
+                : 'If you like this project and want to support it, you can buy me a coffee via'}{' '}
+              <a href={COFFEE_URL} target="_blank" rel="noopener noreferrer">
+                {COFFEE_URL}
+              </a>
+            </p>
+          </div>
+        </section>
+
         {/* Version */}
         <section className="about-section" aria-labelledby="about-version-lbl">
           <h3 id="about-version-lbl" className="about-section__title">
-            Version
+            {t(language, 'about.versionDeployed')}
           </h3>
           <p className="about-version">
             <span className="about-version__tag">v{APP_VERSION}</span>
             <span className="about-version__note">
-              {'Deploye sur '}
+              {t(language, 'about.hostedOn')}
               <a
                 href="https://mister-guiiug.github.io/miss-contraction/"
                 target="_blank"
@@ -150,10 +212,10 @@ export function AboutView() {
         {/* Code source */}
         <section className="about-section" aria-labelledby="about-source-lbl">
           <h3 id="about-source-lbl" className="about-section__title">
-            Code source
+            {t(language, 'about.sourceTitle')}
           </h3>
           <p className="about-section__text">
-            Projet open-source sous licence MIT.
+            {t(language, 'about.sourceText')}
           </p>
           <a
             className="about-link-card"
@@ -163,12 +225,19 @@ export function AboutView() {
             aria-label="Voir le code source sur GitHub (nouvel onglet)"
           >
             <span className="about-link-card__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+              <svg
+                viewBox="0 0 24 24"
+                width="22"
+                height="22"
+                fill="currentColor"
+              >
                 <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
               </svg>
             </span>
             <span className="about-link-card__body">
-              <span className="about-link-card__title">mister-guiiug / miss-contraction</span>
+              <span className="about-link-card__title">
+                mister-guiiug / miss-contraction
+              </span>
               <span className="about-link-card__sub">github.com</span>
             </span>
             <span className="about-link-card__arrow" aria-hidden="true">
@@ -180,7 +249,7 @@ export function AboutView() {
         {/* Soutien */}
         <section className="about-section" aria-labelledby="about-support-lbl">
           <h3 id="about-support-lbl" className="about-section__title">
-            Soutenir le projet
+            {t(language, 'about.supportTitle')}
           </h3>
           <a
             className="about-link-card about-link-card--coffee"
@@ -205,12 +274,9 @@ export function AboutView() {
         {/* PWA */}
         <section className="about-section" aria-labelledby="about-pwa-lbl">
           <h3 id="about-pwa-lbl" className="about-section__title">
-            Application web (PWA)
+            {t(language, 'about.pwaTitle')}
           </h3>
-          <p className="about-section__text">
-            Si l'application semble bloquee sur une ancienne version, forcez le
-            rechargement pour appliquer la derniere mise a jour.
-          </p>
+          <p className="about-section__text">{t(language, 'about.pwaText')}</p>
           <button
             type="button"
             className="btn btn-secondary about-reload-btn"
@@ -219,15 +285,16 @@ export function AboutView() {
             aria-busy={reloading}
           >
             <IconRefresh spinning={reloading} />
-            {reloading ? 'Rechargement...' : 'Forcer le rechargement de la PWA'}
+            {reloading
+              ? t(language, 'about.reloading')
+              : t(language, 'about.forceReload')}
           </button>
         </section>
 
         {/* Avertissement */}
         <p className="about-disclaimer">
           <IconAlert />
-          Cet outil ne remplace pas un avis medical. En cas de doute, appelez
-          la maternite ou le 15.
+          {t(language, 'about.disclaimer')}
         </p>
       </div>
     </ViewLayout>

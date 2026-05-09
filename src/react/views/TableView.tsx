@@ -7,6 +7,7 @@ import { useEffect, useMemo } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { loadRecords } from '../../storage';
 import { ViewLayout } from '../components/layout/ViewLayout';
+import { t } from '../../i18n';
 
 const dateTimeFmt = new Intl.DateTimeFormat('fr-FR', {
   weekday: 'short',
@@ -33,11 +34,8 @@ function formatContractionsPerHour(meanIntervalMs: number): string {
 }
 
 export function TableView() {
-  const { records, setRecords } = useAppStore();
-
-  useEffect(() => {
-    document.title = 'Tableau des contractions - Miss Contraction';
-  }, []);
+  const { records, setRecords, settings } = useAppStore();
+  const language = settings.language;
 
   // Recharger les records depuis localStorage au montage
   // pour synchroniser avec les ajouts faits par le code vanilla
@@ -78,15 +76,8 @@ export function TableView() {
     <ViewLayout
       className="table-page"
       dataTestId="table-view"
-      title="Tableau des contractions"
-      lead={
-        <>
-          Historique detaille : pour chaque contraction, la{' '}
-          <strong>duree</strong>, l'<strong>intervalle</strong> depuis le debut
-          de la precedente, et la <strong>frequence</strong> estimee en
-          contractions par heure.
-        </>
-      }
+      title={t(language, 'table.title')}
+      lead={t(language, 'table.lead')}
     >
       <section
         className="card"
@@ -94,7 +85,7 @@ export function TableView() {
         data-testid="table-section"
       >
         <h2 id="table-heading" className="section-title">
-          Contractions (ordre chronologique)
+          {t(language, 'table.sectionTitle')}
         </h2>
 
         {validRecords.length === 0 ? (
@@ -103,25 +94,25 @@ export function TableView() {
             id="history-table-empty"
             data-testid="table-empty"
           >
-            Aucune contraction à afficher.
+            {t(language, 'table.empty')}
           </p>
         ) : (
           <div
             className="history-table-wrap"
             role="region"
-            aria-label="Tableau défilable sur petit écran"
+            aria-label={t(language, 'table.scrollAria')}
             tabIndex={0}
             data-testid="table-wrapper"
           >
             <table className="history-table" data-testid="contractions-table">
               <thead>
                 <tr>
-                  <th scope="col">N°</th>
-                  <th scope="col">Début</th>
-                  <th scope="col">Durée</th>
-                  <th scope="col">Intervalle</th>
-                  <th scope="col">Fréquence</th>
-                  <th scope="col">Note</th>
+                  <th scope="col">{t(language, 'table.col.num')}</th>
+                  <th scope="col">{t(language, 'table.col.start')}</th>
+                  <th scope="col">{t(language, 'table.col.duration')}</th>
+                  <th scope="col">{t(language, 'table.col.interval')}</th>
+                  <th scope="col">{t(language, 'table.col.frequency')}</th>
+                  <th scope="col">{t(language, 'table.col.note')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -148,12 +139,7 @@ export function TableView() {
           </div>
         )}
 
-        <p className="table-footnote">
-          <strong>Intervalle</strong> : écart entre le début de cette
-          contraction et celui de la ligne précédente.{' '}
-          <strong>Fréquence</strong> : ≈ nombre de contractions par heure si le
-          rythme restait identique à cet intervalle.
-        </p>
+        <p className="table-footnote">{t(language, 'table.footnote')}</p>
       </section>
 
       <p className="settings-back-wrap mobile-home-only">
@@ -162,7 +148,7 @@ export function TableView() {
           className="btn btn-secondary settings-back-link"
           data-testid="table-back-link"
         >
-          Retour a l'accueil
+          {t(language, 'table.backHome')}
         </Link>
       </p>
     </ViewLayout>

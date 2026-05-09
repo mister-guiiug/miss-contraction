@@ -11,29 +11,62 @@ import {
   clearSnoozeUntil,
   loadSettings,
 } from '../../storage';
+import { LANGUAGE_LABELS, t, type AppLanguage } from '../../i18n';
 import { HighContrastToggle } from '../components/settings/HighContrastToggle';
 import { ViewLayout } from '../components/layout/ViewLayout';
 
+const SETTINGS_COPY = {
+  fr: {
+    saved: 'Paramètres enregistrés !',
+    leadPrefix:
+      "Ajustez les alertes, les coordonnées de la maternité et l'affichage.",
+    leadHint: 'Pensez à enregistrer',
+    leadSuffix: 'pour appliquer les changements.',
+    tocAria: 'Aller à une section',
+    sectionAlerts: 'Alertes',
+    sectionMaternity: 'Maternité',
+    sectionStats: 'Statistiques',
+    sectionComfort: 'Confort',
+    sectionModules: 'Options du menu',
+    home: 'Accueil',
+    save: 'Enregistrer',
+  },
+  en: {
+    saved: 'Settings saved!',
+    leadPrefix: 'Adjust alerts, maternity contacts, and display preferences.',
+    leadHint: 'Remember to save',
+    leadSuffix: 'to apply your changes.',
+    tocAria: 'Go to a section',
+    sectionAlerts: 'Alerts',
+    sectionMaternity: 'Maternity',
+    sectionStats: 'Statistics',
+    sectionComfort: 'Comfort',
+    sectionModules: 'Menu options',
+    home: 'Home',
+    save: 'Save',
+  },
+} as const;
+
 export function SettingsView() {
   const { settings, updateSettings, saveSettings } = useAppStore();
-  const [formData, setFormData] = useState(settings);
+  const language = settings.language;
+  const copy = language === 'fr' ? SETTINGS_COPY.fr : SETTINGS_COPY.en;
+  const [formData, setFormData] = useState(() => loadSettings());
   const [saveStatus, setSaveStatus] = useState('');
   const [notifyPermission, setNotifyPermission] =
-    useState<NotificationPermission>('default');
+    useState<NotificationPermission>(() => {
+      if (typeof window !== 'undefined' && 'Notification' in window) {
+        return Notification.permission;
+      }
+      return 'default';
+    });
 
   // Recharger les settings depuis localStorage au montage
   // pour synchroniser avec les modifications faits par le code vanilla
   useEffect(() => {
     const freshSettings = loadSettings();
     updateSettings(freshSettings);
-    setFormData(freshSettings);
   }, [updateSettings]);
-
-  useEffect(() => {
-    if ('Notification' in window) {
-      setNotifyPermission(Notification.permission);
-    }
-  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -58,7 +91,7 @@ export function SettingsView() {
     e.preventDefault();
     updateSettings(formData);
     saveSettings();
-    setSaveStatus('Paramètres enregistrés !');
+    setSaveStatus(copy.saved);
     setTimeout(() => setSaveStatus(''), 3000);
   };
 
@@ -72,13 +105,19 @@ export function SettingsView() {
   const handleSnooze = (minutes: number) => {
     const until = Date.now() + minutes * 60 * 1000;
     setSnoozeUntilMs(until);
-    setSaveStatus(`Alertes suspendues pendant ${minutes} min`);
+    setSaveStatus(
+      language === 'fr'
+        ? `Alertes suspendues pendant ${minutes} min`
+        : `Alerts snoozed for ${minutes} min`
+    );
     setTimeout(() => setSaveStatus(''), 3000);
   };
 
   const handleClearSnooze = () => {
     clearSnoozeUntil();
-    setSaveStatus('Alertes réactivées');
+    setSaveStatus(
+      language === 'fr' ? 'Alertes réactivées' : 'Alerts re-enabled'
+    );
     setTimeout(() => setSaveStatus(''), 3000);
   };
 
@@ -86,40 +125,45 @@ export function SettingsView() {
     <ViewLayout
       className="settings-page"
       dataTestId="settings-view"
-      title="Parametres et alertes"
+      title={t(language, 'route.settings')}
       lead={
         <>
-          Ajustez l'alerte, le numero de la maternite et l'affichage.{' '}
-          <strong className="settings-page-hint">Pensez a enregistrer</strong>{' '}
-          pour appliquer les changements.
+          {copy.leadPrefix}{' '}
+          <strong className="settings-page-hint">{copy.leadHint}</strong>{' '}
+          {copy.leadSuffix}
         </>
       }
     >
-      <nav className="settings-toc" aria-label="Aller à une section">
+      <nav className="settings-toc" aria-label={copy.tocAria}>
         <ul className="settings-toc-list">
           <li>
+            <a className="settings-toc-link" href="#settings-section-language">
+              {t(language, 'settings.language.title')}
+            </a>
+          </li>
+          <li>
             <a className="settings-toc-link" href="#settings-section-alertes">
-              Alertes
+              {copy.sectionAlerts}
             </a>
           </li>
           <li>
             <a className="settings-toc-link" href="#settings-section-maternite">
-              Maternité
+              {copy.sectionMaternity}
             </a>
           </li>
           <li>
             <a className="settings-toc-link" href="#settings-section-stats">
-              Statistiques
+              {copy.sectionStats}
             </a>
           </li>
           <li>
             <a className="settings-toc-link" href="#settings-section-confort">
-              Confort
+              {copy.sectionComfort}
             </a>
           </li>
           <li>
             <a className="settings-toc-link" href="#settings-section-modules">
-              Options du menu
+              {copy.sectionModules}
             </a>
           </li>
         </ul>
@@ -131,6 +175,45 @@ export function SettingsView() {
         onSubmit={handleSubmit}
         data-testid="settings-form"
       >
+        <section
+          className="card settings-card"
+          id="settings-section-language"
+          aria-labelledby="settings-language-heading"
+          data-testid="settings-section-language"
+        >
+          <h2 id="settings-language-heading" className="section-title">
+            {t(language, 'settings.language.title')}
+          </h2>
+          <label className="field field--wide">
+            <span>{t(language, 'settings.language.label')}</span>
+            <select
+              name="language"
+              data-testid="language-select"
+              value={formData.language}
+              onChange={e => {
+                const newLanguage = e.target.value as AppLanguage;
+                setFormData(prev => ({
+                  ...prev,
+                  language: newLanguage,
+                }));
+                updateSettings({ language: newLanguage });
+                saveSettings();
+                setSaveStatus(t(newLanguage, 'settings.language.changed'));
+                setTimeout(() => setSaveStatus(''), 2000);
+              }}
+            >
+              {Object.entries(LANGUAGE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <p className="settings-intro settings-intro--tight">
+            {t(language, 'settings.language.help')}
+          </p>
+        </section>
+
         {/* Section Alertes */}
         <section
           className="card settings-card"
@@ -139,7 +222,7 @@ export function SettingsView() {
           data-testid="settings-section-alerts"
         >
           <h2 id="settings-heading" className="section-title">
-            Alertes
+            {copy.sectionAlerts}
           </h2>
           <p className="settings-intro">
             L'alerte se déclenche lorsque les{' '}
@@ -150,10 +233,16 @@ export function SettingsView() {
             <strong id="lbl-dur">{formData.minDurationSec}</strong> secondes — à
             valider avec votre sage-femme.
           </p>
-          <h3 className="settings-subheading">Seuil</h3>
+          <h3 className="settings-subheading">
+            {language === 'fr' ? 'Seuil' : 'Threshold'}
+          </h3>
           <div className="settings-field-grid">
             <label className="field">
-              <span>Écart max. entre débuts (min)</span>
+              <span>
+                {language === 'fr'
+                  ? 'Écart max. entre débuts (min)'
+                  : 'Max gap between starts (min)'}
+              </span>
               <input
                 type="number"
                 name="maxIntervalMin"
@@ -167,7 +256,11 @@ export function SettingsView() {
               />
             </label>
             <label className="field">
-              <span>Durée min. par contraction (s)</span>
+              <span>
+                {language === 'fr'
+                  ? 'Durée min. par contraction (s)'
+                  : 'Minimum duration per contraction (s)'}
+              </span>
               <input
                 type="number"
                 name="minDurationSec"
@@ -181,7 +274,11 @@ export function SettingsView() {
               />
             </label>
             <label className="field">
-              <span>Contractions consécutives</span>
+              <span>
+                {language === 'fr'
+                  ? 'Contractions consécutives'
+                  : 'Consecutive contractions'}
+              </span>
               <input
                 type="number"
                 name="consecutiveCount"
@@ -196,7 +293,9 @@ export function SettingsView() {
             </label>
           </div>
           <div className="settings-subsection">
-            <h3 className="settings-subheading">Notifications</h3>
+            <h3 className="settings-subheading">
+              {language === 'fr' ? 'Notifications' : 'Notifications'}
+            </h3>
             <label className="field field-check">
               <input
                 type="checkbox"
@@ -207,7 +306,9 @@ export function SettingsView() {
                 onChange={handleChange}
               />
               <span>
-                Pré-alerte si le rythme se resserre (avant le seuil complet)
+                {language === 'fr'
+                  ? 'Pré-alerte si le rythme se resserre (avant le seuil complet)'
+                  : 'Pre-alert when rhythm tightens (before full threshold)'}
               </span>
             </label>
             <div className="field row settings-notify-row">
@@ -217,18 +318,28 @@ export function SettingsView() {
                 data-testid="request-notification-btn"
                 onClick={requestNotificationPermission}
               >
-                Autoriser les notifications
+                {language === 'fr'
+                  ? 'Autoriser les notifications'
+                  : 'Allow notifications'}
               </button>
               <span className="notify-status" data-testid="notification-status">
                 {notifyPermission === 'granted'
-                  ? '✓ Autorisées'
+                  ? language === 'fr'
+                    ? 'Allowed'
+                    : 'Allowed'
                   : notifyPermission === 'denied'
-                    ? '✗ Bloquées'
-                    : 'Non définies'}
+                    ? language === 'fr'
+                      ? 'Blocked'
+                      : 'Blocked'
+                    : language === 'fr'
+                      ? 'Not set'
+                      : 'Not set'}
               </span>
             </div>
             <div className="field snooze-block">
-              <span className="snooze-label">Reporter les alertes</span>
+              <span className="snooze-label">
+                {language === 'fr' ? 'Reporter les alertes' : 'Snooze alerts'}
+              </span>
               <div className="snooze-actions">
                 <button
                   type="button"
@@ -252,7 +363,7 @@ export function SettingsView() {
                   data-testid="clear-snooze-btn"
                   onClick={handleClearSnooze}
                 >
-                  Annuler le report
+                  {language === 'fr' ? 'Annuler le report' : 'Clear snooze'}
                 </button>
               </div>
               <p
@@ -274,14 +385,18 @@ export function SettingsView() {
           data-testid="settings-section-maternity"
         >
           <h2 id="maternity-settings-heading" className="section-title">
-            Maternité
+            {copy.sectionMaternity}
           </h2>
           <p className="settings-intro settings-intro--tight">
             Utilisés sur la page dédiée « Maternité » et sur le bandeau d'appel
             rapide en bas de l'écran lorsque le numéro est renseigné.
           </p>
           <label className="field field--wide">
-            <span>Libellé de la maternité</span>
+            <span>
+              {language === 'fr'
+                ? 'Libellé de la maternité'
+                : 'Maternity label'}
+            </span>
             <input
               type="text"
               name="maternityLabel"
@@ -294,7 +409,9 @@ export function SettingsView() {
             />
           </label>
           <label className="field field--wide">
-            <span>Numéro de téléphone</span>
+            <span>
+              {language === 'fr' ? 'Numéro de téléphone' : 'Phone number'}
+            </span>
             <input
               type="tel"
               name="maternityPhone"
@@ -308,7 +425,11 @@ export function SettingsView() {
             />
           </label>
           <label className="field field--wide">
-            <span>Adresse de la maternité</span>
+            <span>
+              {language === 'fr'
+                ? 'Adresse de la maternité'
+                : 'Maternity address'}
+            </span>
             <textarea
               name="maternityAddress"
               id="maternity-address-field"
@@ -332,10 +453,16 @@ export function SettingsView() {
           data-testid="settings-section-stats"
         >
           <h2 id="stats-heading" className="section-title">
-            Statistiques et affichage
+            {language === 'fr'
+              ? 'Statistiques et affichage'
+              : 'Statistics and display'}
           </h2>
           <label className="field field--wide">
-            <span>Fenêtre pour moyennes et graphique (accueil)</span>
+            <span>
+              {language === 'fr'
+                ? 'Fenêtre pour moyennes et graphique (accueil)'
+                : 'Window for averages and chart (home)'}
+            </span>
             <select
               name="statsWindowMinutes"
               id="stats-window-select"
@@ -343,10 +470,18 @@ export function SettingsView() {
               value={formData.statsWindowMinutes}
               onChange={handleChange}
             >
-              <option value="all">Toutes les données</option>
-              <option value="30">30 dernières minutes</option>
-              <option value="60">1 dernière heure</option>
-              <option value="120">2 dernières heures</option>
+              <option value="all">
+                {language === 'fr' ? 'Toutes les données' : 'All data'}
+              </option>
+              <option value="30">
+                {language === 'fr' ? '30 dernières minutes' : 'Last 30 minutes'}
+              </option>
+              <option value="60">
+                {language === 'fr' ? 'Dernière heure' : 'Last hour'}
+              </option>
+              <option value="120">
+                {language === 'fr' ? 'Dernières 2 heures' : 'Last 2 hours'}
+              </option>
             </select>
           </label>
           <label className="field field-check field-check--spaced">
@@ -358,7 +493,11 @@ export function SettingsView() {
               checked={formData.largeMode}
               onChange={handleChange}
             />
-            <span>Mode grandes tailles (texte et boutons plus lisibles)</span>
+            <span>
+              {language === 'fr'
+                ? 'Mode grandes tailles (texte et boutons plus lisibles)'
+                : 'Large mode (larger text and buttons)'}
+            </span>
           </label>
           <HighContrastToggle />
         </section>
@@ -371,10 +510,14 @@ export function SettingsView() {
           data-testid="settings-section-comfort"
         >
           <h2 id="comfort-heading" className="section-title">
-            Confort et saisie
+            {language === 'fr' ? 'Confort et saisie' : 'Comfort and input'}
           </h2>
           <label className="field">
-            <span>Rappel si « fin » non pressée après (minutes)</span>
+            <span>
+              {language === 'fr'
+                ? 'Rappel si fin non pressée après (minutes)'
+                : 'Reminder if end is not pressed after (minutes)'}
+            </span>
             <input
               type="number"
               name="openContractionReminderMin"
@@ -396,7 +539,11 @@ export function SettingsView() {
               checked={formData.keepAwakeDuringContraction}
               onChange={handleChange}
             />
-            <span>Garder l'écran allumé pendant une contraction en cours</span>
+            <span>
+              {language === 'fr'
+                ? "Garder l'écran allumé pendant une contraction en cours"
+                : 'Keep screen awake during an active contraction'}
+            </span>
           </label>
           <label className="field field-check">
             <input
@@ -407,7 +554,11 @@ export function SettingsView() {
               checked={formData.vibrationEnabled}
               onChange={handleChange}
             />
-            <span>Vibration courte au début et à la fin (mobile)</span>
+            <span>
+              {language === 'fr'
+                ? 'Vibration courte au début et à la fin (mobile)'
+                : 'Short vibration at start and end (mobile)'}
+            </span>
           </label>
           <label className="field field-check">
             <input
@@ -430,7 +581,9 @@ export function SettingsView() {
               onChange={handleChange}
             />
             <span>
-              Afficher le bouton de commande vocale sur l'accueil (expérimental)
+              {language === 'fr'
+                ? "Afficher le bouton de commande vocale sur l'accueil (expérimental)"
+                : 'Show voice command button on home screen (experimental)'}
             </span>
           </label>
         </section>
@@ -443,7 +596,7 @@ export function SettingsView() {
           data-testid="settings-section-modules"
         >
           <h2 id="features-heading" className="section-title">
-            Options du menu
+            {copy.sectionModules}
           </h2>
           <p className="settings-intro settings-intro--tight">
             Masquez ce que vous n'utilisez pas : les entrées disparaissent du
@@ -459,7 +612,9 @@ export function SettingsView() {
               onChange={handleChange}
             />
             <span>
-              Module commande vocale (réglages dans « Confort et saisie »)
+              {language === 'fr'
+                ? 'Module commande vocale (réglages dans Confort et saisie)'
+                : 'Voice command module (settings in Comfort and input)'}
             </span>
           </label>
           <label className="field field-check">
@@ -471,7 +626,11 @@ export function SettingsView() {
               checked={formData.moduleMaternityMessage}
               onChange={handleChange}
             />
-            <span>Message à la maternité / proches (SMS, WhatsApp)</span>
+            <span>
+              {language === 'fr'
+                ? 'Message à la maternité / proches (SMS, WhatsApp)'
+                : 'Message to maternity or contacts (SMS, WhatsApp)'}
+            </span>
           </label>
         </section>
       </form>
@@ -489,7 +648,9 @@ export function SettingsView() {
 
       <div
         className="settings-sticky-actions"
-        aria-label="Enregistrer ou quitter"
+        aria-label={
+          language === 'fr' ? 'Enregistrer ou quitter' : 'Save or quit'
+        }
       >
         <div className="settings-sticky-row">
           <button
@@ -498,14 +659,14 @@ export function SettingsView() {
             className="btn btn-primary settings-save-btn"
             data-testid="settings-save-btn"
           >
-            Enregistrer
+            {copy.save}
           </button>
           <Link
             to="/"
             className="settings-back-inline mobile-home-link"
             data-testid="settings-back-link"
           >
-            Accueil
+            {copy.home}
           </Link>
         </div>
       </div>

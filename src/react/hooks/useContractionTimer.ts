@@ -25,7 +25,6 @@ export function useContractionTimer(activeStart: number | null): TimerReturn {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
-      setSeconds(0);
       return;
     }
 
@@ -48,16 +47,18 @@ export function useContractionTimer(activeStart: number | null): TimerReturn {
     };
   }, [activeStart]);
 
+  const secondsValue = activeStart === null ? 0 : seconds;
+
   // Formatage MM:SS
-  const formatted = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(
-    seconds % 60
+  const formatted = `${String(Math.floor(secondsValue / 60)).padStart(2, '0')}:${String(
+    secondsValue % 60
   ).padStart(2, '0')}`;
 
   // Progression du cercle (0 à 1, 1 = 60 secondes)
-  const progress = Math.min(seconds / MAX_SECONDS, 1);
+  const progress = Math.min(secondsValue / MAX_SECONDS, 1);
 
   return {
-    seconds,
+    seconds: secondsValue,
     formatted,
     progress,
     isRunning: activeStart !== null,
