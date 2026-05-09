@@ -31,7 +31,9 @@ export function TimerSectionWithIntensity({
     return records[records.length - 1].end;
   }, [records]);
 
-  const { formatted: restFormatted } = useRestTimer(lastEnd);
+  const [restStartMs, setRestStartMs] = useState<number | null>(null);
+  const [isRestPaused, setIsRestPaused] = useState(false);
+  const { formatted: restFormatted } = useRestTimer(restStartMs, isRestPaused);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [ripplePosition, setRipplePosition] = useState<{
     x: number;
@@ -42,6 +44,16 @@ export function TimerSectionWithIntensity({
   );
 
   useWakeLock(settings.keepAwakeDuringContraction, isRunning);
+
+  useEffect(() => {
+    if (lastEnd === null) {
+      setRestStartMs(null);
+      setIsRestPaused(false);
+      return;
+    }
+    setRestStartMs(lastEnd);
+    setIsRestPaused(false);
+  }, [lastEnd]);
 
   // Gérer le mode focus pendant contraction
   useEffect(() => {
@@ -118,6 +130,34 @@ export function TimerSectionWithIntensity({
         <div className="rest-timer" data-testid="rest-timer">
           <p className="rest-timer-label">{t(language, 'timer.restSince')}</p>
           <p className="rest-timer-value">{restFormatted}</p>
+          {isRestPaused && (
+            <p className="rest-timer-status" data-testid="rest-timer-status">
+              {t(language, 'timer.restPaused')}
+            </p>
+          )}
+          <div className="actions" data-testid="rest-timer-actions">
+            <button
+              type="button"
+              className="btn btn-ghost btn-small"
+              data-testid="rest-timer-pause-toggle"
+              onClick={() => setIsRestPaused(prev => !prev)}
+            >
+              {isRestPaused
+                ? t(language, 'timer.resumeRest')
+                : t(language, 'timer.pauseRest')}
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost btn-small"
+              data-testid="rest-timer-restart"
+              onClick={() => {
+                setRestStartMs(Date.now());
+                setIsRestPaused(false);
+              }}
+            >
+              {t(language, 'timer.restartRest')}
+            </button>
+          </div>
         </div>
       )}
 
