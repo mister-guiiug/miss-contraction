@@ -39,7 +39,6 @@
     "check:vscode:tasks": "node scripts/sync-vscode-tasks.mjs --check"
   },
   "devDependencies": {
-    "@mister-guiiug/dev-wpa-config": "^1.2.0",
     "@axe-core/playwright": "^4.8.0",
     "@eslint/js": "^9.39.4",
     "@playwright/test": "^1.49.1",
@@ -67,7 +66,8 @@
     "vite": "^7.0.0",
     "vite-plugin-pwa": "^1.2.0",
     "vitest": "^3.2.4",
-    "web-vitals": "^4.2.0"
+    "web-vitals": "^4.2.0",
+    "@mister-guiiug/dev-wpa-config": "^1.0.0"
   },
   "dependencies": {
     "@sentry/react": "^8.45.0",

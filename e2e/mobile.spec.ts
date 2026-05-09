@@ -81,8 +81,8 @@ test.describe('Mobile - Interactions tactiles', () => {
     const btn = page.locator('[data-testid="toggle-contraction-btn"]');
     // Bouton peut être hors écran après scroll, mais no crash
     const errors: string[] = [];
-    page.on('pageerror', e => errors.push(e.message));
-    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
+    page.on('pageerror', (e) => errors.push(e.message));
+    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 });
@@ -117,8 +117,8 @@ test.describe('Mobile - APIs mobiles mockées', () => {
     // Vérifier que vibrate a été appelé (si activé dans les settings)
     // Ce test vérifie surtout qu'aucune erreur n'est levée
     const errors: string[] = [];
-    page.on('pageerror', e => errors.push(e.message));
-    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
+    page.on('pageerror', (e) => errors.push(e.message));
+    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
@@ -145,8 +145,8 @@ test.describe('Mobile - APIs mobiles mockées', () => {
     await btn.tap();
 
     const errors: string[] = [];
-    page.on('pageerror', e => errors.push(e.message));
-    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
+    page.on('pageerror', (e) => errors.push(e.message));
+    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 });
@@ -252,7 +252,7 @@ test.describe('Mobile - PWA readiness', () => {
     const smallInputs = await page.evaluate(() => {
       const inputs = document.querySelectorAll('input, textarea');
       const small: string[] = [];
-      inputs.forEach(input => {
+      inputs.forEach((input) => {
         const style = window.getComputedStyle(input);
         const fontSize = parseFloat(style.fontSize);
         if (fontSize < 16) {

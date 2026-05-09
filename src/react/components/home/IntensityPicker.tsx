@@ -1,4 +1,5 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
+import { INTENSITY_DATA } from '../../../utils/intensity';
 
 interface IntensityPickerProps {
   value?: number;
@@ -19,47 +20,6 @@ export function IntensityPicker({
 }: IntensityPickerProps) {
   const [hovered, setHovered] = useState<number | null>(null);
 
-  const intensities = useMemo(
-    () => [
-      {
-        level: 1,
-        label: 'Léger',
-        description: 'Peu perceptible',
-        color: '#80c878',
-        emoji: '😊',
-      },
-      {
-        level: 2,
-        label: 'Modéré',
-        description: 'Gérable',
-        color: '#a8d678',
-        emoji: '🙂',
-      },
-      {
-        level: 3,
-        label: 'Soutenu',
-        description: 'Requiert de la concentration',
-        color: '#ffd04b',
-        emoji: '😐',
-      },
-      {
-        level: 4,
-        label: 'Fort',
-        description: 'Difficile à supporter',
-        color: '#ff9d4b',
-        emoji: '😣',
-      },
-      {
-        level: 5,
-        label: 'Très fort',
-        description: 'Maximum',
-        color: '#ff5e4b',
-        emoji: '😫',
-      },
-    ],
-    []
-  );
-
   const handleSelect = useCallback(
     (level: number) => {
       if (!disabled) {
@@ -75,7 +35,7 @@ export function IntensityPicker({
       data-testid="intensity-picker"
     >
       <div className="intensity-scale">
-        {intensities.map(intensity => {
+        {INTENSITY_DATA.map((intensity) => {
           const isSelected = value === intensity.level;
           const isHovered = hovered === intensity.level;
 

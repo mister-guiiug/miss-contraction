@@ -8,6 +8,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { formatDateTime } from '../../../utils/formatStats';
 import { formatDuration } from '../../../utils/formatDuration';
 import type { ContractionRecord } from '../../../storage';
+import { getIntensityInfo } from '../../../utils/intensity';
 
 type EditDialogState = {
   record: ContractionRecord | null;
@@ -20,7 +21,7 @@ export function HistoryList() {
   });
 
   const validRecords = [...records]
-    .filter(r => r.end > r.start)
+    .filter((r) => r.end > r.start)
     .sort((a, b) => b.start - a.start);
 
   const handleClearAll = useCallback(() => {
@@ -141,11 +142,28 @@ function HistoryItem({
     ? formatDuration(record.start - previousRecord.start)
     : '—';
 
-  const intensityHtml = record.intensity ? (
+  const intensityInfo = record.intensity
+    ? getIntensityInfo(record.intensity)
+    : null;
+
+  const intensityHtml = intensityInfo ? (
     <span
       className={`timeline-intensity timeline-intensity--${record.intensity}`}
-      title={`Intensité ${record.intensity}`}
+      title={`Intensité ${record.intensity} : ${intensityInfo.label}`}
+      style={{
+        backgroundColor: intensityInfo.color,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '2px',
+        padding: '0 6px',
+        borderRadius: '12px',
+        color: intensityInfo.textColor,
+        fontSize: '0.75rem',
+        fontWeight: 'bold',
+      }}
     >
+      <span style={{ fontSize: '0.9rem' }}>{intensityInfo.emoji}</span>
       <span className="sr-only">Intensité</span> {record.intensity}
     </span>
   ) : null;
@@ -295,7 +313,7 @@ function EditDialog({
             id="edit-start"
             data-testid="edit-start-input"
             value={start}
-            onChange={e => setStart(e.target.value)}
+            onChange={(e) => setStart(e.target.value)}
             step="1"
             required
           />
@@ -308,7 +326,7 @@ function EditDialog({
             id="edit-end"
             data-testid="edit-end-input"
             value={end}
-            onChange={e => setEnd(e.target.value)}
+            onChange={(e) => setEnd(e.target.value)}
             step="1"
             required
           />
@@ -321,7 +339,7 @@ function EditDialog({
             id="edit-intensity-picker"
             data-testid="edit-intensity-picker"
           >
-            {[1, 2, 3, 4, 5].map(value => (
+            {[1, 2, 3, 4, 5].map((value) => (
               <label
                 key={value}
                 className={`btn-intensity ${intensity === value ? 'selected' : ''}`}
@@ -359,7 +377,7 @@ function EditDialog({
             maxLength={240}
             placeholder="Ex. plus intense, repos…"
             value={note}
-            onChange={e => setNote(e.target.value)}
+            onChange={(e) => setNote(e.target.value)}
           />
         </label>
 
@@ -436,7 +454,7 @@ function toDatetimeLocalValue(ms: number): string {
 }
 
 function addQuickNote(setNote: Dispatch<SetStateAction<string>>, tag: string) {
-  setNote(prev => {
+  setNote((prev) => {
     const cur = prev.trim();
     if (!cur) {
       return tag;
