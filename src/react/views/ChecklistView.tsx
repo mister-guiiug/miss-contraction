@@ -27,7 +27,7 @@ const DEFAULT_ITEMS: ChecklistItem[] = [
 
 const CHECKLIST_LABELS = {
   fr: {
-    '1': 'Dossier medical et carte vitale',
+    '1': 'Dossier médical et carte vitale',
     '2': 'Projet de naissance',
     '3': 'Livret de famille',
     '4': 'Pyjamas et bodies (x5)',
@@ -37,8 +37,8 @@ const CHECKLIST_LABELS = {
     '8': "Soutiens-gorge d'allaitement",
     '9': 'Trousse de toilette',
     '10': 'Snacks et boissons',
-    '11': 'Chargeur de telephone long',
-    '12': 'Appareil photo ou camera',
+    '11': 'Chargeur de téléphone long',
+    '12': 'Appareil photo ou caméra',
   },
   en: {
     '1': 'Medical records and health card',

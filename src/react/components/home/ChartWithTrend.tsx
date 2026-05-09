@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useAppStore } from '../../store/useAppStore';
+import { useNow } from '../../hooks/useNow';
 
 interface ChartWithTrendProps {
   thresholdMinutes?: number;
@@ -10,10 +11,10 @@ interface ChartWithTrendProps {
  */
 export function ChartWithTrend({ thresholdMinutes = 5 }: ChartWithTrendProps) {
   const { records, settings } = useAppStore();
+  const now = useNow(1000);
 
   const { bars, trendPath, thresholdPercent } = useMemo(() => {
     // Filtrer selon la fenêtre de statistiques
-    const now = Date.now();
     const windowMs =
       settings.statsWindowMinutes === 'all'
         ? Infinity
@@ -79,7 +80,7 @@ export function ChartWithTrend({ thresholdMinutes = 5 }: ChartWithTrendProps) {
     const thresholdPercent = (thresholdMinutes / maxInterval) * 100;
 
     return { bars, trendPath, thresholdPercent };
-  }, [records, settings.statsWindowMinutes, thresholdMinutes]);
+  }, [now, records, settings.statsWindowMinutes, thresholdMinutes]);
 
   const getIntensityClass = (intensity?: number) => {
     if (!intensity) return 'chart-bar--intensity-1';

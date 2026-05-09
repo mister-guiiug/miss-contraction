@@ -16,7 +16,7 @@ export function I18nSyncProvider({ children }: { children: ReactNode }) {
   // Synchroniser la langue actuelle d'AppSettings vers i18next au montage
   useEffect(() => {
     syncLanguageWithI18next(settings.language);
-  }, []);
+  }, [settings.language]);
 
   // Écouter les changements de langue dans i18next et les reporter à AppSettings
   useEffect(() => {
