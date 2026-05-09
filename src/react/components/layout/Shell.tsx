@@ -11,6 +11,7 @@ import { getBreadcrumbLabel } from '../../../routes';
 import { getRoutePath, getRouteFromPath } from '../../../routes-i18n';
 import { useAppStore } from '../../store/useAppStore';
 import { t, type AppLanguage } from '../../../i18n';
+import type { AppSettings } from '../../../storage';
 
 interface ShellProps {
   children: ReactNode;
@@ -18,55 +19,67 @@ interface ShellProps {
 
 const iconSrc = `${import.meta.env.BASE_URL}icons/icon-192.png`;
 
-function getNavSections(language: AppLanguage) {
+function getNavSections(language: AppLanguage, settings: AppSettings) {
+  const trackingLinks = [
+    {
+      route: 'home',
+      href: getRoutePath('home', language),
+      label: t(language, 'shell.nav.home'),
+      icon: 'home',
+    },
+    {
+      route: 'table',
+      href: getRoutePath('table', language),
+      label: t(language, 'shell.nav.table'),
+      icon: 'table',
+    },
+    ...(settings.moduleVoiceCommands
+      ? [
+          {
+            route: 'midwife',
+            href: getRoutePath('midwife', language),
+            label: t(language, 'shell.nav.midwife'),
+            icon: 'document',
+          },
+        ]
+      : []),
+    {
+      route: 'checklist',
+      href: getRoutePath('checklist', language),
+      label: t(language, 'shell.nav.checklist'),
+      icon: 'checklist',
+    },
+  ];
+
+  const maternityLinks = [
+    {
+      route: 'maternity',
+      href: getRoutePath('maternity', language),
+      label: t(language, 'shell.nav.maternity'),
+      icon: 'phone',
+    },
+    ...(settings.moduleMaternityMessage
+      ? [
+          {
+            route: 'message',
+            href: getRoutePath('message', language),
+            label: t(language, 'shell.nav.message'),
+            icon: 'message',
+          },
+        ]
+      : []),
+  ];
+
   return [
     {
       id: 'drawer-lbl-suivi',
       label: t(language, 'shell.section.tracking'),
-      links: [
-        {
-          route: 'home',
-          href: getRoutePath('home', language),
-          label: t(language, 'shell.nav.home'),
-          icon: 'home',
-        },
-        {
-          route: 'table',
-          href: getRoutePath('table', language),
-          label: t(language, 'shell.nav.table'),
-          icon: 'table',
-        },
-        {
-          route: 'midwife',
-          href: getRoutePath('midwife', language),
-          label: t(language, 'shell.nav.midwife'),
-          icon: 'document',
-        },
-        {
-          route: 'checklist',
-          href: getRoutePath('checklist', language),
-          label: t(language, 'shell.nav.checklist'),
-          icon: 'checklist',
-        },
-      ],
+      links: trackingLinks,
     },
     {
       id: 'drawer-lbl-mat',
       label: t(language, 'shell.section.maternity'),
-      links: [
-        {
-          route: 'maternity',
-          href: getRoutePath('maternity', language),
-          label: t(language, 'shell.nav.maternity'),
-          icon: 'phone',
-        },
-        {
-          route: 'message',
-          href: getRoutePath('message', language),
-          label: t(language, 'shell.nav.message'),
-          icon: 'message',
-        },
-      ],
+      links: maternityLinks,
     },
     {
       id: 'drawer-lbl-app',
@@ -343,7 +356,8 @@ function ThemeIcon({ preference }: { preference: ThemePreference }) {
 }
 
 export function Shell({ children }: ShellProps) {
-  const language = useAppStore(state => state.settings.language);
+  const settings = useAppStore(state => state.settings);
+  const language = settings.language;
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [themePreference, setThemePreference] = useState<ThemePreference>(() =>
     getStoredThemePreference()
@@ -390,7 +404,7 @@ export function Shell({ children }: ShellProps) {
     dark: t(language, 'shell.theme.dark'),
     system: t(language, 'shell.theme.system'),
   };
-  const navSections = getNavSections(language);
+  const navSections = getNavSections(language, settings);
 
   return (
     <>

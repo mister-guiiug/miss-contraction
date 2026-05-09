@@ -113,6 +113,10 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'timer.hint':
       "Touchez le gros bouton au début d'une contraction, puis à la fin.",
     'timer.restSince': 'Repos depuis :',
+    'timer.restPaused': 'En pause',
+    'timer.pauseRest': 'Mettre en pause',
+    'timer.resumeRest': 'Reprendre',
+    'timer.restartRest': 'Redémarrer',
     'timer.running': 'Contraction en cours',
     'timer.intensity': 'Intensité de cette contraction :',
     'timer.start': 'Début de contraction',
@@ -327,6 +331,10 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'timer.hint':
       'Tap the main button at the start of a contraction, then again at the end.',
     'timer.restSince': 'Rest since:',
+    'timer.restPaused': 'Paused',
+    'timer.pauseRest': 'Pause',
+    'timer.resumeRest': 'Resume',
+    'timer.restartRest': 'Restart',
     'timer.running': 'Contraction in progress',
     'timer.intensity': 'Contraction intensity:',
     'timer.start': 'Start contraction',

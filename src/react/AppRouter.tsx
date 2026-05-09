@@ -16,7 +16,7 @@ import { MidwifeView } from './views/MidwifeView';
 import { ChecklistView } from './views/ChecklistView';
 import { AboutView } from './views/AboutView';
 import { getDocumentTitle } from '../routes';
-import { getRouteFromPath } from '../routes-i18n';
+import { getRouteFromPath, getRoutePath } from '../routes-i18n';
 import { useAppStore } from './store/useAppStore';
 import { I18nSyncProvider } from './providers/I18nSyncProvider';
 
@@ -33,6 +33,9 @@ function DocumentTitle() {
 }
 
 export function AppRoutes() {
+  const settings = useAppStore(state => state.settings);
+  const language = settings.language;
+
   return (
     <Shell>
       <DocumentTitle />
@@ -65,13 +68,76 @@ export function AppRoutes() {
         <Route path="/table" element={<Navigate to="/historique" replace />} />
 
         {/* Midwife - all language variants */}
-        <Route path="/sage-femme" element={<MidwifeView />} />
-        <Route path="/midwife" element={<MidwifeView />} />
-        <Route path="/comadrona" element={<MidwifeView />} />
-        <Route path="/hebamme" element={<MidwifeView />} />
-        <Route path="/ostetrica" element={<MidwifeView />} />
-        <Route path="/parteira" element={<MidwifeView />} />
-        <Route path="/vroedvrouw" element={<MidwifeView />} />
+        <Route
+          path="/sage-femme"
+          element={
+            settings.moduleVoiceCommands ? (
+              <MidwifeView />
+            ) : (
+              <Navigate to={getRoutePath('home', language)} replace />
+            )
+          }
+        />
+        <Route
+          path="/midwife"
+          element={
+            settings.moduleVoiceCommands ? (
+              <MidwifeView />
+            ) : (
+              <Navigate to={getRoutePath('home', language)} replace />
+            )
+          }
+        />
+        <Route
+          path="/comadrona"
+          element={
+            settings.moduleVoiceCommands ? (
+              <MidwifeView />
+            ) : (
+              <Navigate to={getRoutePath('home', language)} replace />
+            )
+          }
+        />
+        <Route
+          path="/hebamme"
+          element={
+            settings.moduleVoiceCommands ? (
+              <MidwifeView />
+            ) : (
+              <Navigate to={getRoutePath('home', language)} replace />
+            )
+          }
+        />
+        <Route
+          path="/ostetrica"
+          element={
+            settings.moduleVoiceCommands ? (
+              <MidwifeView />
+            ) : (
+              <Navigate to={getRoutePath('home', language)} replace />
+            )
+          }
+        />
+        <Route
+          path="/parteira"
+          element={
+            settings.moduleVoiceCommands ? (
+              <MidwifeView />
+            ) : (
+              <Navigate to={getRoutePath('home', language)} replace />
+            )
+          }
+        />
+        <Route
+          path="/vroedvrouw"
+          element={
+            settings.moduleVoiceCommands ? (
+              <MidwifeView />
+            ) : (
+              <Navigate to={getRoutePath('home', language)} replace />
+            )
+          }
+        />
         {/* Legacy aliases */}
         <Route
           path="/sagefemme"
@@ -88,13 +154,76 @@ export function AppRoutes() {
         <Route path="/materniteit" element={<MaternityView />} />
 
         {/* Message - all language variants */}
-        <Route path="/message" element={<MessageView />} />
-        <Route path="/messages" element={<MessageView />} />
-        <Route path="/mensaje" element={<MessageView />} />
-        <Route path="/nachricht" element={<MessageView />} />
-        <Route path="/messaggio" element={<MessageView />} />
-        <Route path="/mensagem" element={<MessageView />} />
-        <Route path="/bericht" element={<MessageView />} />
+        <Route
+          path="/message"
+          element={
+            settings.moduleMaternityMessage ? (
+              <MessageView />
+            ) : (
+              <Navigate to={getRoutePath('maternity', language)} replace />
+            )
+          }
+        />
+        <Route
+          path="/messages"
+          element={
+            settings.moduleMaternityMessage ? (
+              <MessageView />
+            ) : (
+              <Navigate to={getRoutePath('maternity', language)} replace />
+            )
+          }
+        />
+        <Route
+          path="/mensaje"
+          element={
+            settings.moduleMaternityMessage ? (
+              <MessageView />
+            ) : (
+              <Navigate to={getRoutePath('maternity', language)} replace />
+            )
+          }
+        />
+        <Route
+          path="/nachricht"
+          element={
+            settings.moduleMaternityMessage ? (
+              <MessageView />
+            ) : (
+              <Navigate to={getRoutePath('maternity', language)} replace />
+            )
+          }
+        />
+        <Route
+          path="/messaggio"
+          element={
+            settings.moduleMaternityMessage ? (
+              <MessageView />
+            ) : (
+              <Navigate to={getRoutePath('maternity', language)} replace />
+            )
+          }
+        />
+        <Route
+          path="/mensagem"
+          element={
+            settings.moduleMaternityMessage ? (
+              <MessageView />
+            ) : (
+              <Navigate to={getRoutePath('maternity', language)} replace />
+            )
+          }
+        />
+        <Route
+          path="/bericht"
+          element={
+            settings.moduleMaternityMessage ? (
+              <MessageView />
+            ) : (
+              <Navigate to={getRoutePath('maternity', language)} replace />
+            )
+          }
+        />
         {/* Legacy alias */}
         <Route path="/sms" element={<Navigate to="/message" replace />} />
 
