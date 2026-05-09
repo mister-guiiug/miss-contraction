@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useAppStore } from '../../store/useAppStore';
+import { t } from '../../../i18n';
 
 interface QuickNotesProps {
   onNoteSelect?: (note: string) => void;
@@ -10,6 +12,7 @@ interface QuickNotesProps {
 export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
   const [customNoteOpen, setCustomNoteOpen] = useState(false);
   const [customNote, setCustomNote] = useState('');
+  const language = useAppStore(state => state.settings.language);
 
   const predefinedNotes = [
     {
@@ -135,7 +138,7 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
             type="text"
             value={customNote}
             onChange={e => setCustomNote(e.target.value)}
-            placeholder="Note personnelle..."
+            placeholder={t(language, 'quicknotes.placeholder')}
             className="note-custom-input"
             style={{
               border: 'none',
@@ -195,7 +198,7 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
-          <span>Personnalisée</span>
+          <span>{t(language, 'quicknotes.custom')}</span>
         </button>
       )}
     </div>

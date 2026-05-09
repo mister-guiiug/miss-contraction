@@ -14,7 +14,6 @@ export function useRestTimer(lastEnd: number | null): RestTimerReturn {
 
   useEffect(() => {
     if (lastEnd === null) {
-      setSeconds(0);
       return;
     }
 
@@ -33,6 +32,8 @@ export function useRestTimer(lastEnd: number | null): RestTimerReturn {
     };
   }, [lastEnd]);
 
+  const secondsValue = lastEnd === null ? 0 : seconds;
+
   // Formatage MM:SS ou HH:MM:SS
   const formatTime = (totalSeconds: number) => {
     const hrs = Math.floor(totalSeconds / 3600);
@@ -48,7 +49,7 @@ export function useRestTimer(lastEnd: number | null): RestTimerReturn {
   };
 
   return {
-    seconds,
-    formatted: formatTime(seconds),
+    seconds: secondsValue,
+    formatted: formatTime(secondsValue),
   };
 }

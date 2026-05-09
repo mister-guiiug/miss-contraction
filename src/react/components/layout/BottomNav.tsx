@@ -3,6 +3,9 @@
  * Remplace le hamburger sur les petits écrans
  */
 import { Link, useLocation } from 'react-router-dom';
+import { useAppStore } from '../../store/useAppStore';
+import { getRoutePath } from '../../../routes-i18n';
+import { t } from '../../../i18n';
 
 interface BottomNavProps {
   onMenuClick?: () => void;
@@ -11,16 +14,35 @@ interface BottomNavProps {
 
 export function BottomNav({ onMenuClick, isMenuOpen = false }: BottomNavProps) {
   const location = useLocation();
+  const language = useAppStore(state => state.settings.language);
 
   const navItems = [
-    { href: '/', label: 'Accueil', icon: HomeIcon },
-    { href: '/historique', label: 'Historique', icon: ListIcon },
-    { href: '/maternite', label: 'Maternité', icon: PhoneIcon, isCta: true },
-    { href: '/parametres', label: 'Réglages', icon: SettingsIcon },
+    {
+      href: getRoutePath('home', language),
+      label: t(language, 'bottom.home'),
+      icon: HomeIcon,
+    },
+    {
+      href: getRoutePath('table', language),
+      label: t(language, 'bottom.history'),
+      icon: ListIcon,
+    },
+    {
+      href: getRoutePath('maternity', language),
+      label: t(language, 'bottom.maternity'),
+      icon: PhoneIcon,
+      isCta: true,
+    },
+    {
+      href: getRoutePath('settings', language),
+      label: t(language, 'bottom.settings'),
+      icon: SettingsIcon,
+    },
   ];
 
   const isMenuRoute =
-    location.pathname === '/message' || location.pathname === '/sage-femme';
+    location.pathname === getRoutePath('message', language) ||
+    location.pathname === getRoutePath('midwife', language);
 
   return (
     <nav className="bottom-nav">
@@ -43,7 +65,7 @@ export function BottomNav({ onMenuClick, isMenuOpen = false }: BottomNavProps) {
       <button
         type="button"
         className={`bottom-nav-item ${isMenuOpen || isMenuRoute ? 'active' : ''}`}
-        aria-label="Menu"
+        aria-label={t(language, 'bottom.menu')}
         aria-expanded={isMenuOpen}
         aria-controls="app-drawer"
         onClick={onMenuClick}
@@ -51,7 +73,7 @@ export function BottomNav({ onMenuClick, isMenuOpen = false }: BottomNavProps) {
         <span className="bottom-nav-icon" aria-hidden="true">
           {MenuIcon()}
         </span>
-        <span>Menu</span>
+        <span>{t(language, 'bottom.menu')}</span>
       </button>
     </nav>
   );
