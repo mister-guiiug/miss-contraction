@@ -49,12 +49,16 @@ export function ChecklistView() {
     const saved = localStorage.getItem('mc_checklist');
     if (!saved) return DEFAULT_ITEMS;
     try {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      // Fusionner avec DEFAULT_ITEMS pour être sûr d'avoir les bases si on a vidé
+      return parsed;
     } catch (e) {
       console.error('Error parsing checklist from localStorage', e);
       return DEFAULT_ITEMS;
     }
   });
+  const [newItemText, setNewItemText] = useState('');
+  const [activeCategory, setActiveCategory] = useState<ChecklistItem['category']>('docs');
 
   useEffect(() => {
     localStorage.setItem('mc_checklist', JSON.stringify(items));
@@ -66,6 +70,23 @@ export function ChecklistView() {
         item.id === id ? { ...item, checked: !item.checked } : item
       )
     );
+  };
+
+  const addItem = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newItemText.trim()) return;
+    const newItem: ChecklistItem = {
+      id: crypto.randomUUID(),
+      label: newItemText.trim(),
+      category: activeCategory,
+      checked: false,
+    };
+    setItems(prev => [...prev, newItem]);
+    setNewItemText('');
+  };
+
+  const removeItem = (id: string) => {
+    setItems(prev => prev.filter(item => item.id !== id));
   };
 
   const categories = [
@@ -82,25 +103,90 @@ export function ChecklistView() {
       lead="Préparez sereinement votre départ pour la maternité avec cette liste essentielle."
       footer={<AppFooter />}
     >
+      <section className="card" style={{ marginBottom: '1.5rem' }}>
+        <h3 className="section-title">Ajouter un élément personnalisé</h3>
+        <form onSubmit={addItem} className="checklist-add-form" style={{ marginTop: '1rem' }}>
+          <div className="field">
+            <label htmlFor="new-item-category">Catégorie</label>
+            <select
+              id="new-item-category"
+              value={activeCategory}
+              onChange={(e) => setActiveCategory(e.target.value as any)}
+              className="select-full"
+            >
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.icon} {cat.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="field">
+            <label htmlFor="new-item-text">Nom de l'élément</label>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <input
+                id="new-item-text"
+                type="text"
+                value={newItemText}
+                onChange={(e) => setNewItemText(e.target.value)}
+                placeholder="Ex: Coussin d'allaitement..."
+                style={{ flex: 1 }}
+              />
+              <button type="submit" className="btn btn-primary">Ajouter</button>
+            </div>
+          </div>
+        </form>
+      </section>
+
       {categories.map(cat => (
-        <div key={cat.id} className="card">
+        <div key={cat.id} className="card" style={{ marginBottom: '1rem' }}>
           <h3 className="section-title">
             <span style={{ marginRight: '0.5rem' }}>{cat.icon}</span>
             {cat.label}
           </h3>
-          <div className="form" style={{ marginTop: '0.5rem' }}>
+          <div className="checklist-items" style={{ marginTop: '0.5rem' }}>
             {items
               .filter(item => item.category === cat.id)
               .map(item => (
-                <label key={item.id} className="field-check">
-                  <input
-                    type="checkbox"
-                    checked={item.checked}
-                    onChange={() => toggleItem(item.id)}
-                  />
-                  <span>{item.label}</span>
-                </label>
+                <div key={item.id} className="checklist-row" style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '0.5rem 0',
+                  borderBottom: '1px solid var(--border-color, #eee)'
+                }}>
+                  <label className="field-check" style={{ margin: 0, flex: 1 }}>
+                    <input
+                      type="checkbox"
+                      checked={item.checked}
+                      onChange={() => toggleItem(item.id)}
+                    />
+                    <span style={{
+                      textDecoration: item.checked ? 'line-through' : 'none',
+                      opacity: item.checked ? 0.6 : 1,
+                      transition: 'all 0.2s'
+                    }}>
+                      {item.label}
+                    </span>
+                  </label>
+                  <button
+                    onClick={() => removeItem(item.id)}
+                    className="btn-delete-item"
+                    aria-label="Supprimer"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#ff4444',
+                      fontSize: '1.2rem',
+                      cursor: 'pointer',
+                      padding: '0 0.5rem'
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
               ))}
+            {items.filter(item => item.category === cat.id).length === 0 && (
+              <p className="hint" style={{ padding: '0.5rem 0' }}>Aucun élément dans cette catégorie.</p>
+            )}
           </div>
         </div>
       ))}
