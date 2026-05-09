@@ -8,14 +8,14 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { HomePage } from '../pages/HomePage';
+import { HomePage } from './pages/HomePage';
 import {
   setupTest,
   createMultipleContractions,
   expectNoJSErrors,
   waitForContractionInHistory,
-} from '../helpers';
-import { TIMEOUTS } from '../config';
+} from './helpers';
+import { TIMEOUTS } from './config';
 
 test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
   let homePage: HomePage;
