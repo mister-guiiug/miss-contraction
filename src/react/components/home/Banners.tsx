@@ -25,7 +25,7 @@ export function Banners() {
 
   // Vérifier le bandeau export nudge
   useEffect(() => {
-    const all = records.filter(r => r.end > r.start);
+    const all = records.filter((r) => r.end > r.start);
     if (all.length === 0) {
       setShowExportNudge(false);
       return;
@@ -65,7 +65,7 @@ export function Banners() {
     // Mise à jour chaque seconde
     undoTimerRef.current = setInterval(() => {
       remaining -= 1;
-      setUndoState(prev => ({ ...prev, remainingTime: remaining }));
+      setUndoState((prev) => ({ ...prev, remainingTime: remaining }));
     }, 1000);
 
     // Masquer après 30s

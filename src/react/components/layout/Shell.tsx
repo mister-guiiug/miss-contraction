@@ -440,13 +440,13 @@ export function Shell({ children }: ShellProps) {
         </div>
 
         <div className="drawer-scroll">
-          {NAV_SECTIONS.map(section => (
+          {NAV_SECTIONS.map((section) => (
             <div key={section.id}>
               <p className="drawer-section-label" id={section.id}>
                 {section.label}
               </p>
               <ul className="drawer-nav" aria-labelledby={section.id}>
-                {section.links.map(link => (
+                {section.links.map((link) => (
                   <li key={link.route}>
                     <DrawerLink
                       route={link.route as AppRoute}

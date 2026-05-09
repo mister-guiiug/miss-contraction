@@ -89,12 +89,12 @@ const APPROACHING = [makeRecord(12, 60), makeRecord(6, 60)];
 describe('Snapshot: filterRecordsByStatsWindow', () => {
   it('filtre "all" retourne tout le tableau (snapshot)', () => {
     const result = filterRecordsByStatsWindow(REGULAR_5MIN, 'all', BASE_TIME);
-    expect(result.map(r => r.id)).toMatchSnapshot();
+    expect(result.map((r) => r.id)).toMatchSnapshot();
   });
 
   it('filtre "30" retourne les 30 dernières minutes (snapshot)', () => {
     const result = filterRecordsByStatsWindow(REGULAR_5MIN, '30', BASE_TIME);
-    expect(result.map(r => r.id)).toMatchSnapshot();
+    expect(result.map((r) => r.id)).toMatchSnapshot();
   });
 
   it('filtre "60" retourne les 60 dernières minutes (snapshot)', () => {
@@ -105,13 +105,13 @@ describe('Snapshot: filterRecordsByStatsWindow', () => {
       makeRecord(5, 60),
     ];
     const result = filterRecordsByStatsWindow(all, '60', BASE_TIME);
-    expect(result.map(r => r.id)).toMatchSnapshot();
+    expect(result.map((r) => r.id)).toMatchSnapshot();
   });
 
   it('filtre "120" retourne les 2 dernières heures (snapshot)', () => {
     const all = [makeRecord(150, 60), makeRecord(90, 60), makeRecord(45, 60)];
     const result = filterRecordsByStatsWindow(all, '120', BASE_TIME);
-    expect(result.map(r => r.id)).toMatchSnapshot();
+    expect(result.map((r) => r.id)).toMatchSnapshot();
   });
 });
 
