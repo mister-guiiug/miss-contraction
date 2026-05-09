@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { interpolate, t } from '../../../i18n';
+import { useNow } from '../../hooks/useNow';
 
 /**
  * Badge d'état du seuil avec animation et indicateur visuel
@@ -8,6 +9,7 @@ import { interpolate, t } from '../../../i18n';
 export function ThresholdBadge() {
   const { records, settings } = useAppStore();
   const language = settings.language;
+  const now = useNow(1000);
 
   const { state, message } = useMemo(() => {
     if (records.length === 0) {
@@ -18,7 +20,6 @@ export function ThresholdBadge() {
     }
 
     // Filtrer selon la fenêtre de statistiques
-    const now = Date.now();
     const windowMs =
       settings.statsWindowMinutes === 'all'
         ? Infinity
@@ -69,7 +70,7 @@ export function ThresholdBadge() {
       state: 'calm' as const,
       message: `${t(language, 'stats.threshold.calm')} (${consecutiveCount}/${settings.consecutiveCount})`,
     };
-  }, [language, records, settings]);
+  }, [language, now, records, settings]);
 
   return (
     <div

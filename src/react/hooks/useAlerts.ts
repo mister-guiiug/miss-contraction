@@ -6,6 +6,7 @@ import {
 } from '../../statsHelpers';
 import { loadSnoozeUntil } from '../../storage';
 import { vibrate } from './useWakeLock';
+import { useNow } from './useNow';
 
 interface AlertState {
   thresholdKind: ThresholdBadgeKind;
@@ -19,6 +20,7 @@ export function useAlerts(
   settings: AppSettings
 ): AlertState {
   const [preAlertBannerDismissed, setPreAlertBannerDismissed] = useState(false);
+  const now = useNow(1000);
 
   const thresholdKind = useMemo(
     () => computeThresholdBadge(records, settings),
@@ -33,8 +35,8 @@ export function useAlerts(
   }, [thresholdKind, settings.vibrationEnabled]);
 
   const isSnoozed = useMemo(() => {
-    return Date.now() < loadSnoozeUntil();
-  }, [records]); // Re-check when records change (on new contraction)
+    return now < loadSnoozeUntil();
+  }, [now]);
 
   const showPreAlertBanner = useMemo(() => {
     return (

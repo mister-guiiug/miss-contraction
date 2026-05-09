@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { useAlerts } from '../../hooks/useAlerts';
 import { KEY_EXPORT_NUDGE_DISMISSED } from '../../../storage';
@@ -12,7 +12,15 @@ export function Banners() {
     records,
     settings
   );
-  const [showExportNudge, setShowExportNudge] = useState(false);
+  const [showExportNudge, setShowExportNudge] = useState<boolean>(() => {
+    try {
+      const dismissedAt =
+        Number(localStorage.getItem(KEY_EXPORT_NUDGE_DISMISSED)) || 0;
+      return Date.now() - dismissedAt >= EXPORT_NUDGE_INTERVAL_MS;
+    } catch {
+      return true;
+    }
+  });
 
   // Undo state
   const [undoState, setUndoState] = useState<{
@@ -23,23 +31,7 @@ export function Banners() {
   const undoTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Vérifier le bandeau export nudge
-  useEffect(() => {
-    const all = records.filter(r => r.end > r.start);
-    if (all.length === 0) {
-      setShowExportNudge(false);
-      return;
-    }
-
-    let dismissedAt = 0;
-    try {
-      dismissedAt =
-        Number(localStorage.getItem(KEY_EXPORT_NUDGE_DISMISSED)) || 0;
-    } catch {
-      dismissedAt = 0;
-    }
-    setShowExportNudge(Date.now() - dismissedAt >= EXPORT_NUDGE_INTERVAL_MS);
-  }, [records]);
+  const hasValidRecords = records.some(r => r.end > r.start);
 
   // Afficher undo banner quand une contraction est ajoutée (pas supprimée)
   const lastRecordIdRef = useRef<string | null>(null);
@@ -53,34 +45,13 @@ export function Banners() {
     };
   }, []);
 
-  const showUndoBanner = useCallback((recordId: string) => {
-    // Nettoyer l'état précédent
-    if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
-    if (undoTimerRef.current) clearInterval(undoTimerRef.current);
-
-    let remaining = UNDO_MS / 1000;
-
-    setUndoState({ visible: true, remainingTime: remaining, recordId });
-
-    // Mise à jour chaque seconde
-    undoTimerRef.current = setInterval(() => {
-      remaining -= 1;
-      setUndoState(prev => ({ ...prev, remainingTime: remaining }));
-    }, 1000);
-
-    // Masquer après 30s
-    undoTimeoutRef.current = setTimeout(() => {
-      hideUndoBanner();
-    }, UNDO_MS);
-  }, []);
-
-  const hideUndoBanner = useCallback(() => {
+  const hideUndoBanner = () => {
     if (undoTimerRef.current) clearInterval(undoTimerRef.current);
     if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
     undoTimerRef.current = null;
     undoTimeoutRef.current = null;
     setUndoState({ visible: false, remainingTime: 0, recordId: null });
-  }, []);
+  };
 
   useEffect(() => {
     // Ne montrer la bannière que si un NOUVEAU record a été ajouté
@@ -90,7 +61,29 @@ export function Banners() {
       if (last && last.id !== lastRecordIdRef.current) {
         lastRecordIdRef.current = last.id;
         lastCountRef.current = records.length;
-        showUndoBanner(last.id);
+
+        if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
+        if (undoTimerRef.current) clearInterval(undoTimerRef.current);
+
+        let remaining = UNDO_MS / 1000;
+        setUndoState({
+          visible: true,
+          remainingTime: remaining,
+          recordId: last.id,
+        });
+
+        undoTimerRef.current = setInterval(() => {
+          remaining -= 1;
+          setUndoState(prev => ({ ...prev, remainingTime: remaining }));
+        }, 1000);
+
+        undoTimeoutRef.current = setTimeout(() => {
+          if (undoTimerRef.current) clearInterval(undoTimerRef.current);
+          if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
+          undoTimerRef.current = null;
+          undoTimeoutRef.current = null;
+          setUndoState({ visible: false, remainingTime: 0, recordId: null });
+        }, UNDO_MS);
       }
     } else {
       // Mise à jour du compteur sans afficher la bannière (suppression ou modification)
@@ -99,25 +92,25 @@ export function Banners() {
         lastRecordIdRef.current = records[records.length - 1].id;
       }
     }
-  }, [records, showUndoBanner]);
+  }, [records]);
 
-  const handleUndo = useCallback(() => {
+  const handleUndo = () => {
     const recordId = undoState.recordId;
     if (recordId) {
       hideUndoBanner();
       deleteRecord(recordId);
       setAlertLatch(false);
     }
-  }, [undoState.recordId, deleteRecord, setAlertLatch, hideUndoBanner]);
+  };
 
-  const dismissExportNudge = useCallback(() => {
+  const dismissExportNudge = () => {
     try {
       localStorage.setItem(KEY_EXPORT_NUDGE_DISMISSED, String(Date.now()));
     } catch {
       /* ignore */
     }
     setShowExportNudge(false);
-  }, []);
+  };
 
   // Pré-alerte (priorité la plus haute)
   if (showPreAlertBanner) {
@@ -162,7 +155,7 @@ export function Banners() {
   }
 
   // Export nudge (priorité basse)
-  if (showExportNudge) {
+  if (hasValidRecords && showExportNudge) {
     return (
       <div className="app-banner app-banner--muted" id="banner-export-nudge">
         <span className="app-banner-text">

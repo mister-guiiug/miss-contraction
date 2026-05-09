@@ -55,15 +55,6 @@ export function TimerSectionWithIntensity({
     };
   }, [isRunning]);
 
-  // Réinitialiser l'intensité quand une contraction commence
-  useEffect(() => {
-    if (isRunning && currentIntensity === undefined) {
-      setCurrentIntensity(3); // Valeur par défaut
-    } else if (!isRunning) {
-      setCurrentIntensity(undefined);
-    }
-  }, [isRunning, currentIntensity]);
-
   const handleToggle = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       // Créer l'effet ripple
@@ -79,8 +70,10 @@ export function TimerSectionWithIntensity({
         // Enregistrer l'intensité et la note avant de terminer
         vibrate([35, 50, 35], settings.vibrationEnabled);
         endContraction(selectedNote || undefined, currentIntensity);
+        setCurrentIntensity(undefined);
         if (onClearNote) onClearNote();
       } else {
+        setCurrentIntensity(3);
         vibrate(40, settings.vibrationEnabled);
         startContraction();
       }
@@ -91,6 +84,8 @@ export function TimerSectionWithIntensity({
       startContraction,
       endContraction,
       currentIntensity,
+      onClearNote,
+      selectedNote,
     ]
   );
 

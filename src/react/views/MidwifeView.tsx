@@ -184,7 +184,7 @@ export function MidwifeView() {
     lines.push('—');
     lines.push('Données indicatives — ne remplacent pas un avis médical.');
     return lines.join('\n');
-  }, [language, mode, selectedRecords, stats, settings]);
+  }, [mode, selectedRecords, stats, settings]);
 
   const handleCopy = async () => {
     try {

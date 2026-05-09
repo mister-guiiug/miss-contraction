@@ -345,8 +345,9 @@ function ThemeIcon({ preference }: { preference: ThemePreference }) {
 export function Shell({ children }: ShellProps) {
   const language = useAppStore(state => state.settings.language);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [themePreference, setThemePreference] =
-    useState<ThemePreference>('system');
+  const [themePreference, setThemePreference] = useState<ThemePreference>(() =>
+    getStoredThemePreference()
+  );
   const [themeAnim, setThemeAnim] = useState(false);
 
   const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
@@ -358,10 +359,6 @@ export function Shell({ children }: ShellProps) {
     setThemeAnim(false);
     requestAnimationFrame(() => setThemeAnim(true));
   };
-
-  useEffect(() => {
-    setThemePreference(getStoredThemePreference());
-  }, []);
 
   useEffect(() => {
     if (!themeAnim) return;
