@@ -110,7 +110,7 @@ export function MessageView() {
           <span>Personnalisez le texte avant envoi</span>
           <textarea
             value={message}
-            onChange={e => setMessage(e.target.value)}
+            onChange={(e) => setMessage(e.target.value)}
             className="msg-textarea"
             data-testid="message-textarea"
             rows={10}

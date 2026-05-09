@@ -326,7 +326,7 @@ Ce document liste tous les `data-testid` à ajouter aux composants React pour su
 <textarea
   data-testid="message-textarea"
   value={message}
-  onChange={e => setMessage(e.target.value)}
+  onChange={(e) => setMessage(e.target.value)}
 />
 ```
 

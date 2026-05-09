@@ -31,9 +31,7 @@
         "kind": "build",
         "isDefault": true
       },
-      "problemMatcher": [
-        "$tsc"
-      ],
+      "problemMatcher": ["$tsc"],
       "presentation": {
         "reveal": "always",
         "panel": "shared"
@@ -47,9 +45,7 @@
         "reveal": "always",
         "panel": "shared"
       },
-      "problemMatcher": [
-        "$tsc"
-      ]
+      "problemMatcher": ["$tsc"]
     },
     {
       "label": "preview",
@@ -80,9 +76,7 @@
         "reveal": "always",
         "panel": "shared"
       },
-      "problemMatcher": [
-        "$eslint-stylish"
-      ]
+      "problemMatcher": ["$eslint-stylish"]
     },
     {
       "label": "format",
@@ -112,9 +106,7 @@
         "reveal": "always",
         "panel": "shared"
       },
-      "problemMatcher": [
-        "$tsc"
-      ]
+      "problemMatcher": ["$tsc"]
     },
     {
       "label": "test",

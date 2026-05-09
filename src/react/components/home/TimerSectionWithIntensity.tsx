@@ -5,6 +5,7 @@ import { useRestTimer } from '../../hooks/useRestTimer';
 import { useWakeLock, vibrate } from '../../hooks/useWakeLock';
 import { IntensityPicker } from './IntensityPicker';
 import { QuickNotes } from './QuickNotes';
+import { BreathGuide } from './BreathGuide';
 
 interface TimerSectionProps {
   onNoteSelect?: (note: string) => void;
@@ -76,6 +77,23 @@ export function TimerSectionWithIntensity({
       if (isRunning) {
         // Enregistrer l'intensité et la note avant de terminer
         vibrate([35, 50, 35], settings.vibrationEnabled);
+
+        const durationMs = Date.now() - (activeStart || Date.now());
+        if (settings.voiceAnnounceDuration && 'speechSynthesis' in window) {
+          const sec = Math.round(durationMs / 1000);
+          let text = '';
+          if (sec < 60) {
+            text = `${sec} secondes`;
+          } else {
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            text = `${m} minute${m > 1 ? 's' : ''} ${s > 0 ? `${s} secondes` : ''}`;
+          }
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'fr-FR';
+          window.speechSynthesis.speak(utterance);
+        }
+
         endContraction(selectedNote || undefined, currentIntensity);
         if (onClearNote) onClearNote();
       } else {
@@ -153,6 +171,8 @@ export function TimerSectionWithIntensity({
               {formatted}
             </p>
           </div>
+
+          <BreathGuide />
 
           {/* Sélecteur d'intensité pendant contraction */}
           <div className="timer-intensity-section">

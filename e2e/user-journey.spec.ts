@@ -215,7 +215,7 @@ test.describe('Parcours - Gestion des notes et intensité', () => {
     const deleteBtn = page
       .locator('[data-testid^="delete-record-btn-"]')
       .first();
-    page.once('dialog', dialog => dialog.accept());
+    page.once('dialog', (dialog) => dialog.accept());
     await deleteBtn.click();
     await page.waitForTimeout(300);
 
@@ -228,7 +228,7 @@ test.describe('Parcours - Navigation complète', () => {
     page,
   }) => {
     const errors: string[] = [];
-    page.on('pageerror', e => errors.push(e.message));
+    page.on('pageerror', (e) => errors.push(e.message));
 
     const routes = [
       ROUTES.HOME,
@@ -247,7 +247,7 @@ test.describe('Parcours - Navigation complète', () => {
       await expect(page.locator('body')).not.toBeEmpty();
     }
 
-    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
@@ -345,7 +345,7 @@ test.describe('Parcours - Undo (annulation)', () => {
     const deleteBtn = page
       .locator('[data-testid^="delete-record-btn-"]')
       .first();
-    page.once('dialog', dialog => dialog.accept());
+    page.once('dialog', (dialog) => dialog.accept());
     await deleteBtn.click();
     await page.waitForTimeout(300);
 

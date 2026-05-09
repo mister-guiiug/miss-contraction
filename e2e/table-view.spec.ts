@@ -63,7 +63,7 @@ test.describe('TableView - Tableau des contractions', () => {
     const contents = await cells.allTextContents();
 
     // Vérifier qu'il y a des timestamps ou heures
-    const hasTime = contents.some(c => /\d{1,2}:\d{2}/.test(c));
+    const hasTime = contents.some((c) => /\d{1,2}:\d{2}/.test(c));
     expect(hasTime).toBe(true);
   });
 
@@ -72,7 +72,7 @@ test.describe('TableView - Tableau des contractions', () => {
     const contents = await cells.allTextContents();
 
     // Vérifier qu'il y a des durées (format mm:ss)
-    const hasDuration = contents.some(c => /\d+:\d{2}/.test(c));
+    const hasDuration = contents.some((c) => /\d+:\d{2}/.test(c));
     expect(hasDuration).toBe(true);
   });
 
@@ -89,7 +89,7 @@ test.describe('TableView - Tableau des contractions', () => {
     const contents = await cells.allTextContents();
 
     // Vérifier qu'il y a des fréquences (format "/h")
-    const hasFrequency = contents.some(c => /\/h|\| h/.test(c));
+    const hasFrequency = contents.some((c) => /\/h|\| h/.test(c));
     expect(hasFrequency || contents.length).toBeTruthy();
   });
 
@@ -119,7 +119,7 @@ test.describe('TableView - Tableau des contractions', () => {
       .filter({ hasText: /Supprimer|Delete|✕|×/ })
       .first();
     if (await deleteButton.isVisible({ timeout: 500 }).catch(() => false)) {
-      page.once('dialog', dialog => {
+      page.once('dialog', (dialog) => {
         expect(dialog.type()).toBe('confirm');
         dialog.accept();
       });
@@ -166,7 +166,7 @@ test.describe('TableView - Tableau des contractions', () => {
       // Cliquer pour trier
       if (
         await timeHeader
-          .evaluate(el => el.parentElement?.classList.contains('sortable'))
+          .evaluate((el) => el.parentElement?.classList.contains('sortable'))
           .catch(() => false)
       ) {
         await timeHeader.click();
@@ -182,7 +182,7 @@ test.describe('TableView - Tableau des contractions', () => {
     if (await durationHeader.isVisible({ timeout: 500 }).catch(() => false)) {
       if (
         await durationHeader
-          .evaluate(el => el.parentElement?.classList.contains('sortable'))
+          .evaluate((el) => el.parentElement?.classList.contains('sortable'))
           .catch(() => false)
       ) {
         await durationHeader.click();

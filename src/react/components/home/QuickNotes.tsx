@@ -114,7 +114,7 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
 
   return (
     <div className="quick-notes">
-      {predefinedNotes.map(note => (
+      {predefinedNotes.map((note) => (
         <button
           key={note.id}
           type="button"
@@ -134,7 +134,7 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
           <input
             type="text"
             value={customNote}
-            onChange={e => setCustomNote(e.target.value)}
+            onChange={(e) => setCustomNote(e.target.value)}
             placeholder="Note personnelle..."
             className="note-custom-input"
             style={{
@@ -147,7 +147,7 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
               color: 'inherit',
             }}
             autoFocus
-            onKeyDown={e => {
+            onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 handleCustomSubmit();
               } else if (e.key === 'Escape') {

@@ -24,7 +24,7 @@ export function BottomNav({ onMenuClick, isMenuOpen = false }: BottomNavProps) {
 
   return (
     <nav className="bottom-nav">
-      {navItems.map(item => {
+      {navItems.map((item) => {
         const isActive = location.pathname === item.href;
         return (
           <Link
