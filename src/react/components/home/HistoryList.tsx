@@ -8,35 +8,37 @@ import { useAppStore } from '../../store/useAppStore';
 import { formatDateTime } from '../../../utils/formatStats';
 import { formatDuration } from '../../../utils/formatDuration';
 import type { ContractionRecord } from '../../../storage';
-import { getIntensityInfo } from '../../../utils/intensity';
+import { t, type AppLanguage } from '../../../i18n';
 
 type EditDialogState = {
   record: ContractionRecord | null;
 };
 
 export function HistoryList() {
-  const { records, deleteRecord, updateRecord, clearRecords } = useAppStore();
+  const { records, deleteRecord, updateRecord, clearRecords, settings } =
+    useAppStore();
+  const language = settings.language;
   const [editDialog, setEditDialog] = useState<EditDialogState>({
     record: null,
   });
 
   const validRecords = [...records]
-    .filter((r) => r.end > r.start)
+    .filter(r => r.end > r.start)
     .sort((a, b) => b.start - a.start);
 
   const handleClearAll = useCallback(() => {
-    if (confirm("Effacer tout l'historique sur cet appareil ?")) {
+    if (confirm(t(language, 'history.confirmClear'))) {
       clearRecords();
     }
-  }, [clearRecords]);
+  }, [clearRecords, language]);
 
   const handleDelete = useCallback(
     (id: string) => {
-      if (confirm("Supprimer cette contraction de l'historique ?")) {
+      if (confirm(t(language, 'history.confirmDelete'))) {
         deleteRecord(id);
       }
     },
-    [deleteRecord]
+    [deleteRecord, language]
   );
 
   const handleEdit = useCallback((record: ContractionRecord) => {
@@ -62,12 +64,12 @@ export function HistoryList() {
       >
         <div className="section-head">
           <h2 id="history-heading" className="section-title">
-            Historique
+            {t(language, 'history.title')}
           </h2>
           <div
             className="section-actions"
             role="group"
-            aria-label="Actions historique"
+            aria-label={t(language, 'history.actionsAria')}
           >
             <button
               type="button"
@@ -76,14 +78,14 @@ export function HistoryList() {
               data-testid="clear-history-btn"
               onClick={handleClearAll}
             >
-              Effacer l'historique
+              {t(language, 'history.clear')}
             </button>
           </div>
         </div>
 
         {validRecords.length === 0 ? (
           <p className="empty" id="history-empty" data-testid="history-empty">
-            Aucune contraction enregistrée pour le moment.
+            {t(language, 'history.empty')}
           </p>
         ) : (
           <ul
@@ -105,6 +107,7 @@ export function HistoryList() {
                 }
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                language={language}
               />
             ))}
           </ul>
@@ -116,6 +119,7 @@ export function HistoryList() {
           record={editDialog.record}
           onSave={handleSaveEdit}
           onClose={() => setEditDialog({ record: null })}
+          language={language}
         />
       )}
     </>
@@ -129,6 +133,7 @@ function HistoryItem({
   previousRecord,
   onEdit,
   onDelete,
+  language,
 }: {
   record: ContractionRecord;
   occurrenceNum: number;
@@ -136,35 +141,20 @@ function HistoryItem({
   previousRecord?: ContractionRecord;
   onEdit: (rec: ContractionRecord) => void;
   onDelete: (id: string) => void;
+  language: AppLanguage;
 }) {
   const duration = record.end - record.start;
   const intervalPrev = previousRecord
     ? formatDuration(record.start - previousRecord.start)
-    : '—';
+    : '-';
 
-  const intensityInfo = record.intensity
-    ? getIntensityInfo(record.intensity)
-    : null;
-
-  const intensityHtml = intensityInfo ? (
+  const intensityHtml = record.intensity ? (
     <span
       className={`timeline-intensity timeline-intensity--${record.intensity}`}
-      title={`Intensité ${record.intensity} : ${intensityInfo.label}`}
-      style={{
-        backgroundColor: intensityInfo.color,
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '2px',
-        padding: '0 6px',
-        borderRadius: '12px',
-        color: intensityInfo.textColor,
-        fontSize: '0.75rem',
-        fontWeight: 'bold',
-      }}
+      title={`${t(language, 'history.intensity')} ${record.intensity}`}
     >
-      <span style={{ fontSize: '0.9rem' }}>{intensityInfo.emoji}</span>
-      <span className="sr-only">Intensité</span> {record.intensity}
+      <span className="sr-only">{t(language, 'history.intensity')}</span>{' '}
+      {record.intensity}
     </span>
   ) : null;
 
@@ -179,7 +169,7 @@ function HistoryItem({
         <div className="timeline-time-row">
           <span
             className="timeline-num"
-            title={`Contraction n°${occurrenceNum}`}
+            title={`#${occurrenceNum}`}
             data-testid="occurrence-num"
           >
             {occurrenceNum}
@@ -196,13 +186,14 @@ function HistoryItem({
 
         <p className="timeline-meta">
           <span className="timeline-stat" data-testid="record-duration">
-            Durée <strong>{formatDuration(duration)}</strong>
+            {t(language, 'history.duration')}{' '}
+            <strong>{formatDuration(duration)}</strong>
           </span>
           <span className="timeline-sep" aria-hidden="true">
-            ·
+            .
           </span>
           <span className="timeline-stat" data-testid="record-interval">
-            Écart <strong>{intervalPrev}</strong>
+            {t(language, 'history.interval')} <strong>{intervalPrev}</strong>
           </span>
         </p>
 
@@ -220,9 +211,9 @@ function HistoryItem({
             data-id={record.id}
             data-testid={`edit-record-btn-${record.id}`}
             onClick={() => onEdit(record)}
-            aria-label="Modifier cette contraction"
+            aria-label={t(language, 'history.editAria')}
           >
-            Modifier
+            {t(language, 'history.edit')}
           </button>
           <button
             type="button"
@@ -231,9 +222,9 @@ function HistoryItem({
             data-id={record.id}
             data-testid={`delete-record-btn-${record.id}`}
             onClick={() => onDelete(record.id)}
-            aria-label="Supprimer cette contraction"
+            aria-label={t(language, 'history.deleteAria')}
           >
-            Supprimer
+            {t(language, 'history.delete')}
           </button>
         </div>
       </div>
@@ -245,10 +236,12 @@ function EditDialog({
   record,
   onSave,
   onClose,
+  language,
 }: {
   record: ContractionRecord;
   onSave: (updates: Partial<ContractionRecord>) => void;
   onClose: () => void;
+  language: AppLanguage;
 }) {
   const [start, setStart] = useState(toDatetimeLocalValue(record.start));
   const [end, setEnd] = useState(toDatetimeLocalValue(record.end));
@@ -264,22 +257,20 @@ function EditDialog({
     const endMs = new Date(end).getTime();
 
     if (isNaN(startMs) || isNaN(endMs)) {
-      setError('Vérifiez les dates saisies.');
+      setError(t(language, 'history.errorInvalidDates'));
       return;
     }
     if (endMs <= startMs) {
-      setError('La fin doit être après le début.');
+      setError(t(language, 'history.errorEndAfterStart'));
       return;
     }
 
-    const updates: Partial<ContractionRecord> = {
+    onSave({
       start: startMs,
       end: endMs,
       note: note.trim() || undefined,
       intensity,
-    };
-
-    onSave(updates);
+    });
   };
 
   const handleIntensityChange = (value: number) => {
@@ -294,7 +285,7 @@ function EditDialog({
           className="edit-dialog-title"
           data-testid="edit-dialog-title"
         >
-          Modifier la contraction
+          {t(language, 'history.editTitle')}
         </h3>
         {error && (
           <p
@@ -307,39 +298,41 @@ function EditDialog({
         )}
 
         <label className="field">
-          <span>Début</span>
+          <span>{t(language, 'history.start')}</span>
           <input
             type="datetime-local"
             id="edit-start"
             data-testid="edit-start-input"
             value={start}
-            onChange={(e) => setStart(e.target.value)}
+            onChange={e => setStart(e.target.value)}
             step="1"
             required
           />
         </label>
 
         <label className="field">
-          <span>Fin</span>
+          <span>{t(language, 'history.end')}</span>
           <input
             type="datetime-local"
             id="edit-end"
             data-testid="edit-end-input"
             value={end}
-            onChange={(e) => setEnd(e.target.value)}
+            onChange={e => setEnd(e.target.value)}
             step="1"
             required
           />
         </label>
 
         <div className="field">
-          <span className="field-label">Intensité de la douleur</span>
+          <span className="field-label">
+            {t(language, 'history.painIntensity')}
+          </span>
           <div
             className="intensity-picker"
             id="edit-intensity-picker"
             data-testid="edit-intensity-picker"
           >
-            {[1, 2, 3, 4, 5].map((value) => (
+            {[1, 2, 3, 4, 5].map(value => (
               <label
                 key={value}
                 className={`btn-intensity ${intensity === value ? 'selected' : ''}`}
@@ -363,21 +356,21 @@ function EditDialog({
               data-testid="edit-intensity-clear-btn"
               onClick={() => setIntensity(undefined)}
             >
-              Effacer
+              {t(language, 'history.clearIntensity')}
             </button>
           </div>
         </div>
 
         <label className="field">
-          <span>Note (optionnelle)</span>
+          <span>{t(language, 'history.noteOptional')}</span>
           <textarea
             id="edit-note"
             data-testid="edit-note-textarea"
             rows={2}
             maxLength={240}
-            placeholder="Ex. plus intense, repos…"
+            placeholder={t(language, 'history.notePlaceholder')}
             value={note}
-            onChange={(e) => setNote(e.target.value)}
+            onChange={e => setNote(e.target.value)}
           />
         </label>
 
@@ -389,38 +382,38 @@ function EditDialog({
           <button
             type="button"
             className="btn btn-ghost btn-tiny"
-            data-note="Ballon"
+            data-note="Balloon"
             data-testid="quick-note-balloon"
-            onClick={() => addQuickNote(setNote, 'Ballon')}
+            onClick={() => addQuickNote(setNote, 'Balloon')}
           >
-            🎈 Ballon
+            Balloon
           </button>
           <button
             type="button"
             className="btn btn-ghost btn-tiny"
-            data-note="Marche"
+            data-note="Walk"
             data-testid="quick-note-walk"
-            onClick={() => addQuickNote(setNote, 'Marche')}
+            onClick={() => addQuickNote(setNote, 'Walk')}
           >
-            🚶 Marche
+            Walk
           </button>
           <button
             type="button"
             className="btn btn-ghost btn-tiny"
-            data-note="Repos"
+            data-note="Rest"
             data-testid="quick-note-rest"
-            onClick={() => addQuickNote(setNote, 'Repos')}
+            onClick={() => addQuickNote(setNote, 'Rest')}
           >
-            🛌 Repos
+            Rest
           </button>
           <button
             type="button"
             className="btn btn-ghost btn-tiny"
-            data-note="Douche"
+            data-note="Shower"
             data-testid="quick-note-shower"
-            onClick={() => addQuickNote(setNote, 'Douche')}
+            onClick={() => addQuickNote(setNote, 'Shower')}
           >
-            🚿 Douche
+            Shower
           </button>
         </div>
 
@@ -432,14 +425,14 @@ function EditDialog({
             data-testid="edit-dialog-cancel-btn"
             onClick={onClose}
           >
-            Annuler
+            {t(language, 'history.cancel')}
           </button>
           <button
             type="submit"
             className="btn btn-primary"
             data-testid="edit-dialog-save-btn"
           >
-            Enregistrer
+            {t(language, 'history.save')}
           </button>
         </div>
       </form>
@@ -454,11 +447,12 @@ function toDatetimeLocalValue(ms: number): string {
 }
 
 function addQuickNote(setNote: Dispatch<SetStateAction<string>>, tag: string) {
-  setNote((prev) => {
+  setNote(prev => {
     const cur = prev.trim();
     if (!cur) {
       return tag;
-    } else if (!cur.includes(tag)) {
+    }
+    if (!cur.includes(tag)) {
       return `${cur}, ${tag}`;
     }
     return cur;
