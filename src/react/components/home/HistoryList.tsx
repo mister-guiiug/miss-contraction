@@ -8,6 +8,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { formatDateTime } from '../../../utils/formatStats';
 import { formatDuration } from '../../../utils/formatDuration';
 import type { ContractionRecord } from '../../../storage';
+import { getIntensityInfo } from '../../../utils/intensity';
 
 type EditDialogState = {
   record: ContractionRecord | null;
@@ -141,11 +142,28 @@ function HistoryItem({
     ? formatDuration(record.start - previousRecord.start)
     : '—';
 
-  const intensityHtml = record.intensity ? (
+  const intensityInfo = record.intensity
+    ? getIntensityInfo(record.intensity)
+    : null;
+
+  const intensityHtml = intensityInfo ? (
     <span
       className={`timeline-intensity timeline-intensity--${record.intensity}`}
-      title={`Intensité ${record.intensity}`}
+      title={`Intensité ${record.intensity} : ${intensityInfo.label}`}
+      style={{
+        backgroundColor: intensityInfo.color,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '2px',
+        padding: '0 6px',
+        borderRadius: '12px',
+        color: intensityInfo.textColor,
+        fontSize: '0.75rem',
+        fontWeight: 'bold',
+      }}
     >
+      <span style={{ fontSize: '0.9rem' }}>{intensityInfo.emoji}</span>
       <span className="sr-only">Intensité</span> {record.intensity}
     </span>
   ) : null;
