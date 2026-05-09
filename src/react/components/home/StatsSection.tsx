@@ -2,7 +2,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { useStats } from '../../hooks/useStats';
 import { formatDuration } from '../../../utils/formatDuration';
 import type { ContractionRecord } from '../../../storage';
-import { getIntensityInfo } from '../../../utils/intensity';
+import { t, type AppLanguage } from '../../../i18n';
 
 const THRESHOLD_ICONS: Record<string, string> = {
   match: '🏥',
@@ -11,45 +11,17 @@ const THRESHOLD_ICONS: Record<string, string> = {
   empty: '📊',
 };
 
-const THRESHOLD_LABELS: Record<string, string> = {
-  match: "Les dernières contractions correspondent à vos seuils d'alerte.",
-  approaching:
-    'Rythme soutenu — restez attentive aux consignes de votre sage-femme.',
-  calm: "En dehors du schéma d'alerte configuré (pour l'instant).",
-  empty: 'Pas encore assez de données pour comparer aux seuils.',
+const THRESHOLD_KEYS: Record<string, string> = {
+  match: 'stats.threshold.match',
+  approaching: 'stats.threshold.approaching',
+  calm: 'stats.threshold.calm',
+  empty: 'stats.threshold.empty',
 };
 
 export function StatsSection() {
   const { records, settings } = useAppStore();
+  const language = settings.language;
   const { data, windowLabel, isEmpty } = useStats(records, settings);
-
-  const handleShare = async () => {
-    const shareText = `Miss Contraction Summary:
-- Quantité: ${data.qtyPerHour}
-- Durée moyenne: ${data.avgDuration}
-- Fréquence: ${data.avgFrequency}
-Status: ${data.humanSummary}
-${data.thresholdKind === 'match' ? '⚠️ SEUIL ATTEINT !' : ''}`;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'Résumé Miss Contraction',
-          text: shareText,
-          url: window.location.href,
-        });
-      } catch (err) {
-        console.error('Share failed', err);
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(shareText);
-        alert('Résumé copié dans le presse-papiers !');
-      } catch (err) {
-        console.error('Copy failed', err);
-      }
-    }
-  };
 
   return (
     <section
@@ -57,38 +29,13 @@ ${data.thresholdKind === 'match' ? '⚠️ SEUIL ATTEINT !' : ''}`;
       aria-labelledby="summary-heading"
       data-testid="stats-section"
     >
-      <div className="section-head">
-        <h2 id="summary-heading" className="section-title">
-          Indicateurs récents
-        </h2>
-        <button
-          type="button"
-          className="btn-share"
-          onClick={handleShare}
-          aria-label="Partager le résumé"
-          title="Partager le résumé"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-            <polyline points="16 6 12 2 8 6" />
-            <line x1="12" y1="2" x2="12" y2="15" />
-          </svg>
-        </button>
-      </div>
+      <h2 id="summary-heading" className="section-title">
+        {t(language, 'stats.title')}
+      </h2>
       <div
         className="stats-enhanced"
         role="group"
-        aria-label="Synthèse des contractions"
+        aria-label={t(language, 'stats.summaryAria')}
         data-testid="stats-cards"
       >
         <div className="stat-card" data-testid="stat-card-quantity">
@@ -100,7 +47,7 @@ ${data.thresholdKind === 'match' ? '⚠️ SEUIL ATTEINT !' : ''}`;
           >
             {data.qtyPerHour}
           </span>
-          <span className="stat-card-label">Quantité / h</span>
+          <span className="stat-card-label">{t(language, 'stats.qty')}</span>
         </div>
         <div className="stat-card" data-testid="stat-card-duration">
           <span className="stat-card-icon" aria-hidden="true" />
@@ -111,7 +58,9 @@ ${data.thresholdKind === 'match' ? '⚠️ SEUIL ATTEINT !' : ''}`;
           >
             {data.avgDuration}
           </span>
-          <span className="stat-card-label">Durée moyenne</span>
+          <span className="stat-card-label">
+            {t(language, 'stats.avgDuration')}
+          </span>
         </div>
         <div className="stat-card" data-testid="stat-card-frequency">
           <span className="stat-card-icon" aria-hidden="true" />
@@ -122,13 +71,11 @@ ${data.thresholdKind === 'match' ? '⚠️ SEUIL ATTEINT !' : ''}`;
           >
             {data.avgFrequency}
           </span>
-          <span className="stat-card-label">Fréquence moyenne</span>
+          <span className="stat-card-label">
+            {t(language, 'stats.avgFrequency')}
+          </span>
         </div>
       </div>
-      <div className="stats-human-summary" data-testid="stats-human-summary">
-        <p className="human-summary-text">{data.humanSummary}</p>
-      </div>
-
       <p
         className="stats-window-label"
         id="stats-window-label"
@@ -146,7 +93,10 @@ ${data.thresholdKind === 'match' ? '⚠️ SEUIL ATTEINT !' : ''}`;
           {THRESHOLD_ICONS[data.thresholdKind] ?? ''}
         </span>
         <span data-testid="threshold-message">
-          {THRESHOLD_LABELS[data.thresholdKind] ?? ''}
+          {t(
+            language,
+            THRESHOLD_KEYS[data.thresholdKind] ?? 'stats.threshold.empty'
+          )}
         </span>
       </p>
       {!isEmpty && (
@@ -155,13 +105,13 @@ ${data.thresholdKind === 'match' ? '⚠️ SEUIL ATTEINT !' : ''}`;
           id="summary-extra"
           data-testid="stats-details"
         >
-          <dt>Contractions (dernière heure)</dt>
+          <dt>{t(language, 'stats.lastHour')}</dt>
           <dd>{data.lastHourCount}</dd>
-          <dt>Estimation détaillée</dt>
+          <dt>{t(language, 'stats.detailEstimation')}</dt>
           <dd>{data.perHourFromMean}</dd>
-          <dt>Dernier intervalle</dt>
+          <dt>{t(language, 'stats.lastInterval')}</dt>
           <dd>{data.lastInterval}</dd>
-          <dt>Dernière durée</dt>
+          <dt>{t(language, 'stats.lastDuration')}</dt>
           <dd>{data.lastDuration}</dd>
         </dl>
       )}
@@ -175,6 +125,7 @@ ${data.thresholdKind === 'match' ? '⚠️ SEUIL ATTEINT !' : ''}`;
       <IntervalChart
         intervals={data.intervals}
         recordsForChart={data.recordsForChart}
+        language={language}
       />
     </section>
   );
@@ -183,17 +134,17 @@ ${data.thresholdKind === 'match' ? '⚠️ SEUIL ATTEINT !' : ''}`;
 function IntervalChart({
   intervals,
   recordsForChart,
+  language,
 }: {
   intervals: number[];
   recordsForChart: ContractionRecord[];
+  language: AppLanguage;
 }) {
   if (intervals.length === 0) return null;
 
   return (
     <div className="interval-list" data-testid="interval-chart">
-      <h3 className="chart-title">
-        Intervalles entre débuts (derniers enregistrements)
-      </h3>
+      <h3 className="chart-title">{t(language, 'stats.intervalsTitle')}</h3>
       <ul className="interval-items" role="list" data-testid="interval-items">
         {intervals.map((ms, i) => {
           const record = recordsForChart[i + 1];
@@ -221,12 +172,8 @@ function IntervalChart({
                 <span
                   className={`interval-intensity interval-intensity--${intensity}`}
                   data-testid={`interval-intensity-${i}`}
-                  style={{
-                    backgroundColor: getIntensityInfo(intensity).color,
-                    color: getIntensityInfo(intensity).textColor,
-                  }}
                 >
-                  {getIntensityInfo(intensity).emoji}
+                  {intensity}
                 </span>
               )}
             </li>

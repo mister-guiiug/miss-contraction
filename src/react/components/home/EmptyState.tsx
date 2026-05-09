@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom';
+import { useAppStore } from '../../store/useAppStore';
+import { t } from '../../../i18n';
 /**
- * État vide affiché quand aucune contraction n'a été enregistrée
+ * Empty state shown when no contraction has been recorded yet.
  */
 export function EmptyState() {
+  const language = useAppStore(state => state.settings.language);
   return (
     <div className="card empty-state">
       <div className="empty-state-illustration">
@@ -57,12 +60,8 @@ export function EmptyState() {
           <circle cx="85" cy="85" r="1.5" fill="rgba(160, 48, 154, 0.2)" />
         </svg>
       </div>
-      <h3>Prête pour suivre vos contractions ?</h3>
-      <p>
-        Appuyez sur le bouton <strong>« Début de contraction »</strong> quand
-        vous ressentez la première contraction. L'application calculera
-        automatiquement les intervalles et durées.
-      </p>
+      <h3>{t(language, 'empty.title')}</h3>
+      <p>{t(language, 'empty.text')}</p>
       <div
         style={{
           display: 'flex',
@@ -72,10 +71,10 @@ export function EmptyState() {
         }}
       >
         <Link to="/parametres" className="btn btn-secondary btn-small">
-          Configurer les alertes
+          {t(language, 'empty.configure')}
         </Link>
         <Link to="/valise" className="btn btn-secondary btn-small">
-          Valise maternité
+          {t(language, 'empty.checklist')}
         </Link>
       </div>
     </div>

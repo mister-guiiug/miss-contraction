@@ -1,64 +1,79 @@
 import { useState, useEffect } from 'react';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { AppFooter } from '../components/layout/AppFooter';
+import { t } from '../../i18n';
+import { useAppStore } from '../store/useAppStore';
 
 interface ChecklistItem {
   id: string;
-  label: string;
   category: 'mama' | 'baby' | 'partner' | 'docs';
   checked: boolean;
 }
 
 const DEFAULT_ITEMS: ChecklistItem[] = [
-  {
-    id: '1',
-    label: 'Dossier médical & carte vitale',
-    category: 'docs',
-    checked: false,
-  },
-  { id: '2', label: 'Projet de naissance', category: 'docs', checked: false },
-  { id: '3', label: 'Livret de famille', category: 'docs', checked: false },
-  { id: '4', label: 'Pyjamas & Bodies (x5)', category: 'baby', checked: false },
-  { id: '5', label: 'Bonnets & Chaussons', category: 'baby', checked: false },
-  { id: '6', label: 'Gigoteuse', category: 'baby', checked: false },
-  { id: '7', label: 'Tenues confortables', category: 'mama', checked: false },
-  {
-    id: '8',
-    label: "Soutiens-gorge d'allaitement",
-    category: 'mama',
-    checked: false,
-  },
-  { id: '9', label: 'Trousse de toilette', category: 'mama', checked: false },
-  { id: '10', label: 'Snacks & Boissons', category: 'partner', checked: false },
-  {
-    id: '11',
-    label: 'Chargeur de téléphone long',
-    category: 'partner',
-    checked: false,
-  },
-  {
-    id: '12',
-    label: 'Appareil photo / Caméra',
-    category: 'partner',
-    checked: false,
-  },
+  { id: '1', category: 'docs', checked: false },
+  { id: '2', category: 'docs', checked: false },
+  { id: '3', category: 'docs', checked: false },
+  { id: '4', category: 'baby', checked: false },
+  { id: '5', category: 'baby', checked: false },
+  { id: '6', category: 'baby', checked: false },
+  { id: '7', category: 'mama', checked: false },
+  { id: '8', category: 'mama', checked: false },
+  { id: '9', category: 'mama', checked: false },
+  { id: '10', category: 'partner', checked: false },
+  { id: '11', category: 'partner', checked: false },
+  { id: '12', category: 'partner', checked: false },
 ];
 
+const CHECKLIST_LABELS = {
+  fr: {
+    '1': 'Dossier médical et carte vitale',
+    '2': 'Projet de naissance',
+    '3': 'Livret de famille',
+    '4': 'Pyjamas et bodies (x5)',
+    '5': 'Bonnets et chaussons',
+    '6': 'Gigoteuse',
+    '7': 'Tenues confortables',
+    '8': "Soutiens-gorge d'allaitement",
+    '9': 'Trousse de toilette',
+    '10': 'Snacks et boissons',
+    '11': 'Chargeur de téléphone long',
+    '12': 'Appareil photo ou caméra',
+  },
+  en: {
+    '1': 'Medical records and health card',
+    '2': 'Birth plan',
+    '3': 'Family record book',
+    '4': 'Pajamas and bodysuits (x5)',
+    '5': 'Hats and booties',
+    '6': 'Sleep sack',
+    '7': 'Comfortable outfits',
+    '8': 'Nursing bras',
+    '9': 'Toiletry bag',
+    '10': 'Snacks and drinks',
+    '11': 'Long phone charger',
+    '12': 'Camera',
+  },
+} as const;
+
+function getChecklistLabel(language: string, id: string): string {
+  const dictionary =
+    language === 'fr' ? CHECKLIST_LABELS.fr : CHECKLIST_LABELS.en;
+  return dictionary[id as keyof typeof dictionary] ?? id;
+}
+
 export function ChecklistView() {
+  const language = useAppStore(state => state.settings.language);
   const [items, setItems] = useState<ChecklistItem[]>(() => {
     const saved = localStorage.getItem('mc_checklist');
     if (!saved) return DEFAULT_ITEMS;
     try {
-      const parsed = JSON.parse(saved);
-      // Fusionner avec DEFAULT_ITEMS pour être sûr d'avoir les bases si on a vidé
-      return parsed;
+      return JSON.parse(saved);
     } catch (e) {
       console.error('Error parsing checklist from localStorage', e);
       return DEFAULT_ITEMS;
     }
   });
-  const [newItemText, setNewItemText] = useState('');
-  const [activeCategory, setActiveCategory] = useState<ChecklistItem['category']>('docs');
 
   useEffect(() => {
     localStorage.setItem('mc_checklist', JSON.stringify(items));
@@ -72,121 +87,43 @@ export function ChecklistView() {
     );
   };
 
-  const addItem = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newItemText.trim()) return;
-    const newItem: ChecklistItem = {
-      id: crypto.randomUUID(),
-      label: newItemText.trim(),
-      category: activeCategory,
-      checked: false,
-    };
-    setItems(prev => [...prev, newItem]);
-    setNewItemText('');
-  };
-
-  const removeItem = (id: string) => {
-    setItems(prev => prev.filter(item => item.id !== id));
-  };
-
   const categories = [
-    { id: 'docs', label: 'Papiers & Documents', icon: '📄' },
-    { id: 'mama', label: 'Pour Maman', icon: '🤰' },
-    { id: 'baby', label: 'Pour Bébé', icon: '👶' },
-    { id: 'partner', label: 'Pour le Partenaire / Accompagnant', icon: '👫' },
+    { id: 'docs', label: t(language, 'checklist.category.docs'), icon: '📄' },
+    { id: 'mama', label: t(language, 'checklist.category.mama'), icon: '🤰' },
+    { id: 'baby', label: t(language, 'checklist.category.baby'), icon: '👶' },
+    {
+      id: 'partner',
+      label: t(language, 'checklist.category.partner'),
+      icon: '👫',
+    },
   ];
 
   return (
     <ViewLayout
       id="view-checklist"
-      title="Valise maternité"
-      lead="Préparez sereinement votre départ pour la maternité avec cette liste essentielle."
+      title={t(language, 'checklist.title')}
+      lead={t(language, 'checklist.lead')}
       footer={<AppFooter />}
     >
-      <section className="card" style={{ marginBottom: '1.5rem' }}>
-        <h3 className="section-title">Ajouter un élément personnalisé</h3>
-        <form onSubmit={addItem} className="checklist-add-form" style={{ marginTop: '1rem' }}>
-          <div className="field">
-            <label htmlFor="new-item-category">Catégorie</label>
-            <select
-              id="new-item-category"
-              value={activeCategory}
-              onChange={(e) => setActiveCategory(e.target.value as any)}
-              className="select-full"
-            >
-              {categories.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.icon} {cat.label}</option>
-              ))}
-            </select>
-          </div>
-          <div className="field">
-            <label htmlFor="new-item-text">Nom de l'élément</label>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <input
-                id="new-item-text"
-                type="text"
-                value={newItemText}
-                onChange={(e) => setNewItemText(e.target.value)}
-                placeholder="Ex: Coussin d'allaitement..."
-                style={{ flex: 1 }}
-              />
-              <button type="submit" className="btn btn-primary">Ajouter</button>
-            </div>
-          </div>
-        </form>
-      </section>
-
       {categories.map(cat => (
-        <div key={cat.id} className="card" style={{ marginBottom: '1rem' }}>
+        <div key={cat.id} className="card">
           <h3 className="section-title">
             <span style={{ marginRight: '0.5rem' }}>{cat.icon}</span>
             {cat.label}
           </h3>
-          <div className="checklist-items" style={{ marginTop: '0.5rem' }}>
+          <div className="form" style={{ marginTop: '0.5rem' }}>
             {items
               .filter(item => item.category === cat.id)
               .map(item => (
-                <div key={item.id} className="checklist-row" style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '0.5rem 0',
-                  borderBottom: '1px solid var(--border-color, #eee)'
-                }}>
-                  <label className="field-check" style={{ margin: 0, flex: 1 }}>
-                    <input
-                      type="checkbox"
-                      checked={item.checked}
-                      onChange={() => toggleItem(item.id)}
-                    />
-                    <span style={{
-                      textDecoration: item.checked ? 'line-through' : 'none',
-                      opacity: item.checked ? 0.6 : 1,
-                      transition: 'all 0.2s'
-                    }}>
-                      {item.label}
-                    </span>
-                  </label>
-                  <button
-                    onClick={() => removeItem(item.id)}
-                    className="btn-delete-item"
-                    aria-label="Supprimer"
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#ff4444',
-                      fontSize: '1.2rem',
-                      cursor: 'pointer',
-                      padding: '0 0.5rem'
-                    }}
-                  >
-                    ×
-                  </button>
-                </div>
+                <label key={item.id} className="field-check">
+                  <input
+                    type="checkbox"
+                    checked={item.checked}
+                    onChange={() => toggleItem(item.id)}
+                  />
+                  <span>{getChecklistLabel(language, item.id)}</span>
+                </label>
               ))}
-            {items.filter(item => item.category === cat.id).length === 0 && (
-              <p className="hint" style={{ padding: '0.5rem 0' }}>Aucun élément dans cette catégorie.</p>
-            )}
           </div>
         </div>
       ))}
@@ -195,18 +132,16 @@ export function ChecklistView() {
         className="card panel panel-cta"
         style={{ textAlign: 'center', marginTop: '1rem' }}
       >
-        <p className="cta-hint">
-          Cette liste est enregistrée localement sur votre téléphone.
-        </p>
+        <p className="cta-hint">{t(language, 'checklist.savedLocal')}</p>
         <button
           className="btn btn-secondary btn-small"
           onClick={() => {
-            if (confirm('Réinitialiser la liste ?')) {
+            if (confirm(t(language, 'checklist.confirmReset'))) {
               setItems(DEFAULT_ITEMS);
             }
           }}
         >
-          Réinitialiser la liste
+          {t(language, 'checklist.reset')}
         </button>
       </div>
     </ViewLayout>

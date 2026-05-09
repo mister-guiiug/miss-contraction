@@ -7,6 +7,7 @@ import {
 import type { ContractionRecord, AppSettings } from './storage';
 
 const defaultSettings: AppSettings = {
+  language: 'fr',
   maxIntervalMin: 5,
   minDurationSec: 45,
   consecutiveCount: 3,

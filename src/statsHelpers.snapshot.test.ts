@@ -22,6 +22,7 @@ import {
 // ============================================================
 
 const DEFAULT_SETTINGS: AppSettings = {
+  language: 'fr',
   maxIntervalMin: 5,
   minDurationSec: 45,
   consecutiveCount: 3,

@@ -15,6 +15,7 @@ import {
   formatContractionsPerHour,
 } from '../../utils/formatStats';
 import { formatDuration } from '../../utils/formatDuration';
+import { useNow } from './useNow';
 
 interface StatsData {
   qtyPerHour: string;
@@ -43,6 +44,7 @@ export function useStats(
   records: ContractionRecord[],
   settings: AppSettings
 ): StatsReturn {
+  const now = useNow(1000);
   const {
     avgDuration,
     avgFrequency,
@@ -58,7 +60,6 @@ export function useStats(
     humanSummary,
     windowLabel,
   } = useMemo(() => {
-    const now = Date.now();
     const allValid = records.filter(r => r.end > r.start);
     const sorted = [...allValid].sort((a, b) => a.start - b.start);
     const done = filterRecordsByStatsWindow(
@@ -162,7 +163,7 @@ export function useStats(
       windowLabel,
       isEmpty,
     };
-  }, [records, settings]);
+  }, [now, records, settings]);
 
   return {
     data: {
