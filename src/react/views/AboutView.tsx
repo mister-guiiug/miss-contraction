@@ -3,10 +3,10 @@ import { ViewLayout } from '../components/layout/ViewLayout';
 import { forceSwUpdate } from '../../register-sw';
 import { useAppStore } from '../store/useAppStore';
 import { t } from '../../i18n';
+import { appVersion } from '../../appVersion';
 
 const REPO_URL = 'https://github.com/mister-guiiug/miss-contraction';
 const COFFEE_URL = 'https://buymeacoffee.com/mister.guiiug';
-const APP_VERSION = __APP_VERSION__;
 
 function IconRefresh({ spinning }: { spinning: boolean }) {
   return (
@@ -155,7 +155,9 @@ export function AboutView() {
           </div>
           <div className="about-hero__body">
             <span className="about-hero__name">Miss Contraction</span>
-            <span className="about-hero__version">v{APP_VERSION}</span>
+            <span className="about-hero__version">
+              {appVersion.deploymentVersion}
+            </span>
           </div>
         </div>
 
@@ -195,9 +197,11 @@ export function AboutView() {
             {t(language, 'about.versionDeployed')}
           </h3>
           <p className="about-version">
-            <span className="about-version__tag">v{APP_VERSION}</span>
+            <span className="about-version__tag">
+              {appVersion.deploymentVersion}
+            </span>
             <span className="about-version__note">
-              {t(language, 'about.hostedOn')}
+              Build {appVersion.shortBuildId} · {t(language, 'about.hostedOn')}
               <a
                 href="https://mister-guiiug.github.io/miss-contraction/"
                 target="_blank"

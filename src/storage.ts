@@ -103,6 +103,16 @@ export function loadSettings(): AppSettings {
     const raw = localStorage.getItem(KEY_SETTINGS);
     if (!raw) return { ...defaultSettings };
     const o = JSON.parse(raw) as Partial<AppSettings>;
+    const moduleVoiceCommands =
+      typeof o.moduleVoiceCommands === 'boolean'
+        ? o.moduleVoiceCommands
+        : defaultSettings.moduleVoiceCommands;
+
+    const voiceCommandsEnabled =
+      moduleVoiceCommands && typeof o.voiceCommandsEnabled === 'boolean'
+        ? o.voiceCommandsEnabled
+        : false;
+
     return {
       language: isSupportedLanguage(o.language)
         ? o.language
@@ -165,14 +175,8 @@ export function loadSettings(): AppSettings {
         typeof o.voiceAnnounceDuration === 'boolean'
           ? o.voiceAnnounceDuration
           : defaultSettings.voiceAnnounceDuration,
-      voiceCommandsEnabled:
-        typeof o.voiceCommandsEnabled === 'boolean'
-          ? o.voiceCommandsEnabled
-          : defaultSettings.voiceCommandsEnabled,
-      moduleVoiceCommands:
-        typeof o.moduleVoiceCommands === 'boolean'
-          ? o.moduleVoiceCommands
-          : defaultSettings.moduleVoiceCommands,
+      voiceCommandsEnabled,
+      moduleVoiceCommands,
       moduleMaternityMessage:
         typeof o.moduleMaternityMessage === 'boolean'
           ? o.moduleMaternityMessage

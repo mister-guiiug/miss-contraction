@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAppStore } from '../../store/useAppStore';
 import { t } from '../../../i18n';
+import { appVersion } from '../../../appVersion';
 
 export function AppFooter() {
   const language = useAppStore(state => state.settings.language);
@@ -33,6 +34,9 @@ export function AppFooter() {
           ☕ {t(language, 'footer.coffee')}
         </a>
       </div>
+      <p className="footer__version" data-testid="footer-version">
+        {appVersion.deploymentVersion}
+      </p>
     </footer>
   );
 }

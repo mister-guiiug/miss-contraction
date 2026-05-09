@@ -55,6 +55,20 @@ describe('loadSettings', () => {
     const s = loadSettings();
     expect(s.maxIntervalMin).toBe(5);
   });
+
+  it('force voiceCommandsEnabled à false quand moduleVoiceCommands est false', () => {
+    localStorage.setItem(
+      'mc_settings_v1',
+      JSON.stringify({
+        moduleVoiceCommands: false,
+        voiceCommandsEnabled: true,
+      })
+    );
+
+    const s = loadSettings();
+    expect(s.moduleVoiceCommands).toBe(false);
+    expect(s.voiceCommandsEnabled).toBe(false);
+  });
 });
 
 describe('saveSettings / loadSettings (aller-retour)', () => {

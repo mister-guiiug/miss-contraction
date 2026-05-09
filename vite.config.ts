@@ -27,6 +27,15 @@ export default defineConfig(({ command }) => {
     process.env.NETLIFY === 'true' ||
     process.env.NETLIFY_BUILD_BASE !== undefined;
   const isReactPreview = process.env.REACT_PREVIEW === '1';
+  const buildId =
+    process.env.DEPLOY_ID ||
+    process.env.NETLIFY_BUILD_ID ||
+    process.env.GITHUB_RUN_ID ||
+    process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ||
+    process.env.COMMIT_REF?.slice(0, 7) ||
+    process.env.GITHUB_SHA?.slice(0, 7) ||
+    (command === 'build' ? String(Date.now()) : 'dev');
+  const deploymentVersion = `${version}+${buildId}`;
 
   // Base path selon l'environnement
   let basePath = '/';
@@ -47,6 +56,8 @@ export default defineConfig(({ command }) => {
     base: basePath,
     define: {
       __APP_VERSION__: JSON.stringify(version),
+      __APP_BUILD_ID__: JSON.stringify(buildId),
+      __APP_DEPLOYMENT_VERSION__: JSON.stringify(deploymentVersion),
     },
     build: {
       sourcemap: true,

@@ -2,6 +2,8 @@
 /// <reference types="vite-plugin-pwa/client" />
 
 declare const __APP_VERSION__: string;
+declare const __APP_BUILD_ID__: string;
+declare const __APP_DEPLOYMENT_VERSION__: string;
 
 /** Wake Lock (écran) — optionnel selon navigateur. */
 interface WakeLockSentinel extends EventTarget {
