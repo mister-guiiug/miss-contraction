@@ -36,8 +36,8 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
 
-    // Accessibilité
-    reducedMotion: 'reduce', // Respecter les préférences utilisateur
+    // Accessibilité — reducedMotion est dans BrowserContextOptions (pas PlaywrightTestOptions)
+    contextOptions: { reducedMotion: 'reduce' },
   },
 
   projects: [
