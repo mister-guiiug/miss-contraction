@@ -51,7 +51,7 @@ export class TablePage {
     await deleteBtn.click();
 
     // Gérer la confirmation
-    this.page.once('dialog', (dialog) => {
+    this.page.once('dialog', dialog => {
       dialog.accept();
     });
 

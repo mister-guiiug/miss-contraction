@@ -15,7 +15,7 @@ test.describe('Gestion d’erreurs - API manquantes', () => {
     });
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
@@ -23,7 +23,7 @@ test.describe('Gestion d’erreurs - API manquantes', () => {
     const btn = page.locator('[data-testid="toggle-contraction-btn"]');
     await expect(btn).toBeVisible();
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
@@ -33,7 +33,7 @@ test.describe('Gestion d’erreurs - API manquantes', () => {
     });
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
@@ -44,7 +44,7 @@ test.describe('Gestion d’erreurs - API manquantes', () => {
     await page.waitForTimeout(300);
     await btn.click();
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
@@ -54,7 +54,7 @@ test.describe('Gestion d’erreurs - API manquantes', () => {
     });
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
@@ -64,7 +64,7 @@ test.describe('Gestion d’erreurs - API manquantes', () => {
     await page.waitForTimeout(300);
     await btn.click();
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
@@ -74,7 +74,7 @@ test.describe('Gestion d’erreurs - API manquantes', () => {
     });
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     await page.goto(ROUTES.MESSAGE);
     await page.waitForLoadState('networkidle');
@@ -86,7 +86,7 @@ test.describe('Gestion d’erreurs - API manquantes', () => {
     await page.waitForTimeout(300);
 
     // Le feedback d'erreur doit s'afficher proprement (pas de crash)
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 });
@@ -114,7 +114,7 @@ test.describe('Gestion d’erreurs - localStorage indisponible', () => {
     });
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
@@ -130,7 +130,7 @@ test.describe('Gestion d’erreurs - Routes invalides', () => {
     page,
   }) => {
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     await page.goto('/route-qui-nexiste-pas');
     await page.waitForLoadState('domcontentloaded');
@@ -139,7 +139,7 @@ test.describe('Gestion d’erreurs - Routes invalides', () => {
     const body = page.locator('body');
     await expect(body).not.toBeEmpty();
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
@@ -203,12 +203,12 @@ test.describe('Gestion d’erreurs - Valeurs limites dans les formulaires', () =
     );
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
@@ -228,12 +228,12 @@ test.describe('Gestion d’erreurs - Valeurs limites dans les formulaires', () =
     );
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
 
     // L'historique doit toujours s'afficher

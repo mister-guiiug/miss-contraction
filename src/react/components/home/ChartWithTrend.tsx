@@ -20,7 +20,7 @@ export function ChartWithTrend({ thresholdMinutes = 5 }: ChartWithTrendProps) {
         ? Infinity
         : Number(settings.statsWindowMinutes) * 60 * 1000;
 
-    const filtered = records.filter((r) => now - r.start <= windowMs);
+    const filtered = records.filter(r => now - r.start <= windowMs);
 
     // Prendre les 10 derniers pour le graphique
     const recent = filtered.slice(-10);

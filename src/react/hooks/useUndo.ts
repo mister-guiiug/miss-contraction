@@ -47,7 +47,7 @@ export function useUndo(onUndo: (recordId: string) => void) {
       // Mise à jour chaque seconde
       timerRef.current = setInterval(() => {
         remaining -= 1;
-        setUndoState((prev) => ({ ...prev, remainingTime: remaining }));
+        setUndoState(prev => ({ ...prev, remainingTime: remaining }));
       }, 1000);
 
       // Masquer après 30s

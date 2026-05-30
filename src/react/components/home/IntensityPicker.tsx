@@ -20,7 +20,6 @@ export function IntensityPicker({
 }: IntensityPickerProps) {
   const [hovered, setHovered] = useState<number | null>(null);
 
-
   const handleSelect = useCallback(
     (level: number) => {
       if (!disabled) {

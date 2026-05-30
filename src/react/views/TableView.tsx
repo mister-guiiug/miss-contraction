@@ -47,7 +47,7 @@ export function TableView() {
   // Filtrer et trier les records valides
   const validRecords = useMemo(() => {
     return [...records]
-      .filter((r) => r.end > r.start)
+      .filter(r => r.end > r.start)
       .sort((a, b) => a.start - b.start);
   }, [records]);
 
@@ -116,7 +116,7 @@ export function TableView() {
                 </tr>
               </thead>
               <tbody>
-                {tableData.map((row) => (
+                {tableData.map(row => (
                   <tr key={row.id} data-testid={`table-row-${row.id}`}>
                     <th scope="row">{row.index}</th>
                     <td data-testid="table-cell-date">
