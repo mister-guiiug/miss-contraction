@@ -1,15 +1,3 @@
-import { defineConfig } from 'eslint/config';
-import baseConfig from '@mister-guiiug/dev-wpa-config/eslint-react';
-
-const sharedConfig = Array.isArray(baseConfig) ? baseConfig : [baseConfig];
-
-export default defineConfig([
-  ...sharedConfig,
-  {
-    files: ['e2e/**/*.{ts,tsx}'],
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
-    },
-  },
-]);
+// L'override e2e/** (no-explicit-any + no-unused-vars off) est intégré à la
+// config partagée depuis dev-wpa-config 1.3.0 — simple réexport ici.
+export { default } from '@mister-guiiug/dev-wpa-config/eslint-react';
