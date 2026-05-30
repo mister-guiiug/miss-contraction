@@ -208,7 +208,7 @@ test.describe('Performance', () => {
       return performance.getEntriesByType('paint');
     });
 
-    const fcp = metrics.find((m) => m.name === 'first-contentful-paint');
+    const fcp = metrics.find(m => m.name === 'first-contentful-paint');
     if (fcp) {
       expect(fcp.startTime).toBeLessThan(2500);
     }
@@ -218,7 +218,7 @@ test.describe('Performance', () => {
     await page.goto('/', { waitUntil: 'networkidle' });
 
     const resourceSizes = await page.evaluate(() => {
-      return performance.getEntriesByType('resource').map((r) => ({
+      return performance.getEntriesByType('resource').map(r => ({
         name: r.name,
         size: r.transferSize,
       }));
@@ -262,7 +262,7 @@ test.describe('Stabilité & Robustesse', () => {
 
   test("pas d'erreurs JavaScript à la page", async ({ page }) => {
     const errors: string[] = [];
-    page.on('pageerror', (error) => {
+    page.on('pageerror', error => {
       errors.push(error.message);
     });
 
@@ -274,7 +274,7 @@ test.describe('Stabilité & Robustesse', () => {
 
   test("pas d'erreurs réseau non gérées", async ({ page }) => {
     const failedRequests: string[] = [];
-    page.on('requestfailed', (request) => {
+    page.on('requestfailed', request => {
       // Ignorer les erreurs prévisibles (e.g., 404 des assets optionnels)
       if (!request.url().includes('.map')) {
         failedRequests.push(request.url());

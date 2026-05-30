@@ -215,7 +215,7 @@ test.describe('SettingsView - Paramètres', () => {
       // Vérifier que les styles changent
       const hasClass = await page
         .locator('html')
-        .evaluate((el) => el.classList.contains('mc-large-mode'));
+        .evaluate(el => el.classList.contains('mc-large-mode'));
       expect(hasClass).toBe(checkedAfter);
     }
   });
@@ -282,7 +282,7 @@ test.describe('SettingsView - Paramètres', () => {
       .first();
     if (await deleteButton.isVisible({ timeout: 500 }).catch(() => false)) {
       // Évaluer pour catcher la dialog
-      page.once('dialog', (dialog) => {
+      page.once('dialog', dialog => {
         expect(dialog.type()).toBe('confirm');
         dialog.dismiss();
       });

@@ -43,7 +43,10 @@ export function useRestTimer(
       return;
     }
 
-    if (pauseStartedAtRef.current !== null && effectiveStartRef.current !== null) {
+    if (
+      pauseStartedAtRef.current !== null &&
+      effectiveStartRef.current !== null
+    ) {
       // Décale le point de départ pour ne pas compter le temps passé en pause.
       effectiveStartRef.current += Date.now() - pauseStartedAtRef.current;
       pauseStartedAtRef.current = null;
@@ -54,7 +57,9 @@ export function useRestTimer(
         setSeconds(0);
         return;
       }
-      const elapsed = Math.floor((Date.now() - effectiveStartRef.current) / 1000);
+      const elapsed = Math.floor(
+        (Date.now() - effectiveStartRef.current) / 1000
+      );
       setSeconds(Math.max(0, elapsed));
     };
 

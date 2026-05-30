@@ -56,7 +56,7 @@ test.describe('Charge - Volume de contractions', () => {
     );
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     const start = Date.now();
     await page.reload();
@@ -69,7 +69,7 @@ test.describe('Charge - Volume de contractions', () => {
     const btn = page.locator('[data-testid="toggle-contraction-btn"]');
     await expect(btn).toBeVisible({ timeout: 3000 });
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
@@ -87,7 +87,7 @@ test.describe('Charge - Volume de contractions', () => {
     );
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     const start = Date.now();
     await page.reload();
@@ -99,7 +99,7 @@ test.describe('Charge - Volume de contractions', () => {
       page.locator('[data-testid="contractions-table"]')
     ).toBeVisible({ timeout: 5000 });
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 });
@@ -114,7 +114,7 @@ test.describe('Stress - Actions rapides', () => {
 
   test('@stress 10 contractions rapides successives', async ({ page }) => {
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     const btn = page.locator('[data-testid="toggle-contraction-btn"]');
     await expect(btn).toBeVisible();
@@ -137,7 +137,7 @@ test.describe('Stress - Actions rapides', () => {
     const validRecords = (records as any[]).filter((r: any) => r.end > r.start);
     expect(validRecords.length).toBeGreaterThanOrEqual(8); // tolérance 20%
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
@@ -158,10 +158,10 @@ test.describe('Stress - Actions rapides', () => {
     const timerDisplay = page.locator('[data-testid="timer-display"]');
     // Peu importe l'état final, il ne doit pas y avoir d'erreur
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
     await page.waitForTimeout(200);
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
@@ -180,7 +180,7 @@ test.describe('Stress - Actions rapides', () => {
     );
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     const routes = [
       ROUTES.HOME,
@@ -198,7 +198,7 @@ test.describe('Stress - Actions rapides', () => {
       }
     }
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 });
@@ -211,7 +211,7 @@ test.describe('Stress - Formulaires', () => {
     await page.waitForLoadState('networkidle');
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     const saveBtn = page.locator('[data-testid="settings-save-btn"]');
 
@@ -223,7 +223,7 @@ test.describe('Stress - Formulaires', () => {
       await page.waitForTimeout(200);
     }
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
 
     // La dernière valeur doit être persistée
@@ -238,7 +238,7 @@ test.describe('Stress - Formulaires', () => {
     page,
   }) => {
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     const now = Date.now();
     const longNote = 'L'.repeat(500);
@@ -258,7 +258,7 @@ test.describe('Stress - Formulaires', () => {
 
     await expect(page.locator('[data-testid="history-items"]')).toBeVisible();
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 });
@@ -271,7 +271,7 @@ test.describe('Charge - Messages et message view', () => {
     await page.waitForLoadState('networkidle');
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     const textarea = page.locator('[data-testid="message-textarea"]');
     const longMessage = 'M'.repeat(1000);
@@ -281,7 +281,7 @@ test.describe('Charge - Messages et message view', () => {
     // L'interface reste stable
     await expect(textarea).toBeVisible();
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 
@@ -292,7 +292,7 @@ test.describe('Charge - Messages et message view', () => {
     await page.waitForLoadState('networkidle');
 
     const errors: string[] = [];
-    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('pageerror', e => errors.push(e.message));
 
     const textarea = page.locator('[data-testid="message-textarea"]');
     const resetBtn = page.locator('[data-testid="message-reset-btn"]');
@@ -306,7 +306,7 @@ test.describe('Charge - Messages et message view', () => {
       }
     }
 
-    const criticalErrors = errors.filter((e) => !e.includes('ResizeObserver'));
+    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
   });
 });

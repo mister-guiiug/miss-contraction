@@ -76,7 +76,7 @@ export function SettingsView() {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
 
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...(name === 'moduleVoiceCommands' && !checked
         ? { ...prev, moduleVoiceCommands: false, voiceCommandsEnabled: false }
         : {

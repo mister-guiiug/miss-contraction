@@ -21,7 +21,7 @@ test.describe('Snapshots Visuels - Régression Design', () => {
     // Masquer les éléments volatiles (timer en cours)
     await page
       .locator('[data-testid="volatile"]')
-      .evaluate((els) => {
+      .evaluate(els => {
         els.forEach((el: Element) => {
           (el as HTMLElement).style.opacity = '0.5';
         });

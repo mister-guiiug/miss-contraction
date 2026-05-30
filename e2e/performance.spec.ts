@@ -31,7 +31,7 @@ test.describe('Performance - Chargement initial', () => {
 
   test('@performance DOMContentLoaded < 2.5s', async ({ page }) => {
     const navigationMetrics = await page.evaluate(async () => {
-      await new Promise<void>((resolve) => {
+      await new Promise<void>(resolve => {
         if (document.readyState === 'complete') resolve();
         else window.addEventListener('load', () => resolve());
       });
@@ -197,7 +197,7 @@ test.describe('Performance - Métriques Web Vitals', () => {
     // Activer l'observer CLS avant le clic
     await page.evaluate(() => {
       (window as any).__clsValue = 0;
-      const observer = new PerformanceObserver((list) => {
+      const observer = new PerformanceObserver(list => {
         for (const entry of list.getEntries()) {
           if (!(entry as any).hadRecentInput) {
             (window as any).__clsValue += (entry as any).value;
@@ -224,7 +224,7 @@ test.describe('Performance - Métriques Web Vitals', () => {
 
     const fcp = await page.evaluate(() => {
       const entries = performance.getEntriesByType('paint');
-      const fcpEntry = entries.find((e) => e.name === 'first-contentful-paint');
+      const fcpEntry = entries.find(e => e.name === 'first-contentful-paint');
       return fcpEntry ? fcpEntry.startTime : null;
     });
 
@@ -271,7 +271,7 @@ test.describe('Performance - Réseau et ressources', () => {
   test('@performance pas de ressource bloquante > 200ms', async ({ page }) => {
     const slowResources: { url: string; duration: number }[] = [];
 
-    page.on('requestfinished', async (request) => {
+    page.on('requestfinished', async request => {
       const timing = request.timing();
       if (
         timing &&
