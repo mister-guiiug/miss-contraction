@@ -89,7 +89,7 @@ test.describe('Export & Import', () => {
       const jsonData = JSON.stringify(originalData);
 
       // Simuler l'import
-      await page.evaluate((json) => {
+      await page.evaluate(json => {
         const data = JSON.parse(json);
         if (data.records)
           localStorage.setItem('mc_records', JSON.stringify(data.records));

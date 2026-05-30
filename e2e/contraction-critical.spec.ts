@@ -67,7 +67,7 @@ test.describe('miss-contraction - Fonctionnalités critiques', () => {
     for (const button of buttons) {
       if (await button.isVisible()) {
         const hasLabel = await button.evaluate(
-          (el) =>
+          el =>
             el.hasAttribute('aria-label') ||
             el.hasAttribute('aria-labelledby') ||
             !!el.textContent?.trim()
@@ -180,7 +180,7 @@ test.describe('miss-contraction - Fonctionnalités critiques', () => {
 
   test('gestion des erreurs - pas de crash JS', async ({ page }) => {
     const errors: string[] = [];
-    page.on('pageerror', (error) => errors.push(error.toString()));
+    page.on('pageerror', error => errors.push(error.toString()));
 
     await page.goto('/');
     await page.waitForLoadState('networkidle');

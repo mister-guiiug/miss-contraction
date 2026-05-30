@@ -25,7 +25,7 @@ export function ThresholdBadge() {
         ? Infinity
         : Number(settings.statsWindowMinutes) * 60 * 1000;
 
-    const filtered = records.filter((r) => now - r.start <= windowMs);
+    const filtered = records.filter(r => now - r.start <= windowMs);
 
     // Vérifier les contractions consécutives sous le seuil
     let consecutiveCount = 0;

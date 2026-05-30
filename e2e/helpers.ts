@@ -197,7 +197,7 @@ export async function verifyLocalStoragePersistence(
   key: string,
   expectedValue: any
 ) {
-  const value = await page.evaluate((k) => {
+  const value = await page.evaluate(k => {
     const stored = localStorage.getItem(k);
     return stored ? JSON.parse(stored) : null;
   }, key);
@@ -208,7 +208,7 @@ export async function verifyLocalStoragePersistence(
   await page.reload();
   await waitForPageReady(page);
 
-  const reloadedValue = await page.evaluate((k) => {
+  const reloadedValue = await page.evaluate(k => {
     const stored = localStorage.getItem(k);
     return stored ? JSON.parse(stored) : null;
   }, key);
