@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.8.0",
-    "@mister-guiiug/dev-wpa-config": "^1.2.0",
+    "@mister-guiiug/dev-wpa-config": "^1.3.1",
     "@playwright/test": "^1.49.1",
     "@sentry/vite-plugin": "^2.22.6",
     "@tailwindcss/vite": "^4.2.2",
