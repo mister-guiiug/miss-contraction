@@ -1,0 +1,73 @@
+# Nettoyage manuel de l'historique GitHub Actions de ce dépôt.
+# Ne conserve que les N runs les plus récents PAR workflow (défaut 3).
+# Actions → « Cleanup workflow runs » → « Run workflow ».
+name: Cleanup workflow runs
+
+on:
+  workflow_dispatch:
+    inputs:
+      keep:
+        description: 'Nombre de runs à conserver par workflow'
+        type: string
+        default: '3'
+      dry-run:
+        description: 'Lister sans supprimer'
+        type: boolean
+        default: false
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: cleanup-runs-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prune old workflow runs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const keep = Math.max(1, parseInt(`${{ inputs.keep }}`, 10) || 3);
+            const dryRun = `${{ inputs.dry-run }}` === 'true';
+            const { owner, repo } = context.repo;
+
+            const runs = await github.paginate(
+              github.rest.actions.listWorkflowRunsForRepo,
+              { owner, repo, per_page: 100 }
+            );
+
+            const byWorkflow = new Map();
+            for (const run of runs) {
+              const list = byWorkflow.get(run.workflow_id) ?? [];
+              list.push(run);
+              byWorkflow.set(run.workflow_id, list);
+            }
+
+            let deleted = 0;
+            let kept = 0;
+            for (const list of byWorkflow.values()) {
+              list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+              kept += Math.min(keep, list.length);
+              for (const run of list.slice(keep)) {
+                if (run.status !== 'completed') continue;
+                if (dryRun) {
+                  core.info(`[dry-run] supprimerait #${run.run_number} ${run.name} (${run.id})`);
+                  deleted++;
+                  continue;
+                }
+                try {
+                  await github.rest.actions.deleteWorkflowRun({ owner, repo, run_id: run.id });
+                  deleted++;
+                } catch (e) {
+                  core.warning(`Run ${run.id} non supprimé : ${e.message}`);
+                }
+              }
+            }
+            core.notice(
+              `${dryRun ? '[dry-run] ' : ''}Conservés ~${kept} (≤${keep}/workflow), ` +
+                `${dryRun ? 'à supprimer' : 'supprimés'} : ${deleted}.`
+            );
