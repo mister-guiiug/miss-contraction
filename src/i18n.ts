@@ -79,6 +79,10 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'about.sourceText':
       'Projet open-source sous licence MIT, hébergé sur GitHub.',
     'about.supportTitle': 'Soutenir le projet',
+    'about.otherAppsTitle': 'Nos autres applications',
+    'about.maturityAlpha': 'Alpha',
+    'about.maturityBeta': 'Bêta',
+    'about.maturityStable': 'Stable',
     'about.storyTitle': 'Pourquoi Miss Contraction ?',
     'about.storyIntro': "Miss Contraction est née d'un besoin réel.",
     'about.storySisterPregnancy':
@@ -297,6 +301,10 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'about.sourceTitle': 'Source code',
     'about.sourceText': 'Open-source MIT project hosted on GitHub.',
     'about.supportTitle': 'Support the project',
+    'about.otherAppsTitle': 'Our other apps',
+    'about.maturityAlpha': 'Alpha',
+    'about.maturityBeta': 'Beta',
+    'about.maturityStable': 'Stable',
     'about.storyTitle': 'Why Miss Contraction?',
     'about.storyIntro': 'Miss Contraction was born from a real need.',
     'about.storySisterPregnancy':
