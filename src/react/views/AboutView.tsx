@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FamilyApps } from '@mister-guiiug/dev-wpa-config/react';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { forceSwUpdate } from '../../register-sw';
 import { useAppStore } from '../store/useAppStore';
@@ -274,6 +275,22 @@ export function AboutView() {
             </span>
           </a>
         </section>
+
+        {/* Nos autres applications */}
+        <FamilyApps
+          className="about-section about-family"
+          currentAppId="miss-contraction"
+          showSource={false}
+          showSponsor={false}
+          labels={{
+            otherApps: t(language, 'about.otherAppsTitle'),
+            maturity: {
+              alpha: t(language, 'about.maturityAlpha'),
+              beta: t(language, 'about.maturityBeta'),
+              stable: t(language, 'about.maturityStable'),
+            },
+          }}
+        />
 
         {/* PWA */}
         <section className="about-section" aria-labelledby="about-pwa-lbl">
