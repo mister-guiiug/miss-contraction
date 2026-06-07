@@ -37,9 +37,12 @@ export default defineConfig(({ command }) => {
     (command === 'build' ? String(Date.now()) : 'dev');
   const deploymentVersion = `${version}+${buildId}`;
 
-  // Base path selon l'environnement
+  // Base path selon l'environnement. `VITE_BASE_PATH` (défini par le déploiement
+  // famille et par la CI Lighthouse avec « / ») est prioritaire sur la détection.
   let basePath = '/';
-  if (command === 'build') {
+  if (process.env.VITE_BASE_PATH) {
+    basePath = process.env.VITE_BASE_PATH;
+  } else if (command === 'build') {
     if (isNetlify) {
       // Netlify : déploiement à la racine
       basePath = '/';
