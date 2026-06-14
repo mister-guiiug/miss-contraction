@@ -88,8 +88,9 @@ export function Banners() {
     } else {
       // Mise à jour du compteur sans afficher la bannière (suppression ou modification)
       lastCountRef.current = records.length;
-      if (records.length > 0) {
-        lastRecordIdRef.current = records[records.length - 1].id;
+      const lastRecord = records[records.length - 1];
+      if (lastRecord) {
+        lastRecordIdRef.current = lastRecord.id;
       }
     }
   }, [records]);

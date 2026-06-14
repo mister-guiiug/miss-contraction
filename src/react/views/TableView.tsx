@@ -54,8 +54,8 @@ export function TableView() {
   // Calculer les intervalles et fréquences pour chaque ligne
   const tableData = useMemo(() => {
     return validRecords.map((record, index) => {
-      const intervalMs =
-        index > 0 ? record.start - validRecords[index - 1].start : null;
+      const prev = validRecords[index - 1];
+      const intervalMs = index > 0 && prev ? record.start - prev.start : null;
       const intervalStr = intervalMs != null ? formatDuration(intervalMs) : '—';
       const freqStr =
         intervalMs != null && intervalMs > 0
