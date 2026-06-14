@@ -25,30 +25,34 @@ export function ChartWithTrend({ thresholdMinutes = 5 }: ChartWithTrendProps) {
     // Prendre les 10 derniers pour le graphique
     const recent = filtered.slice(-10);
 
-    // Calculer les intervalles (en minutes)
-    const intervals: number[] = [];
+    // Paires (intervalle avec la précédente + contraction courante).
+    const pairs: { interval: number; record: (typeof recent)[number] }[] = [];
     for (let i = 1; i < recent.length; i++) {
-      const interval = (recent[i].start - recent[i - 1].start) / 1000 / 60;
-      intervals.push(interval);
+      const cur = recent[i];
+      const prev = recent[i - 1];
+      if (!cur || !prev) continue;
+      pairs.push({
+        interval: (cur.start - prev.start) / 1000 / 60,
+        record: cur,
+      });
     }
 
     // Trouver le max pour l'échelle
-    const maxInterval = Math.max(...intervals, thresholdMinutes * 1.5);
+    const maxInterval = Math.max(
+      ...pairs.map(p => p.interval),
+      thresholdMinutes * 1.5
+    );
 
     // Générer les barres
-    const bars = intervals.map((interval, i) => {
-      const heightPercent = (interval / maxInterval) * 100;
-      const time = new Date(recent[i + 1].start).toLocaleTimeString('fr-FR', {
+    const bars = pairs.map(({ interval, record }) => ({
+      interval,
+      heightPercent: (interval / maxInterval) * 100,
+      time: new Date(record.start).toLocaleTimeString('fr-FR', {
         hour: '2-digit',
         minute: '2-digit',
-      });
-      return {
-        interval,
-        heightPercent,
-        time,
-        intensity: recent[i + 1].intensity,
-      };
-    });
+      }),
+      intensity: record.intensity,
+    }));
 
     // Générer le chemin SVG de tendance (courbe de Bézier lissée)
     let trendPath = '';
@@ -63,16 +67,19 @@ export function ChartWithTrend({ thresholdMinutes = 5 }: ChartWithTrendProps) {
       }));
 
       // Créer une courbe de Bézier lissée
-      trendPath = `M ${points[0].x} ${points[0].y}`;
-
-      for (let i = 0; i < points.length - 1; i++) {
-        const p0 = points[i];
-        const p1 = points[i + 1];
-        const cp1x = p0.x + step / 3;
-        const cp1y = p0.y;
-        const cp2x = p1.x - step / 3;
-        const cp2y = p1.y;
-        trendPath += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p1.x} ${p1.y}`;
+      const first = points[0];
+      if (first) {
+        trendPath = `M ${first.x} ${first.y}`;
+        for (let i = 0; i < points.length - 1; i++) {
+          const p0 = points[i];
+          const p1 = points[i + 1];
+          if (!p0 || !p1) continue;
+          const cp1x = p0.x + step / 3;
+          const cp1y = p0.y;
+          const cp2x = p1.x - step / 3;
+          const cp2y = p1.y;
+          trendPath += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p1.x} ${p1.y}`;
+        }
       }
     }
 
@@ -90,6 +97,8 @@ export function ChartWithTrend({ thresholdMinutes = 5 }: ChartWithTrendProps) {
   if (bars.length === 0) {
     return null;
   }
+
+  const lastBar = bars[bars.length - 1];
 
   return (
     <div className="chart-block">
@@ -117,7 +126,7 @@ export function ChartWithTrend({ thresholdMinutes = 5 }: ChartWithTrendProps) {
               <circle
                 className="chart-trend-dot"
                 cx={((bars.length - 1) * 100) / Math.max(bars.length - 1, 1)}
-                cy={100 - bars[bars.length - 1].heightPercent}
+                cy={100 - (lastBar?.heightPercent ?? 0)}
               />
             )}
           </svg>

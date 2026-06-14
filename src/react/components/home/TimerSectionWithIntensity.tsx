@@ -27,8 +27,8 @@ export function TimerSectionWithIntensity({
   const { formatted, progress, isRunning } = useContractionTimer(activeStart);
 
   const lastEnd = useMemo(() => {
-    if (records.length === 0) return null;
-    return records[records.length - 1].end;
+    const last = records[records.length - 1];
+    return last ? last.end : null;
   }, [records]);
 
   const [restStartMs, setRestStartMs] = useState<number | null>(null);

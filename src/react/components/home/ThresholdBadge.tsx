@@ -35,14 +35,16 @@ export function ThresholdBadge() {
     // Parcourir du plus récent au plus ancien
     for (let i = filtered.length - 1; i >= 0; i--) {
       const record = filtered[i];
+      if (!record) continue;
       const durationSec = (record.end - record.start) / 1000;
 
       // Vérifier la durée minimale
       if (durationSec < minDurationSec) continue;
 
       // Vérifier l'intervalle avec la contraction précédente
-      if (i > 0) {
-        const interval = (record.start - filtered[i - 1].start) / 1000;
+      const prev = filtered[i - 1];
+      if (i > 0 && prev) {
+        const interval = (record.start - prev.start) / 1000;
         if (interval > maxIntervalSec) break;
       }
 
