@@ -31,8 +31,18 @@ export function TimerSectionWithIntensity({
     return last ? last.end : null;
   }, [records]);
 
-  const [restStartMs, setRestStartMs] = useState<number | null>(null);
+  const [restStartMs, setRestStartMs] = useState<number | null>(lastEnd);
   const [isRestPaused, setIsRestPaused] = useState(false);
+  // Réinitialise le minuteur de repos quand la dernière contraction change —
+  // pendant le RENDU (pattern « ajuster l'état au rendu » des docs React),
+  // plutôt qu'un setState dans un effect. Entre deux changements, l'utilisateur
+  // garde la main (boutons « Redémarrer » / « Pause »).
+  const [prevLastEnd, setPrevLastEnd] = useState<number | null>(lastEnd);
+  if (prevLastEnd !== lastEnd) {
+    setPrevLastEnd(lastEnd);
+    setRestStartMs(lastEnd);
+    setIsRestPaused(false);
+  }
   const { formatted: restFormatted } = useRestTimer(restStartMs, isRestPaused);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [ripplePosition, setRipplePosition] = useState<{
@@ -44,16 +54,6 @@ export function TimerSectionWithIntensity({
   );
 
   useWakeLock(settings.keepAwakeDuringContraction, isRunning);
-
-  useEffect(() => {
-    if (lastEnd === null) {
-      setRestStartMs(null);
-      setIsRestPaused(false);
-      return;
-    }
-    setRestStartMs(lastEnd);
-    setIsRestPaused(false);
-  }, [lastEnd]);
 
   // Gérer le mode focus pendant contraction
   useEffect(() => {
