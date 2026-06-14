@@ -3573,13 +3573,22 @@ html[data-theme='dark'] .about-link-card--coffee .about-link-card__icon {
 /* Famille — grille « Nos autres applications » (composant partagé FamilyApps).
    Le composant pose des attributs [data-dwc="…"] ; tout est scopé sous
    .about-family pour rester local à la vue À propos. */
+/* La grille partagée fournit son propre titre : on le masque (la vue rend son
+   propre <h3> + une phrase d'intro) et on laisse sa <section> remonter dans la
+   carte « about-section » via display:contents. */
+.about-family [data-dwc='family-apps'] {
+  display: contents;
+}
+
 .about-family [data-dwc='family-apps-title'] {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  display: none;
+}
+
+.about-family__lead {
+  margin: -0.2rem 0 0.1rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
   color: var(--muted);
-  margin: 0;
 }
 
 .about-family [data-dwc='family-app-list'] {
@@ -3603,12 +3612,14 @@ html[data-theme='dark'] .about-link-card--coffee .about-link-card__icon {
   color: var(--text);
   transition:
     background 0.15s,
-    border-color 0.15s;
+    border-color 0.15s,
+    transform 0.15s;
 }
 
 .about-family [data-dwc='family-app']:hover {
   background: rgba(var(--accent-rgb), 0.07);
   border-color: rgba(var(--accent-rgb), 0.3);
+  transform: translateY(-1px);
 }
 
 .about-family [data-dwc='family-app-icon'] {

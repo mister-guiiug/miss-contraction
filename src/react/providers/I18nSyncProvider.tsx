@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import {
   syncLanguageWithI18next,
