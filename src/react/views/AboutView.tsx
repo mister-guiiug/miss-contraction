@@ -276,21 +276,32 @@ export function AboutView() {
           </a>
         </section>
 
-        {/* Nos autres applications */}
-        <FamilyApps
+        {/* Nos autres applications — titre + phrase d'intro maison, la grille
+            partagée fournit la liste (son titre dupliqué est masqué en CSS). */}
+        <section
           className="about-section about-family"
-          currentAppId="miss-contraction"
-          showSource={false}
-          showSponsor={false}
-          labels={{
-            otherApps: t(language, 'about.otherAppsTitle'),
-            maturity: {
-              alpha: t(language, 'about.maturityAlpha'),
-              beta: t(language, 'about.maturityBeta'),
-              stable: t(language, 'about.maturityStable'),
-            },
-          }}
-        />
+          aria-labelledby="about-family-lbl"
+        >
+          <h3 id="about-family-lbl" className="about-section__title">
+            {t(language, 'about.otherAppsTitle')}
+          </h3>
+          <p className="about-family__lead">
+            {t(language, 'about.otherAppsLead')}
+          </p>
+          <FamilyApps
+            currentAppId="miss-contraction"
+            showSource={false}
+            showSponsor={false}
+            labels={{
+              otherApps: t(language, 'about.otherAppsTitle'),
+              maturity: {
+                alpha: t(language, 'about.maturityAlpha'),
+                beta: t(language, 'about.maturityBeta'),
+                stable: t(language, 'about.maturityStable'),
+              },
+            }}
+          />
+        </section>
 
         {/* PWA */}
         <section className="about-section" aria-labelledby="about-pwa-lbl">
