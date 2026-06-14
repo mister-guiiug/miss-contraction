@@ -19,9 +19,10 @@ export function TimelineCompact() {
     if (lastFive.length >= 3) {
       const intervals: number[] = [];
       for (let i = 1; i < lastFive.length; i++) {
-        const interval =
-          (lastFive[i].start - lastFive[i - 1].start) / 1000 / 60;
-        intervals.push(interval);
+        const cur = lastFive[i];
+        const prev = lastFive[i - 1];
+        if (!cur || !prev) continue;
+        intervals.push((cur.start - prev.start) / 1000 / 60);
       }
 
       const avg1 =
