@@ -80,6 +80,8 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
       'Projet open-source sous licence MIT, hébergé sur GitHub.',
     'about.supportTitle': 'Soutenir le projet',
     'about.otherAppsTitle': 'Nos autres applications',
+    'about.otherAppsLead':
+      'D’autres outils simples et gratuits, pensés dans le même esprit — sans compte, sans pub.',
     'about.maturityAlpha': 'Alpha',
     'about.maturityBeta': 'Bêta',
     'about.maturityStable': 'Stable',
@@ -302,6 +304,8 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'about.sourceText': 'Open-source MIT project hosted on GitHub.',
     'about.supportTitle': 'Support the project',
     'about.otherAppsTitle': 'Our other apps',
+    'about.otherAppsLead':
+      'Other simple, free tools built in the same spirit — no account, no ads.',
     'about.maturityAlpha': 'Alpha',
     'about.maturityBeta': 'Beta',
     'about.maturityStable': 'Stable',
