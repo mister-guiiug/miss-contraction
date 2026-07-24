@@ -197,9 +197,9 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
     // (page.evaluate : l'ancien `locator(':visible').evaluate` violait le
     // strict mode Playwright — 178 éléments).
     const hiddenElements = await page.evaluate(() => {
-      return Array.from(
-        document.querySelectorAll('#main-content *')
-      ).filter(el => getComputedStyle(el).visibility === 'hidden').length;
+      return Array.from(document.querySelectorAll('#main-content *')).filter(
+        el => getComputedStyle(el).visibility === 'hidden'
+      ).length;
     });
 
     // Aucun contenu principal ne doit être marqué comme hidden
