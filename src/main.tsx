@@ -4,6 +4,11 @@ import './enhanced-styles.css';
 import './enhanced-ui.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { ErrorBoundary } from '@mister-guiiug/dev-wpa-config/react';
+import {
+  installErrorReporter,
+  recordError,
+} from '@mister-guiiug/dev-wpa-config/react/observability';
 import { applyResolvedTheme, wireSystemThemeListener } from './theme';
 import { registerServiceWorker } from './register-sw';
 import { initWebVitals } from './monitoring/web-vitals';
@@ -11,6 +16,7 @@ import { App } from './react/AppRouter';
 import i18n from './i18n.config'; // Initialiser i18next
 import { detectBrowserLanguage } from './i18n';
 
+installErrorReporter();
 applyResolvedTheme();
 wireSystemThemeListener();
 registerServiceWorker();
@@ -29,7 +35,13 @@ if (rootElement) {
   const root = createRoot(rootElement);
   root.render(
     <StrictMode>
-      <App />
+      <ErrorBoundary
+        onError={error => {
+          recordError(error, { source: 'error-boundary' });
+        }}
+      >
+        <App />
+      </ErrorBoundary>
     </StrictMode>
   );
 }
