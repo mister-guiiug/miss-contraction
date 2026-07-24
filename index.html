@@ -2,6 +2,16 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
+    <!--
+      Content-Security-Policy en défense en profondeur.
+      'unsafe-inline' : script anti-FOUC + snippets GTM/GA4 injectés au build,
+      styles Tailwind/vite-plugin-pwa. Autorisations tierces limitées à
+      Google Fonts (styles/polices) et Google Tag Manager / GA4 (analytics).
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://www.googletagmanager.com https://*.google-analytics.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-src https://www.googletagmanager.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+    />
     <!-- Script anti-FOUC : applique le thème avant tout rendu -->
     <script>
       (function () {
@@ -59,6 +69,33 @@
       name="description"
       content="Comptez la fréquence des contractions et activez une alerte pour la maternité."
     />
+    <link rel="canonical" href="__SEO_HOME_URL__" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Miss Contraction" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:url" content="__SEO_HOME_URL__" />
+    <meta
+      property="og:title"
+      content="Miss Contraction — chronomètre de contractions"
+    />
+    <meta
+      property="og:description"
+      content="Comptez la fréquence des contractions et activez une alerte pour la maternité."
+    />
+    <meta property="og:image" content="__SEO_LOGO_URL__" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta
+      name="twitter:title"
+      content="Miss Contraction — chronomètre de contractions"
+    />
+    <meta
+      name="twitter:description"
+      content="Comptez la fréquence des contractions et recevez une alerte pour la maternité."
+    />
+    <meta name="twitter:image" content="__SEO_LOGO_URL__" />
+
     <title>Miss Contraction</title>
     <link rel="stylesheet" href="/src/styles.css" />
     <link rel="stylesheet" href="/src/enhanced-ui.css" />
