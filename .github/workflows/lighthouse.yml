@@ -12,5 +12,5 @@ permissions:
 
 jobs:
   lighthouse:
-    uses: mister-guiiug/dev-wpa-config/.github/workflows/pwa-lighthouse.yml@v1
+    uses: mister-guiiug/dev-wpa-config/.github/workflows/pwa-lighthouse.yml@v3
     secrets: inherit
