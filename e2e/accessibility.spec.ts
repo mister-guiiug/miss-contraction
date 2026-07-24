@@ -68,20 +68,14 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
   });
 
   test('@a11y @wcag TableView - pas de violations', async ({ page }) => {
-    // Créer quelques contractions d'abord
+    // Créer quelques contractions d'abord. Testid stable : un filtre par
+    // texte (/Début/) matchait aussi la bannière d'accueil, pas le bouton.
     await page.goto(ROUTES.HOME);
-    const startBtn = page
-      .locator('button')
-      .filter({ hasText: /Début|Start/ })
-      .first();
+    const toggleBtn = page.getByTestId('toggle-contraction-btn');
     for (let i = 0; i < 2; i++) {
-      await startBtn.click();
+      await toggleBtn.click(); // démarre
       await page.waitForTimeout(200);
-      const stopBtn = page
-        .locator('button')
-        .filter({ hasText: /Fin|Stop/ })
-        .first();
-      await stopBtn.click();
+      await toggleBtn.click(); // termine
       await page.waitForTimeout(300);
     }
 
@@ -155,8 +149,13 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
       const id = await input.getAttribute('id');
       const ariaLabel = await input.getAttribute('aria-label');
       const ariaLabelledBy = await input.getAttribute('aria-labelledby');
+      // Un <label> englobant est un étiquetage valide (pattern des
+      // checkboxes) — sans ce cas, le test sous-comptait.
+      const wrappedInLabel = await input.evaluate(
+        el => el.closest('label') !== null
+      );
 
-      if (ariaLabel || ariaLabelledBy) {
+      if (ariaLabel || ariaLabelledBy || wrappedInLabel) {
         labeledCount++;
       } else if (id) {
         const label = page.locator(`label[for="${id}"]`);
@@ -194,14 +193,16 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
   test('@a11y contraste - texte suffisamment contrasté', async ({ page }) => {
     await page.goto(ROUTES.HOME);
 
-    // Vérifier que la page n'a pas de "visibility: hidden" sur du contenu important
-    const hiddenElements = await page.locator(':visible').evaluate(() => {
-      return Array.from(document.querySelectorAll('*')).filter(
-        el => getComputedStyle(el).visibility === 'hidden'
-      ).length;
+    // Vérifier que le contenu principal n'a pas de "visibility: hidden"
+    // (page.evaluate : l'ancien `locator(':visible').evaluate` violait le
+    // strict mode Playwright — 178 éléments).
+    const hiddenElements = await page.evaluate(() => {
+      return Array.from(
+        document.querySelectorAll('#main-content *')
+      ).filter(el => getComputedStyle(el).visibility === 'hidden').length;
     });
 
-    // Aucun élément visible ne doit être marqué comme hidden
+    // Aucun contenu principal ne doit être marqué comme hidden
     expect(hiddenElements).toBe(0);
   });
 
@@ -216,8 +217,9 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
       const ariaLabel = await img.getAttribute('aria-label');
       const role = await img.getAttribute('role');
 
-      // Accepter alt, aria-label, ou role="presentation"
-      if (alt || ariaLabel || role === 'presentation') {
+      // Accepter alt (y compris alt="" — image décorative valide),
+      // aria-label, ou role="presentation"
+      if (alt !== null || ariaLabel || role === 'presentation') {
         altCount++;
       }
     }
