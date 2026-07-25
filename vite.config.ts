@@ -335,6 +335,22 @@ export default defineConfig(({ command }) => {
               purpose: 'maskable',
             },
           ],
+          screenshots: [
+            {
+              src: 'screenshots/mobile.png',
+              sizes: '824x1830',
+              type: 'image/png',
+              form_factor: 'narrow',
+              label: 'Écran d’accueil sur mobile',
+            },
+            {
+              src: 'screenshots/wide.png',
+              sizes: '2560x1600',
+              type: 'image/png',
+              form_factor: 'wide',
+              label: 'Écran d’accueil sur ordinateur',
+            },
+          ],
         },
       }),
       ...(analyze
