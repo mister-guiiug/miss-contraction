@@ -424,6 +424,10 @@ export function Shell({ children }: ShellProps) {
         id="app-drawer"
         aria-label={t(language, 'shell.mainMenu')}
         aria-hidden={!isDrawerOpen}
+        // Drawer fermé : `inert` retire aussi ses liens/boutons de l'ordre de
+        // tabulation (axe aria-hidden-focus — un élément aria-hidden ne doit
+        // pas contenir de focusable).
+        inert={!isDrawerOpen}
       >
         <div className="drawer-header">
           <div className="drawer-header-brand">
