@@ -3788,3 +3788,31 @@ html[data-theme='dark'] .about-family [data-maturity='alpha'] {
   margin: 0;
   line-height: 1.45;
 }
+
+/* Écran de secours du composant partagé ErrorBoundary (dev-wpa-config). */
+[data-dwc='error-boundary'] {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  text-align: center;
+  background: var(--bg);
+  color: var(--text);
+}
+
+[data-dwc='error-boundary-title'] {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+[data-dwc='error-boundary-reset'] {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+}

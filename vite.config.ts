@@ -2,6 +2,7 @@ import { defineConfig, type PluginOption } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import { pwaSeoPlugin } from '@mister-guiiug/dev-wpa-config/vite-pwa-base';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { readFileSync } from 'node:fs';
 
@@ -120,6 +121,15 @@ export default defineConfig(({ command }) => {
     plugins: [
       react(),
       tailwindcss(),
+      // SEO partagé famille : canonical via placeholder index.html +
+      // sitemap.xml/robots.txt générés au build. L'analytics reste géré par
+      // le plugin local ci-dessous (GTM + GA4 avec cookie_domain + GSC,
+      // plus riche que l'injection du plugin partagé).
+      pwaSeoPlugin({
+        siteName: 'Miss Contraction',
+        basePath,
+        logoPath: '/icon.svg',
+      }),
       {
         name: 'google-tag-manager',
         transformIndexHtml() {
@@ -212,7 +222,6 @@ export default defineConfig(({ command }) => {
           'icons/icon-192.png',
           'icons/icon-512.png',
           'icons/apple-touch-icon.png',
-          'robots.txt',
         ],
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,svg,png,woff2,webmanifest}'],
@@ -324,6 +333,22 @@ export default defineConfig(({ command }) => {
               sizes: '512x512',
               type: 'image/png',
               purpose: 'maskable',
+            },
+          ],
+          screenshots: [
+            {
+              src: 'screenshots/mobile.png',
+              sizes: '824x1830',
+              type: 'image/png',
+              form_factor: 'narrow',
+              label: 'Écran d’accueil sur mobile',
+            },
+            {
+              src: 'screenshots/wide.png',
+              sizes: '2560x1600',
+              type: 'image/png',
+              form_factor: 'wide',
+              label: 'Écran d’accueil sur ordinateur',
             },
           ],
         },
