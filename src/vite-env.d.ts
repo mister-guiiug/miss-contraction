@@ -13,6 +13,11 @@ declare const __APP_VERSION__: string;
 declare const __APP_BUILD_ID__: string;
 declare const __APP_DEPLOYMENT_VERSION__: string;
 
+/** Google Analytics (gtag) — injecté au build par le plugin GTM local. */
+interface Window {
+  gtag?: (...args: unknown[]) => void;
+}
+
 /** Wake Lock (écran) — optionnel selon navigateur. */
 interface WakeLockSentinel extends EventTarget {
   released: boolean;
