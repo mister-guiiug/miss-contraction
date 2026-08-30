@@ -7,23 +7,17 @@ import { TimerSectionWithIntensity } from './TimerSectionWithIntensity';
  * Usage du verrou d'écran : *quand* miss-contraction demande à garder l'écran
  * allumé — contraction en cours **et** réglage « garder l'écran allumé »
  * activé. La mécanique du verrou appartient au socle
- * (`@mister-guiiug/dev-wpa-config/react/use-wake-lock`).
+ * (`@mister-guiiug/dev-wpa-config/react/use-wake-lock`), qui la prouve
+ * lui-même depuis dev-wpa-config#90 et #103 : ré-acquisition au retour au
+ * premier plan, écouteur débranché au démontage, silence quand l'API manque
+ * ou refuse. Rien de tout cela n'a plus à être retesté ici.
  *
- * Le dernier cas fait exception et reste ici : la ré-acquisition au retour au
- * premier plan est précisément ce que la copie locale ne faisait PAS (l'écran
- * s'éteignait après un aller-retour dans une autre app en pleine contraction).
- * Tant que le socle n'a pas de test pour son propre hook, c'est la seule
- * preuve du correctif dans le parc.
+ * Ce qui reste est ce que le socle ne peut pas savoir : la condition
+ * d'activation propre à cette app.
  */
 
-type Sentinel = { released: boolean; release: () => Promise<void> };
-
 const release = vi.fn(() => Promise.resolve());
-let lastSentinel: Sentinel | null = null;
-const request = vi.fn(() => {
-  lastSentinel = { released: false, release };
-  return Promise.resolve(lastSentinel);
-});
+const request = vi.fn(() => Promise.resolve({ released: false, release }));
 
 const BASE_SETTINGS = useAppStore.getState().settings;
 
@@ -41,7 +35,6 @@ function setup(options: { running: boolean; keepAwake: boolean }) {
 beforeEach(() => {
   release.mockClear();
   request.mockClear();
-  lastSentinel = null;
   Object.defineProperty(navigator, 'wakeLock', {
     value: { request },
     configurable: true,
@@ -79,19 +72,5 @@ describe('minuteur de contraction et verrou d’écran', () => {
     await vi.waitFor(() => expect(request).toHaveBeenCalled());
     unmount();
     await vi.waitFor(() => expect(release).toHaveBeenCalled());
-  });
-
-  it('reprend le verrou au retour de l’app au premier plan', async () => {
-    setup({ running: true, keepAwake: true });
-    render(<TimerSectionWithIntensity />);
-    await vi.waitFor(() => expect(request).toHaveBeenCalledTimes(1));
-
-    // Le navigateur relâche silencieusement le verrou en arrière-plan…
-    expect(lastSentinel).not.toBeNull();
-    lastSentinel!.released = true;
-    // …puis l'onglet revient au premier plan.
-    document.dispatchEvent(new Event('visibilitychange'));
-
-    await vi.waitFor(() => expect(request).toHaveBeenCalledTimes(2));
   });
 });
