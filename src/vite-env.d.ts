@@ -18,20 +18,6 @@ interface Window {
   gtag?: (...args: unknown[]) => void;
 }
 
-/** Wake Lock (écran) — optionnel selon navigateur. */
-interface WakeLockSentinel extends EventTarget {
-  released: boolean;
-  release(): Promise<void>;
-}
-
-interface WakeLock {
-  request(type: 'screen'): Promise<WakeLockSentinel>;
-}
-
-interface Navigator {
-  wakeLock?: WakeLock;
-}
-
 /** Reconnaissance vocale (Chrome / Safari préfixé). */
 type SpeechRecognitionCtor = new () => SpeechRecognitionInstance;
 

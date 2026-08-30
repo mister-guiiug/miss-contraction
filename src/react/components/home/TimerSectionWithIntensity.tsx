@@ -2,7 +2,8 @@ import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { useContractionTimer } from '../../hooks/useContractionTimer';
 import { useRestTimer } from '../../hooks/useRestTimer';
-import { useWakeLock, vibrate } from '../../hooks/useWakeLock';
+import { useWakeLock } from '@mister-guiiug/dev-wpa-config/react/use-wake-lock';
+import { vibrate } from '../../../utils/vibrate';
 import { IntensityPicker } from './IntensityPicker';
 import { QuickNotes } from './QuickNotes';
 import { interpolate, t } from '../../../i18n';
@@ -53,7 +54,9 @@ export function TimerSectionWithIntensity({
     undefined
   );
 
-  useWakeLock(settings.keepAwakeDuringContraction, isRunning);
+  // Écran allumé pendant une contraction — uniquement si le réglage
+  // « garder l'écran allumé » est actif.
+  useWakeLock(settings.keepAwakeDuringContraction && isRunning);
 
   // Gérer le mode focus pendant contraction
   useEffect(() => {

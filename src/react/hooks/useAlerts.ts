@@ -5,7 +5,7 @@ import {
   type ThresholdBadgeKind,
 } from '../../statsHelpers';
 import { loadSnoozeUntil } from '../../storage';
-import { vibrate } from './useWakeLock';
+import { vibrate } from '../../utils/vibrate';
 import { useNow } from './useNow';
 
 interface AlertState {
