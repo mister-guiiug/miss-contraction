@@ -5,7 +5,7 @@ import {
   type ThresholdBadgeKind,
 } from '../../statsHelpers';
 import { loadSnoozeUntil } from '../../storage';
-import { vibrate } from '../../utils/vibrate';
+import { vibrate } from '@mister-guiiug/dev-wpa-config/haptics';
 import { useNow } from './useNow';
 
 interface AlertState {
@@ -27,10 +27,15 @@ export function useAlerts(
     [records, settings]
   );
 
-  // Vibration si le seuil critique est atteint
+  // Vibration si le seuil critique est atteint : trois pulsations longues,
+  // le dernier échelon du vocabulaire haptique de l'app (1 = début, 2 = fin,
+  // 3 = seuil atteint). Motif explicite plutôt qu'un `HAPTIC_PATTERNS` nommé :
+  // c'est l'alerte « il est temps de partir à la maternité », ressentie
+  // pendant une contraction, et aucun pattern du socle ne tape aussi fort
+  // (`error` plafonne à 70 ms par pulsation).
   useEffect(() => {
     if (thresholdKind === 'match' && settings.vibrationEnabled) {
-      vibrate([100, 50, 100, 50, 100], true);
+      vibrate([100, 50, 100, 50, 100]);
     }
   }, [thresholdKind, settings.vibrationEnabled]);
 
