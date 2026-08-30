@@ -246,6 +246,8 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'checklist.reset': 'Réinitialiser la liste',
     'checklist.confirmReset': 'Réinitialiser la liste ?',
 
+    'midwife.downloadPdf': 'Télécharger en PDF',
+
     'settings.language.title': 'Langue',
     'settings.language.label': "Langue de l'application",
     'settings.language.help':
@@ -464,6 +466,8 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'checklist.reset': 'Reset checklist',
     'checklist.confirmReset': 'Reset checklist?',
 
+    'midwife.downloadPdf': 'Download as PDF',
+
     'settings.language.title': 'Language',
     'settings.language.label': 'Application language',
     'settings.language.help':
@@ -523,6 +527,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'about.forceReload': 'Recargar la aplicacion',
     'about.disclaimer':
       'Esta herramienta no sustituye el consejo medico. En caso de duda, llame a maternidad o emergencias.',
+    'midwife.downloadPdf': 'Descargar en PDF',
     'settings.language.title': 'Idioma',
     'settings.language.label': 'Idioma de la aplicacion',
     'settings.language.help':
@@ -581,6 +586,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'about.forceReload': 'App neu laden',
     'about.disclaimer':
       'Dieses Tool ersetzt keine medizinische Beratung. Bei Unsicherheit Kreißsaal oder Notruf kontaktieren.',
+    'midwife.downloadPdf': 'Als PDF herunterladen',
     'settings.language.title': 'Sprache',
     'settings.language.label': 'Sprache der Anwendung',
     'settings.language.help':
@@ -639,6 +645,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'about.forceReload': "Ricarica l'app",
     'about.disclaimer':
       'Questo strumento non sostituisce il parere medico. In caso di dubbio chiama maternita o emergenza.',
+    'midwife.downloadPdf': 'Scarica in PDF',
     'settings.language.title': 'Lingua',
     'settings.language.label': "Lingua dell'applicazione",
     'settings.language.help':
@@ -697,6 +704,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'about.forceReload': 'Recarregar a aplicacao',
     'about.disclaimer':
       'Esta ferramenta nao substitui aconselhamento medico. Em caso de duvida, ligue para maternidade ou emergencia.',
+    'midwife.downloadPdf': 'Descarregar em PDF',
     'settings.language.title': 'Idioma',
     'settings.language.label': 'Idioma da aplicacao',
     'settings.language.help':
@@ -755,6 +763,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'about.forceReload': 'App opnieuw laden',
     'about.disclaimer':
       'Deze tool vervangt geen medisch advies. Bel bij twijfel kraamzorg of spoed.',
+    'midwife.downloadPdf': 'Downloaden als PDF',
     'settings.language.title': 'Taal',
     'settings.language.label': 'Applicatie taal',
     'settings.language.help':

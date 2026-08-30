@@ -5,59 +5,22 @@ import { Link } from 'react-router-dom';
 
 import { useEffect, useState, useMemo } from 'react';
 import { useAppStore } from '../store/useAppStore';
+import { downloadMidwifePdf } from '../../midwifePdf';
+import {
+  buildMidwifeSummaryText,
+  formatDuration,
+  meanContractionDurationMs,
+  meanStartIntervalMs,
+  midwifeDateTimeFmt as dateTimeFmt,
+  midwifeDateTimeFmtLong as dateTimeFmtLong,
+  type MidwifeMode,
+} from '../../midwifeSummary';
 import { findFirstThresholdMatchEndMs } from '../../statsHelpers';
 import { loadRecords } from '../../storage';
 import type { ContractionRecord } from '../../storage';
+import { formatStatsClock } from '../../utils/formatStats';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { t } from '../../i18n';
-
-function meanStartIntervalMs(done: ContractionRecord[]): number | null {
-  if (done.length < 2) return null;
-  let sum = 0;
-  for (let i = 1; i < done.length; i++) {
-    sum += done[i]!.start - done[i - 1]!.start;
-  }
-  return sum / (done.length - 1);
-}
-
-function meanContractionDurationMs(done: ContractionRecord[]): number | null {
-  if (done.length === 0) return null;
-  let sum = 0;
-  for (const r of done) {
-    sum += r.end - r.start;
-  }
-  return sum / done.length;
-}
-
-type MidwifeMode = '6' | '10' | '12' | '20' | 'all';
-
-const dateTimeFmt = new Intl.DateTimeFormat('fr-FR', {
-  weekday: 'short',
-  day: 'numeric',
-  month: 'short',
-  hour: '2-digit',
-  minute: '2-digit',
-});
-
-const dateTimeFmtLong = new Intl.DateTimeFormat('fr-FR', {
-  dateStyle: 'full',
-  timeStyle: 'short',
-});
-
-function formatStatsClock(ms: number): string {
-  if (!Number.isFinite(ms) || ms < 0) return '—';
-  const totalSec = Math.round(ms / 1000);
-  const m = Math.floor(totalSec / 60);
-  const s = totalSec % 60;
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-}
-
-function formatDuration(ms: number): string {
-  const totalSec = Math.round(ms / 1000);
-  const m = Math.floor(totalSec / 60);
-  const s = totalSec % 60;
-  return `${m}:${s.toString().padStart(2, '0')}`;
-}
 
 function parseMidwifeMode(val: string): MidwifeMode {
   if (
@@ -118,77 +81,20 @@ export function MidwifeView() {
     return { meanInterval, meanDur, qtyHour, firstEnd };
   }, [selectedRecords, records, settings]);
 
-  // Construire le texte pour copie
-  const plainText = useMemo(() => {
-    const lines: string[] = [];
-    const headerFmt = new Intl.DateTimeFormat('fr-FR', {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    });
-    lines.push('Miss Contraction — Résumé pour la sage-femme');
-    lines.push(`Généré le ${headerFmt.format(new Date())}`);
-    lines.push('');
-    lines.push("Seuils configurés dans l'application :");
-    lines.push(
-      `— ${settings.consecutiveCount} contractions consécutives, écart entre débuts ≤ ${settings.maxIntervalMin} min, durée ≥ ${settings.minDurationSec} s chacune.`
-    );
-    lines.push('');
-    if (stats.firstEnd != null) {
-      lines.push(
-        `Première fois où ces critères ont été remplis (sur tout l'historique) : ${dateTimeFmtLong.format(stats.firstEnd)}.`
-      );
-    } else {
-      lines.push(
-        "Aucun groupe de contractions consécutives n'a encore rempli ces critères dans l'historique enregistré."
-      );
-    }
-    lines.push('');
-    const modeLabel =
-      mode === 'all'
-        ? "tout l'historique"
-        : `les ${mode} dernières contractions`;
-    lines.push(
-      `Période du tableau et des moyennes : ${modeLabel} (${selectedRecords.length} contraction(s)).`
-    );
-    lines.push('');
-    if (selectedRecords.length === 0) {
-      lines.push('Aucune contraction dans cette sélection.');
-      lines.push('');
-      lines.push('—');
-      lines.push('Données indicatives — ne remplacent pas un avis médical.');
-      return lines.join('\n');
-    }
-    lines.push('Moyennes sur cette sélection :');
-    lines.push(
-      `— Quantité estimée : ≈ ${stats.qtyHour} contraction(s) / h (si le rythme restait constant).`
-    );
-    lines.push(
-      `— Durée moyenne : ${stats.meanDur != null ? formatStatsClock(stats.meanDur) : '—'} (mm:ss).`
-    );
-    lines.push(
-      `— Intervalle moyen entre débuts : ${stats.meanInterval != null ? formatStatsClock(stats.meanInterval) : '—'} (mm:ss).`
-    );
-    lines.push('');
-    lines.push('Détail (ordre chronologique) :');
-    for (let i = 0; i < selectedRecords.length; i++) {
-      const r = selectedRecords[i]!;
-      const intervalMs = i > 0 ? r.start - selectedRecords[i - 1]!.start : null;
-      const intervalStr = intervalMs != null ? formatDuration(intervalMs) : '—';
-      const note = r.note?.trim();
-      const intensity = r.intensity ? ` — intensité : ${r.intensity}` : '';
-      lines.push(
-        `${i + 1}. ${dateTimeFmt.format(r.start)} — durée ${formatDuration(r.end - r.start)} — écart depuis précédente : ${intervalStr}${intensity}${note ? ` — note : ${note}` : ''}`
-      );
-    }
-    lines.push('');
-    lines.push('—');
-    lines.push('Données indicatives — ne remplacent pas un avis médical.');
-    return lines.join('\n');
-  }, [mode, selectedRecords, stats, settings]);
+  // Données du résumé (constructeur pur partagé entre copie et PDF)
+  const summaryInput = () => ({
+    selectedRecords,
+    settings,
+    mode,
+    firstThresholdEndMs: stats.firstEnd,
+    generatedAtMs: Date.now(),
+  });
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(plainText);
+      await navigator.clipboard.writeText(
+        buildMidwifeSummaryText(summaryInput())
+      );
       setCopyFeedback(
         language === 'fr'
           ? 'Texte copie dans le presse-papiers.'
@@ -207,6 +113,10 @@ export function MidwifeView() {
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleDownloadPdf = () => {
+    downloadMidwifePdf(summaryInput());
   };
 
   const modeLabel =
@@ -382,8 +292,8 @@ export function MidwifeView() {
           role="group"
           aria-label={
             language === 'fr'
-              ? 'Copier ou imprimer le resume'
-              : 'Copy or print summary'
+              ? 'Copier, telecharger ou imprimer le resume'
+              : 'Copy, download or print summary'
           }
         >
           <button
@@ -392,6 +302,13 @@ export function MidwifeView() {
             onClick={handleCopy}
           >
             {language === 'fr' ? 'Copier le texte' : 'Copy text'}
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleDownloadPdf}
+          >
+            {t(language, 'midwife.downloadPdf')}
           </button>
           <button
             type="button"
