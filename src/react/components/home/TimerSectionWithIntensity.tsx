@@ -3,7 +3,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { useContractionTimer } from '../../hooks/useContractionTimer';
 import { useRestTimer } from '../../hooks/useRestTimer';
 import { useWakeLock } from '@mister-guiiug/dev-wpa-config/react/use-wake-lock';
-import { vibrate } from '../../../utils/vibrate';
+import { vibrate } from '@mister-guiiug/dev-wpa-config/haptics';
 import { IntensityPicker } from './IntensityPicker';
 import { QuickNotes } from './QuickNotes';
 import { interpolate, t } from '../../../i18n';
@@ -81,15 +81,22 @@ export function TimerSectionWithIntensity({
       // Retirer le ripple après l'animation
       setTimeout(() => setRipplePosition(null), 600);
 
+      // Motifs explicites plutôt que des `HAPTIC_PATTERNS` nommés : début et
+      // fin sont les deux actions majeures de l'app, déclenchées en pleine
+      // contraction sans regarder l'écran. Le nombre de pulsations les
+      // distingue (1 = début, 2 = fin, 3 = seuil atteint dans `useAlerts`) ;
+      // `confirm` et `success` sont deux pulsations uniques, ce qui aplatirait
+      // ce vocabulaire — et `confirm` (18 ms) passerait sous le seuil du
+      // « retour haptique clair » exigé par AGENTS.md.
       if (isRunning) {
         // Enregistrer l'intensité et la note avant de terminer
-        vibrate([35, 50, 35], settings.vibrationEnabled);
+        if (settings.vibrationEnabled) vibrate([35, 50, 35]);
         endContraction(selectedNote || undefined, currentIntensity);
         setCurrentIntensity(undefined);
         if (onClearNote) onClearNote();
       } else {
         setCurrentIntensity(3);
-        vibrate(40, settings.vibrationEnabled);
+        if (settings.vibrationEnabled) vibrate(40);
         startContraction();
       }
     },
@@ -107,9 +114,9 @@ export function TimerSectionWithIntensity({
   const handleIntensityChange = useCallback(
     (intensity: number) => {
       setCurrentIntensity(intensity);
-      // Feedback haptique léger au changement d'intensité
+      // Feedback haptique léger au changement d'intensité : simple sélection.
       if (settings.vibrationEnabled) {
-        vibrate(20, true);
+        vibrate('tap');
       }
     },
     [settings.vibrationEnabled]

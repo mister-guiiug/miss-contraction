@@ -9,7 +9,7 @@ import { TimelineCompact } from '../components/home/TimelineCompact';
 import { ThresholdBadge } from '../components/home/ThresholdBadge';
 import { AppFooter } from '../components/layout/AppFooter';
 import { ViewLayout } from '../components/layout/ViewLayout';
-import { vibrate } from '../../utils/vibrate';
+import { vibrate } from '@mister-guiiug/dev-wpa-config/haptics';
 import { t } from '../../i18n';
 
 export function HomeView() {
@@ -33,8 +33,9 @@ export function HomeView() {
   const handleNoteSelect = useCallback(
     (note: string) => {
       setSelectedNote(note);
+      // Simple sélection : la pichenette d'affordance du socle suffit.
       if (settings.vibrationEnabled) {
-        vibrate(20, true);
+        vibrate('tap');
       }
     },
     [settings.vibrationEnabled]
