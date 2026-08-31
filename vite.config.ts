@@ -1,5 +1,6 @@
 import { defineConfig, type PluginOption } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { LS_THEME } from './src/themeKey';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { pwaSeoPlugin } from '@mister-guiiug/dev-wpa-config/vite-pwa-base';
@@ -129,6 +130,11 @@ export default defineConfig(({ command }) => {
         siteName: 'Miss Contraction',
         basePath,
         logoPath: '/icon.svg',
+        // Script anti-FOUC engendré au lieu d'être recopié dans `index.html`.
+        // `storageKey` est passée explicitement : le défaut du socle est
+        // `dwc_theme`, partagée par la famille, et l'adopter donnerait à cette
+        // app le thème réglé dans une autre. Voir `src/theme.ts`.
+        themeBoot: { storageKey: LS_THEME },
       }),
       {
         name: 'google-tag-manager',
