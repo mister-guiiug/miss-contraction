@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FamilyApps } from '@mister-guiiug/dev-wpa-config/react';
+import { applyUpdate } from '@mister-guiiug/dev-wpa-config/sw-update';
 import { ViewLayout } from '../components/layout/ViewLayout';
-import { forceSwUpdate } from '../../register-sw';
 import { useAppStore } from '../store/useAppStore';
 import { t } from '../../i18n';
 import { appVersion } from '../../appVersion';
@@ -100,11 +100,23 @@ export function AboutView() {
 
   function handleForceReload() {
     setReloading(true);
-    // Try SW update first; fall back to hard reload after 1 s.
-    forceSwUpdate();
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
+    // `applyUpdate` du socle remplace un bouton qui ne faisait RIEN : l'ancien
+    // `forceSwUpdate()` appelait `updateSW(true)`, lequel se termine par
+    // `if (!auto) sendSkipWaitingMessage()` — donc un no-op en mode
+    // `autoUpdate`. Seule la minuterie de secours de l'app rechargeait, à
+    // l'aveugle, sans avoir rien mis à jour.
+    //
+    // Le socle, lui, revérifie l'enregistrement, active un worker en attente
+    // s'il y en a un, sinon purge le Cache Storage, et ne navigue qu'ensuite —
+    // vers la PORTÉE du worker, pas la route courante. Ça compte ici : l'app
+    // est en `BrowserRouter`, donc `/miss-contraction/a-propos` est une vraie
+    // URL, qui n'existe pas côté GitHub Pages une fois le worker purgé.
+    // Recharger la route courante y rendrait un 404 ; c'est exactement ce que
+    // faisait le `setTimeout(reload, 1000)` qu'on retire.
+    //
+    // `localStorage` n'est jamais touché : les contractions déjà enregistrées
+    // survivent.
+    void applyUpdate();
   }
 
   return (
