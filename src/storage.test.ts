@@ -4,6 +4,10 @@ import {
   saveSettings,
   loadRecords,
   saveRecords,
+  loadActiveStart,
+  saveActiveStart,
+  ACTIVE_START_MAX_AGE_MS,
+  KEY_ACTIVE_START,
 } from './storage';
 import type { ContractionRecord } from './storage';
 
@@ -118,5 +122,61 @@ describe('loadRecords / saveRecords', () => {
     const loaded = loadRecords();
     expect(loaded).toHaveLength(1);
     expect(loaded[0]?.id).toBe('ok');
+  });
+});
+
+/**
+ * La contraction en cours de chronométrage, seule donnée de l'app qui ne
+ * survivait à aucun rechargement — y compris celui que `virtual:pwa-register`
+ * déclenche seul, en `registerType: 'autoUpdate'`, quand un déploiement
+ * atterrit.
+ *
+ * Tout tient dans l'asymétrie des deux erreurs possibles. Jeter une
+ * contraction légitime rend le comportement d'avant : elle est perdue.
+ * Restaurer une contraction périmée est PIRE : le prochain « Fin » écrit un
+ * enregistrement de plusieurs minutes dans l'historique, qui fausse les
+ * statistiques et le seuil d'alerte. Ces tests verrouillent le côté prudent.
+ */
+describe('loadActiveStart / saveActiveStart', () => {
+  const NOW = 1_700_000_000_000;
+
+  it('retourne null si rien en localStorage', () => {
+    expect(loadActiveStart(NOW)).toBeNull();
+  });
+
+  it('restaure une contraction commencée il y a quelques secondes', () => {
+    saveActiveStart(NOW - 20_000);
+    expect(loadActiveStart(NOW)).toBe(NOW - 20_000);
+  });
+
+  it('restaure encore juste avant le seuil', () => {
+    saveActiveStart(NOW - ACTIVE_START_MAX_AGE_MS + 1);
+    expect(loadActiveStart(NOW)).toBe(NOW - ACTIVE_START_MAX_AGE_MS + 1);
+  });
+
+  it('jette un « début » plus vieux que le seuil', () => {
+    // Un « fin » jamais appuyé, pas une contraction en cours : le restaurer
+    // fabriquerait un enregistrement de plus de cinq minutes.
+    saveActiveStart(NOW - ACTIVE_START_MAX_AGE_MS - 1);
+    expect(loadActiveStart(NOW)).toBeNull();
+  });
+
+  it('jette un horodatage futur (horloge reculée)', () => {
+    // Sinon le minuteur afficherait un temps écoulé négatif.
+    saveActiveStart(NOW + 60_000);
+    expect(loadActiveStart(NOW)).toBeNull();
+  });
+
+  it('jette une valeur illisible sans lever', () => {
+    localStorage.setItem(KEY_ACTIVE_START, 'pas-un-nombre');
+    expect(() => loadActiveStart(NOW)).not.toThrow();
+    expect(loadActiveStart(NOW)).toBeNull();
+  });
+
+  it('efface la clé quand la contraction se termine', () => {
+    saveActiveStart(NOW - 20_000);
+    saveActiveStart(null);
+    expect(localStorage.getItem(KEY_ACTIVE_START)).toBeNull();
+    expect(loadActiveStart(NOW)).toBeNull();
   });
 });

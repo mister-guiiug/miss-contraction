@@ -10,6 +10,9 @@ import {
   saveSettings,
   loadRecords,
   saveRecords,
+  loadActiveStart,
+  saveActiveStart,
+  KEY_ACTIVE_START,
 } from '../../storage';
 
 interface AppState {
@@ -39,7 +42,13 @@ export const useAppStore = create<AppState>((set, get) => ({
   // État initial - chargé depuis localStorage
   records: loadRecords(),
   settings: loadSettings(),
-  activeStart: null,
+  // La contraction en cours survit au rechargement. Elle ne le faisait pas, et
+  // l'app est en `registerType: 'autoUpdate'` : le module `virtual:pwa-register`
+  // appelle `window.location.reload()` de lui-même quand un nouveau service
+  // worker s'active. Un déploiement tombant pendant un chronométrage — pendant
+  // un accouchement — le faisait disparaître en silence. Le rechargement reste,
+  // le chronométrage non.
+  activeStart: loadActiveStart(),
   alertLatch: false,
 
   // Actions
@@ -83,7 +92,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   startContraction: () => {
-    set({ activeStart: Date.now() });
+    const start = Date.now();
+    set({ activeStart: start });
+    saveActiveStart(start);
   },
 
   endContraction: (note, intensity) => {
@@ -103,6 +114,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       activeStart: null,
     });
     saveRecords([...records, newRecord]);
+    saveActiveStart(null);
   },
 
   setAlertLatch: latched => {
@@ -118,6 +130,9 @@ if (typeof window !== 'undefined') {
     }
     if (e.key === 'mc_contractions_v1') {
       useAppStore.setState({ records: loadRecords() });
+    }
+    if (e.key === KEY_ACTIVE_START) {
+      useAppStore.setState({ activeStart: loadActiveStart() });
     }
   });
 }
