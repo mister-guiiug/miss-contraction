@@ -269,7 +269,7 @@ test.describe('Gestion d’erreurs - Double-clic et race conditions', () => {
     expect(validRecords.length).toBeLessThanOrEqual(1);
   });
 
-  test('@errors clic start puis reload n’enregistre pas de contraction incomplète', async ({
+  test('@errors clic start puis reload reprend la contraction sans rien enregistrer', async ({
     page,
   }) => {
     await page.goto(ROUTES.HOME);
@@ -281,14 +281,20 @@ test.describe('Gestion d’erreurs - Double-clic et race conditions', () => {
     await btn.click(); // Démarrer sans arrêter
     await page.waitForTimeout(300);
 
-    // Recharger sans avoir cliqué "Fin"
+    // Recharger sans avoir cliqué "Fin". C'est aussi ce que le module
+    // `virtual:pwa-register` fait tout seul, en `registerType: 'autoUpdate'`,
+    // quand un déploiement atterrit pendant un chronométrage.
     await page.reload();
     await page.waitForLoadState('networkidle');
 
-    // L'historique ne doit pas avoir d'entrée invalide
+    // Le chronométrage reprend là où il en était : le minuteur n'est rendu que
+    // pendant une contraction en cours.
+    await expect(page.locator('[data-testid="timer-display"]')).toBeVisible();
+
+    // Et l'invariant tient toujours : une contraction EN COURS n'est pas une
+    // contraction ENREGISTRÉE. Rien n'entre dans l'historique avant « Fin ».
     const historyItems = page.locator('[data-testid="history-items"] li');
     const count = await historyItems.count().catch(() => 0);
-    // 0 car la contraction ouverte n'est pas encore enregistrée
     expect(count).toBe(0);
   });
 });

@@ -50,8 +50,11 @@ export function TimerSectionWithIntensity({
     x: number;
     y: number;
   } | null>(null);
+  // Une contraction restaurée après rechargement repart sur la même intensité
+  // par défaut qu'une contraction démarrée à la main (`handleToggle` pose 3).
+  // Sans ça, elle s'enregistrerait à 2 — le repli de `endContraction`.
   const [currentIntensity, setCurrentIntensity] = useState<number | undefined>(
-    undefined
+    activeStart === null ? undefined : 3
   );
 
   // Écran allumé pendant une contraction — uniquement si le réglage

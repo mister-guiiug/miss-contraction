@@ -53,6 +53,7 @@ export type AppSettings = {
 const KEY_RECORDS = 'mc_contractions_v1';
 const KEY_SETTINGS = 'mc_settings_v1';
 
+export const KEY_ACTIVE_START = 'mc_active_start_v1';
 export const KEY_SNOOZE_UNTIL = 'mc_snooze_until';
 export const KEY_EXPORT_NUDGE_DISMISSED = 'mc_export_nudge_dismissed_at';
 
@@ -91,6 +92,54 @@ export function loadRecords(): ContractionRecord[] {
 
 export function saveRecords(records: ContractionRecord[]): void {
   localStorage.setItem(KEY_RECORDS, JSON.stringify(records));
+}
+
+/**
+ * Au-delà de ce délai, un « début » retrouvé au démarrage n'est plus une
+ * contraction en cours : c'est un « fin » jamais appuyé.
+ *
+ * L'ASYMÉTRIE DICTE LA VALEUR. Ne pas restaurer une contraction légitime
+ * ramène au comportement d'avant : la contraction est perdue, comme elle
+ * l'était à chaque rechargement. En restaurer une périmée est PIRE : au
+ * prochain appui sur « Fin », l'app enregistre une contraction de plusieurs
+ * minutes, qui fausse les statistiques et le seuil d'alerte maternité. Dans le
+ * doute, on jette.
+ *
+ * Cinq minutes : très au-dessus de la plus longue contraction réelle (deux à
+ * trois minutes en fin de travail), et cohérent avec le réglage
+ * `openContractionReminderMin` (défaut 4 min), la borne que l'app se donne
+ * déjà pour juger suspect un « début » resté ouvert. Une constante, et non ce
+ * réglage : il monte jusqu'à 30 minutes, ce qui rouvrirait le mauvais côté de
+ * l'asymétrie.
+ */
+export const ACTIVE_START_MAX_AGE_MS = 5 * 60_000;
+
+/**
+ * Horodatage de la contraction en cours de chronométrage, ou `null`.
+ *
+ * Écarte silencieusement une valeur illisible, future (horloge reculée) ou
+ * plus vieille que `ACTIVE_START_MAX_AGE_MS`.
+ */
+export function loadActiveStart(now: number = Date.now()): number | null {
+  try {
+    const raw = localStorage.getItem(KEY_ACTIVE_START);
+    if (!raw) return null;
+    const start = Number(raw);
+    if (!Number.isFinite(start) || start <= 0) return null;
+    if (start > now) return null;
+    if (now - start > ACTIVE_START_MAX_AGE_MS) return null;
+    return start;
+  } catch {
+    return null;
+  }
+}
+
+export function saveActiveStart(start: number | null): void {
+  if (start === null) {
+    localStorage.removeItem(KEY_ACTIVE_START);
+    return;
+  }
+  localStorage.setItem(KEY_ACTIVE_START, String(start));
 }
 
 function parseStatsWindow(v: unknown): StatsWindowKey {
