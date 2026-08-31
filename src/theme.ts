@@ -1,89 +1,67 @@
-const LS_THEME = 'mc_theme';
+import { useEffect } from 'react';
+import {
+  useTheme as useSocleTheme,
+  type ResolvedTheme,
+  type ThemePreference,
+} from '@mister-guiiug/dev-wpa-config/react/use-theme';
 
-export type ThemePreference = 'light' | 'dark' | 'system';
-export type ResolvedTheme = 'light' | 'dark';
+// Les deux types venaient d'ici et y restent accessibles : `Shell` les importe,
+// ils sont désormais ceux du socle.
+export type { ResolvedTheme, ThemePreference };
 
-export function getStoredThemePreference(): ThemePreference {
-  const s = localStorage.getItem(LS_THEME);
-  if (s === 'light' || s === 'dark' || s === 'system') return s;
-  return 'system';
-}
+// La clé de stockage vit dans son propre module : le script anti-FOUC, qui
+// tourne en contexte Node au build, doit lire la même. Le pourquoi du choix y
+// est écrit.
+export { LS_THEME } from './themeKey';
+import { LS_THEME } from './themeKey';
 
-export function getResolvedTheme(): ResolvedTheme {
-  const pref = getStoredThemePreference();
-  if (pref === 'light') return 'light';
-  if (pref === 'dark') return 'dark';
-  return window.matchMedia('(prefers-color-scheme: light)').matches
-    ? 'light'
-    : 'dark';
-}
-
-export function applyTheme(theme: ResolvedTheme): void {
-  document.documentElement.setAttribute('data-theme', theme);
-  const meta = document.querySelector<HTMLMetaElement>(
-    'meta[name="theme-color"]'
-  );
-  if (meta) {
-    meta.setAttribute('content', theme === 'light' ? '#a0309a' : '#3d1040');
-  }
-}
-
-export function applyResolvedTheme(): void {
-  applyTheme(getResolvedTheme());
-}
-
-export function persistTheme(pref: ThemePreference): void {
-  const t: ThemePreference =
-    pref === 'light' || pref === 'dark' || pref === 'system' ? pref : 'system';
-  localStorage.setItem(LS_THEME, t);
-  applyTheme(getResolvedTheme());
-}
-
-export function cycleThemePreference(): ThemePreference {
-  const cur = getStoredThemePreference();
-  const next: ThemePreference =
-    cur === 'system' ? 'light' : cur === 'light' ? 'dark' : 'system';
-  persistTheme(next);
-  return next;
-}
-
-let mqListenerBound = false;
-
-/** À appeler une fois au démarrage : réagit aux changements d'apparence système. */
-export function wireSystemThemeListener(): void {
-  if (mqListenerBound || typeof window === 'undefined' || !window.matchMedia)
-    return;
-  mqListenerBound = true;
-  const mq = window.matchMedia('(prefers-color-scheme: light)');
-  mq.addEventListener('change', () => {
-    if (getStoredThemePreference() !== 'system') return;
-    applyTheme(getResolvedTheme());
-  });
-}
-
-const THEME_ICONS: Record<ThemePreference, string> = {
-  light: '☀',
-  dark: '◐',
-  system: '🖥',
+/** Couleur de la barre du navigateur, par thème résolu. */
+const THEME_COLOR: Record<ResolvedTheme, string> = {
+  light: '#a0309a',
+  dark: '#3d1040',
 };
 
 /**
- * Met à jour l'icône et le label du bouton selon la préférence courante.
- * Appeler après chaque appel à cycleThemePreference().
+ * L'ordre du bouton : système → clair → sombre → système.
+ *
+ * `useTheme` expose `toggle()`, mais il ne fait qu'alterner clair/sombre : il
+ * perdrait le troisième état, celui qui suit l'appareil. On garde donc le
+ * cycle à trois temps de l'app et on le pousse par `setTheme`.
  */
-export function syncThemeButton(btn: HTMLButtonElement, animate = false): void {
-  const pref = getStoredThemePreference();
-  const labels: Record<ThemePreference, string> = {
-    light: 'Thème clair',
-    dark: 'Thème sombre',
-    system: 'Thème automatique',
+export function nextThemePreference(current: ThemePreference): ThemePreference {
+  return current === 'system'
+    ? 'light'
+    : current === 'light'
+      ? 'dark'
+      : 'system';
+}
+
+/**
+ * Le thème de l'app : l'état et l'écriture de `data-theme` viennent du socle,
+ * la couleur de la barre du navigateur reste ici.
+ *
+ * `useTheme` pose `data-theme` et `color-scheme` sur `<html>` et suit
+ * `prefers-color-scheme` quand la préférence vaut `system`. Il ne touche pas à
+ * `<meta name="theme-color">`, que cette app peint aux couleurs de sa palette
+ * depuis toujours ; c'est le seul morceau qui reste local.
+ */
+export function useAppTheme() {
+  const { theme, resolved, setTheme } = useSocleTheme({
+    storageKey: LS_THEME,
+    defaultTheme: 'system',
+    attribute: 'data-theme',
+  });
+
+  useEffect(() => {
+    const meta = document.querySelector<HTMLMetaElement>(
+      'meta[name="theme-color"]'
+    );
+    meta?.setAttribute('content', THEME_COLOR[resolved]);
+  }, [resolved]);
+
+  return {
+    preference: theme,
+    resolved,
+    cycle: () => setTheme(nextThemePreference(theme)),
   };
-  btn.setAttribute('aria-label', labels[pref]);
-  btn.title = labels[pref];
-  btn.textContent = THEME_ICONS[pref];
-  if (animate) {
-    btn.classList.remove('btn-theme--anim');
-    void btn.offsetWidth; // force reflow
-    btn.classList.add('btn-theme--anim');
-  }
 }
