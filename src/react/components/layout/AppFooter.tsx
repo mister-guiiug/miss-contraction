@@ -3,6 +3,34 @@ import { useAppStore } from '../../store/useAppStore';
 import { t } from '../../../i18n';
 import { appVersion } from '../../../appVersion';
 
+/**
+ * POURQUOI CETTE COPIE RESTE, alors que `react/app-footer` du socle existe.
+ *
+ * Le pied de page du socle rend deux liens EXTERNES — code source et sponsor —
+ * et, en option, le numéro de version. Sur les quatre éléments d'ici, il n'en
+ * couvre qu'un :
+ *
+ * | Élément                         | `react/app-footer`                      |
+ * |---------------------------------|-----------------------------------------|
+ * | L'AVERTISSEMENT MÉDICAL         | aucun emplacement, et pas de `children` |
+ * | Lien « À propos et version »    | `repoUrl` part vers GitHub, pas vers    |
+ * |                                 | `/a-propos` : un `<a target=_blank>`,   |
+ * |                                 | pas un `Link` de routeur — on QUITTE    |
+ * |                                 | l'app                                   |
+ * | Lien « Buy me a coffee »        | couvert (`sponsorUrl`)                  |
+ * | Version (`data-testid`)         | `AppVersion`, autre balisage            |
+ *
+ * Et il rend lui-même un `<footer>` : l'imbriquer dans le nôtre est interdit
+ * par la spécification HTML (`footer` ne peut pas descendre d'un `footer`).
+ * Le remplacer sortirait l'avertissement médical du repère de pied de page.
+ *
+ * Sur une app qu'on ouvre pendant un accouchement, la phrase « cet outil ne
+ * remplace pas un avis médical » n'est pas décorative. Elle reste, et le pied
+ * de page avec elle.
+ *
+ * À DEMANDER AU SOCLE : un `children` avant les liens suffirait à rendre ce
+ * pied de page migrable.
+ */
 export function AppFooter() {
   const language = useAppStore(state => state.settings.language);
 
