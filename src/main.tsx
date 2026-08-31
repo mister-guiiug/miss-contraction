@@ -13,7 +13,6 @@ import {
 import { initWebVitals } from '@mister-guiiug/dev-wpa-config/web-vitals';
 import { unregisterServiceWorkers } from '@mister-guiiug/dev-wpa-config/sw-update';
 import { registerSW } from 'virtual:pwa-register';
-import { applyResolvedTheme, wireSystemThemeListener } from './theme';
 import { App } from './react/AppRouter';
 
 installErrorReporter();
@@ -22,8 +21,6 @@ void initSentry({
   environment: import.meta.env.MODE,
   loader: () => import('@sentry/react'),
 });
-applyResolvedTheme();
-wireSystemThemeListener();
 
 // Service worker. LA GARDE `DEV` RESTE ICI : `unregisterServiceWorkers` est du
 // JavaScript ordinaire, aussi consommé par `node --test` côté socle, et ne peut

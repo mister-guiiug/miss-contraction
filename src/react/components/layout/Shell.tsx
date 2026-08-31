@@ -1,11 +1,7 @@
 import { useState, useEffect, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { BottomNav } from './BottomNav';
-import {
-  cycleThemePreference,
-  getStoredThemePreference,
-  type ThemePreference,
-} from '../../../theme';
+import { useAppTheme, type ThemePreference } from '../../../theme';
 import type { AppRoute } from '../../../routes';
 import { getBreadcrumbLabel } from '../../../routes';
 import { getRoutePath, getRouteFromPath } from '../../../routes-i18n';
@@ -359,17 +355,17 @@ export function Shell({ children }: ShellProps) {
   const settings = useAppStore(state => state.settings);
   const language = settings.language;
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [themePreference, setThemePreference] = useState<ThemePreference>(() =>
-    getStoredThemePreference()
-  );
+  // L'état du thème, sa persistance et l'écriture de `data-theme` viennent
+  // désormais du socle (`react/use-theme`) ; l'app n'en garde que le cycle à
+  // trois temps et la couleur de la barre du navigateur.
+  const { preference: themePreference, cycle: cycleTheme } = useAppTheme();
   const [themeAnim, setThemeAnim] = useState(false);
 
   const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
   const closeDrawer = () => setIsDrawerOpen(false);
 
   const handleThemeClick = () => {
-    const next = cycleThemePreference();
-    setThemePreference(next);
+    cycleTheme();
     setThemeAnim(false);
     requestAnimationFrame(() => setThemeAnim(true));
   };
