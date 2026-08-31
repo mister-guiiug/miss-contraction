@@ -18,7 +18,7 @@ import { AboutView } from './views/AboutView';
 import { getDocumentTitle } from '../routes';
 import { getRouteFromPath, getRoutePath } from '../routes-i18n';
 import { useAppStore } from './store/useAppStore';
-import { I18nSyncProvider } from './providers/I18nSyncProvider';
+import { AppLabelsProvider } from './providers/AppLabelsProvider';
 
 function DocumentTitle() {
   const location = useLocation();
@@ -254,9 +254,9 @@ export function App() {
   return (
     <StrictMode>
       <BrowserRouter basename={import.meta.env.BASE_URL}>
-        <I18nSyncProvider>
+        <AppLabelsProvider>
           <AppRoutes />
-        </I18nSyncProvider>
+        </AppLabelsProvider>
       </BrowserRouter>
     </StrictMode>
   );

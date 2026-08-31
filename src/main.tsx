@@ -15,8 +15,6 @@ import { unregisterServiceWorkers } from '@mister-guiiug/dev-wpa-config/sw-updat
 import { registerSW } from 'virtual:pwa-register';
 import { applyResolvedTheme, wireSystemThemeListener } from './theme';
 import { App } from './react/AppRouter';
-import i18n from './i18n.config'; // Initialiser i18next
-import { detectBrowserLanguage } from './i18n';
 
 installErrorReporter();
 void initSentry({
@@ -63,11 +61,6 @@ void initWebVitals({
     });
   },
 });
-
-// Initialiser i18n avec la langue du navigateur / stockée
-const savedLanguage = localStorage.getItem('i18nextLng');
-const initialLanguage = savedLanguage || detectBrowserLanguage();
-i18n.changeLanguage(initialLanguage);
 
 // Initialiser l'application React avec React Router
 const rootElement = document.querySelector<HTMLDivElement>('#app');
