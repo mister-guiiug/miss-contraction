@@ -240,7 +240,12 @@
   animation: float-gentle 4s ease-in-out infinite;
 }
 
-.empty-state h3 {
+/* La coque vient de `react/empty-state` du socle, qui ne s'habille pas
+   lui-même : ses attributs `[data-dwc]` remplacent ici les `h3`/`p` de la
+   copie locale. Même méthode que `FamilyApps` et `ErrorBoundary` plus bas
+   dans `styles.css` — et la raison pour laquelle `components.css` n'est pas
+   importée : elle restylerait ces deux-là. */
+.empty-state [data-dwc='empty-state-title'] {
   margin: 0 0 0.5rem;
   font-size: 1.25rem;
   font-weight: 700;
@@ -248,11 +253,20 @@
   font-family: var(--font-brand);
 }
 
-.empty-state p {
+.empty-state [data-dwc='empty-state-desc'] {
   margin: 0 0 1.25rem;
   font-size: 0.95rem;
   color: var(--muted);
   line-height: 1.5;
+}
+
+/* Reprend les styles qui étaient en `style={{…}}` sur le conteneur des deux
+   liens : le socle rend ce bloc, il n'en fixe pas la disposition. */
+.empty-state [data-dwc='empty-state-action'] {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 /* ── 3. TIMELINE AMÉLIORÉE ───────────────────────────────────────────────────── */
