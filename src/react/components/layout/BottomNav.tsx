@@ -1,6 +1,35 @@
 /**
- * Navigation inférieure pour mobile (PWA)
- * Remplace le hamburger sur les petits écrans
+ * Navigation inférieure pour mobile (PWA).
+ * Remplace le hamburger sur les petits écrans.
+ *
+ * POURQUOI CETTE COPIE RESTE, alors que `react/bottom-nav` du socle existe et
+ * cite nommément miss-contraction parmi les sept apps à migrer. Deux éléments
+ * de cette barre ne peuvent pas s'exprimer avec son API, et ce ne sont pas des
+ * détails : ce sont les deux qu'on voit en premier.
+ *
+ * 1. LA CINQUIÈME CELLULE N'EST PAS UNE DESTINATION. C'est un `<button>` qui
+ *    ouvre le tiroir de l'app (`#app-drawer`), avec `aria-expanded` et
+ *    `aria-controls` — et il s'allume aussi sur les routes « message » et
+ *    « sage-femme », que le tiroir contient. Le socle ne prend que des `items`
+ *    à `href`. Son bouton « Plus » ressemble au nôtre mais fait autre chose :
+ *    il déplie SON propre tiroir d'onglets en surnombre. (Son en-tête indique
+ *    d'ailleurs que le motif `aria-expanded`/`aria-controls` a été repris
+ *    D'ICI ; c'est la mécanique, pas le balisage, qui diffère.)
+ *
+ * 2. L'APPEL MATERNITÉ EST UN BOUTON D'ACTION, pas un onglet : gros disque
+ *    violet en relief, libellé masqué visuellement (`sr-only`). Le socle rend
+ *    tous les `items` à l'identique et n'émet aucune accroche par élément —
+ *    ni `className`, ni `data-*` propre, et `key` ne descend pas dans le DOM.
+ *    La classe `.cta` n'aurait plus rien à quoi se raccrocher. Un sélecteur
+ *    sur le `href` ne tiendrait pas non plus : les chemins sont traduits dans
+ *    les sept langues (`routes-i18n.ts`).
+ *
+ * Migrer coûterait donc soit le bouton menu, soit le bouton d'appel — sur un
+ * écran qu'on regarde pendant un accouchement. Ce que le socle apporterait de
+ * neuf (le nom du repère `<nav>`) est repris ici directement, à un coût nul.
+ *
+ * À DEMANDER AU SOCLE si la migration doit un jour aboutir : un emplacement
+ * libre en fin de barre (`trailing`), et une accroche d'habillage par élément.
  */
 import { Link, useLocation } from 'react-router-dom';
 import { useAppStore } from '../../store/useAppStore';
@@ -45,7 +74,10 @@ export function BottomNav({ onMenuClick, isMenuOpen = false }: BottomNavProps) {
     location.pathname === getRoutePath('midwife', language);
 
   return (
-    <nav className="bottom-nav">
+    // Le repère porte un nom : deux `<nav>` anonymes sont indiscernables dans
+    // la liste des repères d'un lecteur d'écran. C'est le seul défaut que
+    // `react/bottom-nav` relevait ici, et il n'exige pas de migrer.
+    <nav className="bottom-nav" aria-label={t(language, 'shell.bottomNav')}>
       {navItems.map(item => {
         const isActive = location.pathname === item.href;
         return (
