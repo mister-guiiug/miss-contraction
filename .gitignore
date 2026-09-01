@@ -11,3 +11,9 @@ test-results/
 
 # Lighthouse CI (rapports locaux)
 .lighthouseci/
+
+# Copies complètes du dépôt, créées par les agents lancés en `isolation:
+# worktree`. Elles étaient masquées par `.git/info/exclude`, qui est LOCAL :
+# invisible à `git status` ici, absent partout ailleurs. Versionnée, la ligne
+# couvre aussi Prettier, qui honore `.gitignore` depuis la 3.x.
+.claude/worktrees/
