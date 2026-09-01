@@ -1,37 +1,40 @@
 /**
- * Navigation inférieure pour mobile (PWA).
- * Remplace le hamburger sur les petits écrans.
+ * Navigation inférieure pour mobile (PWA). Remplace le hamburger sur les
+ * petits écrans.
  *
- * POURQUOI CETTE COPIE RESTE, alors que `react/bottom-nav` du socle existe et
- * cite nommément miss-contraction parmi les sept apps à migrer. Deux éléments
- * de cette barre ne peuvent pas s'exprimer avec son API, et ce ne sont pas des
- * détails : ce sont les deux qu'on voit en premier.
+ * MIGRÉE VERS `react/bottom-nav` DU SOCLE. Cette copie avait refusé de migrer,
+ * et son en-tête nommait les deux blocages : la cinquième cellule n'est pas
+ * une destination (c'est un `<button>` qui ouvre le tiroir de l'app, avec
+ * `aria-expanded` et `aria-controls`), et l'appel maternité est un bouton
+ * d'action, pas un onglet — or `key` ne descend pas dans le DOM et les chemins
+ * sont traduits dans sept langues, donc aucune accroche d'habillage.
  *
- * 1. LA CINQUIÈME CELLULE N'EST PAS UNE DESTINATION. C'est un `<button>` qui
- *    ouvre le tiroir de l'app (`#app-drawer`), avec `aria-expanded` et
- *    `aria-controls` — et il s'allume aussi sur les routes « message » et
- *    « sage-femme », que le tiroir contient. Le socle ne prend que des `items`
- *    à `href`. Son bouton « Plus » ressemble au nôtre mais fait autre chose :
- *    il déplie SON propre tiroir d'onglets en surnombre. (Son en-tête indique
- *    d'ailleurs que le motif `aria-expanded`/`aria-controls` a été repris
- *    D'ICI ; c'est la mécanique, pas le balisage, qui diffère.)
+ * Le socle 3.31.0 répond aux deux : `trailing` pour la cellule libre,
+ * `item.className` pour l'habillage par élément. La demande écrite ici
+ * — « À DEMANDER AU SOCLE… » — a été honorée telle quelle.
  *
- * 2. L'APPEL MATERNITÉ EST UN BOUTON D'ACTION, pas un onglet : gros disque
- *    violet en relief, libellé masqué visuellement (`sr-only`). Le socle rend
- *    tous les `items` à l'identique et n'émet aucune accroche par élément —
- *    ni `className`, ni `data-*` propre, et `key` ne descend pas dans le DOM.
- *    La classe `.cta` n'aurait plus rien à quoi se raccrocher. Un sélecteur
- *    sur le `href` ne tiendrait pas non plus : les chemins sont traduits dans
- *    les sept langues (`routes-i18n.ts`).
+ * CE QUE LA MIGRATION APPORTE, et que cette copie n'avait pas :
  *
- * Migrer coûterait donc soit le bouton menu, soit le bouton d'appel — sur un
- * écran qu'on regarde pendant un accouchement. Ce que le socle apporterait de
- * neuf (le nom du repère `<nav>`) est repris ici directement, à un coût nul.
+ *   · une mention « Page actuelle » lue mais non vue sur l'onglet courant.
+ *     L'état actif ne tenait qu'à la couleur (WCAG 1.4.1) ;
+ *   · `aria-hidden` sur les icônes des liens — seul le bouton menu l'avait.
  *
- * À DEMANDER AU SOCLE si la migration doit un jour aboutir : un emplacement
- * libre en fin de barre (`trailing`), et une accroche d'habillage par élément.
+ * `currentPath` EST PASSÉ EXPLICITEMENT. Le socle retombe sinon sur
+ * `location.pathname` du navigateur, qui inclut la base `/miss-contraction/`
+ * en production, là où `useLocation()` de react-router la retire : aucun
+ * onglet ne serait jamais actif en ligne, et tout le serait en local.
+ *
+ * `end: true` PARTOUT. Le socle compare par préfixe hors de la racine ; cette
+ * barre comparait à l'identique. Sans ce drapeau, un chemin plus profond
+ * allumerait son parent.
+ *
+ * L'HABILLAGE RESTE LOCAL, comme pour `EmptyState` : cette app n'importe pas
+ * `components.css` (elle restylerait `EmptyState` et `ErrorBoundary`), donc
+ * `enhanced-ui.css` cible les `[data-dwc]` du socle.
  */
+import type { ComponentType } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { BottomNav as SocleBottomNav } from '@mister-guiiug/dev-wpa-config/react/bottom-nav';
 import { useAppStore } from '../../store/useAppStore';
 import { getRoutePath } from '../../../routes-i18n';
 import { t } from '../../../i18n';
@@ -49,23 +52,32 @@ export function BottomNav({ onMenuClick, isMenuOpen = false }: BottomNavProps) {
     {
       href: getRoutePath('home', language),
       label: t(language, 'bottom.home'),
-      icon: HomeIcon,
+      icon: <HomeIcon />,
+      end: true,
+      className: 'bottom-nav-item',
     },
     {
       href: getRoutePath('table', language),
       label: t(language, 'bottom.history'),
-      icon: ListIcon,
+      icon: <ListIcon />,
+      end: true,
+      className: 'bottom-nav-item',
     },
     {
       href: getRoutePath('maternity', language),
       label: t(language, 'bottom.maternity'),
-      icon: PhoneIcon,
-      isCta: true,
+      icon: <PhoneIcon />,
+      end: true,
+      // `cta` : gros disque en relief, libellé masqué visuellement. C'est
+      // l'accroche par élément que cette barre réclamait au socle.
+      className: 'bottom-nav-item cta',
     },
     {
       href: getRoutePath('settings', language),
       label: t(language, 'bottom.settings'),
-      icon: SettingsIcon,
+      icon: <SettingsIcon />,
+      end: true,
+      className: 'bottom-nav-item',
     },
   ];
 
@@ -74,40 +86,35 @@ export function BottomNav({ onMenuClick, isMenuOpen = false }: BottomNavProps) {
     location.pathname === getRoutePath('midwife', language);
 
   return (
-    // Le repère porte un nom : deux `<nav>` anonymes sont indiscernables dans
-    // la liste des repères d'un lecteur d'écran. C'est le seul défaut que
-    // `react/bottom-nav` relevait ici, et il n'exige pas de migrer.
-    <nav className="bottom-nav" aria-label={t(language, 'shell.bottomNav')}>
-      {navItems.map(item => {
-        const isActive = location.pathname === item.href;
-        return (
-          <Link
-            key={item.href}
-            to={item.href}
-            className={`bottom-nav-item ${item.isCta ? 'cta' : ''} ${isActive ? 'active' : ''}`}
-            aria-label={item.label}
-            aria-current={isActive ? 'page' : undefined}
-          >
-            <span className="bottom-nav-icon">{item.icon()}</span>
-            <span className={item.isCta ? 'sr-only' : ''}>{item.label}</span>
-          </Link>
-        );
-      })}
-
-      <button
-        type="button"
-        className={`bottom-nav-item ${isMenuOpen || isMenuRoute ? 'active' : ''}`}
-        aria-label={t(language, 'bottom.menu')}
-        aria-expanded={isMenuOpen}
-        aria-controls="app-drawer"
-        onClick={onMenuClick}
-      >
-        <span className="bottom-nav-icon" aria-hidden="true">
-          {MenuIcon()}
-        </span>
-        <span>{t(language, 'bottom.menu')}</span>
-      </button>
-    </nav>
+    <SocleBottomNav
+      className="bottom-nav"
+      label={t(language, 'shell.bottomNav')}
+      currentPath={location.pathname}
+      // `linkComponent` est typé `ComponentType<Record<string, unknown>>`, qui
+      // refuse un composant à prop obligatoire — donc `Link` et son `to`,
+      // alors que c'est l'usage documenté du socle. La conversion est sûre :
+      // `hrefProp` fournit précisément `to`. Même motif que miss-genius,
+      // miss-lookhouse, miss-supaboss et mister-cim10, qui portent toutes les
+      // quatre ce cast : c'est le type du socle qui doit s'élargir.
+      linkComponent={Link as unknown as ComponentType<Record<string, unknown>>}
+      hrefProp="to"
+      items={navItems}
+      trailing={
+        <button
+          type="button"
+          className={`bottom-nav-item ${isMenuOpen || isMenuRoute ? 'active' : ''}`}
+          aria-label={t(language, 'bottom.menu')}
+          aria-expanded={isMenuOpen}
+          aria-controls="app-drawer"
+          onClick={onMenuClick}
+        >
+          <span className="bottom-nav-icon" aria-hidden="true">
+            {MenuIcon()}
+          </span>
+          <span>{t(language, 'bottom.menu')}</span>
+        </button>
+      }
+    />
   );
 }
 
