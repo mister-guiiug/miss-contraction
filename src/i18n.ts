@@ -66,6 +66,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'bottom.maternity': 'Maternité',
     'bottom.settings': 'Réglages',
     'bottom.menu': 'Menu',
+    'bottom.current': 'Page actuelle',
 
     'footer.disclaimer':
       'Cet outil ne remplace pas un avis médical. Appelez la maternité ou le 15 en cas de doute.',
@@ -294,6 +295,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'bottom.maternity': 'Maternity',
     'bottom.settings': 'Settings',
     'bottom.menu': 'Menu',
+    'bottom.current': 'Current page',
 
     'footer.disclaimer':
       'This tool does not replace medical advice. Call maternity services or emergency if in doubt.',
@@ -512,6 +514,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'bottom.maternity': 'Maternidad',
     'bottom.settings': 'Ajustes',
     'bottom.menu': 'Menu',
+    'bottom.current': 'Página actual',
     'footer.disclaimer':
       'Esta herramienta no sustituye el consejo medico. Llame a maternidad o emergencias si tiene dudas.',
     'footer.about': 'Acerca de y version',
@@ -572,6 +575,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'bottom.maternity': 'Kreißsaal',
     'bottom.settings': 'Einstellungen',
     'bottom.menu': 'Menu',
+    'bottom.current': 'Aktuelle Seite',
     'footer.disclaimer':
       'Dieses Tool ersetzt keine medizinische Beratung. Bei Unsicherheit Kreißsaal oder Notruf kontaktieren.',
     'footer.about': 'Uber und Version',
@@ -632,6 +636,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'bottom.maternity': 'Maternita',
     'bottom.settings': 'Impostazioni',
     'bottom.menu': 'Menu',
+    'bottom.current': 'Pagina corrente',
     'footer.disclaimer':
       'Questo strumento non sostituisce il parere medico. In caso di dubbio chiama maternita o emergenza.',
     'footer.about': 'Informazioni e versione',
@@ -692,6 +697,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'bottom.maternity': 'Maternidade',
     'bottom.settings': 'Definicoes',
     'bottom.menu': 'Menu',
+    'bottom.current': 'Página atual',
     'footer.disclaimer':
       'Esta ferramenta nao substitui aconselhamento medico. Em caso de duvida, ligue para maternidade ou emergencia.',
     'footer.about': 'Sobre e versao',
@@ -752,6 +758,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'bottom.maternity': 'Kraamzorg',
     'bottom.settings': 'Instellingen',
     'bottom.menu': 'Menu',
+    'bottom.current': 'Huidige pagina',
     'footer.disclaimer':
       'Deze tool vervangt geen medisch advies. Bel bij twijfel kraamzorg of spoed.',
     'footer.about': 'Over en versie',

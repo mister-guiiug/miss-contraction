@@ -544,7 +544,10 @@
     border-radius: 0.9rem;
   }
 
-  .bottom-nav-icon {
+  /* Le socle marque l'icône par attribut ; le bouton menu, qui reste du code
+     d'ici, garde sa classe. Les deux sélecteurs cohabitent. */
+  .bottom-nav-icon,
+  .bottom-nav-item [data-dwc='bottom-nav-icon'] {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -567,12 +570,16 @@
     border-radius: 0.5rem;
   }
 
-  .bottom-nav-item.active {
+  /* `[data-current]` vient du socle ; `.active` reste celui du bouton menu,
+     qui n'est pas une destination et n'a donc pas d'état de route. */
+  .bottom-nav-item.active,
+  .bottom-nav-item[data-current] {
     color: var(--primary);
   }
 
   /* Pill indicateur d'état actif sous l'icône */
-  .bottom-nav-item.active:not(.cta) .bottom-nav-icon {
+  .bottom-nav-item.active:not(.cta) .bottom-nav-icon,
+  .bottom-nav-item[data-current]:not(.cta) [data-dwc='bottom-nav-icon'] {
     background: rgba(var(--accent-rgb), 0.14);
     border-radius: 999px;
     padding: 0.22rem 0.62rem;
@@ -618,8 +625,43 @@
     height: 1.62rem;
   }
 
-  .bottom-nav-item:not(.cta) > span:last-child {
+  /* PLUS « le dernier span » : sur l'onglet courant, le dernier enfant est
+     maintenant la mention lue « Page actuelle », pas le libellé. Le socle
+     nomme les deux, on les vise par leur nom. */
+  .bottom-nav-item:not(.cta) > span:last-child,
+  .bottom-nav-item:not(.cta) [data-dwc='bottom-nav-label'] {
     white-space: nowrap;
+  }
+
+  /* L'appel maternité est un disque : son libellé est lu, pas vu. C'était le
+     `sr-only` posé à la main sur le span ; le socle rend le libellé sans
+     classe, donc la règle passe par son attribut. */
+  .bottom-nav-item.cta [data-dwc='bottom-nav-label'] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* SANS CETTE RÈGLE, « Page actuelle » S'AFFICHE EN CLAIR dans la barre.
+     `components.css` la porte, mais cette app ne l'importe pas — elle
+     restylerait `EmptyState` et `ErrorBoundary`, déjà habillés ici. Même
+     méthode que pour eux : on reprend la règle, pas la feuille. */
+  .bottom-nav [data-dwc='bottom-nav-sr'] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   /* Masquer le hamburger sur mobile quand bottom nav est présent */
