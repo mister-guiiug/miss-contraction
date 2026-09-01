@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { LabelsProvider } from '@mister-guiiug/dev-wpa-config/react/labels';
 import { useAppStore } from '../store/useAppStore';
+import { t } from '../../i18n';
 
 /**
  * Donne aux composants du socle la langue choisie dans les réglages.
@@ -25,5 +26,18 @@ import { useAppStore } from '../store/useAppStore';
 export function AppLabelsProvider({ children }: { children: ReactNode }) {
   const language = useAppStore(state => state.settings.language);
 
-  return <LabelsProvider locale={language}>{children}</LabelsProvider>;
+  return (
+    <LabelsProvider
+      locale={language}
+      // `nav.current` est le seul libellé du socle qu'un composant ne laisse
+      // pas passer en prop : `BottomNav` le lit dans son dictionnaire pour la
+      // mention « Page actuelle », masquée visuellement mais lue à voix haute
+      // sur l'onglet courant. Sans cette surcharge, cinq de nos sept langues
+      // l'entendraient en français — exactement la frontière que cet en-tête
+      // décrit. `overrides` est la porte prévue pour ça.
+      overrides={{ nav: { current: t(language, 'bottom.current') } }}
+    >
+      {children}
+    </LabelsProvider>
+  );
 }
