@@ -2321,21 +2321,52 @@ a.btn {
   font-size: 0.78rem;
   color: var(--muted);
   text-align: center;
-  margin: 0 0 0.5rem;
+  /* Plus de marge basse : c'est le `gap` du pied de page qui espace, désormais
+     que les trois blocs sont frères dans le même conteneur flex. */
+  margin: 0;
   line-height: 1.4;
 }
 
-.footer__links {
+/* LE CONTENEUR DES LIENS A DISPARU avec la migration vers `react/app-footer` :
+   le socle rend ses liens en enfants directs du `<footer>`, sans emballage.
+   C'est donc le pied de page lui-même qui devient la rangée, l'avertissement
+   et le numéro prenant toute la largeur. Le rendu ne bouge pas ; le DOM, si. */
+.footer--app {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  flex-wrap: wrap;
   font-size: 0.82rem;
 }
 
+.footer__disclaimer,
 .footer__version {
-  margin: 0.45rem 0 0;
+  flex-basis: 100%;
+}
+
+/* Le lien sponsor vient du socle : il porte son attribut, pas notre classe. */
+[data-dwc='footer-sponsor'] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.15em 0.35em;
+  border-radius: 0.35rem;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+
+[data-dwc='footer-sponsor']:hover {
+  color: var(--primary);
+  background: rgba(var(--accent-rgb), 0.08);
+  text-decoration: none;
+}
+
+.footer__version {
+  margin: 0;
   font-size: 0.72rem;
   letter-spacing: 0.04em;
   font-family: monospace;
