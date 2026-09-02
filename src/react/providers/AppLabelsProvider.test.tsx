@@ -6,24 +6,22 @@ import { useAppStore } from '../store/useAppStore';
 import { SUPPORTED_LANGUAGES, t, type AppLanguage } from '../../i18n';
 
 /**
- * LA FRONTIÈRE ENTRE NOS SEPT LANGUES ET LES DEUX DU SOCLE.
+ * NOS SEPT LANGUES ET CELLES DU SOCLE : LA FRONTIÈRE A DISPARU.
  *
  * `AppLabelsProvider` relaie `settings.language` à `LabelsProvider`, ce qui
  * fait suivre la langue aux libellés que les composants du paquet portent
- * eux-mêmes. Mais `react/labels.js` ne livre QUE `fr` et `en`, et résout par
- * `LABELS[locale] ?? LABELS['fr']` : les cinq autres langues de l'app
- * retombent en français, sans erreur ni avertissement.
+ * eux-mêmes. Jusqu'à 3.32, `react/labels.js` ne livrait QUE `fr` et `en` et
+ * résolvait par `LABELS[locale] ?? LABELS['fr']` : les cinq autres langues de
+ * l'app retombaient en français, sans erreur ni avertissement — du français
+ * à une utilisatrice néerlandophone, pendant un accouchement.
  *
- * Ce test fige donc les deux moitiés du contrat, parce que la seconde est un
- * piège silencieux :
+ * Depuis 3.33.0, le socle porte les sept mêmes langues que l'app. Ces tests
+ * figent donc la nouvelle vérité : les deux moitiés du contrat disent juste,
+ * dans les sept langues.
  *
- *  - ce que l'app écrit (`t()`) est juste dans les SEPT langues ;
- *  - ce que le socle écrit n'est juste que dans DEUX.
- *
- * Conséquence pratique pour toute adoption future d'un composant du paquet :
- * tout texte visible doit lui être passé en prop depuis `t()`. S'en remettre
- * au dictionnaire du socle, c'est livrer du français à une utilisatrice
- * néerlandophone — pendant un accouchement.
+ * LA RÈGLE QU'ILS ONT INSPIRÉE RESTE BONNE : ce qui est propre à l'app se
+ * passe en prop depuis `t()`. Un dictionnaire partagé ne saura jamais dire
+ * « contraction » à la place de l'app.
  */
 
 const BASE_SETTINGS = useAppStore.getState().settings;
@@ -54,7 +52,7 @@ afterEach(() => {
 });
 
 describe('AppLabelsProvider', () => {
-  it('fait suivre la langue aux libellés du socle, pour les deux qu’il couvre', () => {
+  it('fait suivre la langue aux libellés du socle', () => {
     renderIn('fr');
     expect(screen.getByTestId('socle')).toHaveTextContent(
       'Navigation principale'
@@ -68,17 +66,17 @@ describe('AppLabelsProvider', () => {
     );
   });
 
-  it('affiche le libellé de l’app dans une langue que le socle ne couvre pas', () => {
+  it('en néerlandais, l’app ET le socle parlent néerlandais', () => {
     renderIn('nl');
 
-    // Ce que l'app écrit : du néerlandais.
+    // Ce que l'app écrit.
     expect(screen.getByTestId('app')).toHaveTextContent(t('nl', 'bottom.home'));
     expect(screen.getByTestId('app')).not.toHaveTextContent(
       t('fr', 'bottom.home')
     );
 
-    // Ce que le socle écrit : le repli français, et il faut le savoir.
-    expect(screen.getByTestId('socle')).toHaveTextContent(
+    // Ce que le socle écrit : plus le repli français (socle 3.33.0).
+    expect(screen.getByTestId('socle')).not.toHaveTextContent(
       'Navigation principale'
     );
   });
@@ -96,7 +94,7 @@ describe('AppLabelsProvider', () => {
     }
   });
 
-  it('documente le repli silencieux : cinq langues sur sept lisent le français', () => {
+  it('plus aucun repli silencieux : seul le français lit le français', () => {
     const replis = SUPPORTED_LANGUAGES.filter(language => {
       renderIn(language);
       const socle = screen.getByTestId('socle').textContent;
@@ -104,7 +102,8 @@ describe('AppLabelsProvider', () => {
       return socle === 'Navigation principale';
     });
 
-    // fr (légitime) + es, de, it, pt, nl (repli). Seul `en` s'en sort.
-    expect(replis).toEqual(['fr', 'es', 'de', 'it', 'pt', 'nl']);
+    // Le socle 3.33.0 porte nos sept langues : `fr` seul rend le français, et
+    // c'est le sien. Avant, es, de, it, pt et nl le lisaient par défaut.
+    expect(replis).toEqual(['fr']);
   });
 });
