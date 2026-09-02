@@ -68,13 +68,3 @@ export function useAlerts(
     dismissPreAlertBanner,
   };
 }
-
-export function shouldShowPreAlertBanner(
-  settings: AppSettings,
-  thresholdKind: ThresholdBadgeKind,
-  isSnoozed: boolean
-): boolean {
-  return (
-    settings.preAlertEnabled && thresholdKind === 'approaching' && !isSnoozed
-  );
-}

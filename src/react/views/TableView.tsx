@@ -8,8 +8,9 @@ import { useAppStore } from '../store/useAppStore';
 import { loadRecords } from '../../storage';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { t } from '../../i18n';
+import { getDefaultLocale } from '@mister-guiiug/dev-wpa-config/format';
 
-const dateTimeFmt = new Intl.DateTimeFormat('fr-FR', {
+const dateTimeFmt = new Intl.DateTimeFormat(getDefaultLocale(), {
   weekday: 'short',
   day: 'numeric',
   month: 'short',
