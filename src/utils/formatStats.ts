@@ -1,3 +1,4 @@
+import { getDefaultLocale } from '@mister-guiiug/dev-wpa-config/format';
 /**
  * Formate un nombre de millisecondes en horloge type 01:05
  * Utilisé pour les moyennes affichées dans les bandeaux statistiques
@@ -28,7 +29,7 @@ export function formatContractionsPerHour(meanIntervalMs: number): string {
 /**
  * Formate une date/heure pour affichage dans l'historique
  */
-const dateTimeFmt = new Intl.DateTimeFormat('fr-FR', {
+const dateTimeFmt = new Intl.DateTimeFormat(getDefaultLocale(), {
   weekday: 'short',
   day: 'numeric',
   month: 'short',

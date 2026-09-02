@@ -8,7 +8,6 @@ interface TimerReturn {
 }
 
 const MAX_SECONDS = 60;
-const CIRCUMFERENCE = 2 * Math.PI * 90; // r = 90
 
 /**
  * Gère le timer de contraction
@@ -63,11 +62,4 @@ export function useContractionTimer(activeStart: number | null): TimerReturn {
     progress,
     isRunning: activeStart !== null,
   };
-}
-
-/**
- * Calcule le stroke-dashoffset pour le cercle SVG de progression
- */
-export function calculateCircleOffset(progress: number): number {
-  return CIRCUMFERENCE * (1 - progress);
 }
