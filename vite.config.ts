@@ -127,6 +127,9 @@ export default defineConfig(({ command }) => {
       // le plugin local ci-dessous (GTM + GA4 avec cookie_domain + GSC,
       // plus riche que l'injection du plugin partagé).
       pwaSeoPlugin({
+        // Deux <meta name="theme-color"> par schéma : la barre du navigateur suit
+        // le mode sombre dès le premier rendu (relevé du 02/09/2026 : 5 apps sur 16).
+        themeColor: { light: '#f8f2fc', dark: '#160b1c' },
         siteName: 'Miss Contraction',
         basePath,
         logoPath: '/icon.svg',
@@ -223,7 +226,10 @@ export default defineConfig(({ command }) => {
         },
       },
       VitePWA({
-        registerType: 'autoUpdate',
+        // `prompt`, pas `autoUpdate` : un déploiement tombant pendant un
+        // chronométrage ne recharge plus la page tout seul ; le bandeau du
+        // socle (AppUpdates, main.tsx) laisse l'utilisatrice choisir le moment.
+        registerType: 'prompt',
         includeAssets: [
           'icons/icon-192.png',
           'icons/icon-512.png',

@@ -13,6 +13,7 @@ import {
 import { initWebVitals } from '@mister-guiiug/dev-wpa-config/web-vitals';
 import { unregisterServiceWorkers } from '@mister-guiiug/dev-wpa-config/sw-update';
 import { registerSW } from 'virtual:pwa-register';
+import { AppUpdates } from '@mister-guiiug/dev-wpa-config/react/app-updates';
 import { App } from './react/AppRouter';
 
 installErrorReporter();
@@ -27,17 +28,13 @@ void initSentry({
 // pas lire `import.meta.env`. En développement, un worker resté d'une session
 // précédente sert du cache périmé et se bat contre le HMR.
 //
-// EN PRODUCTION, `registerSW()` SUFFIT — et c'est tout ce qu'il faut. Le plugin
-// est configuré en `registerType: 'autoUpdate'` (`vite.config.ts`) : le worker
-// généré porte `skipWaiting` + `clientsClaim`, et le module `virtual:pwa-register`
-// recharge lui-même la page sur l'évènement `activated` d'une mise à jour.
-// `onNeedRefresh` n'est JAMAIS appelé dans ce mode (il n'existe que dans la
-// branche `prompt`), et `updateSW(true)` y est un no-op : les deux rappels que
-// portait `src/register-sw.ts` étaient du code mort.
+// EN PRODUCTION, l'enregistrement est confié à `<AppUpdates>` (ci-dessous) :
+// le plugin est en `registerType: 'prompt'` (`vite.config.ts`), la nouvelle
+// version est téléchargée en fond et c'est l'utilisatrice qui recharge, depuis
+// le bandeau du socle. Avant le 02/09/2026, l'app était en `autoUpdate` : un
+// déploiement tombant pendant un chronométrage rechargeait la page de lui-même.
 if (import.meta.env.DEV) {
   void unregisterServiceWorkers();
-} else {
-  registerSW();
 }
 
 // Web Vitals via le socle (INP au lieu de FID, métriques indépendantes) :
@@ -70,7 +67,11 @@ if (rootElement) {
           recordError(error, { source: 'error-boundary' });
         }}
       >
-        <App />
+        {/* En développement, `registerSW` vaut `undefined` : aucun worker n'est
+            enregistré et le bandeau ne peut pas apparaître. */}
+        <AppUpdates registerSW={import.meta.env.PROD ? registerSW : undefined}>
+          <App />
+        </AppUpdates>
       </ErrorBoundary>
     </StrictMode>
   );
