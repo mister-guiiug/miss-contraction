@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && pwa-bundle-budget",
     "build:analyze": "cross-env ANALYZE=1 npm run build",
     "build:netlify": "tsc -b && REACT_PREVIEW=1 vite build",
     "build:react-preview": "tsc -b && REACT_PREVIEW=1 vite build",
@@ -37,6 +37,9 @@
     "type-check": "tsc -b",
     "sync:vscode:tasks": "node scripts/sync-vscode-tasks.mjs",
     "check:vscode:tasks": "node scripts/sync-vscode-tasks.mjs --check"
+  },
+  "bundleBudget": {
+    "totalGzipKb": 270
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.8.0",
