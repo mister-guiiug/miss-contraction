@@ -8,6 +8,7 @@
 
 import type { ContractionRecord } from './storage';
 import { formatStatsClock } from './utils/formatStats';
+import { getDefaultLocale } from '@mister-guiiug/dev-wpa-config/format';
 
 /** Période affichée : N dernières contractions ou tout l'historique. */
 export type MidwifeMode = '6' | '10' | '12' | '20' | 'all';
@@ -67,7 +68,7 @@ export function formatDuration(ms: number): string {
 }
 
 /** Début de contraction dans le détail (ex. « sam. 30 août, 14:05 »). */
-export const midwifeDateTimeFmt = new Intl.DateTimeFormat('fr-FR', {
+export const midwifeDateTimeFmt = new Intl.DateTimeFormat(getDefaultLocale(), {
   weekday: 'short',
   day: 'numeric',
   month: 'short',
@@ -76,12 +77,15 @@ export const midwifeDateTimeFmt = new Intl.DateTimeFormat('fr-FR', {
 });
 
 /** Premier seuil atteint, en toutes lettres. */
-export const midwifeDateTimeFmtLong = new Intl.DateTimeFormat('fr-FR', {
-  dateStyle: 'full',
-  timeStyle: 'short',
-});
+export const midwifeDateTimeFmtLong = new Intl.DateTimeFormat(
+  getDefaultLocale(),
+  {
+    dateStyle: 'full',
+    timeStyle: 'short',
+  }
+);
 
-const midwifeHeaderFmt = new Intl.DateTimeFormat('fr-FR', {
+const midwifeHeaderFmt = new Intl.DateTimeFormat(getDefaultLocale(), {
   dateStyle: 'medium',
   timeStyle: 'short',
 });

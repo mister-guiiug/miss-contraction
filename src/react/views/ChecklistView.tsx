@@ -3,6 +3,9 @@ import { ViewLayout } from '../components/layout/ViewLayout';
 import { AppFooter } from '../components/layout/AppFooter';
 import { t } from '../../i18n';
 import { useAppStore } from '../store/useAppStore';
+import { createLogger } from '@mister-guiiug/dev-wpa-config/logger';
+
+const log = createLogger('views');
 
 interface ChecklistItem {
   id: string;
@@ -70,7 +73,7 @@ export function ChecklistView() {
     try {
       return JSON.parse(saved);
     } catch (e) {
-      console.error('Error parsing checklist from localStorage', e);
+      log.error('Error parsing checklist from localStorage', { error: e });
       return DEFAULT_ITEMS;
     }
   });

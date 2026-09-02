@@ -10,10 +10,7 @@ import type { AppRoute } from './routes';
  * Route paths for each language
  * Example: { fr: { home: '/', settings: '/parametres' }, en: { home: '/', settings: '/settings' } }
  */
-export const routePathsByLanguage: Record<
-  AppLanguage,
-  Record<AppRoute, string>
-> = {
+const routePathsByLanguage: Record<AppLanguage, Record<AppRoute, string>> = {
   fr: {
     home: '/',
     settings: '/parametres',
@@ -101,20 +98,6 @@ export function getRoutePath(route: AppRoute, language: AppLanguage): string {
 }
 
 /**
- * Get all possible paths for a route (across all languages)
- * Useful for React Router configuration
- * @param route - Route name
- * @returns Array of all paths for this route in all languages
- */
-export function getAllRoutePathsForRoute(route: AppRoute): string[] {
-  const paths = new Set<string>();
-  Object.values(routePathsByLanguage).forEach(langRoutes => {
-    paths.add(langRoutes[route]);
-  });
-  return Array.from(paths);
-}
-
-/**
  * Reverse map: find route name from a path and language
  * Used for parsing current location
  */
@@ -130,32 +113,3 @@ export function getRouteFromPath(
   }
   return 'home';
 }
-
-/**
- * Create redirect map for backward compatibility
- * Maps all old hardcoded paths to canonical route names
- */
-export const legacyPathMap: Record<string, AppRoute> = {
-  // French paths (canonical)
-  '/': 'home',
-  '/parametres': 'settings',
-  '/historique': 'table',
-  '/sage-femme': 'midwife',
-  '/maternite': 'maternity',
-  '/message': 'message',
-  '/valise': 'checklist',
-  '/a-propos': 'about',
-  // English alternative paths
-  '/settings': 'settings',
-  '/history': 'table',
-  '/midwife': 'midwife',
-  '/maternity': 'maternity',
-  '/messages': 'message',
-  '/sms': 'message',
-  '/checklist': 'checklist',
-  '/about': 'about',
-  // Other variations
-  '/tableau': 'table',
-  '/table': 'table',
-  '/sagefemme': 'midwife',
-};

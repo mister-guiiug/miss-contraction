@@ -54,7 +54,7 @@ const KEY_RECORDS = 'mc_contractions_v1';
 const KEY_SETTINGS = 'mc_settings_v1';
 
 export const KEY_ACTIVE_START = 'mc_active_start_v1';
-export const KEY_SNOOZE_UNTIL = 'mc_snooze_until';
+const KEY_SNOOZE_UNTIL = 'mc_snooze_until';
 export const KEY_EXPORT_NUDGE_DISMISSED = 'mc_export_nudge_dismissed_at';
 
 const defaultSettings: AppSettings = {

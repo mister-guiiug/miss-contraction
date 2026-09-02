@@ -14,7 +14,7 @@ export type AppRoute =
   | 'checklist'
   | 'about';
 
-export function getRouteMeta(
+function getRouteMeta(
   route: AppRoute,
   language: AppLanguage
 ): {

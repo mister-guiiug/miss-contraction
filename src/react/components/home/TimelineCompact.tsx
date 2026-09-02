@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useAppStore } from '../../store/useAppStore';
+import { getDefaultLocale } from '@mister-guiiug/dev-wpa-config/format';
 
 /**
  * Timeline compacte horizontale pour les 5 dernières contractions
@@ -47,7 +48,7 @@ export function TimelineCompact() {
   if (lastFive.length === 0) return null;
 
   const formatTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleTimeString('fr-FR', {
+    return new Date(timestamp).toLocaleTimeString(getDefaultLocale(), {
       hour: '2-digit',
       minute: '2-digit',
     });

@@ -32,7 +32,7 @@ function DocumentTitle() {
   return null;
 }
 
-export function AppRoutes() {
+function AppRoutes() {
   const settings = useAppStore(state => state.settings);
   const language = settings.language;
 

@@ -21,6 +21,7 @@ import type { ContractionRecord } from '../../storage';
 import { formatStatsClock } from '../../utils/formatStats';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { t } from '../../i18n';
+import { getDefaultLocale } from '@mister-guiiug/dev-wpa-config/format';
 
 function parseMidwifeMode(val: string): MidwifeMode {
   if (
@@ -197,7 +198,7 @@ export function MidwifeView() {
             __html: `
             <div class="midwife-doc">
               <p class="midwife-doc-title">Miss Contraction — Résumé pour la sage-femme</p>
-              <p class="midwife-doc-meta">Généré le ${new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date())}</p>
+              <p class="midwife-doc-meta">Généré le ${new Intl.DateTimeFormat(getDefaultLocale(), { dateStyle: 'medium', timeStyle: 'short' }).format(new Date())}</p>
               <section class="midwife-doc-section">
                 <h3 class="midwife-doc-h">Seuils (réglages actuels)</h3>
                 <p>${settings.consecutiveCount} contractions consécutives, écart entre débuts ≤ ${settings.maxIntervalMin} min, durée ≥ ${settings.minDurationSec} s chacune.</p>
