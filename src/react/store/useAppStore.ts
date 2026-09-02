@@ -43,11 +43,12 @@ export const useAppStore = create<AppState>((set, get) => ({
   records: loadRecords(),
   settings: loadSettings(),
   // La contraction en cours survit au rechargement. Elle ne le faisait pas, et
-  // l'app est en `registerType: 'autoUpdate'` : le module `virtual:pwa-register`
-  // appelle `window.location.reload()` de lui-même quand un nouveau service
-  // worker s'active. Un déploiement tombant pendant un chronométrage — pendant
-  // un accouchement — le faisait disparaître en silence. Le rechargement reste,
-  // le chronométrage non.
+  // l'app était en `registerType: 'autoUpdate'` : le module `virtual:pwa-register`
+  // appelait `window.location.reload()` de lui-même quand un nouveau service
+  // worker s'activait. Un déploiement tombant pendant un chronométrage — pendant
+  // un accouchement — le faisait disparaître en silence. Depuis le 02/09/2026
+  // l'app est en `prompt` (l'utilisatrice recharge quand elle veut) ; la
+  // persistance reste : un rechargement volontaire ne doit rien perdre non plus.
   activeStart: loadActiveStart(),
   alertLatch: false,
 
