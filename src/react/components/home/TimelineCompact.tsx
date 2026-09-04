@@ -63,18 +63,6 @@ export function TimelineCompact() {
       : `${secs}s`;
   };
 
-  const getIntensityColor = (intensity?: number) => {
-    if (!intensity) return '#80c878';
-    const colors = {
-      1: '#80c878',
-      2: '#a8d678',
-      3: '#ffd04b',
-      4: '#ff9d4b',
-      5: '#ff5e4b',
-    };
-    return colors[intensity as keyof typeof colors] || '#80c878';
-  };
-
   const trendLabel = {
     faster: "S'accélère ↗",
     slower: 'Ralentit ↘',
@@ -110,7 +98,7 @@ export function TimelineCompact() {
             {record.intensity && (
               <div
                 className="timeline-compact-intensity"
-                style={{ backgroundColor: getIntensityColor(record.intensity) }}
+                data-intensity={record.intensity}
               >
                 {record.intensity}
               </div>

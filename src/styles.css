@@ -1,3 +1,26 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   STYLES — Miss Contraction  (1/3)
+
+   LES TOKENS SONT ICI, ET NULLE PART AILLEURS. Les deux blocs qui suivent
+   sont la seule définition des couleurs de l'application. Les deux autres
+   feuilles (`enhanced-styles.css`, `enhanced-ui.css`) les consomment ; elles
+   n'ont pas le droit d'écrire un hex. Chaque valeur de ces blocs est vérifiée
+   par `src/designTokens.test.ts`, qui lit CE fichier.
+
+   TROIS FEUILLES, CHARGÉES DANS CET ORDRE PAR `main.tsx` :
+     1. styles.css          — tokens, mise en page, composants de base
+     2. enhanced-styles.css — animation et décor
+     3. enhanced-ui.css     — habillage des composants d'écran ; gagne les
+                              conflits, puisqu'elle est chargée en dernier
+   Trente-cinq sélecteurs existent dans deux de ces feuilles à la fois. Le
+   découpage, son coût et ce qu'il faudrait pour le défaire sont écrits dans
+   `docs/DESIGN_SYSTEM.md`.
+
+   `tokens.css` ET `components.css` DU SOCLE NE SONT PAS IMPORTÉS. Ce fichier
+   restyle directement les `[data-dwc]` des composants du socle. Le pourquoi
+   est dans `AppFooter.tsx` et `BottomNav.tsx`, le quoi dans le document.
+────────────────────────────────────────────────────────────────────────────── */
+
 :root,
 html[data-theme='light'] {
   color-scheme: light;
@@ -17,10 +40,23 @@ html[data-theme='light'] {
   --danger-hover: #9f1830;
   --border: rgba(180, 120, 200, 0.28);
 
+  /*
+   * L'encre posée SUR `--primary` / `--danger`. Elle était écrite `#fff` en
+   * dur à sept endroits, ce qui allait en thème clair (6,2:1 et 5,8:1) et pas
+   * du tout en sombre, où ces deux couleurs s'éclaircissent : le blanc y
+   * tombait à 2,8:1 et 2,6:1. Chaque bouton principal et chaque bouton de
+   * suppression de l'application échouaient à WCAG AA en thème sombre.
+   */
+  --primary-contrast: #fff;
+  --danger-contrast: #fff;
+
   /* ── Canaux RGB (pour rgba()) ────────────────────────────── */
   --accent-rgb: 160, 48, 154;
   --ink-rgb: 44, 24, 58;
   --depth-rgb: 72, 22, 78;
+  /* `--danger` en canaux, pour les halos de l'état « enregistrement ». Ils
+   * étaient écrits `rgba(196, 30, 58, …)` — la valeur du thème clair, figée. */
+  --danger-rgb: 196, 30, 58;
 
   /* ── Ombres ──────────────────────────────────────────────── */
   --shadow: 0 8px 32px rgba(var(--ink-rgb), 0.09);
@@ -89,13 +125,41 @@ html[data-theme='light'] {
   --badge-match-text: #5c1a58;
   --cta-hint-color: var(--muted);
 
+  /*
+   * ── Teintes d'accent des pastilles ──────────────────────────────────────
+   *
+   * Les notes rapides (« eau », « douche », « ballon », « médicament ») et
+   * l'indicateur de tendance portaient chacun leur hex, identique dans les
+   * deux thèmes. Neuf des douze combinaisons échouaient à WCAG AA : un texte
+   * `#dc2626` sur son propre fond à 12 % donne 3,4:1 en sombre, `#7c3aed`
+   * 3,0:1, `#16a34a` 2,9:1 en clair.
+   *
+   * Les fonds et bordures ne sont plus écrits : ils se dérivent de la teinte
+   * par `color-mix()` sur `currentColor`. Une seule valeur à tenir par thème,
+   * et le fond ne peut plus diverger de son texte.
+   *
+   * LA TEINTE DU FOND NE DOIT PAS DÉPASSER 12 %. Plus elle est dense, plus le
+   * fond se rapproche du texte et plus le contraste baisse ; c'est cette
+   * densité-là que `designTokens.test.ts` mesure. À 14 %, le cyan tombait
+   * à 4,4:1.
+   */
+  --accent-cyan: #155e75;
+  --accent-violet: #6d28d9;
+  --accent-orange: #9a3412;
+  --accent-red: #b91c1c;
+  --accent-green: #166534;
+
   /* ── Typographie ─────────────────────────────────────────── */
-  --font-brand: 'Fredoka', 'Segoe UI', system-ui, sans-serif;
-  font-family:
-    'Segoe UI',
-    system-ui,
-    -apple-system,
-    sans-serif;
+  /*
+   * Deux piles de police cohabitaient : celle-ci, qui plaçait 'Segoe UI' en
+   * tête, et `--font-sans` du preset du socle, appliquée à `body` et qui part
+   * de `system-ui`. Selon l'élément, la page piochait dans l'une ou l'autre.
+   * On s'aligne sur celle du socle : sous Windows `system-ui` EST Segoe UI,
+   * et ailleurs elle donne la police du système plutôt qu'un `sans-serif`
+   * générique. `--font-brand` garde Fredoka pour les titres.
+   */
+  --font-brand: 'Fredoka', var(--font-sans);
+  font-family: var(--font-sans);
   line-height: 1.5;
 }
 
@@ -117,10 +181,17 @@ html[data-theme='dark'] {
   --danger-hover: #e35e70;
   --border: rgba(200, 130, 220, 0.18);
 
+  /* Voir le thème clair : ici les deux teintes sont claires, l'encre doit
+   * donc être sombre. `--bg` donne 6,8:1 sur la primaire et 7,3:1 sur le
+   * danger, contre 2,8:1 et 2,6:1 avec le blanc qui était écrit en dur. */
+  --primary-contrast: var(--bg);
+  --danger-contrast: var(--bg);
+
   /* ── Canaux RGB ──────────────────────────────────────────── */
   --accent-rgb: 214, 120, 207;
   --ink-rgb: 240, 232, 245;
   --depth-rgb: 180, 140, 200;
+  --danger-rgb: 244, 123, 138;
 
   /* ── Ombres ──────────────────────────────────────────────── */
   --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
@@ -188,6 +259,67 @@ html[data-theme='dark'] {
   --badge-approaching-text: #f5c97a;
   --badge-match-text: var(--primary);
   --cta-hint-color: rgba(var(--ink-rgb), 0.8);
+
+  /* Voir le thème clair. Sur fond sombre les mêmes teintes doivent s'éclaircir
+   * au lieu de s'assombrir ; 8,2:1 au pire des cinq. */
+  --accent-cyan: #67e8f9;
+  --accent-violet: #c4b5fd;
+  --accent-orange: #fdba74;
+  --accent-red: #fca5a5;
+  --accent-green: #86efac;
+}
+
+/* ── Échelle d'intensité — LA source des cinq couleurs ─────────────────────
+ *
+ * Elles étaient recopiées à cinq endroits (`utils/intensity.ts`, un littéral
+ * dans `TimelineCompact`, et trois blocs de ce fichier). Le correctif de
+ * contraste du niveau 3 n'avait donc été appliqué qu'à deux d'entre eux, et
+ * pas du tout à la pastille de la timeline compacte. Tout part d'ici
+ * désormais : le TypeScript pointe sur ces variables plutôt que sur des hex.
+ *
+ * HORS DES BLOCS DE THÈME, DÉLIBÉRÉMENT. Le fond de la pastille ne bascule pas
+ * en sombre — vert = léger, rouge = très fort est une convention, pas une
+ * teinte de l'interface. L'encre doit donc rester sombre dans les deux thèmes,
+ * sans quoi elle passerait au blanc sur un fond resté clair. C'est exactement
+ * le défaut qui rendait quatre pastilles sur cinq illisibles.
+ *
+ * `--intensity-ink` est `--text` du thème clair, figé : il tient le 4,5:1 de
+ * WCAG AA sur les cinq fonds (5,4:1 au pire, sur le niveau 5). Toute nouvelle
+ * teinte ici doit être vérifiée par `npm run test` (`intensity.test.ts`).
+ */
+:root {
+  --intensity-1-bg: #80c878;
+  --intensity-2-bg: #a8d678;
+  --intensity-3-bg: #ffd04b;
+  --intensity-4-bg: #ff9d4b;
+  --intensity-5-bg: #ff5e4b;
+  --intensity-ink: #2b1833;
+}
+
+/*
+ * Le seul endroit qui associe un niveau à sa couleur. Les trois composants qui
+ * affichent une pastille posent `data-intensity` ; leur classe ne porte plus
+ * que la forme (diamètre, graisse), jamais la couleur.
+ */
+[data-intensity='1'] {
+  background-color: var(--intensity-1-bg);
+  color: var(--intensity-ink);
+}
+[data-intensity='2'] {
+  background-color: var(--intensity-2-bg);
+  color: var(--intensity-ink);
+}
+[data-intensity='3'] {
+  background-color: var(--intensity-3-bg);
+  color: var(--intensity-ink);
+}
+[data-intensity='4'] {
+  background-color: var(--intensity-4-bg);
+  color: var(--intensity-ink);
+}
+[data-intensity='5'] {
+  background-color: var(--intensity-5-bg);
+  color: var(--intensity-ink);
 }
 
 /* Focus Mode during contraction */
@@ -250,7 +382,7 @@ html[data-theme='dark'] .panel-cta .btn-secondary:hover {
   font-size: 0.9rem;
   font-weight: 600;
   text-decoration: none;
-  color: #fff;
+  color: var(--primary-contrast);
   background: var(--primary);
   border-radius: 0.55rem;
   box-shadow: 0 4px 16px rgba(var(--ink-rgb), 0.25);
@@ -542,7 +674,7 @@ body {
   padding: 0.65rem 1rem;
   border-radius: 1rem;
   text-decoration: none;
-  color: #fff;
+  color: var(--primary-contrast);
   font-weight: 700;
   font-size: 1rem;
   background: linear-gradient(
@@ -1375,7 +1507,7 @@ body {
     var(--primary-deep) 100%
   );
   border: 2px solid rgba(255, 255, 255, 0.4);
-  color: #fff;
+  color: var(--primary-contrast);
   box-shadow:
     0 6px 0 rgba(var(--depth-rgb), 0.22),
     0 16px 40px rgba(var(--accent-rgb), 0.45);
@@ -1932,9 +2064,46 @@ a.btn {
   transform: scale(0.98);
 }
 
+/*
+ * ── États désactivé et occupé ──────────────────────────────────────────────
+ *
+ * Ils manquaient tous les deux. `AboutView` a un bouton « forcer le
+ * rechargement » qui porte `disabled` et `aria-busy` pendant l'opération, et
+ * `IntensityPicker` un `disabled` : rien ne le montrait à l'écran, le bouton
+ * restait identique et continuait de réagir au survol.
+ *
+ * `pointer-events: none` n'est posé que sur le vrai `:disabled`, qui n'est
+ * déjà ni cliquable ni focusable : on ne perd rien. `[aria-disabled]` doit au
+ * contraire rester atteignable au clavier pour que le lecteur d'écran
+ * l'annonce — il garde donc ses événements, et seul le curseur change.
+ *
+ * `aria-busy` ne grise rien : l'action est en cours, pas interdite. Le curseur
+ * suffit à le dire — le libellé du bouton et son icône animée s'en chargent
+ * déjà là où l'attribut est posé.
+ */
+.btn:disabled {
+  pointer-events: none;
+}
+
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn[aria-disabled='true']:hover {
+  text-decoration: none;
+}
+
+.btn[aria-busy='true'] {
+  cursor: progress;
+}
+
 .btn-primary {
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-contrast);
 }
 
 .btn-primary:hover {
@@ -1943,7 +2112,7 @@ a.btn {
 
 .btn-danger {
   background: var(--danger);
-  color: #fff;
+  color: var(--danger-contrast);
 }
 
 .btn-danger:hover {
@@ -1974,25 +2143,7 @@ a.btn {
   font-size: 0.85rem;
 }
 
-.btn-share {
-  background: rgba(var(--accent-rgb), 0.1);
-  color: var(--primary);
-  border: 1px solid rgba(var(--accent-rgb), 0.2);
-  border-radius: 50%;
-  width: 2.5rem;
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-share:hover {
-  background: var(--primary);
-  color: #fff;
-  transform: translateY(-2px);
-}
+/* `.btn-share` vivait ici sans qu'aucun composant ne la porte : supprimée. */
 
 .hint {
   margin: 0.85rem 0 0;
@@ -2152,7 +2303,7 @@ a.btn {
   font-size: 0.82rem;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
-  color: #fff;
+  color: var(--primary-contrast);
   background: var(--primary);
   border-radius: 0.4rem;
   line-height: 1;
@@ -2629,6 +2780,7 @@ a.btn {
   font-variant-numeric: tabular-nums;
 }
 
+/* Forme seule — la couleur vient de `[data-intensity]`, voir le bloc en tête. */
 .interval-intensity {
   display: inline-flex;
   align-items: center;
@@ -2638,25 +2790,7 @@ a.btn {
   font-size: 0.75rem;
   font-weight: 700;
   border-radius: 50%;
-  color: #fff;
   margin-left: auto;
-}
-
-.interval-intensity--1 {
-  background-color: #80c878;
-}
-.interval-intensity--2 {
-  background-color: #a8d678;
-}
-.interval-intensity--3 {
-  background-color: #ffd04b;
-  color: #444 !important;
-}
-.interval-intensity--4 {
-  background-color: #ff9d4b;
-}
-.interval-intensity--5 {
-  background-color: #ff5e4b;
 }
 
 .chart-title {
@@ -2724,20 +2858,11 @@ a.btn {
   font-weight: 500;
 }
 
-.chart-bar-intensity {
-  position: absolute;
-  top: 0.3rem;
-  right: 0.3rem;
-  width: 1.2rem;
-  height: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  font-weight: 700;
-  border-radius: 50%;
-  color: #fff;
-}
+/*
+ * `.chart-bar-intensity` et les cinq `.chart-bar--intensity-N` qui la
+ * coloraient ont été supprimées : aucun composant ne les portait. C'était le
+ * troisième exemplaire de l'échelle dans ce fichier.
+ */
 
 .timeline-note {
   margin: 0.35rem 0 0;
@@ -3273,12 +3398,13 @@ a.btn {
   transform: translateY(-2px);
 }
 
-.intensity-option--selected {
-  border-color: var(--intensity-color);
-  background: var(--intensity-color);
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.2);
-}
+/*
+ * L'état sélectionné est défini par `enhanced-ui.css` — teinte à 15 % du
+ * niveau, plus un halo. La version qui vivait ici peignait le fond en pleine
+ * couleur et le libellé en `#fff` ; comme la feuille suivante gagnait sur le
+ * fond mais pas sur le libellé, le chiffre finissait en blanc sur une surface
+ * quasi blanche. Elle est supprimée, pas déplacée.
+ */
 
 .intensity-option-icon {
   line-height: 1;
@@ -3290,8 +3416,64 @@ a.btn {
   margin-top: 2px;
 }
 
-.intensity-option--selected .intensity-option-label {
-  color: #fff;
+/*
+ * ── Le sélecteur d'intensité du dialogue d'édition ────────────────────────
+ *
+ * `HistoryList` pose cinq `<label class="btn-intensity">` autour d'un bouton
+ * radio `sr-only`. La classe n'avait AUCUNE règle : les cinq chiffres
+ * s'empilaient en texte nu dans la colonne de `.intensity-picker`, et rien ne
+ * distinguait le niveau choisi. Il ne s'agissait pas d'une classe morte mais
+ * de l'inverse — un contrôle vivant sans habillage.
+ *
+ * Il ne réutilise pas `.intensity-option` : ce composant-là est un `<button>`
+ * avec émoji, info-bulle et animation, piloté par `IntensityPicker`. Ici, cinq
+ * pastilles sobres suffisent, à la forme des pastilles d'historique.
+ *
+ * L'anneau de focus passe par `:has()` : c'est le radio caché qui reçoit le
+ * focus, pas le label qui le porte.
+ */
+.intensity-picker:has(.btn-intensity) {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-intensity {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* 2,75 rem = 44 px, la cible tactile recommandée. C'est un `<label>`, donc
+   * la règle générale d'`enhanced-styles.css` (qui vise `.btn` et `button`) ne
+   * l'atteint pas : la taille est portée ici. */
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 2px solid var(--border);
+  border-radius: 0.65rem;
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.btn-intensity:hover {
+  border-color: var(--primary);
+  background: rgba(var(--accent-rgb), 0.06);
+}
+
+.btn-intensity:has(:focus-visible) {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.btn-intensity.selected {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-contrast);
 }
 
 .intensity-option-tooltip {
@@ -3338,7 +3520,19 @@ a.btn {
   border-radius: 3px;
 }
 
-/* Timeline Intensity */
+/*
+ * Timeline Intensity — forme seule, couleur par `[data-intensity]`.
+ *
+ * LE REPLI EST CONDITIONNÉ, ET IL DOIT L'ÊTRE. Écrit sans le `:not()`, il a la
+ * même spécificité que `[data-intensity='N']` mais vient plus loin dans le
+ * fichier : il gagnait, et les cinq pastilles de l'historique s'affichaient
+ * toutes en gris `--muted`. Le `:not()` supprime le conflit au lieu de
+ * l'arbitrer — le repli ne s'applique plus que là où il a un sens.
+ *
+ * En pratique il ne sert jamais : `HistoryList` ne pose la pastille que
+ * lorsqu'un niveau existe. Son encre suit le thème, contrairement à celle des
+ * cinq niveaux, parce que son fond le suit aussi.
+ */
 .timeline-intensity {
   display: inline-flex;
   align-items: center;
@@ -3348,43 +3542,12 @@ a.btn {
   border-radius: 50%;
   font-size: 0.75rem;
   font-weight: 800;
-  color: #fff;
-  background: var(--muted);
   flex-shrink: 0;
 }
 
-.timeline-intensity--1 {
-  background-color: #80c878;
-}
-.timeline-intensity--2 {
-  background-color: #a8d678;
-}
-.timeline-intensity--3 {
-  background-color: #ffd04b;
-  color: #444 !important;
-}
-.timeline-intensity--4 {
-  background-color: #ff9d4b;
-}
-.timeline-intensity--5 {
-  background-color: #ff5e4b;
-}
-
-/* Chart Bars by Intensity */
-.chart-bar--intensity-1 {
-  background-color: #80c878 !important;
-}
-.chart-bar--intensity-2 {
-  background-color: #a8d678 !important;
-}
-.chart-bar--intensity-3 {
-  background-color: #ffd04b !important;
-}
-.chart-bar--intensity-4 {
-  background-color: #ff9d4b !important;
-}
-.chart-bar--intensity-5 {
-  background-color: #ff5e4b !important;
+.timeline-intensity:not([data-intensity]) {
+  color: var(--bg);
+  background: var(--muted);
 }
 
 /* Quick Notes */
@@ -3680,34 +3843,32 @@ html[data-theme='dark'] .about-link-card--coffee .about-link-card__icon {
   border: 1px solid transparent;
 }
 
+/*
+ * Badges de maturité — même patron que les pastilles de note : on ne pose que
+ * la teinte, le fond et la bordure s'en déduisent.
+ *
+ * Les six valeurs qui vivaient ici étaient bien déclinées par thème, mais deux
+ * échouaient quand même : « STABLE » donnait 3,8:1 et « BETA » 4,1:1 en thème
+ * clair — du texte de 0,62 rem en capitales, là où WCAG AA demande 4,5:1. Les
+ * teintes d'accent sont, elles, vérifiées par `designTokens.test.ts`.
+ */
+.about-family [data-maturity='stable'],
+.about-family [data-maturity='beta'],
+.about-family [data-maturity='alpha'] {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  border-color: color-mix(in srgb, currentColor 30%, transparent);
+}
+
 .about-family [data-maturity='stable'] {
-  background: rgba(34, 160, 90, 0.14);
-  color: #1b8a4c;
-  border-color: rgba(34, 160, 90, 0.3);
+  color: var(--accent-green);
 }
 
 .about-family [data-maturity='beta'] {
-  background: rgba(210, 150, 20, 0.16);
-  color: #9a6a00;
-  border-color: rgba(210, 150, 20, 0.32);
+  color: var(--accent-orange);
 }
 
 .about-family [data-maturity='alpha'] {
-  background: rgba(150, 90, 210, 0.14);
-  color: #7a44c8;
-  border-color: rgba(150, 90, 210, 0.3);
-}
-
-html[data-theme='dark'] .about-family [data-maturity='stable'] {
-  color: #5cd99a;
-}
-
-html[data-theme='dark'] .about-family [data-maturity='beta'] {
-  color: #f5c97a;
-}
-
-html[data-theme='dark'] .about-family [data-maturity='alpha'] {
-  color: #c9a6f0;
+  color: var(--accent-violet);
 }
 
 /* Hero card */

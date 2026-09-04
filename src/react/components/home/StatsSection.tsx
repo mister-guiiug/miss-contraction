@@ -170,7 +170,8 @@ function IntervalChart({
               </span>
               {intensity && (
                 <span
-                  className={`interval-intensity interval-intensity--${intensity}`}
+                  className="interval-intensity"
+                  data-intensity={intensity}
                   data-testid={`interval-intensity-${i}`}
                 >
                   {intensity}

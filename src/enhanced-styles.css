@@ -1,6 +1,20 @@
 /**
- * AMÉLIORATIONS GRAPHIQUES - Miss Contraction
- * À ajouter au fichier styles.css existant
+ * AMÉLIORATIONS GRAPHIQUES — Miss Contraction  (2/3)
+ *
+ * L'en-tête disait « à ajouter au fichier styles.css existant ». Ça n'a jamais
+ * été fait, et le fichier vit depuis en surcouche. Il RESTE une surcouche : le
+ * découpage est décrit dans `styles.css` et dans `docs/DESIGN_SYSTEM.md`, et
+ * l'ordre d'import de `main.tsx` en fait la loi.
+ *
+ * CE QU'ON MET ICI : l'animation et le décor — chronomètre circulaire, halos,
+ * transitions d'entrée de vue, vagues. Les règles d'accessibilité globales
+ * (cible tactile, contraste forcé, mouvement réduit) y ont abouti par
+ * accident ; elles y restent tant que les trois feuilles ne sont pas fondues,
+ * mais on n'en ajoute pas.
+ *
+ * CE QU'ON N'Y MET PAS : une couleur écrite en dur. Onze `rgba(160, 48, 154)`
+ * — le `--primary` du thème clair — traînaient ici et ne suivaient pas le
+ * thème sombre. Tout passe par les tokens de `styles.css`.
  */
 
 /* ========================================
@@ -33,7 +47,7 @@
   stroke-dasharray: 565;
   stroke-dashoffset: 565;
   animation: timerProgress 60s linear forwards;
-  filter: drop-shadow(0 0 8px rgba(160, 48, 154, 0.3));
+  filter: drop-shadow(0 0 8px rgba(var(--accent-rgb), 0.3));
   transition: stroke-dashoffset 0.3s ease;
 }
 
@@ -61,7 +75,7 @@
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(160, 48, 154, 0.1) 0%,
+    rgba(var(--accent-rgb), 0.1) 0%,
     transparent 70%
   );
   animation: pulse 2s ease-in-out infinite;
@@ -95,28 +109,31 @@
     var(--primary) 0%,
     var(--primary-hover) 100%
   );
-  color: white;
+  /* Pas de `color` ici : le bouton porte aussi `.btn-primary` ou, pendant
+   * l'enregistrement, `.btn-danger`. C'est à eux de poser leur encre — la
+   * ligne `color: white` qui vivait ici la leur volait, et donnait du blanc
+   * sur fond clair en thème sombre. */
   border: none;
   cursor: pointer;
   overflow: hidden;
   box-shadow:
-    0 4px 16px rgba(160, 48, 154, 0.3),
-    0 0 0 0 rgba(160, 48, 154, 0.7);
+    0 4px 16px rgba(var(--accent-rgb), 0.3),
+    0 0 0 0 rgba(var(--accent-rgb), 0.7);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-cta-enhanced:hover {
   transform: translateY(-2px);
   box-shadow:
-    0 8px 24px rgba(160, 48, 154, 0.4),
-    0 0 0 8px rgba(160, 48, 154, 0.1);
+    0 8px 24px rgba(var(--accent-rgb), 0.4),
+    0 0 0 8px rgba(var(--accent-rgb), 0.1);
 }
 
 .btn-cta-enhanced:active {
   transform: translateY(0);
   box-shadow:
-    0 2px 8px rgba(160, 48, 154, 0.3),
-    0 0 0 4px rgba(160, 48, 154, 0.2);
+    0 2px 8px rgba(var(--accent-rgb), 0.3),
+    0 0 0 4px rgba(var(--accent-rgb), 0.2);
 }
 
 .btn-cta-enhanced.recording {
@@ -131,10 +148,10 @@
 @keyframes recordingPulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(196, 30, 58, 0.7);
+    box-shadow: 0 0 0 0 rgba(var(--danger-rgb), 0.7);
   }
   50% {
-    box-shadow: 0 0 0 16px rgba(196, 30, 58, 0);
+    box-shadow: 0 0 0 16px rgba(var(--danger-rgb), 0);
   }
 }
 
@@ -219,8 +236,8 @@
     var(--primary) 0%,
     var(--primary-hover) 100%
   );
-  color: white;
-  box-shadow: 0 4px 16px rgba(160, 48, 154, 0.4);
+  color: var(--primary-contrast);
+  box-shadow: 0 4px 16px rgba(var(--accent-rgb), 0.4);
   animation: matchAlert 1.5s ease-in-out infinite;
 }
 
@@ -228,11 +245,11 @@
   0%,
   100% {
     transform: scale(1);
-    box-shadow: 0 4px 16px rgba(160, 48, 154, 0.4);
+    box-shadow: 0 4px 16px rgba(var(--accent-rgb), 0.4);
   }
   50% {
     transform: scale(1.05);
-    box-shadow: 0 8px 24px rgba(160, 48, 154, 0.6);
+    box-shadow: 0 8px 24px rgba(var(--accent-rgb), 0.6);
   }
 }
 
@@ -308,22 +325,10 @@ html {
     color 0.2s ease;
 }
 
-.btn-theme-enhanced {
-  position: relative;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--surface);
-  border: 2px solid var(--border);
-  cursor: pointer;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.btn-theme-enhanced:hover {
-  transform: rotate(15deg) scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
+/*
+ * `.btn-theme-enhanced` a été supprimée : aucun composant ne la portait. Le
+ * bouton de thème réel est `.btn-theme`, habillé dans `styles.css`.
+ */
 
 /* ========================================
    8. VAGUES D'APaiseMENT (DÉCORATIF)
@@ -386,26 +391,46 @@ html {
   .stat-card-value {
     font-size: 1.5rem;
   }
-
-  /* Touch targets minimum 44x44px */
-  .btn,
-  button,
-  a {
-    min-height: 44px;
-    min-width: 44px;
-  }
 }
 
 /* ========================================
    10. ACCESSIBILITY VISUAL
    ======================================== */
 
-/* Focus visible amélioré */
-*:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-  border-radius: 4px;
+/*
+ * ── Cible tactile de 44 px ────────────────────────────────────────────────
+ *
+ * ELLE DÉPEND DU DOIGT, PAS DE LA LARGEUR. La règle vivait sous
+ * `@media (max-width: 768px)` : une tablette en paysage, un portable à écran
+ * tactile, une borne — aucun n'était couvert, alors que le doigt ne rétrécit
+ * pas quand la fenêtre s'élargit. `pointer: coarse` pose la question qu'on
+ * voulait poser. Au passage, la souris récupère ses tailles d'origine : lui
+ * imposer 44 px partout n'apportait rien et déformait les barres d'action.
+ *
+ * ELLE NE VISE PLUS `a` NU. Le `min-width` s'appliquait à tous les liens, y
+ * compris ceux au fil du texte de l'écran « À propos », où il reste sans effet
+ * (élément en ligne) tout en promettant le contraire.
+ *
+ * `.btn-ghost` en est exclu : c'est l'action discrète posée dans une ligne de
+ * tableau ou un en-tête, elle déclare elle-même `min-height: auto` et la
+ * forcer à 44 px casserait ces mises en page.
+ *
+ * TOUT EST DANS `:where()`, ET C'EST LE CŒUR DE LA RÈGLE. Sans lui, ce
+ * sélecteur pèse plus lourd qu'une classe de composant et devient un PLAFOND
+ * au lieu d'un plancher : écrit `.btn:not(.btn-ghost)`, il ramenait le grand
+ * bouton de l'accueil de ses 88 px à 44 px sur tout écran tactile — soit
+ * exactement l'inverse du but. `:where()` ne compte pour rien dans la
+ * spécificité : 44 px s'applique à ce qui ne demande rien, et n'importe quel
+ * composant qui veut plus grand l'emporte sans avoir à le savoir.
+ */
+@media (pointer: coarse) {
+  :where(.btn, button, a.btn, a.bottom-nav-item):not(:where(.btn-ghost)) {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
+
+/* Focus visible amélioré — voir `enhanced-ui.css`, qui porte la règle unique. */
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
@@ -426,9 +451,15 @@ html {
   }
 }
 
-/* Dark mode enhancement */
-@media (prefers-color-scheme: dark) {
-  .timer-circle-progress {
-    filter: drop-shadow(0 0 12px rgba(214, 120, 207, 0.5));
-  }
+/*
+ * Halo plus large du chronomètre en thème sombre.
+ *
+ * IL ÉCOUTAIT `prefers-color-scheme`, pas le thème de l'app. Les deux ne
+ * coïncident pas : `useAppTheme` propose trois états et écrit le thème RÉSOLU
+ * dans `data-theme` sur `<html>`. Quelqu'un qui choisit « clair » sur un
+ * système sombre gardait donc ce halo. Et la couleur était le
+ * `--primary` sombre écrit en dur, qui ne suivait plus rien.
+ */
+html[data-theme='dark'] .timer-circle-progress {
+  filter: drop-shadow(0 0 12px rgba(var(--accent-rgb), 0.5));
 }
