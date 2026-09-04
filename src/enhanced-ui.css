@@ -1,6 +1,22 @@
 /* ─────────────────────────────────────────────────────────────────────────────
-   ENHANCED UI - Miss Contraction
-   Améliorations UX/UI : timer, timeline, graphique, navigation, etc.
+   ENHANCED UI — Miss Contraction  (3/3, la dernière chargée)
+
+   ELLE GAGNE, ET C'EST TOUT CE QUI TRANCHE. Trente-cinq sélecteurs sont
+   déclarés à la fois ici et dans `styles.css` ; à spécificité égale, c'est
+   l'ordre d'import de `main.tsx` qui décide, donc cette feuille. Ce n'est pas
+   un choix de conception, c'est un état de fait qu'on documente plutôt que de
+   le laisser surprendre — voir `docs/DESIGN_SYSTEM.md`, « Trois feuilles ».
+
+   CE QUE ÇA A COÛTÉ. `.intensity-option--selected` était défini des deux
+   côtés : la version d'ici gagnait sur le fond (une teinte à 15 %), celle de
+   `styles.css` gardait le libellé en `#fff`. Le chiffre sélectionné
+   s'affichait donc en blanc sur une surface presque blanche. Avant de
+   redéclarer un sélecteur qui existe déjà dans `styles.css`, vérifier ce que
+   l'autre déclaration laisse passer — ou, mieux, la corriger là-bas.
+
+   CE QU'ON MET ICI : l'habillage des composants d'écran (chronomètre,
+   timeline, graphique, navigation) et les `[data-dwc]` du socle que l'app
+   restyle elle-même.
 ────────────────────────────────────────────────────────────────────────────── */
 
 /* ── 1. TIMER PRINCIPAL - Mode une main ────────────────────────────────────── */
@@ -116,7 +132,24 @@
 }
 
 /*
-
+ * ── Le grand bouton de l'accueil ──────────────────────────────────────────
+ *
+ * CETTE RÈGLE A ÉTÉ MUETTE PENDANT LONGTEMPS. Un `/*` ouvert sur une ligne
+ * vide, juste avant, n'était refermé que par le commentaire « Zone de touch
+ * étendue » quinze lignes plus bas : tout le bloc était du commentaire, et
+ * rien ne le signalait — la feuille restait valide, elle perdait simplement
+ * une règle. Le bouton tirait donc sa taille du seul `padding: 24px 32px`
+ * d'`enhanced-styles.css`, une vingtaine de pixels sous ce qui était prévu.
+ *
+ * ELLE EST RALLUMÉE. 5,5 rem, soit 88 px : le double de la cible tactile
+ * recommandée. C'est le seul contrôle qu'on cherche à tâtons, d'une main,
+ * pendant une contraction — la taille est la fonctionnalité.
+ *
+ * ELLE GAGNE SUR `enhanced-styles.css`, y compris sur le `padding` que
+ * celle-ci pose sous 768 px : une media query n'ajoute pas de spécificité, et
+ * cette feuille est chargée après. C'est voulu — la hauteur ne doit pas
+ * dépendre de la largeur de l'écran.
+ */
 .btn-cta-enhanced {
   min-height: 5.5rem;
   font-size: 1.4rem;
@@ -315,6 +348,12 @@
   font-variant-numeric: tabular-nums;
 }
 
+/*
+ * Forme seule. Le fond ET l'encre viennent de `[data-intensity]` (styles.css).
+ * Cette règle imposait `color: #fff` : comme le fond était posé en `style`
+ * inline par le composant, le chiffre 3 s'affichait en blanc sur `#ffd04b`,
+ * soit 1,46:1. C'était le pire contraste de l'application.
+ */
 .timeline-compact-item .timeline-compact-intensity {
   width: 1.2rem;
   height: 1.2rem;
@@ -325,7 +364,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
 }
 
 /* Indicateur de tendance */
@@ -340,18 +378,25 @@
   margin-top: 0.5rem;
 }
 
+/*
+ * Le fond se dérive du texte : une seule valeur à tenir, et la pastille ne
+ * peut plus se retrouver avec une encre du thème clair sur un fond sombre.
+ */
+.trend-indicator--faster,
+.trend-indicator--slower,
+.trend-indicator--stable {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
 .trend-indicator--faster {
-  background: rgba(220, 38, 38, 0.12);
-  color: #dc2626;
+  color: var(--accent-red);
 }
 
 .trend-indicator--slower {
-  background: rgba(34, 197, 94, 0.12);
-  color: #16a34a;
+  color: var(--accent-green);
 }
 
 .trend-indicator--stable {
-  background: rgba(var(--accent-rgb), 0.08);
   color: var(--primary);
 }
 
@@ -592,7 +637,7 @@
       var(--primary) 0%,
       var(--primary-deep) 100%
     );
-    color: #fff;
+    color: var(--primary-contrast);
     border-radius: 50%;
     width: 3.7rem;
     height: 3.7rem;
@@ -732,7 +777,16 @@ html[data-contrast='high'] {
   --muted: #4b5563;
 }
 
-/* Focus visible amélioré */
+/*
+ * ── L'anneau de focus, règle unique ───────────────────────────────────────
+ *
+ * IL Y EN AVAIT TROIS. Celle-ci, une jumelle dans `enhanced-styles.css` (2 px,
+ * même commentaire, valeurs différentes) et celle du preset du socle. Les
+ * deux dernières ne s'appliquaient jamais : la jumelle perdait sur l'ordre des
+ * imports, le socle parce qu'il place la sienne dans `@layer base`, que toute
+ * règle non calquée l'emporte. Trois écritures, un seul effet — impossible de
+ * savoir laquelle on modifiait. La jumelle a été supprimée ; celle-ci reste.
+ */
 *:focus-visible {
   outline: 3px solid var(--primary);
   outline-offset: 3px;
@@ -795,35 +849,41 @@ html[data-contrast='high'] {
   flex-shrink: 0;
 }
 
-/* Couleurs spécifiques par type de note */
+/*
+ * Couleurs spécifiques par type de note.
+ *
+ * Chaque variante ne pose plus que sa teinte : le fond et la bordure s'en
+ * déduisent. Les trois valeurs étaient auparavant écrites côte à côte, et
+ * identiques dans les deux thèmes — d'où un texte `#7c3aed` à 3,0:1 sur fond
+ * sombre.
+ */
+.note-tag--waters,
+.note-tag--shower,
+.note-tag--ball,
+.note-tag--medication,
+.note-tag--custom {
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  border-color: color-mix(in srgb, currentColor 20%, transparent);
+}
+
 .note-tag--waters {
-  color: #0891b2;
-  background: rgba(8, 145, 178, 0.08);
-  border-color: rgba(8, 145, 178, 0.2);
+  color: var(--accent-cyan);
 }
 
 .note-tag--shower {
-  color: #7c3aed;
-  background: rgba(124, 58, 237, 0.08);
-  border-color: rgba(124, 58, 237, 0.2);
+  color: var(--accent-violet);
 }
 
 .note-tag--ball {
-  color: #ea580c;
-  background: rgba(234, 88, 12, 0.08);
-  border-color: rgba(234, 88, 12, 0.2);
+  color: var(--accent-orange);
 }
 
 .note-tag--medication {
-  color: #dc2626;
-  background: rgba(220, 38, 38, 0.08);
-  border-color: rgba(220, 38, 38, 0.2);
+  color: var(--accent-red);
 }
 
 .note-tag--custom {
   color: var(--primary);
-  background: rgba(var(--accent-rgb), 0.08);
-  border-color: rgba(var(--accent-rgb), 0.2);
 }
 
 /* ── 10. SÉLECTEUR D'INTENSITÉ MODERNE ─────────────────────────────────────── */
@@ -1028,42 +1088,14 @@ html[data-contrast='high'] {
   order: -1;
 }
 
-/* ── POPUP D'ÉDITION D'INTENSITÉ ───────────────────────────────────────────── */
-
-.intensity-edit-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(var(--ink-rgb), 0.5);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  animation: overlay-fade-in 0.2s ease;
-}
-
-@keyframes overlay-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.intensity-edit-popup {
-  background: var(--surface);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  max-width: 24rem;
-  width: 100%;
-  box-shadow:
-    var(--shadow),
-    0 0 0 1px var(--surface-highlight) inset;
-  animation: popup-slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
+/*
+ * ── La popup d'édition d'intensité a été supprimée ───────────────────────
+ *
+ * Cent cinquante lignes — surcouche, panneau, grille, cinq options, actions
+ * — qu'aucun composant ne montait. L'édition d'une intensité passe par le
+ * dialogue de `HistoryList` et ses `.btn-intensity`, habillés dans
+ * `styles.css`. Seules les images-clés encore utilisées restent ici.
+ */
 
 @keyframes popup-slide-up {
   from {
@@ -1074,108 +1106,6 @@ html[data-contrast='high'] {
     transform: translateY(0) scale(1);
     opacity: 1;
   }
-}
-
-.intensity-edit-title {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--text);
-  text-align: center;
-}
-
-.intensity-edit-subtitle {
-  margin: 0 0 1.25rem;
-  font-size: 0.85rem;
-  color: var(--muted);
-  text-align: center;
-  line-height: 1.4;
-}
-
-.intensity-edit-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0.4rem;
-  margin-bottom: 1.25rem;
-}
-
-.intensity-edit-option {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.6rem 0.35rem;
-  border: 2px solid var(--border);
-  border-radius: 0.65rem;
-  background: var(--surface-input);
-  cursor: pointer;
-  transition:
-    background 0.15s ease,
-    border-color 0.15s ease,
-    transform 0.1s ease;
-}
-
-.intensity-edit-option:hover {
-  background: rgba(var(--accent-rgb), 0.08);
-  border-color: var(--primary);
-  transform: translateY(-2px);
-}
-
-.intensity-edit-option:active {
-  transform: translateY(0) scale(0.98);
-}
-
-.intensity-edit-option--selected {
-  background: var(--intensity-color);
-  border-color: var(--intensity-color);
-  box-shadow: 0 4px 12px rgba(var(--intensity-color), 0.4);
-  transform: translateY(-2px);
-}
-
-.intensity-edit-option--selected .intensity-edit-number,
-.intensity-edit-option--selected .intensity-edit-label {
-  color: #fff;
-}
-
-.intensity-edit-icon {
-  width: 1.8rem;
-  height: 1.8rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s ease;
-}
-
-.intensity-edit-option:hover .intensity-edit-icon {
-  transform: scale(1.1);
-}
-
-.intensity-edit-option--selected .intensity-edit-icon {
-  transform: scale(1.15);
-  color: #fff;
-}
-
-.intensity-edit-number {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--text);
-}
-
-.intensity-edit-label {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: var(--muted);
-  text-align: center;
-}
-
-.intensity-edit-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.intensity-edit-actions .btn {
-  flex: 1;
-  min-height: 2.75rem;
 }
 
 /* ── TRANSITIONS COMMUNES ───────────────────────────────────────────────────── */
