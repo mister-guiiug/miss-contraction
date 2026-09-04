@@ -150,7 +150,8 @@ function HistoryItem({
 
   const intensityHtml = record.intensity ? (
     <span
-      className={`timeline-intensity timeline-intensity--${record.intensity}`}
+      className="timeline-intensity"
+      data-intensity={record.intensity}
       title={`${t(language, 'history.intensity')} ${record.intensity}`}
     >
       <span className="sr-only">{t(language, 'history.intensity')}</span>{' '}

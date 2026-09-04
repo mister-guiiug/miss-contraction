@@ -1,2 +1,30 @@
+/*
+ * ── Ce que Tailwind fait ici, et ce qu'il n'y fait pas ─────────────────────
+ *
+ * ON GARDE TAILWIND POUR SON PREFLIGHT, PAS POUR SES UTILITAIRES. L'audit du
+ * design system notait qu'aucune classe utilitaire n'est employée dans
+ * l'application — c'est exact : les 249 classes du JSX sont toutes maison, et
+ * `sr-only` vient du socle. La conclusion « Tailwind est du poids mort »
+ * était, elle, fausse. Le reset de Tailwind PORTE la mise en page : les trois
+ * feuilles de l'app ne déclarent aucun style d'élément à part `html` et
+ * `body`. Sans preflight, tous les titres reprennent les marges du navigateur,
+ * les listes leurs puces et leur retrait, les boutons leur police système, et
+ * les images cessent d'être des blocs. Le retirer casserait chaque écran.
+ *
+ * NE PAS Y VOIR UNE INVITATION À MÉLANGER LES DEUX. On n'écrit pas
+ * `class="flex gap-2"` à côté d'une classe BEM : le jour où l'on adopte
+ * vraiment les utilitaires, ce sera une migration décidée, pas une dérive
+ * fichier par fichier. Toute mise en forme nouvelle va dans `styles.css`.
+ *
+ * CE QUE LE PRESET APPORTE EN PLUS. Les breakpoints en rem, les échelles
+ * fluides `--text-fluid-*` / `--spacing-fluid-*`, les utilitaires de zone sûre
+ * iOS (`pt-safe`, `bottom-safe-3`, …) et `touch-target`. Aucun n'est utilisé
+ * aujourd'hui ; ils ne coûtent rien tant qu'ils ne le sont pas, et les
+ * échelles fluides sont la base toute prête si l'on tokenise un jour les 41
+ * tailles de police et 56 valeurs d'espacement de l'app.
+ *
+ * `tokens.css` ET `components.css` DU SOCLE NE SONT PAS IMPORTÉS, exprès.
+ * Voir `docs/DESIGN_SYSTEM.md`, section « Le socle ».
+ */
 @import 'tailwindcss';
 @import '@mister-guiiug/dev-wpa-config/tailwind-preset.css';
