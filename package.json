@@ -5,6 +5,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "prepare": "husky",
     "dev": "vite",
     "build": "tsc -b && vite build && pwa-bundle-budget",
     "build:analyze": "cross-env ANALYZE=1 npm run build",

@@ -199,7 +199,7 @@ test.describe('Gestion d’erreurs - Valeurs limites dans les formulaires', () =
       ([key, records]) => {
         localStorage.setItem(key, JSON.stringify(records));
       },
-      ['mc_records', fakeRecords] as [string, typeof fakeRecords]
+      ['mc_contractions_v1', fakeRecords] as [string, typeof fakeRecords]
     );
 
     const errors: string[] = [];
@@ -224,7 +224,7 @@ test.describe('Gestion d’erreurs - Valeurs limites dans les formulaires', () =
       ([key, records]) => {
         localStorage.setItem(key, JSON.stringify(records));
       },
-      ['mc_records', fakeRecords] as [string, typeof fakeRecords]
+      ['mc_contractions_v1', fakeRecords] as [string, typeof fakeRecords]
     );
 
     const errors: string[] = [];
@@ -259,7 +259,7 @@ test.describe('Gestion d’erreurs - Double-clic et race conditions', () => {
 
     // Vérifier l'état cohérent (pas de contraction "fantôme" non fermée)
     const records = await page.evaluate(() => {
-      const raw = localStorage.getItem('mc_records');
+      const raw = localStorage.getItem('mc_contractions_v1');
       return raw ? JSON.parse(raw) : [];
     });
 
@@ -309,7 +309,7 @@ test.describe('Gestion d’erreurs - Édition de contractions', () => {
       ([key, records]) => {
         localStorage.setItem(key, JSON.stringify(records));
       },
-      ['mc_records', fakeRecords] as [string, typeof fakeRecords]
+      ['mc_contractions_v1', fakeRecords] as [string, typeof fakeRecords]
     );
 
     await page.goto(ROUTES.HOME);

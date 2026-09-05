@@ -1,317 +1,278 @@
 /**
  * Tests E2E - SettingsView
  * Couverture: seuils, maternité, notifications, snooze, thème, grand confort
+ *
+ * ── RÉÉCRIT ──────────────────────────────────────────────────────────────────
+ *
+ * Le `beforeEach` cliquait `a[href="/parametres"], a[href*="settings"]`, dont
+ * le premier résultat est le lien du TIROIR fermé : invisible pour
+ * l'utilisatrice, « visible et stable » pour Playwright. Le clic n'aboutissait
+ * jamais et les vingt tests tombaient en timeout de 30 secondes.
+ *
+ * Les tests eux-mêmes étaient enveloppés dans
+ * `if (await x.isVisible().catch(() => false)) { … }` : un champ absent ou mal
+ * nommé faisait PASSER le test. Ils cherchaient des `input[name="…"]` et des
+ * `label:has-text("intervalle max")` là où l'écran expose des `data-testid`.
+ * On passe par `SettingsPage`, et chaque test conclut désormais sur une
+ * assertion qui peut échouer.
  */
 
 import { test, expect } from '@playwright/test';
+import { SettingsPage } from './pages/SettingsPage';
+import {
+  ROUTES,
+  SELECTORS,
+  TEST_DATA,
+  KEY_SETTINGS,
+  KEY_SNOOZE_UNTIL,
+  KEY_RECORDS,
+  LS_THEME,
+} from './config';
+
+/** Relit l'échéance du report d'alertes, ou `null` si aucun n'est posé. */
+async function snoozeUntil(page: import('@playwright/test').Page) {
+  return await page.evaluate(key => {
+    const raw = localStorage.getItem(key);
+    return raw ? Number(raw) : null;
+  }, KEY_SNOOZE_UNTIL);
+}
+
+/** Relit les réglages persistés, tels que l'application les a écrits. */
+async function storedSettings(page: import('@playwright/test').Page) {
+  return await page.evaluate(key => {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  }, KEY_SETTINGS);
+}
 
 test.describe('SettingsView - Paramètres', () => {
+  let settings: SettingsPage;
+
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto(ROUTES.HOME);
     await page.evaluate(() => localStorage.clear());
-
-    // Naviguer vers les paramètres
-    const settingsNav = page
-      .locator('a[href="/parametres"], a[href*="settings"]')
-      .first();
-    if (await settingsNav.isVisible({ timeout: 1000 }).catch(() => false)) {
-      await settingsNav.click();
-    } else {
-      // Accès direct
-      await page.goto('/parametres');
-    }
-
-    await page.waitForLoadState('networkidle');
+    settings = new SettingsPage(page);
+    await settings.goto();
   });
 
   test('affiche la page des paramètres', async ({ page }) => {
-    const settingsPage = page.locator('[class*="settings"], form').first();
-    await expect(settingsPage).toBeVisible();
+    await expect(page.locator(SELECTORS.SETTINGS_VIEW)).toBeVisible();
+    await expect(page.locator('[data-testid="settings-form"]')).toBeVisible();
   });
 
-  test('paramètres seuils - maxIntervalMin', async ({ page }) => {
-    const input = page.locator(
-      'input[name="maxIntervalMin"], label:has-text("intervalle max") ~ input'
-    );
-    if (await input.isVisible({ timeout: 500 }).catch(() => false)) {
-      const currentValue = await input.inputValue();
-      const newValue = String(parseInt(currentValue || '3') - 1);
-      await input.fill(newValue);
-
-      const submitButton = page.locator(
-        'button:has-text("Enregistrer"), button:has-text("Sauvegarder"), [type="submit"]'
-      );
-      if (await submitButton.isVisible({ timeout: 500 }).catch(() => false)) {
-        await submitButton.click();
-      }
-    }
-  });
-
-  test('paramètres seuils - minDurationSec', async ({ page }) => {
-    const input = page.locator(
-      'input[name="minDurationSec"], label:has-text("durée min") ~ input'
-    );
-    if (await input.isVisible({ timeout: 500 }).catch(() => false)) {
-      await input.fill('35');
-    }
-  });
-
-  test('paramètres seuils - consecutiveCount', async ({ page }) => {
-    const input = page.locator(
-      'input[name="consecutiveCount"], label:has-text("nombre de contractions") ~ input'
-    );
-    if (await input.isVisible({ timeout: 500 }).catch(() => false)) {
-      await input.fill('4');
-    }
-  });
-
-  test('maternité - saisir le nom', async ({ page }) => {
-    const input = page
-      .locator(
-        'input[name="maternityLabel"], label:has-text("Maternité") ~ input, label:has-text("Libellé") ~ input'
-      )
-      .first();
-    if (await input.isVisible({ timeout: 500 }).catch(() => false)) {
-      await input.fill('Maternité Sainte-Marie');
-    }
-  });
-
-  test('maternité - saisir le téléphone', async ({ page }) => {
-    const input = page
-      .locator(
-        'input[name="maternityPhone"], label:has-text("Téléphone") ~ input, input[type="tel"]'
-      )
-      .first();
-    if (await input.isVisible({ timeout: 500 }).catch(() => false)) {
-      await input.fill('01 23 45 67 89');
-    }
-  });
-
-  test("maternité - saisir l'adresse", async ({ page }) => {
-    const input = page
-      .locator(
-        'input[name="maternityAddress"], label:has-text("Adresse") ~ input, textarea[name="maternityAddress"]'
-      )
-      .first();
-    if (await input.isVisible({ timeout: 500 }).catch(() => false)) {
-      await input.fill('123 Rue de la Santé, 75000 Paris');
-    }
-  });
-
-  test("maternité - saisir les consignes d'admission", async ({ page }) => {
-    const input = page
-      .locator(
-        'textarea[name="maternityAdmissionInstructions"], label:has-text("Consignes") ~ textarea'
-      )
-      .first();
-    if (await input.isVisible({ timeout: 500 }).catch(() => false)) {
-      await input.fill("Arriver avec dossier complet\nAppeler avant d'arriver");
-    }
-  });
-
-  test('notifications - demander la permission', async ({ page }) => {
-    const requestButton = page
-      .locator(
-        'button:has-text("Activer"), button:has-text("Request"), button:has-text("Notifications")'
-      )
-      .first();
-    if (await requestButton.isVisible({ timeout: 500 }).catch(() => false)) {
-      // Mock notification permission pour éviter les popups
-      await page.evaluate(() => {
-        (Notification as any).permission = 'granted';
-      });
-      await requestButton.click();
-    }
-  });
-
-  test('snooze - arrêter les alertes 30 min', async ({ page }) => {
-    const snoozeButton = page
-      .locator('button')
-      .filter({ hasText: /30|Snooze/ })
-      .first();
-    if (await snoozeButton.isVisible({ timeout: 500 }).catch(() => false)) {
-      await snoozeButton.click();
-      const confirmationMessage = page.locator('text=alert', { exact: false });
-      if (
-        await confirmationMessage.isVisible({ timeout: 500 }).catch(() => false)
-      ) {
-        await expect(confirmationMessage).toBeDefined();
-      }
-    }
-  });
-
-  test('snooze - arrêter les alertes 1h', async ({ page }) => {
-    const snoozeButton = page
-      .locator('button')
-      .filter({ hasText: /60|1h|1 h/ })
-      .first();
-    if (await snoozeButton.isVisible({ timeout: 500 }).catch(() => false)) {
-      await snoozeButton.click();
-    }
-  });
-
-  test("snooze - annuler le report d'alerte", async ({ page }) => {
-    // D'abord activer un snooze
-    const snoozeButton = page
-      .locator('button')
-      .filter({ hasText: /30|Snooze/ })
-      .first();
-    if (await snoozeButton.isVisible({ timeout: 500 }).catch(() => false)) {
-      await snoozeButton.click();
-      await page.waitForTimeout(500);
-
-      // Chercher le bouton d'annulation du snooze
-      const cancelButton = page
-        .locator('button')
-        .filter({ hasText: /Annuler|Cancel|Snooze actif/ })
-        .first();
-      if (await cancelButton.isVisible({ timeout: 500 }).catch(() => false)) {
-        await cancelButton.click();
-      }
-    }
-  });
-
-  test('thème - toggle dark/light', async ({ page }) => {
-    const themeButton = page
-      .locator('button')
-      .filter({ hasText: /thème|Thème|Dark|Light/ })
-      .first();
-    if (await themeButton.isVisible({ timeout: 500 }).catch(() => false)) {
-      const htmlBefore = await page.locator('html').getAttribute('data-theme');
-      await themeButton.click();
-      const htmlAfter = await page.locator('html').getAttribute('data-theme');
-      expect(htmlBefore).not.toBe(htmlAfter);
-    }
-  });
-
-  test('contraste élevé - toggle', async ({ page }) => {
-    const highContrastToggle = page
-      .locator(
-        'input[type="checkbox"][name="highContrast"], label:has-text("Contraste") ~ input'
-      )
-      .first();
-    if (
-      await highContrastToggle.isVisible({ timeout: 500 }).catch(() => false)
-    ) {
-      const checkedBefore = await highContrastToggle.isChecked();
-      await highContrastToggle.click();
-      const checkedAfter = await highContrastToggle.isChecked();
-      expect(checkedBefore).not.toBe(checkedAfter);
-    }
-  });
-
-  test('grand confort - toggle', async ({ page }) => {
-    const largeMode = page
-      .locator(
-        'input[type="checkbox"][name="largeMode"], label:has-text("Grand confort") ~ input, label:has-text("Textes agrandis") ~ input'
-      )
-      .first();
-    if (await largeMode.isVisible({ timeout: 500 }).catch(() => false)) {
-      const checkedBefore = await largeMode.isChecked();
-      await largeMode.click();
-      const checkedAfter = await largeMode.isChecked();
-      expect(checkedBefore).not.toBe(checkedAfter);
-
-      // Vérifier que les styles changent
-      const hasClass = await page
-        .locator('html')
-        .evaluate(el => el.classList.contains('mc-large-mode'));
-      expect(hasClass).toBe(checkedAfter);
-    }
-  });
-
-  test('vibrations - toggle', async ({ page }) => {
-    const vibration = page
-      .locator(
-        'input[type="checkbox"][name="hapticFeedback"], label:has-text("Vibrations") ~ input'
-      )
-      .first();
-    if (await vibration.isVisible({ timeout: 500 }).catch(() => false)) {
-      const checkedBefore = await vibration.isChecked();
-      await vibration.click();
-      const checkedAfter = await vibration.isChecked();
-      expect(checkedBefore).not.toBe(checkedAfter);
-    }
-  });
-
-  test('commande vocale - toggle (experimental)', async ({ page }) => {
-    const voiceCommand = page
-      .locator(
-        'input[type="checkbox"][name="voiceCommands"], label:has-text("Vocale") ~ input, label:has-text("commande vocale") ~ input'
-      )
-      .first();
-    if (await voiceCommand.isVisible({ timeout: 500 }).catch(() => false)) {
-      const checkedBefore = await voiceCommand.isChecked();
-      await voiceCommand.click();
-      const checkedAfter = await voiceCommand.isChecked();
-      expect(checkedBefore).not.toBe(checkedAfter);
-    }
-  });
-
-  test('sauvegarde - affiche confirmation', async ({ page }) => {
-    const submitButton = page.locator(
-      'button:has-text("Enregistrer"), button:has-text("Sauvegarder"), [type="submit"]'
-    );
-    if (await submitButton.isVisible({ timeout: 500 }).catch(() => false)) {
-      // Modifier quelque chose
-      const input = page.locator('input[name="maxIntervalMin"]');
-      if (await input.isVisible({ timeout: 500 }).catch(() => false)) {
-        await input.fill('4');
-      }
-
-      await submitButton.click();
-
-      // Vérifier la confirmation
-      const confirmationMessage = page.locator('text=Paramètres enregistrés', {
-        exact: false,
-      });
-      if (
-        await confirmationMessage
-          .isVisible({ timeout: 2000 })
-          .catch(() => false)
-      ) {
-        await expect(confirmationMessage).toBeVisible();
-      }
-    }
-  });
-
-  test('effacement - confirmation avant suppression', async ({ page }) => {
-    const deleteButton = page
-      .locator('button')
-      .filter({ hasText: /Effacer|Supprimer|Vider|Delete|Clear/ })
-      .first();
-    if (await deleteButton.isVisible({ timeout: 500 }).catch(() => false)) {
-      // Évaluer pour catcher la dialog
-      page.once('dialog', dialog => {
-        expect(dialog.type()).toBe('confirm');
-        dialog.dismiss();
-      });
-
-      await deleteButton.click();
-    }
-  });
-
-  test('persistance - les paramètres persistent après rechargement', async ({
+  test('paramètres seuils - les trois valeurs sont persistées', async ({
     page,
   }) => {
-    const input = page.locator('input[name="maxIntervalMin"]');
-    if (await input.isVisible({ timeout: 500 }).catch(() => false)) {
-      await input.fill('5');
+    const { maxIntervalMin, minDurationSec, consecutiveCount } =
+      TEST_DATA.settings;
 
-      const submitButton = page.locator(
-        'button:has-text("Enregistrer"), [type="submit"]'
+    await settings.setMaxInterval(maxIntervalMin);
+    await settings.setMinDuration(minDurationSec);
+    await settings.setConsecutiveCount(consecutiveCount);
+    await settings.save();
+
+    expect(await storedSettings(page)).toMatchObject({
+      maxIntervalMin,
+      minDurationSec,
+      consecutiveCount,
+    });
+  });
+
+  test('paramètres seuils - les valeurs sont relues au rechargement', async ({
+    page,
+  }) => {
+    await settings.setMaxInterval(TEST_DATA.settings.maxIntervalMin);
+    await settings.save();
+
+    await page.reload();
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.locator(SELECTORS.MAX_INTERVAL_INPUT)).toHaveValue(
+      String(TEST_DATA.settings.maxIntervalMin)
+    );
+  });
+
+  test('maternité - nom, téléphone et adresse sont persistés', async ({
+    page,
+  }) => {
+    const { name, phone, address } = TEST_DATA.maternity;
+
+    await settings.setMaternityName(name);
+    await settings.setMaternityPhone(phone);
+    await settings.setMaternityAddress(address);
+    await settings.save();
+
+    expect(await storedSettings(page)).toMatchObject({
+      maternityLabel: name,
+      maternityPhone: phone,
+      maternityAddress: address,
+    });
+  });
+
+  test('maternité - les valeurs remontent sur la vue maternité', async ({
+    page,
+  }) => {
+    const { name } = TEST_DATA.maternity;
+    await settings.setMaternityName(name);
+    await settings.setMaternityPhone(TEST_DATA.maternity.phone);
+    await settings.save();
+
+    await page.goto(ROUTES.MATERNITY);
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.locator(SELECTORS.MATERNITY_LABEL)).toContainText(name);
+  });
+
+  test('notifications - le bouton de permission est présent', async ({
+    page,
+  }) => {
+    // Le navigateur de test n'accorde rien : on vérifie que la commande
+    // existe et que l'écran affiche un état, pas que la permission passe.
+    await expect(
+      page.locator('[data-testid="request-notification-btn"]')
+    ).toBeVisible();
+    await expect(
+      page.locator('[data-testid="notification-status"]')
+    ).toBeVisible();
+  });
+
+  /*
+   * Le bouton « Annuler le report » est TOUJOURS rendu — il ne disparaît pas
+   * une fois le report levé. C'est donc `mc_snooze_until` qu'on interroge, pas
+   * la présence du bouton ; et le message de statut s'efface au bout de trois
+   * secondes, il ne peut pas servir de preuve durable.
+   */
+  test('snooze - reporter les alertes 30 min puis annuler', async ({
+    page,
+  }) => {
+    await settings.snooze(30);
+    await expect(page.locator('[data-testid="snooze-status"]')).toContainText(
+      '30 min'
+    );
+    expect(await snoozeUntil(page)).toBeGreaterThan(Date.now());
+
+    await settings.cancelSnooze();
+    await expect(page.locator('[data-testid="snooze-status"]')).toContainText(
+      'réactivées'
+    );
+    expect(await snoozeUntil(page)).toBeNull();
+  });
+
+  test('snooze - reporter les alertes 1 h', async ({ page }) => {
+    const before = Date.now();
+    await settings.snooze(60);
+
+    const until = await snoozeUntil(page);
+    expect(until).not.toBeNull();
+    // Une heure, à la seconde de latence près.
+    expect(until! - before).toBeGreaterThan(59 * 60_000);
+    expect(until! - before).toBeLessThan(61 * 60_000);
+  });
+
+  /*
+   * C'EST LA PRÉFÉRENCE QUI TOURNE, PAS FORCÉMENT L'APPARENCE. Le cycle va
+   * système → clair → sombre → système, et `data-theme` porte le thème
+   * RÉSOLU. Sous Playwright, `prefers-color-scheme` vaut `light` : partir de
+   * « système » pour aller à « clair » ne change donc rien à l'attribut.
+   * Guetter `data-theme` faisait échouer ce test sans qu'aucun bug n'existe.
+   */
+  test('thème - le bouton fait tourner la préférence', async ({ page }) => {
+    const read = () =>
+      page.evaluate(key => localStorage.getItem(key), LS_THEME);
+
+    await settings.toggleTheme();
+    expect(await read()).toBe('light');
+
+    await settings.toggleTheme();
+    expect(await read()).toBe('dark');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+    await settings.toggleTheme();
+    expect(await read()).toBe('system');
+  });
+
+  test('contraste élevé - la bascule pose l’attribut sur <html>', async ({
+    page,
+  }) => {
+    const enabled = await settings.toggleHighContrast();
+    expect(enabled).toBe(true);
+
+    await expect(page.locator('html')).toHaveAttribute('data-contrast', 'high');
+  });
+
+  test('grand confort - la bascule est persistée', async ({ page }) => {
+    const enabled = await settings.toggleLargeMode();
+    expect(enabled).toBe(true);
+
+    await settings.save();
+    expect(await storedSettings(page)).toMatchObject({ largeMode: true });
+  });
+
+  test('vibrations - la bascule est persistée', async ({ page }) => {
+    // Elle est active par défaut : la première bascule la désactive.
+    const enabled = await settings.toggleVibration();
+    expect(enabled).toBe(false);
+
+    await settings.save();
+    expect(await storedSettings(page)).toMatchObject({
+      vibrationEnabled: false,
+    });
+  });
+
+  test('sauvegarde - affiche une confirmation', async ({ page }) => {
+    await settings.setMaxInterval(TEST_DATA.settings.maxIntervalMin);
+    await settings.save();
+
+    const feedback = page.locator(SELECTORS.SETTINGS_SAVE_FEEDBACK);
+    await expect(feedback).toBeVisible();
+    await expect(feedback).not.toBeEmpty();
+  });
+
+  test('effacement - demande confirmation puis vide l’historique', async ({
+    page,
+  }) => {
+    // Semer deux contractions, puis les effacer depuis l'accueil.
+    await page.goto(ROUTES.HOME);
+    await page.evaluate(key => {
+      const now = Date.now();
+      localStorage.setItem(
+        key,
+        JSON.stringify([
+          { id: 'a', start: now - 120000, end: now - 119000 },
+          { id: 'b', start: now - 60000, end: now - 59000 },
+        ])
       );
-      if (await submitButton.isVisible({ timeout: 500 }).catch(() => false)) {
-        await submitButton.click();
-        await page.waitForTimeout(500);
-      }
+    }, KEY_RECORDS);
+    await page.reload();
+    await page.waitForLoadState('networkidle');
 
-      // Recharger
-      await page.reload();
+    await expect(page.locator(`${SELECTORS.HISTORY_ITEMS} > li`)).toHaveCount(
+      2
+    );
 
-      // Vérifier que la valeur persiste
-      const newValue = await input.inputValue();
-      expect(newValue).toBe('5');
-    }
+    await settings.clearAllData();
+
+    // Sans contraction, `HomeView` remplace toute la liste par l'état vide du
+    // socle : `history-empty` n'est jamais monté dans ce cas.
+    await expect(page.locator(SELECTORS.EMPTY_STATE)).toBeVisible();
+    await expect(page.locator(SELECTORS.HISTORY_ITEMS)).toHaveCount(0);
+  });
+
+  test('persistance - les paramètres survivent au rechargement', async ({
+    page,
+  }) => {
+    await settings.setMaternityName(TEST_DATA.maternity.name);
+    await settings.setMinDuration(TEST_DATA.settings.minDurationSec);
+    await settings.save();
+
+    await page.reload();
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.locator(SELECTORS.MATERNITY_LABEL_INPUT)).toHaveValue(
+      TEST_DATA.maternity.name
+    );
+    await expect(page.locator(SELECTORS.MIN_DURATION_INPUT)).toHaveValue(
+      String(TEST_DATA.settings.minDurationSec)
+    );
   });
 });

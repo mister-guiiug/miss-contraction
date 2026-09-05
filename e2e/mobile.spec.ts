@@ -63,7 +63,7 @@ test.describe('Mobile - Interactions tactiles', () => {
       ([key, recs]) => {
         localStorage.setItem(key, JSON.stringify(recs));
       },
-      ['mc_records', records] as [string, typeof records]
+      ['mc_contractions_v1', records] as [string, typeof records]
     );
 
     await page.reload();
@@ -160,7 +160,13 @@ test.describe('Mobile - Orientation', () => {
     await expect(
       page.locator('[data-testid="toggle-contraction-btn"]')
     ).toBeVisible();
-    await expect(page.locator('[data-testid="stats-section"]')).toBeVisible();
+
+    /*
+     * `stats-section` n'est monté QUE s'il existe au moins une contraction :
+     * `HomeView` affiche sinon l'état vide du socle. Le test l'attendait sur
+     * un stockage fraîchement vidé — il ne pouvait pas passer.
+     */
+    await expect(page.locator('[data-dwc="empty-state"]')).toBeVisible();
   });
 
   test('@mobile mode paysage : layout intact sans overflow', async ({

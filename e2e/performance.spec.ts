@@ -69,14 +69,24 @@ test.describe('Performance - Chargement initial', () => {
     const btn = page.locator('[data-testid="toggle-contraction-btn"]');
     await expect(btn).toBeVisible();
 
+    /*
+     * ON CHAUFFE AVANT DE MESURER. Le premier clic contre le serveur de
+     * développement déclenche la compilation à la demande de Vite : 1370 ms
+     * mesurés pour un budget de 700, sans que l'application y soit pour quoi
+     * que ce soit. Ce qu'on veut connaître, c'est la réactivité en régime
+     * établi ; on lance donc une contraction, on l'arrête, puis on mesure.
+     */
+    await btn.click();
+    await expect(btn).toHaveClass(/recording/);
+    await btn.click();
+    await expect(btn).not.toHaveClass(/recording/);
+
     // Mesurer le temps entre clic et mise à jour UI
     const start = Date.now();
     await btn.click();
 
-    // Attendre l'apparition du timer (preuve que l'UI a répondu)
-    await expect(page.locator('[data-testid="timer-display"]')).toBeVisible({
-      timeout: 2000,
-    });
+    // Attendre le passage à l'état « enregistrement » (l'UI a répondu)
+    await expect(btn).toHaveClass(/recording/, { timeout: 2000 });
 
     const responseTime = Date.now() - start;
     expect(responseTime).toBeLessThan(PERF_THRESHOLDS.BUTTON_RESPONSE_MS + 500); // +500ms pour overhead Playwright
@@ -142,7 +152,7 @@ test.describe('Performance - Rendu avec données', () => {
       ([key, recs]) => {
         localStorage.setItem(key, JSON.stringify(recs));
       },
-      ['mc_records', records] as [string, typeof records]
+      ['mc_contractions_v1', records] as [string, typeof records]
     );
 
     const start = Date.now();
@@ -171,7 +181,7 @@ test.describe('Performance - Rendu avec données', () => {
       ([key, recs]) => {
         localStorage.setItem(key, JSON.stringify(recs));
       },
-      ['mc_records', records] as [string, typeof records]
+      ['mc_contractions_v1', records] as [string, typeof records]
     );
 
     const start = Date.now();

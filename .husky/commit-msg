@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# Refuse les signatures d'assistant IA dans le message de commit.
+# Voir scripts/check-ai-attribution.mjs et AGENTS.md § « Signature et attribution ».
+node scripts/check-ai-attribution.mjs --message "$1"

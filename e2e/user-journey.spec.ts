@@ -144,7 +144,7 @@ test.describe('Parcours - Gestion des notes et intensité', () => {
 
     // La contraction enregistrée doit avoir une note
     const records = await page.evaluate(() => {
-      const raw = localStorage.getItem('mc_records');
+      const raw = localStorage.getItem('mc_contractions_v1');
       return raw ? JSON.parse(raw) : [];
     });
 
@@ -159,7 +159,7 @@ test.describe('Parcours - Gestion des notes et intensité', () => {
       ([key, records]) => {
         localStorage.setItem(key, JSON.stringify(records));
       },
-      ['mc_records', fakeRecords] as [string, typeof fakeRecords]
+      ['mc_contractions_v1', fakeRecords] as [string, typeof fakeRecords]
     );
 
     await page.reload();
@@ -186,7 +186,7 @@ test.describe('Parcours - Gestion des notes et intensité', () => {
 
     // La note est persistée
     const records = await page.evaluate(() => {
-      const raw = localStorage.getItem('mc_records');
+      const raw = localStorage.getItem('mc_contractions_v1');
       return raw ? JSON.parse(raw) : [];
     });
     expect(records[0].note).toBe('Note de test modifiée');
@@ -202,7 +202,7 @@ test.describe('Parcours - Gestion des notes et intensité', () => {
       ([key, records]) => {
         localStorage.setItem(key, JSON.stringify(records));
       },
-      ['mc_records', fakeRecords] as [string, typeof fakeRecords]
+      ['mc_contractions_v1', fakeRecords] as [string, typeof fakeRecords]
     );
 
     await page.reload();
@@ -291,16 +291,27 @@ test.describe('Parcours - Scénario urgence', () => {
       .locator('[data-testid="maternity-phone-input"]')
       .fill(maternity.phone);
     await page.locator('[data-testid="settings-save-btn"]').click();
-    await page.waitForTimeout(500);
+    // On attend le retour de l'écran plutôt qu'un délai au jugé.
+    await expect(
+      page.locator('[data-testid="settings-save-feedback"]')
+    ).toBeVisible();
 
     // Aller sur la vue maternité
     await page.goto(ROUTES.MATERNITY);
     await page.waitForLoadState('networkidle');
 
-    // Le bouton d'appel doit être visible et contenir le numéro
+    /*
+     * Le bouton d'appel doit porter le numéro SANS ESPACES. `MaternityView`
+     * les retire (`phone.replace(/\s/g, '')`), et c'est le comportement juste :
+     * une URI `tel:` ne les accepte pas. C'est l'attente du test qui était
+     * fausse — elle réclamait « tel:01 23 45 67 89 ».
+     */
     const callBtn = page.locator('[data-testid="maternity-call-btn"]');
     await expect(callBtn).toBeVisible();
-    await expect(callBtn).toHaveAttribute('href', `tel:${maternity.phone}`);
+    await expect(callBtn).toHaveAttribute(
+      'href',
+      `tel:${maternity.phone.replace(/\s/g, '')}`
+    );
   });
 
   test('@journey préparer le message WhatsApp', async ({ page }) => {
@@ -332,7 +343,7 @@ test.describe('Parcours - Undo (annulation)', () => {
       ([key, records]) => {
         localStorage.setItem(key, JSON.stringify(records));
       },
-      ['mc_records', fakeRecords] as [string, typeof fakeRecords]
+      ['mc_contractions_v1', fakeRecords] as [string, typeof fakeRecords]
     );
 
     await page.reload();

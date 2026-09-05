@@ -50,11 +50,19 @@ export type AppSettings = {
   moduleMaternityMessage: boolean;
 };
 
-const KEY_RECORDS = 'mc_contractions_v1';
-const KEY_SETTINGS = 'mc_settings_v1';
-
+/*
+ * LES CLÉS SONT TOUTES EXPORTÉES, ET C'EST LE HARNAIS E2E QUI L'A EXIGÉ.
+ * Trois d'entre elles étaient privées, alors que les tests de bout en bout
+ * doivent semer et relire `localStorage`. Ils en tenaient donc leur propre
+ * copie — `mc_records`, `mc_settings`, `mc_snooze_until_ms` — dont AUCUNE ne
+ * correspondait à la vraie clé. Quarante-deux occurrences écrivaient et
+ * relisaient un stockage que l'application n'a jamais lu. Une seule
+ * définition ferme la porte.
+ */
+export const KEY_RECORDS = 'mc_contractions_v1';
+export const KEY_SETTINGS = 'mc_settings_v1';
 export const KEY_ACTIVE_START = 'mc_active_start_v1';
-const KEY_SNOOZE_UNTIL = 'mc_snooze_until';
+export const KEY_SNOOZE_UNTIL = 'mc_snooze_until';
 export const KEY_EXPORT_NUDGE_DISMISSED = 'mc_export_nudge_dismissed_at';
 
 const defaultSettings: AppSettings = {

@@ -1,71 +1,47 @@
 /**
  * Page Object pour navigation et Shell communs
+ *
+ * LES CINQ MÉTHODES ÉTAIENT IDENTIQUES, ET TOUTES INUTILES À MOITIÉ. Chacune
+ * cherchait un `[data-testid="nav-…"]`, attendait qu'il devienne visible, puis
+ * retombait sur `page.goto`. Aucun de ces cinq crochets n'existe : la barre
+ * basse vient de `react/bottom-nav` du socle, qui n'expose que des
+ * `[data-dwc]` et ne donne aucune prise par onglet. Le détour retombait donc
+ * toujours, après avoir consommé une temporisation à chaque fois.
+ *
+ * On va droit à l'URL. `clickNavLink` reste disponible pour les tests qui
+ * éprouvent la navigation elle-même.
  */
 
-import { Page, expect } from '@playwright/test';
+import { Page } from '@playwright/test';
 import { SELECTORS, TIMEOUTS, ROUTES } from '../config';
+import { navigateTo, clickNavLink } from '../helpers';
 
 export class Shell {
   constructor(private page: Page) {}
 
   async navigateToHome() {
-    const navBtn = this.page.locator(SELECTORS.NAV_HOME);
-    if (
-      await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
-    ) {
-      await navBtn.click();
-    } else {
-      await this.page.goto(ROUTES.HOME);
-    }
-    await this.page.waitForLoadState('networkidle');
+    await navigateTo(this.page, ROUTES.HOME);
   }
 
   async navigateToSettings() {
-    const navBtn = this.page.locator(SELECTORS.NAV_SETTINGS);
-    if (
-      await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
-    ) {
-      await navBtn.click();
-    } else {
-      await this.page.goto(ROUTES.SETTINGS);
-    }
-    await this.page.waitForLoadState('networkidle');
+    await navigateTo(this.page, ROUTES.SETTINGS);
   }
 
   async navigateToTable() {
-    const navBtn = this.page.locator(SELECTORS.NAV_TABLE);
-    if (
-      await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
-    ) {
-      await navBtn.click();
-    } else {
-      await this.page.goto(ROUTES.TABLE);
-    }
-    await this.page.waitForLoadState('networkidle');
+    await navigateTo(this.page, ROUTES.TABLE);
   }
 
   async navigateToMaternity() {
-    const navBtn = this.page.locator(SELECTORS.NAV_MATERNITY);
-    if (
-      await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
-    ) {
-      await navBtn.click();
-    } else {
-      await this.page.goto(ROUTES.MATERNITY);
-    }
-    await this.page.waitForLoadState('networkidle');
+    await navigateTo(this.page, ROUTES.MATERNITY);
   }
 
   async navigateToMessage() {
-    const navBtn = this.page.locator(SELECTORS.NAV_MESSAGE);
-    if (
-      await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
-    ) {
-      await navBtn.click();
-    } else {
-      await this.page.goto(ROUTES.MESSAGE);
-    }
-    await this.page.waitForLoadState('networkidle');
+    await navigateTo(this.page, ROUTES.MESSAGE);
+  }
+
+  /** Passer par la barre basse, pour éprouver la navigation elle-même. */
+  async clickBottomNav(route: string) {
+    await clickNavLink(this.page, route);
   }
 
   async getPageTitle() {
@@ -73,11 +49,13 @@ export class Shell {
   }
 
   async isNavigationVisible() {
-    const nav = this.page.locator('[data-testid="main-navigation"]');
-    return await nav.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false);
+    return await this.page
+      .locator(SELECTORS.BOTTOM_NAV)
+      .isVisible({ timeout: TIMEOUTS.SHORT })
+      .catch(() => false);
   }
 
   async getNavigationItems() {
-    return await this.page.locator('[data-testid*="nav-"]').count();
+    return await this.page.locator(SELECTORS.BOTTOM_NAV_ITEM).count();
   }
 }

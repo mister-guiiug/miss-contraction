@@ -27,7 +27,7 @@ test.describe('Charge - Volume de contractions', () => {
       ([key, records]) => {
         localStorage.setItem(key, JSON.stringify(records));
       },
-      ['mc_records', generateRecords(100)] as [
+      ['mc_contractions_v1', generateRecords(100)] as [
         string,
         ReturnType<typeof generateRecords>,
       ]
@@ -49,7 +49,7 @@ test.describe('Charge - Volume de contractions', () => {
       ([key, records]) => {
         localStorage.setItem(key, JSON.stringify(records));
       },
-      ['mc_records', generateRecords(500)] as [
+      ['mc_contractions_v1', generateRecords(500)] as [
         string,
         ReturnType<typeof generateRecords>,
       ]
@@ -80,7 +80,7 @@ test.describe('Charge - Volume de contractions', () => {
       ([key, records]) => {
         localStorage.setItem(key, JSON.stringify(records));
       },
-      ['mc_records', generateRecords(500)] as [
+      ['mc_contractions_v1', generateRecords(500)] as [
         string,
         ReturnType<typeof generateRecords>,
       ]
@@ -130,7 +130,7 @@ test.describe('Stress - Actions rapides', () => {
 
     // Toutes les contractions doivent être enregistrées
     const records = await page.evaluate(() => {
-      const raw = localStorage.getItem('mc_records');
+      const raw = localStorage.getItem('mc_contractions_v1');
       return raw ? JSON.parse(raw) : [];
     });
 
@@ -173,7 +173,7 @@ test.describe('Stress - Actions rapides', () => {
       ([key, records]) => {
         localStorage.setItem(key, JSON.stringify(records));
       },
-      ['mc_records', generateRecords(50)] as [
+      ['mc_contractions_v1', generateRecords(50)] as [
         string,
         ReturnType<typeof generateRecords>,
       ]
@@ -228,7 +228,7 @@ test.describe('Stress - Formulaires', () => {
 
     // La dernière valeur doit être persistée
     const settings = await page.evaluate(() => {
-      const raw = localStorage.getItem('mc_settings');
+      const raw = localStorage.getItem('mc_settings_v1');
       return raw ? JSON.parse(raw) : null;
     });
     expect(settings?.maxIntervalMin).toBe(9); // 5 + 4 (dernier index)
@@ -240,6 +240,11 @@ test.describe('Stress - Formulaires', () => {
     const errors: string[] = [];
     page.on('pageerror', e => errors.push(e.message));
 
+    // Sans navigation préalable, `page` est sur `about:blank` : y toucher
+    // `localStorage` lève `SecurityError`. C'était la seule cause de l'échec.
+    await page.goto(ROUTES.HOME);
+    await page.waitForLoadState('networkidle');
+
     const now = Date.now();
     const longNote = 'L'.repeat(500);
     const records = [
@@ -250,7 +255,7 @@ test.describe('Stress - Formulaires', () => {
       ([key, recs]) => {
         localStorage.setItem(key, JSON.stringify(recs));
       },
-      ['mc_records', records] as [string, typeof records]
+      ['mc_contractions_v1', records] as [string, typeof records]
     );
 
     await page.reload();

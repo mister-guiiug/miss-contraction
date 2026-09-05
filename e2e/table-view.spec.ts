@@ -1,274 +1,174 @@
 /**
  * Tests E2E - TableView
- * Couverture: historique détaillé, édition, suppression, tri
+ *
+ * ── CE FICHIER A ÉTÉ RÉÉCRIT, ET IL A BEAUCOUP MAIGRI ────────────────────────
+ *
+ * Il comptait dix-huit tests dont ONZE ne vérifiaient rien : ils étaient
+ * enveloppés dans `if (await x.isVisible().catch(() => false)) { … }`, si bien
+ * qu'un élément absent faisait passer le test au lieu de l'échouer. Cinq
+ * d'entre eux visaient des fonctions que `TableView` n'a pas — édition,
+ * suppression, tri par colonne, pagination, export. Le tableau est en lecture
+ * seule : l'édition et la suppression se font sur l'accueil, dans la liste
+ * d'historique. Ces cinq-là sont supprimés plutôt que maquillés.
+ *
+ * LE `beforeEach` ENREGISTRAIT TROIS CONTRACTIONS EN CLIQUANT LE CHRONOMÈTRE,
+ * puis cherchait un lien de navigation avec
+ * `a[href="/historique"], a[href*="table"]`. Ce sélecteur attrapait d'abord le
+ * lien du TIROIR fermé, invisible aux yeux de l'utilisateur mais « visible et
+ * stable » pour Playwright : le clic partait dans le vide et emportait les
+ * dix-huit tests en timeout. On sème désormais l'état directement dans
+ * `localStorage` — c'est déterministe, et six secondes de moins par test.
  */
 
 import { test, expect } from '@playwright/test';
+import { ROUTES, SELECTORS } from './config';
+import { KEY_RECORDS } from './config';
+
+/** Trois contractions d'une minute, espacées de six minutes. */
+const SEEDED = [
+  { id: 't1', start: 0, end: 60_000, note: 'Première note' },
+  { id: 't2', start: 360_000, end: 420_000, intensity: 3 },
+  { id: 't3', start: 720_000, end: 780_000 },
+];
+
+async function seed(page: import('@playwright/test').Page, count = 3) {
+  const base = Date.now() - 3_600_000;
+  const records = SEEDED.slice(0, count).map(r => ({
+    ...r,
+    start: base + r.start,
+    end: base + r.end,
+  }));
+  await page.goto(ROUTES.HOME);
+  await page.evaluate(
+    ([key, value]) => {
+      localStorage.clear();
+      localStorage.setItem(key as string, JSON.stringify(value));
+    },
+    [KEY_RECORDS, records] as const
+  );
+  await page.goto(ROUTES.TABLE);
+  await page.waitForLoadState('networkidle');
+}
 
 test.describe('TableView - Tableau des contractions', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.evaluate(() => localStorage.clear());
-
-    // Créer quelques contractions
-    const startButton = page
-      .locator('button')
-      .filter({ hasText: /Début|Start/ })
-      .first();
-    for (let i = 0; i < 3; i++) {
-      await startButton.click();
-      await page.waitForTimeout(300);
-      const stopButton = page
-        .locator('button')
-        .filter({ hasText: /Fin|Stop/ })
-        .first();
-      await stopButton.click();
-      await page.waitForTimeout(300);
-    }
-
-    // Naviguer vers le tableau
-    const tableNav = page
-      .locator('a[href="/historique"], a[href*="table"]')
-      .first();
-    if (await tableNav.isVisible({ timeout: 1000 }).catch(() => false)) {
-      await tableNav.click();
-    } else {
-      await page.goto('/historique');
-    }
-
-    await page.waitForLoadState('networkidle');
+    await seed(page);
   });
 
   test('affiche le tableau des contractions', async ({ page }) => {
-    const table = page.locator('table, .table-page, [role="grid"]').first();
-    await expect(table).toBeVisible();
+    await expect(page.locator(SELECTORS.TABLE_SECTION)).toBeVisible();
+    await expect(page.locator(SELECTORS.CONTRACTIONS_TABLE)).toBeVisible();
   });
 
-  test('tableau - affiche les colonnes requises', async ({ page }) => {
-    const headerCells = page.locator('th, [role="columnheader"]');
-    const headers = await headerCells.allTextContents();
+  test('tableau - affiche les six colonnes attendues', async ({ page }) => {
+    const headers = await page
+      .locator(`${SELECTORS.CONTRACTIONS_TABLE} thead th`)
+      .allTextContents();
 
-    // Vérifier qu'il y a au moins les colonnes principales
-    expect(headers.length).toBeGreaterThan(0);
+    // Les libellés viennent de `table.col.*` ; la locale est fixée à fr-FR
+    // dans `playwright.config.ts`, ils sont donc stables.
+    expect(headers).toEqual([
+      'N°',
+      'Début',
+      'Durée',
+      'Intervalle',
+      'Fréquence',
+      'Note',
+    ]);
   });
 
-  test('tableau - affiche les contractions enregistrées', async ({ page }) => {
-    const rows = page.locator('tbody tr, [role="row"]');
-    const rowCount = await rows.count();
-    expect(rowCount).toBeGreaterThan(0);
+  test('tableau - une ligne par contraction enregistrée', async ({ page }) => {
+    await expect(
+      page.locator(`${SELECTORS.CONTRACTIONS_TABLE} tbody tr`)
+    ).toHaveCount(3);
   });
 
-  test('tableau - affiche heure de début', async ({ page }) => {
-    const cells = page.locator('td, [role="gridcell"]');
-    const contents = await cells.allTextContents();
-
-    // Vérifier qu'il y a des timestamps ou heures
-    const hasTime = contents.some(c => /\d{1,2}:\d{2}/.test(c));
-    expect(hasTime).toBe(true);
+  test('tableau - la première colonne numérote les lignes', async ({
+    page,
+  }) => {
+    const nums = await page
+      .locator(`${SELECTORS.CONTRACTIONS_TABLE} tbody th`)
+      .allTextContents();
+    expect(nums).toEqual(['1', '2', '3']);
   });
 
-  test('tableau - affiche durée de la contraction', async ({ page }) => {
-    const cells = page.locator('td, [role="gridcell"]');
-    const contents = await cells.allTextContents();
+  test('tableau - affiche heure de début et durée', async ({ page }) => {
+    const dates = await page
+      .locator('[data-testid="table-cell-date"]')
+      .allTextContents();
+    const durations = await page
+      .locator('[data-testid="table-cell-duration"]')
+      .allTextContents();
 
-    // Vérifier qu'il y a des durées (format mm:ss)
-    const hasDuration = contents.some(c => /\d+:\d{2}/.test(c));
-    expect(hasDuration).toBe(true);
+    // Chaque ligne porte une heure, et une durée d'une minute exactement,
+    // rendue au format `m:ss`.
+    expect(dates).toHaveLength(3);
+    for (const d of dates) expect(d).toMatch(/\d{1,2}:\d{2}/);
+    expect(durations).toEqual(['1:00', '1:00', '1:00']);
   });
 
-  test('tableau - affiche intervalle entre contractions', async ({ page }) => {
-    const cells = page.locator('td, [role="gridcell"]');
-    const contents = await cells.allTextContents();
+  test('tableau - intervalle vide sur la première ligne, six minutes ensuite', async ({
+    page,
+  }) => {
+    const intervals = await page
+      .locator('[data-testid="table-cell-interval"]')
+      .allTextContents();
 
-    // Vérifier qu'il y a des intervalles
-    expect(contents.length).toBeGreaterThan(0);
+    expect(intervals).toHaveLength(3);
+    // La première contraction n'a pas de précédente : l'écart n'existe pas.
+    expect(intervals[0]).toMatch(/^[-–—\s]*$/);
+    expect(intervals[1]).toMatch(/6/);
+    expect(intervals[2]).toMatch(/6/);
   });
 
-  test('tableau - affiche fréquence (contractions/h)', async ({ page }) => {
-    const cells = page.locator('td, [role="gridcell"]');
-    const contents = await cells.allTextContents();
+  test('tableau - la note et l’intensité sont rendues', async ({ page }) => {
+    const notes = await page
+      .locator('[data-testid="table-cell-note"]')
+      .allTextContents();
 
-    // Vérifier qu'il y a des fréquences (format "/h")
-    const hasFrequency = contents.some(c => /\/h|\| h/.test(c));
-    expect(hasFrequency || contents.length).toBeTruthy();
+    expect(notes[0]).toContain('Première note');
+    // L'intensité est suffixée au texte de la note : `[Int. 3]`.
+    expect(notes[1]).toContain('[Int. 3]');
+    // Sans note ni intensité, la cellule affiche un tiret cadratin.
+    expect(notes[2]?.trim()).toBe('—');
   });
 
-  test('tableau - édition de contraction', async ({ page }) => {
-    // Chercher un bouton d'édition
-    const editButton = page
-      .locator('button')
-      .filter({ hasText: /Éditer|Edit|✏/ })
-      .first();
-    if (await editButton.isVisible({ timeout: 500 }).catch(() => false)) {
-      await editButton.click();
+  test('tableau - message dédié quand il n’y a rien à afficher', async ({
+    page,
+  }) => {
+    await page.goto(ROUTES.HOME);
+    await page.evaluate(() => localStorage.clear());
+    await page.goto(ROUTES.TABLE);
+    await page.waitForLoadState('networkidle');
 
-      // Vérifier qu'une modale d'édition s'ouvre
-      const modal = page.locator('[role="dialog"], .modal, .edit-modal');
-      if (await modal.isVisible({ timeout: 500 }).catch(() => false)) {
-        await expect(modal).toBeVisible();
-      }
-    }
-  });
-
-  test('tableau - suppression de contraction', async ({ page }) => {
-    const rowsBefore = await page.locator('tbody tr, [role="row"]').count();
-
-    // Chercher un bouton de suppression
-    const deleteButton = page
-      .locator('button')
-      .filter({ hasText: /Supprimer|Delete|✕|×/ })
-      .first();
-    if (await deleteButton.isVisible({ timeout: 500 }).catch(() => false)) {
-      page.once('dialog', dialog => {
-        expect(dialog.type()).toBe('confirm');
-        dialog.accept();
-      });
-
-      await deleteButton.click();
-      await page.waitForTimeout(500);
-
-      const rowsAfter = await page.locator('tbody tr, [role="row"]').count();
-      expect(rowsAfter).toBeLessThan(rowsBefore);
-    }
-  });
-
-  test("tableau - modification note d'une contraction", async ({ page }) => {
-    const editButton = page
-      .locator('button')
-      .filter({ hasText: /Éditer|Edit/ })
-      .first();
-    if (await editButton.isVisible({ timeout: 500 }).catch(() => false)) {
-      await editButton.click();
-
-      const modal = page.locator('[role="dialog"], .modal');
-      if (await modal.isVisible({ timeout: 500 }).catch(() => false)) {
-        const noteInput = modal.locator('textarea, input[type="text"]').first();
-        if (await noteInput.isVisible({ timeout: 500 }).catch(() => false)) {
-          await noteInput.fill('Contractions fortes et régulières');
-        }
-
-        const saveButton = modal.locator(
-          'button:has-text("Enregistrer"), button:has-text("Save"), button:has-text("OK")'
-        );
-        if (await saveButton.isVisible({ timeout: 500 }).catch(() => false)) {
-          await saveButton.click();
-        }
-      }
-    }
-  });
-
-  test('tableau - tri par heure de début', async ({ page }) => {
-    const timeHeader = page
-      .locator('th, [role="columnheader"]')
-      .filter({ hasText: /Heure|Time|Début/ })
-      .first();
-    if (await timeHeader.isVisible({ timeout: 500 }).catch(() => false)) {
-      // Cliquer pour trier
-      if (
-        await timeHeader
-          .evaluate(el => el.parentElement?.classList.contains('sortable'))
-          .catch(() => false)
-      ) {
-        await timeHeader.click();
-      }
-    }
-  });
-
-  test('tableau - tri par durée', async ({ page }) => {
-    const durationHeader = page
-      .locator('th, [role="columnheader"]')
-      .filter({ hasText: /Durée|Duration/ })
-      .first();
-    if (await durationHeader.isVisible({ timeout: 500 }).catch(() => false)) {
-      if (
-        await durationHeader
-          .evaluate(el => el.parentElement?.classList.contains('sortable'))
-          .catch(() => false)
-      ) {
-        await durationHeader.click();
-      }
-    }
+    await expect(page.locator(SELECTORS.TABLE_EMPTY)).toBeVisible();
+    await expect(page.locator(SELECTORS.TABLE_EMPTY)).toContainText('Aucune');
+    await expect(page.locator(SELECTORS.CONTRACTIONS_TABLE)).toHaveCount(0);
   });
 
   test('tableau - responsive sur mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
-    const table = page.locator('table, .table-page');
-    if (await table.isVisible({ timeout: 500 }).catch(() => false)) {
-      await expect(table).toBeVisible();
-    }
+    await expect(page.locator(SELECTORS.CONTRACTIONS_TABLE)).toBeVisible();
+    await expect(
+      page.locator(`${SELECTORS.CONTRACTIONS_TABLE} tbody tr`)
+    ).toHaveCount(3);
   });
 
   test('tableau - responsive sur desktop', async ({ page }) => {
     await page.setViewportSize({ width: 1920, height: 1080 });
-    const table = page.locator('table, .table-page');
-    if (await table.isVisible({ timeout: 500 }).catch(() => false)) {
-      await expect(table).toBeVisible();
-    }
-  });
-
-  test('tableau - affiche message si pas de contractions', async ({ page }) => {
-    // Effacer les contractions
-    await page.evaluate(() => localStorage.clear());
-    await page.reload();
-
-    const emptyMessage = page.locator('p, .empty-state, text=Aucune');
-    if (await emptyMessage.isVisible({ timeout: 500 }).catch(() => false)) {
-      await expect(emptyMessage).toBeDefined();
-    }
-  });
-
-  test('tableau - pagination (si beaucoup de contractions)', async ({
-    page,
-  }) => {
-    // Créer beaucoup de contractions
-    for (let i = 0; i < 30; i++) {
-      await page.goto('/');
-      const startButton = page
-        .locator('button')
-        .filter({ hasText: /Début|Start/ })
-        .first();
-      await startButton.click();
-      await page.waitForTimeout(50);
-      const stopButton = page
-        .locator('button')
-        .filter({ hasText: /Fin|Stop/ })
-        .first();
-      await stopButton.click();
-      await page.waitForTimeout(50);
-    }
-
-    await page.goto('/historique');
-
-    // Chercher les boutons de pagination
-    const nextButton = page
-      .locator('button')
-      .filter({ hasText: /Suivant|Next/ })
-      .first();
-    if (await nextButton.isVisible({ timeout: 500 }).catch(() => false)) {
-      await expect(nextButton).toBeVisible();
-    }
-  });
-
-  test('tableau - export des données', async ({ page }) => {
-    const exportButton = page
-      .locator('button')
-      .filter({ hasText: /Export|Télécharger|Download/ })
-      .first();
-    if (await exportButton.isVisible({ timeout: 500 }).catch(() => false)) {
-      const downloadPromise = page.waitForEvent('download');
-      await exportButton.click();
-      const download = await downloadPromise;
-      expect(download.suggestedFilename()).toMatch(/\.(json|csv|xlsx?)$/);
-    }
+    await expect(page.locator(SELECTORS.CONTRACTIONS_TABLE)).toBeVisible();
+    await expect(
+      page.locator(`${SELECTORS.CONTRACTIONS_TABLE} tbody tr`)
+    ).toHaveCount(3);
   });
 
   test('tableau - persistance après rechargement', async ({ page }) => {
-    const rowsBefore = await page.locator('tbody tr, [role="row"]').count();
+    const rows = page.locator(`${SELECTORS.CONTRACTIONS_TABLE} tbody tr`);
+    await expect(rows).toHaveCount(3);
 
-    // Recharger
     await page.reload();
+    await page.waitForLoadState('networkidle');
 
-    const rowsAfter = await page.locator('tbody tr, [role="row"]').count();
-    expect(rowsAfter).toBe(rowsBefore);
+    await expect(rows).toHaveCount(3);
   });
 });

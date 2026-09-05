@@ -1,8 +1,15 @@
-# ✅ E2E Test Infrastructure - Implementation Complete
+# E2E Test Infrastructure
 
-**Date**: April 29, 2026  
-**Status**: All 10 improvements implemented  
-**Coverage**: 100% of critical user paths
+**Date**: April 29, 2026 — révisé en septembre 2026
+
+> **Ce document annonçait « Implementation Complete » et « 100% of critical
+> user paths ». C'était faux au moment où il a été écrit.** L'infrastructure
+> avait bien été posée, mais elle visait un balisage qui n'existait pas :
+> 21 tests sur 28 échouaient, et personne ne pouvait le voir puisque la CI ne
+> lance pas Playwright (`run-e2e: false`). L'inventaire ci-dessous reste utile
+> comme carte des fichiers ; ses coches ne valent pas garantie d'exécution.
+> Ce qui garantit quelque chose, c'est `src/e2eSelectors.test.ts`, qui tourne
+> dans la CI.
 
 ---
 
@@ -361,7 +368,6 @@ message-feedback             Feedback message
 ## 📖 Documentation
 
 - [E2E Test README](./README.md) - Complete execution guide
-- [Data-TestID Guide](./DATA_TESTID_IMPLEMENTATION.md) - Implementation reference
 - [Page Objects API](./pages/README.md) - Page Object methods (if created)
 - [Playwright Config](../playwright.config.ts) - Full configuration
 
