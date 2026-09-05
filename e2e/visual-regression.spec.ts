@@ -36,7 +36,7 @@ async function injectContractions(page: Page, count = 5) {
     ([key, recs]) => {
       localStorage.setItem(key, JSON.stringify(recs));
     },
-    ['mc_records', records] as [string, typeof records]
+    ['mc_contractions_v1', records] as [string, typeof records]
   );
 }
 
@@ -158,7 +158,7 @@ test.describe('Régression visuelle - Thèmes', () => {
     // Activer le mode haute lisibilité via localStorage
     await page.evaluate(() => {
       const settings = { largeMode: true };
-      localStorage.setItem('mc_settings', JSON.stringify(settings));
+      localStorage.setItem('mc_settings_v1', JSON.stringify(settings));
     });
 
     await page.reload();
@@ -233,7 +233,7 @@ test.describe('Régression visuelle - États UI', () => {
     await page.goto(ROUTES.SETTINGS);
     await page.evaluate(() => {
       localStorage.setItem(
-        'mc_settings',
+        'mc_settings_v1',
         JSON.stringify({
           maxIntervalMin: 5,
           minDurationSec: 30,
@@ -256,7 +256,7 @@ test.describe('Régression visuelle - États UI', () => {
     await page.goto(ROUTES.MATERNITY);
     await page.evaluate(() => {
       localStorage.setItem(
-        'mc_settings',
+        'mc_settings_v1',
         JSON.stringify({
           maternityLabel: 'Clinique du Soleil',
           maternityPhone: '0601020304',

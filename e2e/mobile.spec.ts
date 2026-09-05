@@ -63,7 +63,7 @@ test.describe('Mobile - Interactions tactiles', () => {
       ([key, recs]) => {
         localStorage.setItem(key, JSON.stringify(recs));
       },
-      ['mc_records', records] as [string, typeof records]
+      ['mc_contractions_v1', records] as [string, typeof records]
     );
 
     await page.reload();

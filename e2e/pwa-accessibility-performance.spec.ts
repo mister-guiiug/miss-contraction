@@ -317,7 +317,7 @@ test.describe('Stabilité & Robustesse', () => {
   test("récupération d'erreur - parse JSON cassé", async ({ page }) => {
     // Simuler un localStorage corrompu
     await page.evaluate(() => {
-      localStorage.setItem('mc_records', '{invalid json}');
+      localStorage.setItem('mc_contractions_v1', '{invalid json}');
     });
 
     // Recharger - l'app devrait gérer l'erreur

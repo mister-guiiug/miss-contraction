@@ -27,9 +27,18 @@ e2e/
 ├── ... et 4 autres fichiers de test
 │
 └── Documentation
-    ├── DATA_TESTID_IMPLEMENTATION.md  # Guide data-testid
     └── README.md (ce fichier)
 ```
+
+> **`DATA_TESTID_IMPLEMENTATION.md` a été supprimé.** Ce guide de 458 lignes
+> listait les `data-testid` « à ajouter aux composants ». Ils ne l'ont jamais
+> été — mais le harnais, lui, a été écrit contre eux : 48 des 60 sélecteurs
+> visaient un balisage imaginaire, et 21 tests échouaient depuis avril 2026
+> sans que personne le voie (`run-e2e: false` dans la CI). Les sélecteurs
+> suivent désormais l'application, jamais l'inverse, et
+> `src/e2eSelectors.test.ts` — qui tourne avec les tests unitaires, donc DANS
+> la CI — refuse tout sélecteur ou toute clé `localStorage` qui n'existe pas
+> dans `src/`.
 
 ## 📊 Points forts
 
@@ -57,7 +66,6 @@ e2e/
 - ✅ `home-view-refactored.spec.ts` - Test refactorisé (18 tests)
 - ✅ `accessibility.spec.ts` - Tests a11y avec axe-core (14 tests)
 - ✅ `visual-snapshots.spec.ts` - Tests snapshots (18 tests)
-- ✅ `DATA_TESTID_IMPLEMENTATION.md` - Guide complet
 
 ### Configuration mise à jour
 
@@ -362,7 +370,7 @@ await waitForContractionInHistory(page);
 const stats = await getDisplayedStats(page);
 
 // Vérifier la persistance
-await verifyLocalStoragePersistence(page, 'mc_records', expectedData);
+await verifyLocalStoragePersistence(page, KEY_RECORDS, expectedData);
 ```
 
 ## 📊 Tags pour orchestration rapide
@@ -435,7 +443,7 @@ TIMEOUTS.LONG = 5000        // Chargement réseau
 TIMEOUTS.ELEMENT_READY = 2000
 
 // Sélecteurs via data-testid (robustes)
-SELECTORS.START_BTN = '[data-testid="start-contraction-btn"]'
+SELECTORS.TOGGLE_BTN = '[data-testid="toggle-contraction-btn"]'
 SELECTORS.THRESHOLD_BADGE = '[data-testid="threshold-badge"]'
 // ... 20+ sélecteurs
 
@@ -567,23 +575,22 @@ Intégration native avec GitHub Actions
 
 ## 🛠️ Implémentation des data-testid
 
-Tous les tests utilisent `data-testid` pour la robustesse. Voir [DATA_TESTID_IMPLEMENTATION.md](DATA_TESTID_IMPLEMENTATION.md) pour:
+Les tests s'appuient sur `data-testid` quand le composant en pose un. **Le
+sens de lecture est celui-ci : le test suit le composant.** L'inverse — écrire
+le test contre des crochets « à ajouter plus tard » — est précisément ce qui a
+laissé 21 tests morts pendant des mois.
 
-- Liste complète des data-testid
-- Ordre d'implémentation (phases 1-4)
-- Exemples de code React
+Quand un composant n'a pas de `data-testid`, on prend ce qu'il offre plutôt que
+d'en inventer un : un `id` (`#btn-theme`, `#high-contrast-check`), une classe
+BEM (`.note-tag--shower`), ou les crochets `[data-dwc]` des composants du
+socle. C'est moins joli, c'est vrai.
 
-### Exemple d'ajout
+### Avant d'ajouter un sélecteur
 
-```tsx
-<button
-  data-testid="start-contraction-btn"
-  aria-label="Démarrer une contraction"
-  onClick={handleStart}
->
-  Début
-</button>
-```
+1. Chercher le crochet réel : `grep -rn 'data-testid' src/react`.
+2. L'ajouter à `SELECTORS` dans `config.ts`.
+3. `npm run test` — `src/e2eSelectors.test.ts` refuse tout sélecteur absent
+   de `src/`.
 
 ## 📚 Bonnes pratiques
 
@@ -624,10 +631,12 @@ test.beforeEach(async ({ page }) => {
 
 ## 🎯 Prochaines étapes
 
-1. ✅ Ajouter les `data-testid` au code React (voir DATA_TESTID_IMPLEMENTATION.md)
+1. ⏳ **Passer `run-e2e: true` dans `.github/workflows/ci.yml`.** C'est la
+   seule ligne qui compte : tant que la CI ne lance pas Playwright, rien
+   n'empêche la suite de repartir à la dérive. `src/e2eSelectors.test.ts`
+   couvre les sélecteurs et les clés de stockage, pas le comportement.
 2. ⏳ Lancer les snapshots: `npx playwright test --update-snapshots`
-3. ⏳ Intégrer dans CI/CD
-4. ⏳ Monitorer les rapports
+3. ⏳ Monitorer les rapports
 
 ## 🐛 Dépannage
 

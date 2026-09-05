@@ -15,20 +15,29 @@ export async function setupTest(page: Page) {
 }
 
 /**
- * Créer une contraction avec durée configurable
+ * Créer une contraction avec durée configurable.
+ *
+ * UN SEUL BOUTON. L'application bascule début / fin sur le même contrôle ; ce
+ * helper cliquait `start-contraction-btn` puis `stop-contraction-btn`, deux
+ * `data-testid` qui n'ont jamais existé. On attend le passage à l'état
+ * « enregistrement » avant de compter la durée, sans quoi un clic avalé par le
+ * rendu produirait une contraction fantôme.
  */
 export async function createContraction(page: Page, durationMs = 500) {
-  const startBtn = page.locator(SELECTORS.START_BTN);
-  await expect(startBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
-  await startBtn.click();
+  const toggle = page.locator(SELECTORS.TOGGLE_BTN);
+  await expect(toggle).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
+
+  await toggle.click();
+  await expect(page.locator(SELECTORS.TOGGLE_BTN_RECORDING)).toBeVisible({
+    timeout: TIMEOUTS.ELEMENT_READY,
+  });
 
   await page.waitForTimeout(durationMs);
 
-  const stopBtn = page.locator(SELECTORS.STOP_BTN);
-  await expect(stopBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
-  await stopBtn.click();
-
-  await page.waitForTimeout(200); // Attendre que localStorage se mette à jour
+  await toggle.click();
+  await expect(page.locator(SELECTORS.TOGGLE_BTN_RECORDING)).toBeHidden({
+    timeout: TIMEOUTS.ELEMENT_READY,
+  });
 }
 
 /**
@@ -49,25 +58,31 @@ export async function createMultipleContractions(
 }
 
 /**
- * Naviguer vers une vue via le menu ou directement
+ * Naviguer vers une vue.
+ *
+ * PAR URL, ET C'EST VOLONTAIRE. La version précédente cherchait d'abord un
+ * `[data-testid="nav-home"]` et retombait sur `page.goto` — le crochet
+ * n'existant pas, elle retombait toujours. Le détour ne servait donc à rien et
+ * coûtait un `isVisible` avec temporisation à chaque navigation. La barre
+ * basse vient du socle et n'offre aucune prise par onglet ; le test qui veut
+ * éprouver la navigation elle-même clique le lien par son `href`
+ * (`clickNavLink` ci-dessous).
  */
 export async function navigateTo(page: Page, route: string) {
-  const navSelector = Object.entries(ROUTES).find(([_, v]) => v === route)?.[0];
-  const navTestId = navSelector ? `nav-${navSelector.toLowerCase()}` : null;
-
-  if (navTestId) {
-    const navBtn = page.locator(`[data-testid="${navTestId}"]`);
-    if (
-      await navBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
-    ) {
-      await navBtn.click();
-      await page.waitForLoadState('networkidle');
-      return;
-    }
-  }
-
-  // Fallback: navigation directe
   await page.goto(route);
+  await page.waitForLoadState('networkidle');
+}
+
+/**
+ * Cliquer un onglet de la barre basse, désigné par son chemin.
+ *
+ * Réservé aux tests qui éprouvent la navigation ; partout ailleurs,
+ * `navigateTo` va droit au but.
+ */
+export async function clickNavLink(page: Page, route: string) {
+  const link = page.locator(`${SELECTORS.BOTTOM_NAV} a[href="${route}"]`);
+  await expect(link).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
+  await link.click();
   await page.waitForLoadState('networkidle');
 }
 
@@ -92,24 +107,31 @@ export async function updateSetting(
  * Sauvegarder les paramètres avec confirmation
  */
 export async function saveSettings(page: Page) {
-  const saveBtn = page.locator(SELECTORS.SAVE_BTN);
-  if (await saveBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
-    await saveBtn.click();
+  const saveBtn = page.locator(SELECTORS.SAVE_SETTINGS_BTN);
+  await expect(saveBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
+  await saveBtn.click();
 
-    // Attendre la confirmation
-    const confirmMsg = page.locator('text=/Enregistré|Sauvegardé/i');
-    await expect(confirmMsg)
-      .toBeVisible({ timeout: TIMEOUTS.NORMAL })
-      .catch(() => {
-        // La confirmation n'est pas obligatoire
-      });
-  }
+  // L'écran affiche un retour dédié : on l'attend plutôt que de chercher un
+  // texte au jugé, comme le faisait `text=/Enregistré|Sauvegardé/i`.
+  await expect(page.locator(SELECTORS.SETTINGS_SAVE_FEEDBACK)).toBeVisible({
+    timeout: TIMEOUTS.NORMAL,
+  });
 }
 
 /**
- * Vérifier qu'aucune erreur JavaScript ne s'est produite
+ * Vérifier qu'aucune erreur JavaScript ne s'est produite.
+ *
+ * ELLE N'EST PAS `async`, ET C'EST TOUT L'ENJEU. Elle ne fait qu'abonner un
+ * écouteur et rendre les poignées pour le relire : rien à attendre. Déclarée
+ * `async`, elle rendait une promesse, et les appels — dans les specs comme
+ * dans `README.md` — l'utilisent sans `await`. `errorHandler.verify()` levait
+ * donc `verify is not a function`, sur une promesse.
+ *
+ * Le défaut est là depuis la création de ce fichier (70d17e1, avril 2026) :
+ * `run-e2e: false` dans la CI, personne ne lançait ces tests. Ce n'est pas une
+ * régression du socle.
  */
-export async function expectNoJSErrors(page: Page) {
+export function expectNoJSErrors(page: Page) {
   const errors: string[] = [];
 
   const errorHandler = (error: Error) => {
@@ -134,12 +156,19 @@ export async function waitForContractionInHistory(page: Page) {
   const historyList = page.locator(SELECTORS.HISTORY_LIST);
   await expect(historyList).toBeVisible({ timeout: TIMEOUTS.NORMAL });
 
-  const entry = page.locator(SELECTORS.CONTRACTION_ENTRY).first();
+  // Les entrées portent `history-item-<id>` ; on vise la liste et sa première
+  // ligne. `contraction-entry`, que ce helper attendait, n'a jamais existé.
+  const entry = page.locator(`${SELECTORS.HISTORY_ITEMS} > li`).first();
   await expect(entry).toBeVisible({ timeout: TIMEOUTS.NORMAL });
 }
 
 /**
- * Récupérer les statistiques affichées
+ * Récupérer les statistiques affichées.
+ *
+ * Les trois valeurs portent chacune leur `data-testid`. Ce helper lisait des
+ * attributs `[data-stat="qty"]` qui n'existent nulle part dans `src/` : il
+ * rendait donc toujours `null` quand la section était masquée, et levait
+ * quand elle ne l'était pas.
  */
 export async function getDisplayedStats(page: Page) {
   const statsSection = page.locator(SELECTORS.STATS_SECTION);
@@ -153,12 +182,12 @@ export async function getDisplayedStats(page: Page) {
   }
 
   return {
-    qtyPerHour: await statsSection.locator('[data-stat="qty"]').textContent(),
-    avgDuration: await statsSection
-      .locator('[data-stat="duration"]')
+    qtyPerHour: await page.locator(SELECTORS.STAT_VALUE_QTY).textContent(),
+    avgDuration: await page
+      .locator(SELECTORS.STAT_VALUE_DURATION)
       .textContent(),
-    avgFrequency: await statsSection
-      .locator('[data-stat="frequency"]')
+    avgFrequency: await page
+      .locator(SELECTORS.STAT_VALUE_FREQUENCY)
       .textContent(),
   };
 }

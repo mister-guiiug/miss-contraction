@@ -46,7 +46,7 @@ test.describe('Export & Import', () => {
 
   test('export - inclut les enregistrements', async ({ page }) => {
     const exportData = await page.evaluate(() => {
-      const records = localStorage.getItem('mc_records');
+      const records = localStorage.getItem('mc_contractions_v1');
       return records ? JSON.parse(records) : null;
     });
 
@@ -57,7 +57,7 @@ test.describe('Export & Import', () => {
 
   test('export - inclut les paramètres', async ({ page }) => {
     const exportData = await page.evaluate(() => {
-      const settings = localStorage.getItem('mc_settings');
+      const settings = localStorage.getItem('mc_settings_v1');
       return settings ? JSON.parse(settings) : null;
     });
 
@@ -70,8 +70,8 @@ test.describe('Export & Import', () => {
     // Exporter les données actuelles
     const originalData = await page.evaluate(() => {
       return {
-        records: JSON.parse(localStorage.getItem('mc_records') || '[]'),
-        settings: JSON.parse(localStorage.getItem('mc_settings') || '{}'),
+        records: JSON.parse(localStorage.getItem('mc_contractions_v1') || '[]'),
+        settings: JSON.parse(localStorage.getItem('mc_settings_v1') || '{}'),
       };
     });
 
@@ -92,16 +92,21 @@ test.describe('Export & Import', () => {
       await page.evaluate(json => {
         const data = JSON.parse(json);
         if (data.records)
-          localStorage.setItem('mc_records', JSON.stringify(data.records));
+          localStorage.setItem(
+            'mc_contractions_v1',
+            JSON.stringify(data.records)
+          );
         if (data.settings)
-          localStorage.setItem('mc_settings', JSON.stringify(data.settings));
+          localStorage.setItem('mc_settings_v1', JSON.stringify(data.settings));
       }, jsonData);
 
       // Vérifier que les données sont restaurées
       const restoredData = await page.evaluate(() => {
         return {
-          records: JSON.parse(localStorage.getItem('mc_records') || '[]'),
-          settings: JSON.parse(localStorage.getItem('mc_settings') || '{}'),
+          records: JSON.parse(
+            localStorage.getItem('mc_contractions_v1') || '[]'
+          ),
+          settings: JSON.parse(localStorage.getItem('mc_settings_v1') || '{}'),
         };
       });
 
@@ -112,8 +117,8 @@ test.describe('Export & Import', () => {
   test('export - format correct du fichier', async ({ page }) => {
     const exportData = await page.evaluate(() => {
       return {
-        records: JSON.parse(localStorage.getItem('mc_records') || '[]'),
-        settings: JSON.parse(localStorage.getItem('mc_settings') || '{}'),
+        records: JSON.parse(localStorage.getItem('mc_contractions_v1') || '[]'),
+        settings: JSON.parse(localStorage.getItem('mc_settings_v1') || '{}'),
       };
     });
 

@@ -172,7 +172,7 @@ test.describe('Alertes & Notifications', () => {
 
       // Vérifier que le snooze est enregistré
       const snoozeUntil = await page.evaluate(() => {
-        return localStorage.getItem('mc_snooze_until_ms');
+        return localStorage.getItem('mc_snooze_until');
       });
 
       if (snoozeUntil) {
@@ -197,7 +197,7 @@ test.describe('Alertes & Notifications', () => {
       await snoozeButton.click();
 
       const snoozeUntil = await page.evaluate(() => {
-        return localStorage.getItem('mc_snooze_until_ms');
+        return localStorage.getItem('mc_snooze_until');
       });
 
       if (snoozeUntil) {
@@ -232,7 +232,7 @@ test.describe('Alertes & Notifications', () => {
 
         // Vérifier que le snooze est annulé
         const snoozeUntil = await page.evaluate(() => {
-          return localStorage.getItem('mc_snooze_until_ms');
+          return localStorage.getItem('mc_snooze_until');
         });
 
         expect(snoozeUntil === null || parseInt(snoozeUntil) === 0).toBe(true);
@@ -278,7 +278,7 @@ test.describe('Alertes & Notifications', () => {
 
       // Vérifier que le paramètre est sauvegardé
       const savedValue = await page.evaluate(() => {
-        const settings = localStorage.getItem('mc_settings');
+        const settings = localStorage.getItem('mc_settings_v1');
         return settings ? JSON.parse(settings).maxIntervalMin : null;
       });
 
@@ -300,7 +300,7 @@ test.describe('Alertes & Notifications', () => {
       }
 
       const savedValue = await page.evaluate(() => {
-        const settings = localStorage.getItem('mc_settings');
+        const settings = localStorage.getItem('mc_settings_v1');
         return settings ? JSON.parse(settings).minDurationSec : null;
       });
 
@@ -324,7 +324,7 @@ test.describe('Alertes & Notifications', () => {
       }
 
       const savedValue = await page.evaluate(() => {
-        const settings = localStorage.getItem('mc_settings');
+        const settings = localStorage.getItem('mc_settings_v1');
         return settings ? JSON.parse(settings).consecutiveCount : null;
       });
 

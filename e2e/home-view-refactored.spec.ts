@@ -9,6 +9,7 @@
 
 import { test, expect } from '@playwright/test';
 import { HomePage } from './pages/HomePage';
+import { SettingsPage } from './pages/SettingsPage';
 import {
   setupTest,
   createMultipleContractions,
@@ -40,13 +41,16 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
   });
 
   test('@critical chronomètre - démarre une contraction', async ({ page }) => {
-    const startBtn = await homePage.getStartButton();
-    await expect(startBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
+    // Un seul bouton, qui bascule : on éprouve donc le changement d'état, pas
+    // l'apparition d'un second bouton. `getStopButton` visait un
+    // `data-testid` qui n'a jamais existé.
+    const toggle = homePage.getToggleButton();
+    await expect(toggle).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
+    expect(await homePage.isRecording()).toBe(false);
 
     await homePage.startContraction();
 
-    const stopBtn = await homePage.getStopButton();
-    await expect(stopBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
+    expect(await homePage.isRecording()).toBe(true);
   });
 
   test('@critical @smoke chronomètre - cycle complet', async ({ page }) => {
@@ -86,7 +90,7 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
       await homePage.selectIntensity(3);
       // Vérifier que le bouton est marqué comme actif
       const activeBtn = page.locator(
-        '[data-testid="intensity-3"][aria-pressed="true"]'
+        '[data-testid="intensity-option-3"][aria-pressed="true"]'
       );
       await expect(activeBtn)
         .toBeVisible({ timeout: TIMEOUTS.SHORT })
@@ -120,16 +124,18 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
   test('@smoke notes rapides - sélectionner une note', async ({ page }) => {
     await homePage.startContraction();
 
-    // Tenter de sélectionner une note
-    const noteText = 'Contraction forte';
-    try {
-      await homePage.selectQuickNote(noteText);
-      // Vérifier que la sélection est affichée
-      const selectedMsg = page.locator(`text=${noteText}`);
-      await expect(selectedMsg).toBeVisible({ timeout: TIMEOUTS.SHORT });
-    } catch {
-      // Notes optionnelles
-    }
+    /*
+     * PLUS DE `try/catch`. Le test visait la note « Contraction forte », qui
+     * n'existe pas — les cinq notes sont « eau », « douche », « ballon »,
+     * « médicament », « repos » — puis avalait son propre échec. Il ne
+     * pouvait donc rien constater. On désigne la note par son identifiant, et
+     * on vérifie que l'écran l'affiche.
+     */
+    await homePage.selectQuickNote('shower');
+
+    await expect(
+      page.locator('[data-testid="selected-note-display"]')
+    ).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
 
     await homePage.stopContraction();
   });
@@ -149,23 +155,29 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
   });
 
   test('@smoke fenêtre temporelle - change les stats', async ({ page }) => {
-    // Créer des contractions
     await createMultipleContractions(page, 3, 500, 300);
 
-    // Sélectionner différentes fenêtres temporelles
-    try {
-      await homePage.selectTimeWindow('30');
-      const stats30 = await homePage.getStats();
+    /*
+     * LA FENÊTRE EST UN `<select>` DES RÉGLAGES, pas une rangée de boutons sur
+     * l'accueil : `HomePage.selectTimeWindow` visait des `time-window-*` qui
+     * n'existent nulle part. Le `try/catch` d'origine masquait l'échec.
+     */
+    const settings = new SettingsPage(page);
+    await settings.goto();
+    await settings.setStatsWindow('30');
+    await settings.save();
 
-      await homePage.selectTimeWindow('all');
-      const statsAll = await homePage.getStats();
+    await homePage.goto();
+    const stats30 = await homePage.getStats();
+    expect(stats30).toBeTruthy();
 
-      // Vérifier que les stats sont différentes (ou au moins affichées)
-      expect(stats30).toBeTruthy();
-      expect(statsAll).toBeTruthy();
-    } catch {
-      // Fenêtres temporelles optionnelles
-    }
+    await settings.goto();
+    await settings.setStatsWindow('all');
+    await settings.save();
+
+    await homePage.goto();
+    const statsAll = await homePage.getStats();
+    expect(statsAll).toBeTruthy();
   });
 
   test('@critical historique - affiche les contractions', async ({ page }) => {
@@ -199,15 +211,17 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
   test('@critical responsive mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
 
-    const startBtn = await homePage.getStartButton();
-    await expect(startBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
+    await expect(homePage.getToggleButton()).toBeVisible({
+      timeout: TIMEOUTS.ELEMENT_READY,
+    });
   });
 
   test('@critical responsive desktop', async ({ page }) => {
     await page.setViewportSize({ width: 1920, height: 1080 });
 
-    const startBtn = await homePage.getStartButton();
-    await expect(startBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
+    await expect(homePage.getToggleButton()).toBeVisible({
+      timeout: TIMEOUTS.ELEMENT_READY,
+    });
   });
 
   test('@critical persistance - contractions après rechargement', async ({

@@ -20,7 +20,7 @@ test.describe('Snapshots Visuels - Régression Design', () => {
   test('@visual HomeView - layout principal', async ({ page }) => {
     // Masquer les éléments volatiles (timer en cours)
     await page
-      .locator('[data-testid="volatile"]')
+      .locator('[data-testid="timer-value"]')
       .evaluate(els => {
         els.forEach((el: Element) => {
           (el as HTMLElement).style.opacity = '0.5';

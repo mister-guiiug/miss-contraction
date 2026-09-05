@@ -1,16 +1,22 @@
 /**
  * Page Object pour SettingsView
+ *
+ * LES BASCULES SONT DES CASES À COCHER, PAS DES BOUTONS `*-toggle`. Aucun des
+ * cinq `[data-testid="…-toggle"]` visés ici n'existe : l'écran de réglages
+ * rend des `<input type="checkbox">` dont les crochets se terminent par
+ * `-check`. Le contraste élevé et le thème n'ont même pas de `data-testid` —
+ * ils portent un `id`, respectivement dans `HighContrastToggle` et `Shell`.
  */
 
 import { Page, expect } from '@playwright/test';
-import { SELECTORS, TIMEOUTS } from '../config';
+import { SELECTORS, TIMEOUTS, ROUTES } from '../config';
 import { updateSetting, saveSettings, toggleCheckbox } from '../helpers';
 
 export class SettingsPage {
   constructor(private page: Page) {}
 
   async goto() {
-    await this.page.goto('/parametres');
+    await this.page.goto(ROUTES.SETTINGS);
     await this.page.waitForLoadState('networkidle');
   }
 
@@ -27,7 +33,7 @@ export class SettingsPage {
   }
 
   async setMaternityName(value: string) {
-    await updateSetting(this.page, SELECTORS.MATERNITY_NAME_INPUT, value);
+    await updateSetting(this.page, SELECTORS.MATERNITY_LABEL_INPUT, value);
   }
 
   async setMaternityPhone(value: string) {
@@ -35,49 +41,60 @@ export class SettingsPage {
   }
 
   async setMaternityAddress(value: string) {
-    await updateSetting(this.page, SELECTORS.MATERNITY_ADDRESS_INPUT, value);
+    await updateSetting(this.page, SELECTORS.MATERNITY_ADDRESS_TEXTAREA, value);
+  }
+
+  /**
+   * La fenêtre de calcul des statistiques est un `<select>` de cet écran — pas
+   * une rangée de boutons sur l'accueil, comme le supposait
+   * `HomePage.selectTimeWindow`.
+   */
+  async setStatsWindow(value: 'all' | '30' | '60' | '120') {
+    const select = this.page.locator(SELECTORS.STATS_WINDOW_SELECT);
+    await expect(select).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
+    await select.selectOption(value);
   }
 
   async save() {
     await saveSettings(this.page);
   }
 
+  /** Le bouton de thème vit dans l'en-tête, et porte un `id`. */
   async toggleTheme() {
-    return await toggleCheckbox(this.page, '[data-testid="theme-toggle"]');
+    const btn = this.page.locator('#btn-theme');
+    await expect(btn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
+    await btn.click();
   }
 
   async toggleHighContrast() {
-    return await toggleCheckbox(
-      this.page,
-      '[data-testid="high-contrast-toggle"]'
-    );
+    return await toggleCheckbox(this.page, '#high-contrast-check');
   }
 
   async toggleLargeMode() {
-    return await toggleCheckbox(this.page, '[data-testid="large-mode-toggle"]');
+    return await toggleCheckbox(this.page, '[data-testid="large-mode-check"]');
   }
 
   async toggleVibration() {
-    return await toggleCheckbox(this.page, '[data-testid="vibration-toggle"]');
+    return await toggleCheckbox(this.page, '[data-testid="vibration-check"]');
   }
 
   async toggleVoiceCommands() {
     return await toggleCheckbox(
       this.page,
-      '[data-testid="voice-commands-toggle"]'
+      '[data-testid="voice-commands-check"]'
     );
   }
 
   async snooze(minutes: 30 | 60) {
     const snoozeBtn = this.page.locator(
-      `[data-testid="snooze-${minutes}-btn"]`
+      `[data-testid="snooze-${minutes}min-btn"]`
     );
     await expect(snoozeBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
     await snoozeBtn.click();
   }
 
   async cancelSnooze() {
-    const cancelBtn = this.page.locator('[data-testid="cancel-snooze-btn"]');
+    const cancelBtn = this.page.locator('[data-testid="clear-snooze-btn"]');
     if (
       await cancelBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
     ) {
@@ -92,22 +109,28 @@ export class SettingsPage {
     }
   }
 
+  /**
+   * L'effacement des données est sur l'accueil, dans l'en-tête de
+   * l'historique — pas dans les réglages. Il ouvre une `confirm()` native :
+   * l'écouteur doit être posé AVANT le clic, sinon le dialogue reste ouvert et
+   * le clic n'aboutit jamais.
+   */
   async clearAllData() {
-    const deleteBtn = this.page.locator('[data-testid="clear-data-btn"]');
+    await this.page.goto(ROUTES.HOME);
+    await this.page.waitForLoadState('networkidle');
+
+    const deleteBtn = this.page.locator(SELECTORS.CLEAR_HISTORY_BTN);
     if (
       await deleteBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
     ) {
+      this.page.once('dialog', dialog => dialog.accept());
       await deleteBtn.click();
-
-      // Gérer la confirmation
-      this.page.once('dialog', dialog => {
-        dialog.accept();
-      });
     }
   }
 
   async getSaveConfirmation() {
-    const msg = this.page.locator('[data-testid="save-confirmation"]');
-    return await msg.textContent();
+    return await this.page
+      .locator(SELECTORS.SETTINGS_SAVE_FEEDBACK)
+      .textContent();
   }
 }

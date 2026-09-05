@@ -65,7 +65,7 @@ test.describe('HomeView - Vue principale', () => {
 
     // Vérifier que le chronomètre affiche un temps croissant
     await page.waitForTimeout(1000);
-    const timerDisplay = page.locator('[data-testid="timer"], .timer, .chrono');
+    const timerDisplay = page.locator('[data-testid="timer-value"]');
     if (await timerDisplay.isVisible({ timeout: 500 }).catch(() => false)) {
       const text1 = await timerDisplay.textContent();
       await page.waitForTimeout(500);
@@ -338,9 +338,7 @@ test.describe('HomeView - Vue principale', () => {
   test('affichage vide (EmptyState) - quand pas de contractions', async ({
     page,
   }) => {
-    const emptyState = page.locator(
-      '.empty-state, [data-testid="empty-state"]'
-    );
+    const emptyState = page.locator('[data-testid="history-empty"]');
     if (await emptyState.isVisible({ timeout: 500 }).catch(() => false)) {
       await expect(emptyState).toBeVisible();
     }

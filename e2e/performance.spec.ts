@@ -142,7 +142,7 @@ test.describe('Performance - Rendu avec données', () => {
       ([key, recs]) => {
         localStorage.setItem(key, JSON.stringify(recs));
       },
-      ['mc_records', records] as [string, typeof records]
+      ['mc_contractions_v1', records] as [string, typeof records]
     );
 
     const start = Date.now();
@@ -171,7 +171,7 @@ test.describe('Performance - Rendu avec données', () => {
       ([key, recs]) => {
         localStorage.setItem(key, JSON.stringify(recs));
       },
-      ['mc_records', records] as [string, typeof records]
+      ['mc_contractions_v1', records] as [string, typeof records]
     );
 
     const start = Date.now();

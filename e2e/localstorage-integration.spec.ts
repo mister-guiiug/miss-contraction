@@ -7,8 +7,8 @@
 import { test, expect } from '@playwright/test';
 import { ROUTES, TEST_DATA } from './config';
 
-const RECORDS_KEY = 'mc_records';
-const SETTINGS_KEY = 'mc_settings';
+const RECORDS_KEY = 'mc_contractions_v1';
+const SETTINGS_KEY = 'mc_settings_v1';
 
 test.describe('LocalStorage - Persistance des contractions', () => {
   test.beforeEach(async ({ page }) => {

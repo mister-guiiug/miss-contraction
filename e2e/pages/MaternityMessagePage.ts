@@ -1,50 +1,63 @@
 /**
  * Page Object pour MaternityView et MessageView
+ *
+ * TOUS LES CROCHETS VISÉS ICI ÉTAIENT FAUX. `maternity-name`,
+ * `maternity-phone-link`, `maternity-directions-link`, `maternity-instructions`,
+ * `copy-message-btn`, `copy-confirmation`, `share-whatsapp-link`,
+ * `share-sms-link` : aucun n'existe dans `src/`. Les vrais suivent la
+ * convention `<vue>-<élément>` (`maternity-label`, `message-copy-btn`, …).
+ *
+ * `getInstructions` a disparu : `MaternityView` n'affiche pas d'instructions,
+ * et le réglage correspondant n'existe pas non plus.
  */
 
 import { Page, expect } from '@playwright/test';
-import { SELECTORS, TIMEOUTS } from '../config';
+import { SELECTORS, TIMEOUTS, ROUTES } from '../config';
 
 export class MaternityPage {
   constructor(private page: Page) {}
 
   async goto() {
-    await this.page.goto('/maternite');
+    await this.page.goto(ROUTES.MATERNITY);
     await this.page.waitForLoadState('networkidle');
   }
 
   async getMaternityName() {
-    const element = this.page.locator('[data-testid="maternity-name"]');
-    return await element.textContent();
+    return await this.page.locator(SELECTORS.MATERNITY_LABEL).textContent();
   }
 
+  /**
+   * Le téléphone est rendu à deux endroits : le texte
+   * (`maternity-phone`) et le bouton d'appel qui porte le `tel:`
+   * (`maternity-call-btn`). Quand aucun numéro n'est réglé, ni l'un ni l'autre
+   * n'est monté — c'est `maternity-phone-placeholder` qui prend la place.
+   */
   async getMaternityPhone() {
-    const link = this.page.locator('[data-testid="maternity-phone-link"]');
+    const link = this.page.locator(SELECTORS.MATERNITY_CALL_BTN);
     return {
       href: await link.getAttribute('href'),
-      text: await link.textContent(),
+      text: await this.page
+        .locator('[data-testid="maternity-phone"]')
+        .textContent(),
     };
   }
 
   async getMaternityAddress() {
-    const element = this.page.locator('[data-testid="maternity-address"]');
-    return await element.textContent();
-  }
-
-  async getInstructions() {
-    const element = this.page.locator('[data-testid="maternity-instructions"]');
-    return await element.textContent();
+    return await this.page
+      .locator('[data-testid="maternity-address"]')
+      .textContent();
   }
 
   async callMaternity() {
-    const link = this.page.locator('[data-testid="maternity-phone-link"]');
-    const href = await link.getAttribute('href');
-    return href; // Retourne le href tel:...
+    return await this.page
+      .locator(SELECTORS.MATERNITY_CALL_BTN)
+      .getAttribute('href');
   }
 
   async getDirectionsLink() {
-    const link = this.page.locator('[data-testid="maternity-directions-link"]');
-    return await link.getAttribute('href');
+    return await this.page
+      .locator(SELECTORS.MATERNITY_MAPS_BTN)
+      .getAttribute('href');
   }
 }
 
@@ -52,7 +65,7 @@ export class MessagePage {
   constructor(private page: Page) {}
 
   async goto() {
-    await this.page.goto('/message');
+    await this.page.goto(ROUTES.MESSAGE);
     await this.page.waitForLoadState('networkidle');
   }
 
@@ -70,41 +83,24 @@ export class MessagePage {
   }
 
   async copyMessage() {
-    const copyBtn = this.page.locator('[data-testid="copy-message-btn"]');
+    const copyBtn = this.page.locator(SELECTORS.MESSAGE_COPY_BTN);
     await expect(copyBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
     await copyBtn.click();
 
-    const confirmation = this.page.locator('[data-testid="copy-confirmation"]');
-    await expect(confirmation)
-      .toBeVisible({ timeout: TIMEOUTS.NORMAL })
-      .catch(() => {
-        // Confirmation optionnelle
-      });
+    await expect(this.page.locator(SELECTORS.MESSAGE_FEEDBACK)).toBeVisible({
+      timeout: TIMEOUTS.NORMAL,
+    });
   }
 
   async getWhatsAppLink() {
-    const link = this.page.locator('[data-testid="share-whatsapp-link"]');
-    return await link.getAttribute('href');
+    return await this.page
+      .locator(SELECTORS.MESSAGE_WHATSAPP_BTN)
+      .getAttribute('href');
   }
 
   async getSMSLink() {
-    const link = this.page.locator('[data-testid="share-sms-link"]');
-    return await link.getAttribute('href');
-  }
-
-  async shareViaWhatsApp() {
-    const link = this.page.locator('[data-testid="share-whatsapp-link"]');
-    if (await link.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
-      return await link.getAttribute('href');
-    }
-    return null;
-  }
-
-  async shareViaSMS() {
-    const link = this.page.locator('[data-testid="share-sms-link"]');
-    if (await link.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
-      return await link.getAttribute('href');
-    }
-    return null;
+    return await this.page
+      .locator(SELECTORS.MESSAGE_SMS_BTN)
+      .getAttribute('href');
   }
 }
