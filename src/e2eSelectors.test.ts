@@ -3,6 +3,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import * as storage from './storage';
+import { LS_THEME } from './themeKey';
 
 /**
  * Le garde-fou du harnais de bout en bout.
@@ -122,14 +123,21 @@ describe('sélecteurs du harnais e2e', () => {
 });
 
 describe('clés localStorage du harnais e2e', () => {
-  const real = new Set(
-    Object.entries(storage)
+  /*
+   * Les clés viennent des modules qui les définissent, jamais d'une liste
+   * tenue à la main ici. `LS_THEME` est à part : le script anti-FOUC engendré
+   * au build la lit en contexte Node, elle ne pouvait pas vivre dans
+   * `storage.ts`.
+   */
+  const real = new Set([
+    ...Object.entries(storage)
       .filter(([k, v]) => k.startsWith('KEY_') && typeof v === 'string')
-      .map(([, v]) => v as string)
-  );
+      .map(([, v]) => v as string),
+    LS_THEME,
+  ]);
 
-  it("l'application en expose bien cinq", () => {
-    expect(real.size).toBe(5);
+  it("l'application en expose six", () => {
+    expect(real.size).toBe(6);
   });
 
   it('les tests e2e ne citent que des clés réelles', () => {

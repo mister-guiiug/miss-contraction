@@ -629,6 +629,22 @@ test.beforeEach(async ({ page }) => {
 });
 ```
 
+### Captures de référence
+
+Les images de `e2e/__snapshots__/` ne sont **pas versionnées** : elles sont
+engendrées au premier passage, par plateforme (`{platform}` figure dans le
+gabarit de chemin). Un premier `npx playwright test` sur une machine neuve
+échoue donc en écrivant les références, et le second passe. C'est le
+comportement normal de Playwright.
+
+> **À signaler au socle.** `dev-pwa-config` définit
+> `'{snapshotDir}/{testFileDir}/{testFileName}-{projectName}-{platform}{ext}'`,
+> **sans `{arg}`** : les soixante captures d'un fichier s'écrivent toutes dans
+> le même PNG et s'écrasent l'une l'autre. Cinquante-huit tests visuels sur
+> soixante échouaient pour cette seule raison, en comparant deux écrans sans
+> rapport. `playwright.config.ts` rétablit `{arg}` en attendant un correctif
+> amont ; toute la famille `miss-*` / `mister-*` est concernée.
+
 ## 🎯 Prochaines étapes
 
 1. ⏳ **Passer `run-e2e: true` dans `.github/workflows/ci.yml`.** C'est la

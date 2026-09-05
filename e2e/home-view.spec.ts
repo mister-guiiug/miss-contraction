@@ -4,6 +4,8 @@
  */
 
 import { test, expect } from '@playwright/test';
+import { SettingsPage } from './pages/SettingsPage';
+import { ROUTES } from './config';
 
 test.describe('HomeView - Vue principale', () => {
   test.beforeEach(async ({ page }) => {
@@ -14,7 +16,9 @@ test.describe('HomeView - Vue principale', () => {
   });
 
   test('affiche les sections principales', async ({ page }) => {
-    await expect(page.locator('h1, h2, main, #app')).toBeVisible();
+    // `h1, h2, main, #app` résolvait à cinq éléments — « strict mode
+    // violation ». La racine et la vue suffisent.
+    await expect(page.locator('#app')).toBeVisible();
     await expect(page.locator('#view-home')).toBeVisible();
   });
 
@@ -297,42 +301,40 @@ test.describe('HomeView - Vue principale', () => {
     }
   });
 
-  test('fenêtre temporelle - change les stats selon la sélection', async ({
+  /*
+   * LA FENÊTRE TEMPORELLE N'EST PAS SUR L'ACCUEIL. C'est un `<select>` de
+   * l'écran des réglages. Ce test cherchait des `button:has-text("Toutes")`
+   * qui n'existent nulle part, sous un `if (isVisible)` qui l'empêchait
+   * d'échouer ; puis il assertait `aria-pressed` sur un locator vide.
+   */
+  test('fenêtre temporelle - le libellé des stats suit le réglage', async ({
     page,
   }) => {
-    // Créer quelques contractions
-    const startButton = page
-      .locator('button')
-      .filter({ hasText: /Début|Start/ })
-      .first();
-    for (let i = 0; i < 3; i++) {
-      await startButton.click();
-      await page.waitForTimeout(100);
-      const stopButton = page
-        .locator('button')
-        .filter({ hasText: /Fin|Stop/ })
-        .first();
-      await stopButton.click();
-      await page.waitForTimeout(300);
-    }
+    await page.evaluate(key => {
+      const now = Date.now();
+      localStorage.setItem(
+        key,
+        JSON.stringify([
+          { id: 'w1', start: now - 900000, end: now - 840000 },
+          { id: 'w2', start: now - 540000, end: now - 480000 },
+        ])
+      );
+    }, 'mc_contractions_v1');
+    await page.reload();
+    await page.waitForLoadState('networkidle');
 
-    // Chercher les boutons de fenêtre temporelle
-    const allButton = page.locator(
-      'button:has-text("Toutes"), button:has-text("All")'
-    );
-    const window30 = page.locator(
-      'button:has-text("30 min"), button:has-text("Last 30")'
-    );
+    const label = page.locator('[data-testid="stats-window-label"]');
+    const initial = await label.textContent();
 
-    if (await allButton.isVisible({ timeout: 500 }).catch(() => false)) {
-      await allButton.click();
-      await expect(allButton).toHaveAttribute('aria-pressed', 'true');
-    }
+    const settings = new SettingsPage(page);
+    await settings.goto();
+    await settings.setStatsWindow('30');
+    await settings.save();
 
-    if (await window30.isVisible({ timeout: 500 }).catch(() => false)) {
-      await window30.click();
-      await expect(window30).toHaveAttribute('aria-pressed', 'true');
-    }
+    await page.goto(ROUTES.HOME);
+    await page.waitForLoadState('networkidle');
+
+    await expect(label).not.toHaveText(initial ?? '');
   });
 
   test('affichage vide (EmptyState) - quand pas de contractions', async ({

@@ -69,6 +69,16 @@ export const SELECTORS = {
   // Historique
   HISTORY_LIST: '[data-testid="history-list"]',
   HISTORY_ITEMS: '[data-testid="history-items"]',
+
+  /*
+   * DEUX « ÉTATS VIDES », ET UN SEUL SE VOIT. `HomeView` ne monte
+   * `HistoryList` que lorsqu'il y a des contractions : sans aucune, c'est
+   * `EmptyState` — le composant du socle — qui occupe la place.
+   * `history-empty` est donc une branche défensive, atteignable seulement si
+   * des enregistrements existent mais qu'aucun n'est valide. Les tests qui
+   * vérifient « la liste est vide » doivent viser `EMPTY_STATE`.
+   */
+  EMPTY_STATE: '[data-dwc="empty-state"]',
   HISTORY_EMPTY: '[data-testid="history-empty"]',
 
   // Tableau
@@ -135,6 +145,12 @@ export {
   KEY_SNOOZE_UNTIL,
   KEY_EXPORT_NUDGE_DISMISSED,
 } from '../src/storage';
+
+/*
+ * La clé du thème vit à part : le script anti-FOUC engendré au build la lit en
+ * contexte Node, elle ne pouvait donc pas rester dans `storage.ts`.
+ */
+export { LS_THEME } from '../src/themeKey';
 
 /** Les chemins français, ceux que sert l'application par défaut. */
 export const ROUTES = {

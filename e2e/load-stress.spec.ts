@@ -240,6 +240,11 @@ test.describe('Stress - Formulaires', () => {
     const errors: string[] = [];
     page.on('pageerror', e => errors.push(e.message));
 
+    // Sans navigation préalable, `page` est sur `about:blank` : y toucher
+    // `localStorage` lève `SecurityError`. C'était la seule cause de l'échec.
+    await page.goto(ROUTES.HOME);
+    await page.waitForLoadState('networkidle');
+
     const now = Date.now();
     const longNote = 'L'.repeat(500);
     const records = [

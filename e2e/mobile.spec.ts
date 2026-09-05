@@ -160,7 +160,13 @@ test.describe('Mobile - Orientation', () => {
     await expect(
       page.locator('[data-testid="toggle-contraction-btn"]')
     ).toBeVisible();
-    await expect(page.locator('[data-testid="stats-section"]')).toBeVisible();
+
+    /*
+     * `stats-section` n'est monté QUE s'il existe au moins une contraction :
+     * `HomeView` affiche sinon l'état vide du socle. Le test l'attendait sur
+     * un stockage fraîchement vidé — il ne pouvait pas passer.
+     */
+    await expect(page.locator('[data-dwc="empty-state"]')).toBeVisible();
   });
 
   test('@mobile mode paysage : layout intact sans overflow', async ({

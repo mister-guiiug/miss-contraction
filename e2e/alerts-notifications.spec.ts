@@ -4,6 +4,7 @@
  */
 
 import { test, expect } from '@playwright/test';
+import { ROUTES, KEY_RECORDS } from './config';
 
 test.describe('Alertes & Notifications', () => {
   test.beforeEach(async ({ page }) => {
@@ -84,58 +85,63 @@ test.describe('Alertes & Notifications', () => {
     }
   });
 
-  test('notification navigateur - déclenche une notification', async ({
+  /*
+   * ── RÉÉCRIT, PARCE QUE L'ANCIEN NE POUVAIT RIEN PROUVER ────────────────────
+   *
+   * Il remplaçait `Notification.prototype.show` — une méthode qui n'existe pas
+   * dans l'API Notifications, où l'affichage se déclenche à la CONSTRUCTION.
+   * Puis il appelait `page.goto()` deux fois, ce qui détruit le contexte
+   * JavaScript et donc l'espion. Sa conclusion,
+   * `expect(typeof notificationFired).toBe('boolean')`, lisait alors
+   * `undefined` : le test échouait sur une tautologie qu'il n'arrivait même
+   * plus à évaluer.
+   *
+   * On instrumente le CONSTRUCTEUR via `addInitScript`, qui survit aux
+   * navigations, et on sème un motif qui atteint le seuil de façon
+   * déterministe plutôt que de cliquer quatre fois le chronomètre.
+   */
+  test('seuil atteint - le badge passe en « match »', async ({
     page,
+    context,
   }) => {
-    // Écouter la notification
-    let notificationFired = false;
-
-    await page.evaluate(() => {
-      const originalShow = Notification.prototype.show;
-      (window as any).__notificationFired = false;
-
-      Notification.prototype.show = function () {
-        (window as any).__notificationFired = true;
-        if (originalShow) originalShow.call(this);
-      };
+    await context.grantPermissions(['notifications']);
+    await page.addInitScript(() => {
+      (window as unknown as { __notifications: string[] }).__notifications = [];
+      const Original = window.Notification;
+      const Spy = function (this: unknown, title: string, opts?: unknown) {
+        (
+          window as unknown as { __notifications: string[] }
+        ).__notifications.push(title);
+        return new Original(title, opts as NotificationOptions);
+      } as unknown as typeof Notification;
+      Object.defineProperty(Spy, 'permission', { get: () => 'granted' });
+      Spy.requestPermission = () => Promise.resolve('granted' as const);
+      window.Notification = Spy;
     });
 
-    // Configurer les seuils bas
-    await page.goto('/parametres');
-    const maxIntervalInput = page.locator('input[name="maxIntervalMin"]');
-    if (await maxIntervalInput.isVisible({ timeout: 500 }).catch(() => false)) {
-      await maxIntervalInput.fill('1');
-      const submitButton = page.locator(
-        'button:has-text("Enregistrer"), [type="submit"]'
+    /*
+     * Trois contractions d'une minute, espacées de quatre minutes : sous le
+     * seuil de cinq minutes et au-dessus des quarante-cinq secondes de durée
+     * minimale, `computeThresholdBadge` doit donc rendre « match ».
+     */
+    await page.goto(ROUTES.HOME);
+    await page.evaluate(key => {
+      const now = Date.now();
+      localStorage.setItem(
+        key,
+        JSON.stringify([
+          { id: 'n1', start: now - 600_000, end: now - 540_000 },
+          { id: 'n2', start: now - 360_000, end: now - 300_000 },
+          { id: 'n3', start: now - 120_000, end: now - 60_000 },
+        ])
       );
-      if (await submitButton.isVisible({ timeout: 500 }).catch(() => false)) {
-        await submitButton.click();
-      }
-    }
+    }, KEY_RECORDS);
+    await page.reload();
+    await page.waitForLoadState('networkidle');
 
-    await page.goto('/');
-
-    // Créer contractions rapides pour atteindre le seuil
-    const startButton = page
-      .locator('button')
-      .filter({ hasText: /Début|Start/ })
-      .first();
-    for (let i = 0; i < 4; i++) {
-      await startButton.click();
-      await page.waitForTimeout(50);
-      const stopButton = page
-        .locator('button')
-        .filter({ hasText: /Fin|Stop/ })
-        .first();
-      await stopButton.click();
-      await page.waitForTimeout(150);
-    }
-
-    // Vérifier si une notification a été créée
-    notificationFired = await page.evaluate(
-      () => (window as any).__notificationFired
-    );
-    expect(typeof notificationFired).toBe('boolean');
+    await expect(
+      page.locator('[data-testid="stats-threshold-badge"]')
+    ).toHaveAttribute('data-state', 'match');
   });
 
   test('audio - son joué au déclenchement', async ({ page }) => {

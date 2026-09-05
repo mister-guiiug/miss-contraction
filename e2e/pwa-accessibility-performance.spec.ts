@@ -15,9 +15,22 @@ test.describe('PWA - Progressive Web App', () => {
     expect(response.ok()).toBe(true);
   });
 
+  /*
+   * LE MANIFESTE N'EXISTE QU'APRÈS BUILD. `vite-plugin-pwa` l'engendre à la
+   * construction ; le serveur de développement, lui, répond par `index.html`
+   * (repli SPA) pour toute URL inconnue. `response.json()` levait donc sur du
+   * HTML. On saute explicitement plutôt que de laisser un échec permanent :
+   * un test sauté avec sa raison est honnête, un test vert qui ne vérifie
+   * rien ne l'est pas.
+   */
   test('manifest - contient les champs requis', async ({ page }) => {
     const response = await page.request.get('/manifest.webmanifest');
-    const manifest = await response.json();
+    const body = await response.text();
+    test.skip(
+      body.trimStart().startsWith('<'),
+      'Serveur de développement : le manifeste PWA est engendré au build'
+    );
+    const manifest = JSON.parse(body);
 
     expect(manifest.name).toBeDefined();
     expect(manifest.short_name).toBeDefined();
@@ -55,20 +68,32 @@ test.describe('PWA - Progressive Web App', () => {
 
   test('icons - icônes PWA présentes', async ({ page }) => {
     const response = await page.request.get('/manifest.webmanifest');
-    const manifest = await response.json();
+    const body = await response.text();
+    test.skip(
+      body.trimStart().startsWith('<'),
+      'Serveur de développement : le manifeste PWA est engendré au build'
+    );
 
-    if (manifest.icons && manifest.icons.length > 0) {
-      const icon = manifest.icons[0];
-      expect(icon.src).toBeDefined();
-      expect(icon.sizes).toBeDefined();
-    }
+    const manifest = JSON.parse(body);
+    // Plus de `if` : le manifeste DOIT décrire au moins une icône.
+    expect(Array.isArray(manifest.icons)).toBe(true);
+    expect(manifest.icons.length).toBeGreaterThan(0);
+    expect(manifest.icons[0].src).toBeDefined();
+    expect(manifest.icons[0].sizes).toBeDefined();
   });
 
   test('theme color - défini', async ({ page }) => {
+    /*
+     * DEUX BALISES `theme-color` coexistent : celle d'`index.html`, que
+     * `useAppTheme` repeint, et celle qu'injecte le plugin PWA. Playwright
+     * refuse un locator ambigu (« strict mode violation »). On lit la
+     * première, celle que l'application pilote.
+     */
     const themeColor = await page
       .locator('meta[name="theme-color"]')
+      .first()
       .getAttribute('content');
-    expect(themeColor).toBeTruthy();
+    expect(themeColor).toMatch(/^#[0-9a-f]{3,8}$/i);
   });
 
   test('viewport - configuré pour mobile', async ({ page }) => {
@@ -105,43 +130,58 @@ test.describe('Accessibilité', () => {
   });
 
   test('boutons - ont des labels accessibles', async ({ page }) => {
-    const buttons = await page.locator('button').all();
+    /*
+     * TOUS les boutons visibles, pas « les cinq premiers » : le tirage
+     * arbitraire tombait sur des contrôles masqués et ne disait rien de
+     * l'écran. On rassemble les fautifs pour que l'échec les nomme, au lieu
+     * de s'arrêter au premier.
+     */
+    const boutons = await page.locator('button:visible').all();
+    expect(boutons.length).toBeGreaterThan(0);
 
-    for (const button of buttons.slice(0, 5)) {
-      if (await button.isVisible()) {
-        const ariaLabel = await button.getAttribute('aria-label');
-        const textContent = await button.textContent();
-
-        // Au moins aria-label OU du texte visible
-        const hasLabel =
-          ariaLabel || (textContent && textContent.trim().length > 0);
-        expect(hasLabel).toBe(true);
+    const sansNom: string[] = [];
+    for (const bouton of boutons) {
+      const aria = await bouton.getAttribute('aria-label');
+      const texte = (await bouton.textContent())?.trim();
+      if (!aria && !texte) {
+        sansNom.push((await bouton.getAttribute('id')) ?? '(sans id)');
       }
     }
+    expect(sansNom).toEqual([]);
   });
 
   test('formulaires - labels associées aux inputs', async ({ page }) => {
     await page.goto('/parametres');
 
-    const inputs = await page.locator('input, textarea, select').all();
+    /*
+     * UN `<input>` DANS UN `<label>` EST ÉTIQUETÉ, sans `for` ni `aria-label`.
+     * C'est l'étiquetage implicite, et c'est ce que fait l'écran de réglages :
+     * `<label class="field field-check"><input …><span>…</span></label>`. Le
+     * test ne connaissait que la forme explicite et déclarait fautifs des
+     * champs parfaitement accessibles.
+     */
+    const champs = await page
+      .locator('input:visible, textarea:visible, select:visible')
+      .all();
+    expect(champs.length).toBeGreaterThan(0);
 
-    for (const input of inputs.slice(0, 5)) {
-      if (await input.isVisible()) {
-        const id = await input.getAttribute('id');
-        const ariaLabel = await input.getAttribute('aria-label');
-        const ariaLabelledBy = await input.getAttribute('aria-labelledby');
+    const sansEtiquette: string[] = [];
+    for (const champ of champs) {
+      const id = await champ.getAttribute('id');
+      const aria = await champ.getAttribute('aria-label');
+      const ariaBy = await champ.getAttribute('aria-labelledby');
+      const dansUnLabel = await champ.evaluate(
+        el => el.closest('label') !== null
+      );
+      const explicite = id
+        ? (await page.locator(`label[for="${id}"]`).count()) > 0
+        : false;
 
-        if (id) {
-          const label = page.locator(`label[for="${id}"]`);
-          const hasLabel = await label
-            .isVisible({ timeout: 500 })
-            .catch(() => false);
-          expect(hasLabel || ariaLabel || ariaLabelledBy).toBeTruthy();
-        } else {
-          expect(ariaLabel || ariaLabelledBy).toBeTruthy();
-        }
+      if (!dansUnLabel && !explicite && !aria && !ariaBy) {
+        sansEtiquette.push(id ?? '(sans id)');
       }
     }
+    expect(sansEtiquette).toEqual([]);
   });
 
   test('contraste - texte lisible', async ({ page }) => {
@@ -169,17 +209,24 @@ test.describe('Accessibilité', () => {
   });
 
   test('images - alt text', async ({ page }) => {
-    const images = await page.locator('img').all();
+    /*
+     * `alt=""` EST UNE RÉPONSE, PAS UN OUBLI. Les deux logos de l'application
+     * sont décoratifs et accompagnés de leur nom en toutes lettres : les
+     * annoncer une seconde fois nuirait au lecteur d'écran. WCAG demande que
+     * l'attribut SOIT LÀ, pas qu'il soit rempli. Le test exigeait une valeur
+     * non vide et condamnait donc le choix correct.
+     */
+    const images = await page.locator('img:visible').all();
 
+    const sansAlt: string[] = [];
     for (const img of images) {
-      if (await img.isVisible()) {
-        const alt = await img.getAttribute('alt');
-        const ariaLabel = await img.getAttribute('aria-label');
-
-        // Au moins alt OU aria-label
-        expect(alt || ariaLabel).toBeTruthy();
+      const alt = await img.getAttribute('alt');
+      const aria = await img.getAttribute('aria-label');
+      if (alt === null && !aria) {
+        sansAlt.push((await img.getAttribute('src')) ?? '(sans src)');
       }
     }
+    expect(sansAlt).toEqual([]);
   });
 
   test('langues - attribut lang défini', async ({ page }) => {
@@ -453,8 +500,18 @@ test.describe('Compatibilité Navigateurs', () => {
   });
 
   test('fonctionnalités LocalStorage', async ({ page }) => {
+    // Sans navigation, `page` est sur `about:blank` : y lire `localStorage`
+    // lève `SecurityError`. Ce test échouait pour cette seule raison.
+    await page.goto('/');
+
     const hasLocalStorage = await page.evaluate(() => {
-      return typeof localStorage !== 'undefined';
+      try {
+        localStorage.setItem('__probe', '1');
+        localStorage.removeItem('__probe');
+        return true;
+      } catch {
+        return false;
+      }
     });
     expect(hasLocalStorage).toBe(true);
   });
@@ -467,9 +524,11 @@ test.describe('Compatibilité Navigateurs', () => {
   });
 
   test('API Service Workers', async ({ page }) => {
-    const hasSW = await page.evaluate(() => {
-      return 'serviceWorker' in navigator;
-    });
+    // `serviceWorker` n'est exposé qu'en contexte sécurisé : sur `about:blank`,
+    // où ce test restait faute de navigation, l'API est absente.
+    await page.goto('/');
+
+    const hasSW = await page.evaluate(() => 'serviceWorker' in navigator);
     expect(hasSW).toBe(true);
   });
 

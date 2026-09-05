@@ -6,27 +6,46 @@
 import { test, expect } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
+import { ROUTES, KEY_RECORDS, KEY_SETTINGS } from './config';
+import { clickNavLink } from './helpers';
 
 test.describe('Export & Import', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.evaluate(() => localStorage.clear());
-
-    // Créer quelques contractions
-    const startButton = page
-      .locator('button')
-      .filter({ hasText: /Début|Start/ })
-      .first();
-    for (let i = 0; i < 3; i++) {
-      await startButton.click();
-      await page.waitForTimeout(200);
-      const stopButton = page
-        .locator('button')
-        .filter({ hasText: /Fin|Stop/ })
-        .first();
-      await stopButton.click();
-      await page.waitForTimeout(300);
-    }
+    /*
+     * On sème l'état au lieu de cliquer trois fois le chronomètre : c'est
+     * déterministe, et surtout les réglages sont réellement écrits. Le test
+     * « export - inclut les paramètres » lisait `mc_settings_v1` alors que
+     * rien ne l'avait jamais créé — il tombait sur `null` et levait un
+     * `TypeError` en lisant `.maternityLabel`.
+     */
+    await page.goto(ROUTES.HOME);
+    await page.evaluate(
+      ([recordsKey, settingsKey]) => {
+        localStorage.clear();
+        const now = Date.now();
+        localStorage.setItem(
+          recordsKey,
+          JSON.stringify([
+            { id: 'e1', start: now - 900000, end: now - 840000 },
+            { id: 'e2', start: now - 540000, end: now - 480000 },
+            { id: 'e3', start: now - 180000, end: now - 120000 },
+          ])
+        );
+        localStorage.setItem(
+          settingsKey,
+          JSON.stringify({
+            language: 'fr',
+            maxIntervalMin: 5,
+            minDurationSec: 45,
+            consecutiveCount: 3,
+            maternityLabel: 'Maternité de test',
+          })
+        );
+      },
+      [KEY_RECORDS, KEY_SETTINGS] as const
+    );
+    await page.reload();
+    await page.waitForLoadState('networkidle');
   });
 
   test('export - télécharge un fichier JSON', async ({ page }) => {
@@ -200,12 +219,21 @@ test.describe('Navigation & Routing', () => {
     }
   });
 
-  test('redirect - /settings vers /parametres', async ({ page }) => {
+  /*
+   * `/settings` N'EST PAS UNE REDIRECTION, c'est un ALIAS. `AppRouter` déclare
+   * un chemin par langue (`/parametres`, `/settings`, `/configuracion`, …) qui
+   * monte la même vue, sans changer l'URL. Seuls `/tableau` et `/table`
+   * redirigent vraiment, vers `/historique`. Ce test attendait une redirection
+   * qui n'a jamais existé ; il vérifie désormais ce que l'application promet.
+   */
+  test('alias - /settings monte la vue des paramètres sans rediriger', async ({
+    page,
+  }) => {
     await page.goto('/settings');
     await page.waitForLoadState('networkidle');
 
-    const currentUrl = page.url();
-    expect(currentUrl).toContain('/parametres');
+    expect(page.url()).toContain('/settings');
+    await expect(page.locator('[data-testid="settings-view"]')).toBeVisible();
   });
 
   test('redirect - /tableau vers /historique', async ({ page }) => {
@@ -224,12 +252,14 @@ test.describe('Navigation & Routing', () => {
     expect(currentUrl).toContain('/historique');
   });
 
-  test('redirect - /maternity vers /maternite', async ({ page }) => {
+  test('alias - /maternity monte la vue maternité sans rediriger', async ({
+    page,
+  }) => {
     await page.goto('/maternity');
     await page.waitForLoadState('networkidle');
 
-    const currentUrl = page.url();
-    expect(currentUrl).toContain('/maternite');
+    expect(page.url()).toContain('/maternity');
+    await expect(page.locator('[data-testid="maternity-view"]')).toBeVisible();
   });
 
   test('redirect - /sagefemme vers /sage-femme', async ({ page }) => {
@@ -267,15 +297,16 @@ test.describe('Navigation & Routing', () => {
   test('navigation menu - liens cliquables', async ({ page }) => {
     await page.goto('/');
 
-    const homeLink = page
-      .locator('a[href="/"], a')
-      .filter({ hasText: /Accueil|Home/ })
-      .first();
-    if (await homeLink.isVisible({ timeout: 500 }).catch(() => false)) {
-      await homeLink.click();
-      const currentUrl = page.url();
-      expect(currentUrl).toContain('/');
-    }
+    /*
+     * `a` filtré par texte attrapait d'abord le lien du TIROIR fermé —
+     * invisible pour l'utilisatrice, cliquable pour Playwright, donc un
+     * timeout de 30 s. On passe par la barre basse, la vraie navigation.
+     */
+    await clickNavLink(page, ROUTES.TABLE);
+    await expect(page).toHaveURL(new RegExp(`${ROUTES.TABLE}$`));
+
+    await clickNavLink(page, ROUTES.HOME);
+    await expect(page).toHaveURL(/\/$/);
   });
 
   test('document title - change selon la page', async ({ page }) => {
@@ -309,7 +340,10 @@ test.describe('Navigation & Routing', () => {
   test('forward button - fonctionne', async ({ page }) => {
     await page.goto('/');
     await page.goto('/parametres');
+    // `goBack` n'était pas attendu : `goForward` partait pendant la
+    // navigation arrière et restait bloqué jusqu'au timeout.
     await page.goBack();
+    await page.waitForLoadState('networkidle');
 
     // Aller en avant
     await page.goForward();

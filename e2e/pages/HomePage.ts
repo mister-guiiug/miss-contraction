@@ -100,9 +100,14 @@ export class HomePage {
     }
   }
 
+  /**
+   * L'état vide RÉEL est celui du socle. `history-empty`, que cette méthode
+   * visait, appartient à `HistoryList` — que `HomeView` ne monte même pas
+   * lorsqu'il n'y a aucune contraction. Elle rendait donc toujours `false`.
+   */
   async isEmptyStateVisible() {
     return await this.page
-      .locator(SELECTORS.HISTORY_EMPTY)
+      .locator(SELECTORS.EMPTY_STATE)
       .isVisible({ timeout: TIMEOUTS.SHORT })
       .catch(() => false);
   }

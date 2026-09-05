@@ -74,15 +74,37 @@ export async function navigateTo(page: Page, route: string) {
 }
 
 /**
- * Cliquer un onglet de la barre basse, désigné par son chemin.
+ * Naviguer en cliquant, comme le ferait une utilisatrice.
+ *
+ * DEUX NAVIGATIONS COEXISTENT, SELON LA LARGEUR. La barre basse est
+ * `display: none` au-delà de 767 px : sur desktop, c'est le tiroir qui sert,
+ * ouvert par le bouton `#btn-menu`. Un helper qui ne connaîtrait que la barre
+ * basse échouerait sur desktop — et c'est exactement ce qui arrivait au test
+ * « navigation menu ».
  *
  * Réservé aux tests qui éprouvent la navigation ; partout ailleurs,
  * `navigateTo` va droit au but.
  */
 export async function clickNavLink(page: Page, route: string) {
-  const link = page.locator(`${SELECTORS.BOTTOM_NAV} a[href="${route}"]`);
-  await expect(link).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
-  await link.click();
+  const bottomLink = page.locator(`${SELECTORS.BOTTOM_NAV} a[href="${route}"]`);
+
+  if (
+    await bottomLink.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
+  ) {
+    await bottomLink.click();
+  } else {
+    // Le tiroir peut être resté ouvert d'une navigation précédente : le
+    // rouvrir le refermerait, et sa toile de fond intercepterait le clic.
+    const menuBtn = page.locator('#btn-menu');
+    if ((await menuBtn.getAttribute('aria-expanded')) !== 'true') {
+      await menuBtn.click();
+    }
+
+    const drawerLink = page.locator(`#app-drawer a[href="${route}"]`);
+    await expect(drawerLink).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
+    await drawerLink.click();
+  }
+
   await page.waitForLoadState('networkidle');
 }
 
@@ -291,7 +313,17 @@ export async function expectErrorToOccur(
 export async function toggleCheckbox(page: Page, selector: string) {
   const checkbox = page.locator(selector);
   const isChecked = await checkbox.isChecked();
-  await checkbox.click();
+
+  /*
+   * ON CLIQUE LE `<span>`, PAS LA CASE. Les bascules de l'écran de réglages
+   * sont des `.field-check` : la `<input type="checkbox">` est masquée
+   * (`opacity: 0; clip: rect(0,0,0,0)`) et c'est le `<span>` frère qui dessine
+   * l'interrupteur. Playwright refuse de cliquer un élément invisible, et
+   * `checkbox.click()` partait donc en timeout de 30 secondes — trois tests y
+   * passaient. Le `<span>` étant dans le `<label>`, le clic bascule bien la
+   * case.
+   */
+  await page.locator(`${selector} + span`).click();
 
   const newChecked = await checkbox.isChecked();
   expect(newChecked).not.toBe(isChecked);

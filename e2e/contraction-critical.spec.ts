@@ -10,7 +10,11 @@ test.describe('miss-contraction - Fonctionnalités critiques', () => {
   });
 
   test("page d'accueil se charge correctement", async ({ page }) => {
-    await expect(page.locator('h1, h2, main, #app, body')).toBeVisible();
+    // `h1, h2, main, #app, body` résolvait à six éléments : Playwright refuse
+    // d'assurer une visibilité ambiguë (« strict mode violation »). La racine
+    // de l'application suffit à dire que la page a monté.
+    await expect(page.locator('#app')).toBeVisible();
+    await expect(page.locator('[data-testid="view-home"]')).toBeVisible();
   });
 
   test('chronomètre fonctionnel', async ({ page }) => {
@@ -52,11 +56,11 @@ test.describe('miss-contraction - Fonctionnalités critiques', () => {
     // Test mobile
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto('/');
-    await expect(page.locator('body, main, #app')).toBeVisible();
+    await expect(page.locator('#app')).toBeVisible();
 
     // Test desktop
     await page.setViewportSize({ width: 1920, height: 1080 });
-    await expect(page.locator('body, main, #app')).toBeVisible();
+    await expect(page.locator('#app')).toBeVisible();
   });
 
   test('accessibilité - boutons avec labels', async ({ page }) => {
@@ -185,13 +189,23 @@ test.describe('miss-contraction - Fonctionnalités critiques', () => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    // Tester les interactions principales
-    const buttons = await page.locator('button').all();
-    for (const button of buttons.slice(0, 5)) {
-      // Tester 5 boutons
-      if (await button.isVisible()) {
-        await button.click();
-        await page.waitForTimeout(500);
+    /*
+     * On clique des commandes CHOISIES, pas « les cinq premiers boutons ».
+     * `locator('button').first()` tombait sur un contrôle masqué — le lien
+     * d'évitement ou la fermeture du tiroir — et attendait 30 secondes qu'il
+     * devienne cliquable. Au passage, cliquer cinq boutons au hasard pouvait
+     * quitter la page et vider le test de son sens.
+     */
+    const commandes = [
+      '[data-testid="toggle-contraction-btn"]',
+      '.note-tag--shower',
+      '[data-testid="toggle-contraction-btn"]',
+    ];
+    for (const selecteur of commandes) {
+      const bouton = page.locator(selecteur).first();
+      if (await bouton.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await bouton.click();
+        await page.waitForTimeout(300);
       }
     }
 

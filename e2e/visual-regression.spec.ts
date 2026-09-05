@@ -16,11 +16,42 @@ const VIEWPORTS = [
   { name: 'desktop', width: 1280, height: 800 },
 ] as const;
 
+/**
+ * ── LES POLICES DISTANTES SONT COUPÉES POUR LES CAPTURES ─────────────────────
+ *
+ * L'application charge Fredoka depuis Google Fonts. Une capture d'écran prise
+ * pendant que la police arrive rend le texte dans le repli ; prise après, dans
+ * Fredoka. `networkidle` ne tranche pas — la feuille de style est bien reçue,
+ * mais le fichier de fonte, lui, est demandé ensuite — et
+ * `document.fonts.ready` peut se résoudre avant même que la demande parte.
+ *
+ * Le résultat, ce sont des écarts STABLES d'une exécution à l'autre mais
+ * dépendants de la charge : 16 102 pixels sur une page de tableau vide, 11 515
+ * sur une autre. Rien à voir avec une régression visuelle.
+ *
+ * On coupe donc la police distante et on compare toujours le même rendu, celui
+ * du repli système. Une régression de MISE EN PAGE reste détectée ; ce qu'on
+ * perd, c'est la vérification du dessin de Fredoka — qui n'a jamais été
+ * l'objet de ces tests, et qu'un réseau capricieux ne permettait pas d'assurer.
+ */
+async function couperPolicesDistantes(page: Page) {
+  await page.route(/fonts\.(googleapis|gstatic)\.com/, route => route.abort());
+}
+
+test.beforeEach(async ({ page }) => {
+  await couperPolicesDistantes(page);
+});
+
+async function stabiliser(page: Page) {
+  await page.waitForLoadState('networkidle');
+  await page.evaluate(() => document.fonts.ready);
+}
+
 async function clearAndLoad(page: Page, route: string) {
   await page.goto(route);
   await page.evaluate(() => localStorage.clear());
   await page.reload();
-  await page.waitForLoadState('networkidle');
+  await stabiliser(page);
 }
 
 async function injectContractions(page: Page, count = 5) {
