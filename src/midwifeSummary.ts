@@ -8,7 +8,7 @@
 
 import type { ContractionRecord } from './storage';
 import { formatStatsClock } from './utils/formatStats';
-import { getDefaultLocale } from '@mister-guiiug/dev-wpa-config/format';
+import { getDefaultLocale } from '@mister-guiiug/dev-pwa-config/format';
 
 /** Période affichée : N dernières contractions ou tout l'historique. */
 export type MidwifeMode = '6' | '10' | '12' | '20' | 'all';

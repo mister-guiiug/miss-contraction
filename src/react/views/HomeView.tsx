@@ -9,7 +9,7 @@ import { TimelineCompact } from '../components/home/TimelineCompact';
 import { ThresholdBadge } from '../components/home/ThresholdBadge';
 import { AppFooter } from '../components/layout/AppFooter';
 import { ViewLayout } from '../components/layout/ViewLayout';
-import { vibrate } from '@mister-guiiug/dev-wpa-config/haptics';
+import { vibrate } from '@mister-guiiug/dev-pwa-config/haptics';
 import { t } from '../../i18n';
 
 export function HomeView() {

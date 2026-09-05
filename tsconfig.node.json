@@ -1,5 +1,5 @@
 {
-  "extends": "@mister-guiiug/dev-wpa-config/tsconfig-node",
+  "extends": "@mister-guiiug/dev-pwa-config/tsconfig-node",
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo"

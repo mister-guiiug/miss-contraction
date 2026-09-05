@@ -1,4 +1,4 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>mister-guiiug/dev-wpa-config//renovate/default.json"]
+  "extends": ["github>mister-guiiug/dev-pwa-config//renovate/default.json"]
 }

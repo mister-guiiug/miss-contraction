@@ -7,8 +7,8 @@ import { TimerSectionWithIntensity } from './TimerSectionWithIntensity';
  * Usage du verrou d'écran : *quand* miss-contraction demande à garder l'écran
  * allumé — contraction en cours **et** réglage « garder l'écran allumé »
  * activé. La mécanique du verrou appartient au socle
- * (`@mister-guiiug/dev-wpa-config/react/use-wake-lock`), qui la prouve
- * lui-même depuis dev-wpa-config#90 et #103 : ré-acquisition au retour au
+ * (`@mister-guiiug/dev-pwa-config/react/use-wake-lock`), qui la prouve
+ * lui-même depuis dev-pwa-config#90 et #103 : ré-acquisition au retour au
  * premier plan, écouteur débranché au démontage, silence quand l'API manque
  * ou refuse. Rien de tout cela n'a plus à être retesté ici.
  *

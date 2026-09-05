@@ -5,7 +5,7 @@ import { MESSAGES, SUPPORTED_LANGUAGES } from '../../i18n';
 
 /**
  * Le bouton « Recharger l'application » de l'écran « À propos », après
- * l'adoption de `@mister-guiiug/dev-wpa-config/sw-update`.
+ * l'adoption de `@mister-guiiug/dev-pwa-config/sw-update`.
  *
  * DEUX CHOSES À PROUVER, et une seule appartient à cette app.
  *
@@ -33,11 +33,11 @@ import { MESSAGES, SUPPORTED_LANGUAGES } from '../../i18n';
 
 const applyUpdate = vi.hoisted(() => vi.fn(() => Promise.resolve('purged')));
 
-vi.mock('@mister-guiiug/dev-wpa-config/sw-update', () => ({ applyUpdate }));
+vi.mock('@mister-guiiug/dev-pwa-config/sw-update', () => ({ applyUpdate }));
 
 // `FamilyApps` va chercher le catalogue de la famille : hors sujet ici, et il
 // tirerait une requête réseau dans jsdom.
-vi.mock('@mister-guiiug/dev-wpa-config/react', () => ({
+vi.mock('@mister-guiiug/dev-pwa-config/react', () => ({
   FamilyApps: () => null,
 }));
 

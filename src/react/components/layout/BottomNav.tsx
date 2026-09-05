@@ -33,7 +33,7 @@
  * `enhanced-ui.css` cible les `[data-dwc]` du socle.
  */
 import { Link, useLocation } from 'react-router-dom';
-import { BottomNav as SocleBottomNav } from '@mister-guiiug/dev-wpa-config/react/bottom-nav';
+import { BottomNav as SocleBottomNav } from '@mister-guiiug/dev-pwa-config/react/bottom-nav';
 import { useAppStore } from '../../store/useAppStore';
 import { getRoutePath } from '../../../routes-i18n';
 import { t } from '../../../i18n';

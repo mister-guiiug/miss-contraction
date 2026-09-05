@@ -8,7 +8,7 @@ import { useAppStore } from '../store/useAppStore';
 import { loadRecords } from '../../storage';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { t } from '../../i18n';
-import { getDefaultLocale } from '@mister-guiiug/dev-wpa-config/format';
+import { getDefaultLocale } from '@mister-guiiug/dev-pwa-config/format';
 
 const dateTimeFmt = new Intl.DateTimeFormat(getDefaultLocale(), {
   weekday: 'short',

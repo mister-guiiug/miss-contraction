@@ -4,16 +4,16 @@ import './enhanced-styles.css';
 import './enhanced-ui.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ErrorBoundary } from '@mister-guiiug/dev-wpa-config/react';
+import { ErrorBoundary } from '@mister-guiiug/dev-pwa-config/react';
 import {
   installErrorReporter,
   initSentry,
   recordError,
-} from '@mister-guiiug/dev-wpa-config/react/observability';
-import { initWebVitals } from '@mister-guiiug/dev-wpa-config/web-vitals';
-import { unregisterServiceWorkers } from '@mister-guiiug/dev-wpa-config/sw-update';
+} from '@mister-guiiug/dev-pwa-config/react/observability';
+import { initWebVitals } from '@mister-guiiug/dev-pwa-config/web-vitals';
+import { unregisterServiceWorkers } from '@mister-guiiug/dev-pwa-config/sw-update';
 import { registerSW } from 'virtual:pwa-register';
-import { AppUpdates } from '@mister-guiiug/dev-wpa-config/react/app-updates';
+import { AppUpdates } from '@mister-guiiug/dev-pwa-config/react/app-updates';
 import { App } from './react/AppRouter';
 
 installErrorReporter();

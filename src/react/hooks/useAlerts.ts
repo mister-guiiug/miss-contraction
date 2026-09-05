@@ -5,7 +5,7 @@ import {
   type ThresholdBadgeKind,
 } from '../../statsHelpers';
 import { loadSnoozeUntil } from '../../storage';
-import { vibrate } from '@mister-guiiug/dev-wpa-config/haptics';
+import { vibrate } from '@mister-guiiug/dev-pwa-config/haptics';
 import { useNow } from './useNow';
 
 interface AlertState {

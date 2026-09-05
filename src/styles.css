@@ -3949,7 +3949,7 @@ html[data-theme='dark'] .about-link-card--coffee .about-link-card__icon {
   line-height: 1.45;
 }
 
-/* Écran de secours du composant partagé ErrorBoundary (dev-wpa-config). */
+/* Écran de secours du composant partagé ErrorBoundary (dev-pwa-config). */
 [data-dwc='error-boundary'] {
   min-height: 100dvh;
   display: flex;

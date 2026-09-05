@@ -27,4 +27,4 @@
  * Voir `docs/DESIGN_SYSTEM.md`, section « Le socle ».
  */
 @import 'tailwindcss';
-@import '@mister-guiiug/dev-wpa-config/tailwind-preset.css';
+@import '@mister-guiiug/dev-pwa-config/tailwind-preset.css';

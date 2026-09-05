@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { FamilyApps } from '@mister-guiiug/dev-wpa-config/react';
-import { applyUpdate } from '@mister-guiiug/dev-wpa-config/sw-update';
+import { FamilyApps } from '@mister-guiiug/dev-pwa-config/react';
+import { applyUpdate } from '@mister-guiiug/dev-pwa-config/sw-update';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { useAppStore } from '../store/useAppStore';
 import { t } from '../../i18n';

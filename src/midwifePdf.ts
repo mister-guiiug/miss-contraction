@@ -1,7 +1,7 @@
 /**
  * Export PDF du résumé sage-femme — générateur zéro-dépendance du socle.
  *
- * Le générateur (`@mister-guiiug/dev-wpa-config/pdf`) encode le texte en
+ * Le générateur (`@mister-guiiug/dev-pwa-config/pdf`) encode le texte en
  * WinAnsi et remplace tout caractère au-delà de Latin-1 par « ? ». Le résumé
  * contient justement des caractères typographiques hors Latin-1 (— ≤ ≥ ≈) et
  * les notes libres peuvent en apporter d'autres (’ … → émojis) : `toPdfText`
@@ -9,14 +9,14 @@
  * n'a pas d'équivalent, plutôt que de laisser apparaître des « ? ».
  */
 
-import { dateSlug } from '@mister-guiiug/dev-wpa-config/download';
+import { dateSlug } from '@mister-guiiug/dev-pwa-config/download';
 import {
   PAGE,
   PdfContent,
   buildPdf,
   downloadPdf,
   textWidth,
-} from '@mister-guiiug/dev-wpa-config/pdf';
+} from '@mister-guiiug/dev-pwa-config/pdf';
 import {
   buildMidwifeSummaryLines,
   type MidwifeSummaryInput,

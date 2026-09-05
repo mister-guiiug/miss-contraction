@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useAppStore } from '../../store/useAppStore';
-import { getDefaultLocale } from '@mister-guiiug/dev-wpa-config/format';
+import { getDefaultLocale } from '@mister-guiiug/dev-pwa-config/format';
 
 /**
  * Timeline compacte horizontale pour les 5 dernières contractions

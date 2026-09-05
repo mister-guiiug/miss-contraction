@@ -3,7 +3,7 @@ import {
   useTheme as useSocleTheme,
   type ResolvedTheme,
   type ThemePreference,
-} from '@mister-guiiug/dev-wpa-config/react/use-theme';
+} from '@mister-guiiug/dev-pwa-config/react/use-theme';
 
 // Les deux types venaient d'ici et y restent accessibles : `Shell` les importe,
 // ils sont désormais ceux du socle.
