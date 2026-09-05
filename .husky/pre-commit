@@ -1,3 +1,9 @@
 #!/usr/bin/env sh
 # Hook pre-commit standard famille miss-* / mister-*.
 npx lint-staged
+
+# Les signatures d'assistant n'ont pas plus leur place dans un commentaire ou
+# une page de documentation que dans un message de commit. On ne regarde que
+# les fichiers indexés, et seulement le texte.
+fichiers=$(git diff --cached --name-only --diff-filter=ACMR)
+[ -z "$fichiers" ] || node scripts/check-ai-attribution.mjs --files $fichiers
