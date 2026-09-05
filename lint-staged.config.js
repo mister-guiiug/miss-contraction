@@ -1,1 +1,1 @@
-export { default } from '@mister-guiiug/dev-wpa-config/lint-staged';
+export { default } from '@mister-guiiug/dev-pwa-config/lint-staged';

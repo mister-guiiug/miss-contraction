@@ -3,7 +3,7 @@ import { ViewLayout } from '../components/layout/ViewLayout';
 import { AppFooter } from '../components/layout/AppFooter';
 import { t } from '../../i18n';
 import { useAppStore } from '../store/useAppStore';
-import { createLogger } from '@mister-guiiug/dev-wpa-config/logger';
+import { createLogger } from '@mister-guiiug/dev-pwa-config/logger';
 
 const log = createLogger('views');
 

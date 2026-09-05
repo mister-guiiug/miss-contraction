@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import { baseTestOptions } from '@mister-guiiug/dev-wpa-config/vitest-base';
+import { baseTestOptions } from '@mister-guiiug/dev-pwa-config/vitest-base';
 
 export default defineConfig({
   plugins: [react()],

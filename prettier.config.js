@@ -1,1 +1,1 @@
-export { default } from '@mister-guiiug/dev-wpa-config/prettier';
+export { default } from '@mister-guiiug/dev-pwa-config/prettier';

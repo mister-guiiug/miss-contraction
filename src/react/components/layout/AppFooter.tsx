@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { AppFooter as SocleFooter } from '@mister-guiiug/dev-wpa-config/react/app-footer';
+import { AppFooter as SocleFooter } from '@mister-guiiug/dev-pwa-config/react/app-footer';
 import { useAppStore } from '../../store/useAppStore';
 import { t } from '../../../i18n';
 import { appVersion } from '../../../appVersion';

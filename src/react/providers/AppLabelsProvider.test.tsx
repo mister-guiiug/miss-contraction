@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
-import { useLabels } from '@mister-guiiug/dev-wpa-config/react/labels';
+import { useLabels } from '@mister-guiiug/dev-pwa-config/react/labels';
 import { AppLabelsProvider } from './AppLabelsProvider';
 import { useAppStore } from '../store/useAppStore';
 import { SUPPORTED_LANGUAGES, t, type AppLanguage } from '../../i18n';

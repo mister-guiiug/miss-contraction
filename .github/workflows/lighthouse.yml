@@ -1,4 +1,4 @@
-# Lighthouse délégué au reusable workflow famille (dev-wpa-config).
+# Lighthouse délégué au reusable workflow famille (dev-pwa-config).
 name: Lighthouse
 
 on:
@@ -12,5 +12,5 @@ permissions:
 
 jobs:
   lighthouse:
-    uses: mister-guiiug/dev-wpa-config/.github/workflows/pwa-lighthouse.yml@v3
+    uses: mister-guiiug/dev-pwa-config/.github/workflows/pwa-lighthouse.yml@v4
     secrets: inherit

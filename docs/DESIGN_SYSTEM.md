@@ -7,7 +7,7 @@ c'est lui qu'il faut corriger.
 
 ## Le socle
 
-L'application dépend de `@mister-guiiug/dev-wpa-config`, qui expose trois
+L'application dépend de `@mister-guiiug/dev-pwa-config`, qui expose trois
 feuilles de style. **Une seule est importée.**
 
 | Feuille du socle      | Importée ? | Pourquoi                                                                   |
@@ -23,7 +23,7 @@ barre de navigation, `ErrorBoundary`.
 
 **Le coût, à connaître.** Une montée de version du socle peut renommer ou
 déplacer un `[data-dwc]` sans rien casser de visible : la règle de l'app cesse
-simplement de s'appliquer. Après chaque bump de `dev-wpa-config`, passer sur
+simplement de s'appliquer. Après chaque bump de `dev-pwa-config`, passer sur
 les écrans « À propos » et « accueil vide ».
 
 ### Tailwind

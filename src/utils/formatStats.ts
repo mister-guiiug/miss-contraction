@@ -1,4 +1,4 @@
-import { getDefaultLocale } from '@mister-guiiug/dev-wpa-config/format';
+import { getDefaultLocale } from '@mister-guiiug/dev-pwa-config/format';
 /**
  * Formate un nombre de millisecondes en horloge type 01:05
  * Utilisé pour les moyennes affichées dans les bandeaux statistiques

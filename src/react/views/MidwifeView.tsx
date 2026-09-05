@@ -21,7 +21,7 @@ import type { ContractionRecord } from '../../storage';
 import { formatStatsClock } from '../../utils/formatStats';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { t } from '../../i18n';
-import { getDefaultLocale } from '@mister-guiiug/dev-wpa-config/format';
+import { getDefaultLocale } from '@mister-guiiug/dev-pwa-config/format';
 
 function parseMidwifeMode(val: string): MidwifeMode {
   if (

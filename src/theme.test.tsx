@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
-import { themeBootSource } from '@mister-guiiug/dev-wpa-config/theme-boot';
+import { themeBootSource } from '@mister-guiiug/dev-pwa-config/theme-boot';
 import { LS_THEME } from './themeKey';
 import { nextThemePreference, useAppTheme } from './theme';
 
