@@ -14,6 +14,18 @@ test.use({
   isMobile: true,
 });
 
+/*
+ * Firefox ne sait pas émuler `isMobile` : `browser.newContext` refuse
+ * l'option. CHAQUE test de ce fichier échouait donc sur le projet `firefox`,
+ * systématiquement, depuis que la configuration existe — invisible, la suite
+ * ne tournant dans aucune CI. Un saut déclaré vaut mieux qu'un échec
+ * permanent qu'on apprend à ignorer.
+ */
+test.skip(
+  ({ browserName }) => browserName === 'firefox',
+  'isMobile n’est pas supporté par Firefox'
+);
+
 test.describe('Mobile - Interactions tactiles', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(ROUTES.HOME);
@@ -78,13 +90,10 @@ test.describe('Mobile - Interactions tactiles', () => {
     await page.evaluate(() => window.scrollBy(0, 300));
     await page.waitForTimeout(200);
 
-    // Page toujours fonctionnelle après scroll
-    const btn = page.locator('[data-testid="toggle-contraction-btn"]');
-    // Bouton peut être hors écran après scroll, mais no crash
-    const errors: string[] = [];
-    page.on('pageerror', e => errors.push(e.message));
-    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
-    expect(criticalErrors).toHaveLength(0);
+    // Page toujours fonctionnelle après scroll : les vingt lignes sont
+    // toujours là, et la barre du bas — fixe — reste visible.
+    await expect(historyList.locator('> li')).toHaveCount(20);
+    await expect(page.locator('[data-dwc="bottom-nav"]')).toBeVisible();
   });
 });
 
@@ -92,8 +101,6 @@ test.describe('Mobile - APIs mobiles mockées', () => {
   test('@mobile vibration API mockée - contraction enregistrée sans erreur', async ({
     page,
   }) => {
-    const vibrateCalls: number[][] = [];
-
     await page.addInitScript(() => {
       (navigator as any).vibrate = (pattern: number | number[]) => {
         (window as any).__vibrateCalls = (window as any).__vibrateCalls || [];
@@ -115,12 +122,18 @@ test.describe('Mobile - APIs mobiles mockées', () => {
     await btn.tap();
     await page.waitForTimeout(300);
 
-    // Vérifier que vibrate a été appelé (si activé dans les settings)
-    // Ce test vérifie surtout qu'aucune erreur n'est levée
-    const errors: string[] = [];
-    page.on('pageerror', e => errors.push(e.message));
-    const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
-    expect(criticalErrors).toHaveLength(0);
+    /*
+     * Le mock pousse dans `window.__vibrateCalls` ; une variable locale du
+     * même nom était déclarée à côté, vide, et personne ne lisait ni l'une ni
+     * l'autre. On lit la bonne : début et fin de contraction vibrent tous
+     * deux (`vibrationEnabled` est vrai par défaut).
+     */
+    const appels = await page.evaluate(
+      () =>
+        (window as unknown as { __vibrateCalls?: number[][] }).__vibrateCalls ??
+        []
+    );
+    expect(appels.length).toBeGreaterThanOrEqual(2);
   });
 
   test('@mobile WakeLock API mockée - pas d’erreur au démarrage timer', async ({

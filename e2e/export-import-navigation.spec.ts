@@ -4,8 +4,6 @@
  */
 
 import { test, expect } from '@playwright/test';
-import fs from 'fs';
-import path from 'path';
 import { ROUTES, KEY_RECORDS, KEY_SETTINGS } from './config';
 import { clickNavLink } from './helpers';
 

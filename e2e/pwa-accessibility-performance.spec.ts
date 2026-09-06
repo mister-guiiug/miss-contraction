@@ -265,10 +265,10 @@ test.describe('Performance', () => {
     await page.goto('/', { waitUntil: 'networkidle' });
 
     const resourceSizes = await page.evaluate(() => {
-      return performance.getEntriesByType('resource').map(r => ({
-        name: r.name,
-        size: r.transferSize,
-      }));
+      const ressources = performance.getEntriesByType(
+        'resource'
+      ) as PerformanceResourceTiming[];
+      return ressources.map(r => ({ name: r.name, size: r.transferSize }));
     });
 
     // Vérifier que la page globale n'est pas trop lourde

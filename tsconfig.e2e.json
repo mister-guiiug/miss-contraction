@@ -1,0 +1,20 @@
+{
+  // Le harnais e2e n'était couvert par AUCUN projet TypeScript : `tsconfig.app`
+  // n'inclut que `src`, et `tsconfig.node` une liste nommée de fichiers de
+  // configuration. Une spécification pouvait donc viser
+  // `SELECTORS.CE_QUI_NEXISTE_PAS` sans que rien ne le voie avant l'exécution —
+  // et la suite ne tourne dans aucune CI.
+  "extends": "@mister-guiiug/dev-pwa-config/tsconfig-node",
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.e2e.tsbuildinfo",
+    // `page.evaluate` type-vérifie le corps de la fonction contre la
+    // bibliothèque ambiante : sans le DOM, `document` et `localStorage`
+    // n'existent pas.
+    "lib": ["ES2025", "DOM", "DOM.Iterable"]
+  },
+  // Les trois fichiers de `src` que le harnais importe sont listés ici plutôt
+  // que référencés : une référence de projet exige que le projet cible émette,
+  // et `tsconfig.app` est en `noEmit`.
+  "include": ["e2e", "src/storage.ts", "src/i18n.ts", "src/themeKey.ts"]
+}

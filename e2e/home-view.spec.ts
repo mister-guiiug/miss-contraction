@@ -84,33 +84,34 @@ test.describe('HomeView - Vue principale', () => {
   });
 
   test('intensité - sélectionner une intensité', async ({ page }) => {
-    const startButton = page
-      .locator('button')
-      .filter({ hasText: /Début|Start/ })
-      .first();
-    await startButton.click();
+    await page.locator(SELECTORS.TOGGLE_BTN).click();
 
-    // Chercher les contrôles d'intensité (spinner, slider, boutons)
-    const intensityControls = page.locator(
-      '[data-testid="intensity"], .intensity-picker, [role="slider"]'
-    );
-    if (
-      await intensityControls
-        .first()
-        .isVisible({ timeout: 500 })
-        .catch(() => false)
-    ) {
-      const buttons = await page
-        .locator(
-          'button:has-text("1"), button:has-text("2"), button:has-text("3")'
-        )
-        .all();
-      if (buttons.length > 0) {
-        await buttons[0].click();
-        // Vérifier qu'une intensité est sélectionnée
-        await expect(buttons[0]).toHaveAttribute('aria-pressed', 'true');
-      }
-    }
+    /*
+     * Deux `if` imbriqués rendaient ce test inoffensif : il visait
+     * `[data-testid="intensity"]` — jamais posé — puis des boutons par leur
+     * texte (« 1 », « 2 », « 3 »), et ne vérifiait rien si l'un des deux
+     * échouait. L'échelle porte des `data-testid` depuis longtemps.
+     */
+    const picker = page.locator('[data-testid="intensity-picker"]');
+    await expect(picker).toBeVisible();
+
+    const options = page.locator('[data-testid^="intensity-option-"]');
+    await expect(options).toHaveCount(5);
+
+    // Aucun niveau présélectionné : une échelle subjective pré-remplie ne
+    // mesure plus rien.
+    await expect(
+      options.and(page.locator('[aria-pressed="true"]'))
+    ).toHaveCount(0);
+
+    const niveau4 = page.locator('[data-testid="intensity-option-4"]');
+    await niveau4.click();
+    await expect(niveau4).toHaveAttribute('aria-pressed', 'true');
+
+    // Et ce que « 4 » veut dire s'affiche, sans survol.
+    await expect(
+      page.locator('[data-testid="intensity-description"]')
+    ).not.toBeEmpty();
   });
 
   test('badge seuil - affiche état correct (calme)', async ({ page }) => {
@@ -217,35 +218,29 @@ test.describe('HomeView - Vue principale', () => {
     }
   });
 
-  test('statistiques - affiche qté/h, durée moyenne, fréquence', async ({
-    page,
-  }) => {
-    // Créer quelques contractions
-    const startButton = page
-      .locator('button')
-      .filter({ hasText: /Début|Start/ })
-      .first();
+  test('statistiques - affiche les trois indicateurs', async ({ page }) => {
+    /*
+     * LES TROIS VALEURS SE VISENT PAR LEUR `data-testid`, PLUS PAR LEUR TEXTE.
+     * Ce test cherchait « Fréquence moyenne » : la tuile s'appelle
+     * « Intervalle moyen » depuis qu'on a cessé d'annoncer un intervalle sous
+     * le nom d'une fréquence. Personne ne l'a vu — la suite ne tourne dans
+     * aucune CI.
+     */
+    const toggle = page.locator(SELECTORS.TOGGLE_BTN);
     for (let i = 0; i < 3; i++) {
-      await startButton.click();
+      await toggle.click();
       await page.waitForTimeout(200);
-      const stopButton = page
-        .locator('button')
-        .filter({ hasText: /Fin|Stop/ })
-        .first();
-      await stopButton.click();
+      await toggle.click();
       await page.waitForTimeout(300);
     }
 
-    // Vérifier que les stats s'affichent
-    const statsSection = page.locator('h2').filter({ hasText: /Indicateurs/ });
-    if (await statsSection.isVisible({ timeout: 500 }).catch(() => false)) {
-      const qtyLabel = page.locator(':text("Quantité / h")');
-      const durationLabel = page.locator(':text("Durée moyenne")');
-      const freqLabel = page.locator(':text("Fréquence moyenne")');
-
-      await expect(qtyLabel).toBeVisible();
-      await expect(durationLabel).toBeVisible();
-      await expect(freqLabel).toBeVisible();
+    await expect(page.locator(SELECTORS.STATS_SECTION)).toBeVisible();
+    for (const sel of [
+      SELECTORS.STAT_VALUE_QTY,
+      SELECTORS.STAT_VALUE_DURATION,
+      SELECTORS.STAT_VALUE_FREQUENCY,
+    ]) {
+      await expect(page.locator(sel)).not.toBeEmpty();
     }
   });
 

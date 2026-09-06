@@ -2,7 +2,8 @@
  * Helpers et utilitaires réutilisables pour les tests E2E
  */
 
-import { Page, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { TIMEOUTS, SELECTORS, ROUTES } from './config';
 
 /**

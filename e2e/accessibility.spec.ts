@@ -10,7 +10,7 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
-import { ROUTES, TIMEOUTS } from './config';
+import { ROUTES } from './config';
 
 async function injectAxe(_page: Page): Promise<void> {
   // AxeBuilder injects axe-core during analyze(); keep API for existing tests.
@@ -40,12 +40,12 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
   test('@a11y @wcag HomeView - pas de violations', async ({ page }) => {
     await injectAxe(page);
     try {
-      await checkA11y(page, null, {
-        detailedReport: true,
-        detailedReportOptions: {
-          html: true,
-        },
-      });
+      /*
+       * Deux arguments de trop, restés d'`axe-playwright` : le `checkA11y`
+       * local n'en prend qu'un, et JavaScript jetait les autres en silence.
+       * L'option `detailedReport` n'a donc jamais rien produit.
+       */
+      await checkA11y(page);
     } catch (e) {
       // Capturer les violations pour le rapport
       const violations = await getViolations(page);
@@ -179,7 +179,7 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
 
     for (const heading of headings) {
       const tagName = await heading.evaluate(el => el.tagName);
-      const level = parseInt(tagName[1]);
+      const level = Number(tagName.slice(1));
 
       // La hiérarchie ne doit pas sauter plus d'un niveau
       expect(Math.abs(level - previousLevel)).toBeLessThanOrEqual(2);

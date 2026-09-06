@@ -11,7 +11,8 @@
  * et le réglage correspondant n'existe pas non plus.
  */
 
-import { Page, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { SELECTORS, TIMEOUTS, ROUTES } from '../config';
 
 export class MaternityPage {

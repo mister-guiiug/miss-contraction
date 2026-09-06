@@ -30,22 +30,10 @@ test.describe('Performance - Chargement initial', () => {
   });
 
   test('@performance DOMContentLoaded < 2.5s', async ({ page }) => {
-    const navigationMetrics = await page.evaluate(async () => {
-      await new Promise<void>(resolve => {
-        if (document.readyState === 'complete') resolve();
-        else window.addEventListener('load', () => resolve());
-      });
-
-      const nav = performance.getEntriesByType(
-        'navigation'
-      )[0] as PerformanceNavigationTiming;
-      return {
-        domContentLoaded: nav.domContentLoadedEventEnd - nav.startTime,
-        loadEvent: nav.loadEventEnd - nav.startTime,
-        responseStart: nav.responseStart - nav.startTime,
-      };
-    });
-
+    /*
+     * La mesure se prend APRÈS la navigation. Un premier relevé était fait
+     * avant `goto` — sur la page blanche — puis jeté sans être lu.
+     */
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('domcontentloaded');
 

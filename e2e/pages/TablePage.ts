@@ -11,7 +11,7 @@
  * cellules `table-cell-<champ>`, pas `[data-col="…"]`.
  */
 
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { SELECTORS, TIMEOUTS, ROUTES } from '../config';
 
 export class TablePage {
