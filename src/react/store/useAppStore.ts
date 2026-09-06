@@ -107,7 +107,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       start: activeStart,
       end: Date.now(),
       note,
-      intensity: intensity ?? 2,
+      // Pas de repli : une intensité non déclarée reste absente. Elle valait 2
+      // par défaut, ce qui inventait une douleur pour toute contraction que
+      // l'utilisatrice n'avait pas notée.
+      intensity,
     };
 
     set({

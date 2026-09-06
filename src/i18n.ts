@@ -138,11 +138,11 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'stats.avgDuration': 'Durée moyenne',
     'stats.avgFrequency': 'Fréquence moyenne',
     'stats.lastHour': 'Contractions (dernière heure)',
-    'stats.detailEstimation': 'Estimation détaillée',
     'stats.lastInterval': 'Dernier intervalle',
     'stats.lastDuration': 'Dernière durée',
-    'stats.intervalsTitle':
-      'Intervalles entre débuts (derniers enregistrements)',
+    'stats.windowAll': 'Moyennes sur toutes les données enregistrées.',
+    'stats.windowMinutes':
+      'Moyennes sur les {minutes} dernières minutes (début de contraction).',
     'stats.threshold.match':
       "Les dernières contractions correspondent à vos seuils d'alerte.",
     'stats.threshold.approaching':
@@ -249,6 +249,69 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'checklist.confirmReset': 'Réinitialiser la liste ?',
 
     'midwife.downloadPdf': 'Télécharger en PDF',
+    'midwife.lead':
+      'Synthèse courte des dernières contractions, avec les moyennes sur la période choisie et, si elle existe, l’heure du premier seuil atteint.',
+    'midwife.contentTitle': 'Contenu du résumé',
+    'midwife.listedLabel': 'Contractions listées (ordre chronologique)',
+    'midwife.lastN': 'Les {n} dernières',
+    'midwife.allHistory': 'Tout l’historique',
+    'midwife.modeLastN': 'Les {n} dernières contractions',
+    'midwife.countHint':
+      'Les moyennes (durée, intervalle, quantité / h) sont calculées uniquement sur cette sélection. Le « premier seuil atteint » utilise tout l’historique enregistré.',
+    'midwife.docTitle': 'Miss Contraction — Résumé pour la sage-femme',
+    'midwife.generatedOn': 'Généré le {date}',
+    'midwife.thresholdsTitle': 'Seuils (réglages actuels)',
+    'midwife.thresholdsHeading': 'Seuils configurés dans l’application :',
+    'midwife.thresholdsText':
+      '{count} contractions consécutives, écart entre débuts ≤ {interval} min, durée ≥ {duration} s chacune.',
+    'midwife.firstMatchTitle': 'Premier seuil atteint (tout l’historique)',
+    'midwife.firstMatchAt':
+      'Première fois où ces critères ont été remplis (sur tout l’historique) : {date}.',
+    'midwife.firstMatchNone':
+      'Aucun groupe enregistré ne remplit encore ces critères.',
+    'midwife.firstMatchNoneLong':
+      'Aucun groupe de contractions consécutives n’a encore rempli ces critères dans l’historique enregistré.',
+    'midwife.firstMatchNote':
+      'Instant retenu : fin de la dernière contraction du premier groupe qui satisfait simultanément l’intervalle et la durée configurés.',
+    'midwife.periodLine':
+      'Période du tableau et des moyennes : {mode} ({count} contraction(s)).',
+    'midwife.modeAllLower': 'tout l’historique',
+    'midwife.modeLastNLower': 'les {n} dernières contractions',
+    'midwife.emptySelection': 'Aucune contraction dans cette sélection.',
+    'midwife.averagesTitle': 'Moyennes — {mode} ({count})',
+    'midwife.averagesHeading': 'Moyennes sur cette sélection :',
+    'midwife.statQty':
+      'Quantité estimée : ≈ {value} contraction(s) / h (rythme constant)',
+    'midwife.statQtyLong':
+      'Quantité estimée : ≈ {value} contraction(s) / h (si le rythme restait constant).',
+    'midwife.statDuration': 'Durée moyenne : {value} (mm:ss)',
+    'midwife.statDurationLong': 'Durée moyenne : {value} (mm:ss).',
+    'midwife.statInterval': 'Intervalle moyen entre débuts : {value} (mm:ss)',
+    'midwife.statIntervalLong':
+      'Intervalle moyen entre débuts : {value} (mm:ss).',
+    'midwife.detailTitle': 'Détail (ordre chronologique)',
+    'midwife.detailHeading': 'Détail (ordre chronologique) :',
+    'midwife.detailLine':
+      '{num}. {start} — durée {duration} — écart depuis précédente : {interval}',
+    'midwife.detailIntensity': ' — intensité : {value}',
+    'midwife.detailNote': ' — note : {value}',
+    'midwife.col.num': 'N°',
+    'midwife.col.start': 'Début',
+    'midwife.col.duration': 'Durée',
+    'midwife.col.interval': 'Écart',
+    'midwife.col.note': 'Note',
+    'midwife.intensityShort': 'Int.',
+    'midwife.disclaimer':
+      'Données indicatives — ne remplacent pas un avis médical.',
+    'midwife.copied': 'Texte copié dans le presse-papiers.',
+    'midwife.copyFailed':
+      'Copie impossible — utilisez Imprimer ou PDF, ou copiez le texte affiché.',
+    'midwife.actionsAria': 'Copier, télécharger ou imprimer le résumé',
+    'midwife.copyText': 'Copier le texte',
+    'midwife.print': 'Imprimer ou PDF',
+    'midwife.printHint':
+      'Dans la boîte d’impression, choisissez « Enregistrer au format PDF » si vous voulez un fichier.',
+    'midwife.detailedTable': 'Tableau détaillé',
 
     'settings.language.title': 'Langue',
     'settings.language.label': "Langue de l'application",
@@ -366,10 +429,11 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'stats.avgDuration': 'Average duration',
     'stats.avgFrequency': 'Average frequency',
     'stats.lastHour': 'Contractions (last hour)',
-    'stats.detailEstimation': 'Detailed estimate',
     'stats.lastInterval': 'Last interval',
     'stats.lastDuration': 'Last duration',
-    'stats.intervalsTitle': 'Intervals between starts (latest records)',
+    'stats.windowAll': 'Averages over all recorded data.',
+    'stats.windowMinutes':
+      'Averages over the last {minutes} minutes (contraction start).',
     'stats.threshold.match':
       'Latest contractions match your configured alert thresholds.',
     'stats.threshold.approaching':
@@ -471,6 +535,67 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'checklist.confirmReset': 'Reset checklist?',
 
     'midwife.downloadPdf': 'Download as PDF',
+    'midwife.lead':
+      'Short summary of the latest contractions, with averages over the selected period and, when available, the first threshold match time.',
+    'midwife.contentTitle': 'Summary content',
+    'midwife.listedLabel': 'Listed contractions (chronological order)',
+    'midwife.lastN': 'Last {n}',
+    'midwife.allHistory': 'Full history',
+    'midwife.modeLastN': 'Last {n} contractions',
+    'midwife.countHint':
+      'Averages (duration, interval, quantity / h) are computed on this selection only. The “first threshold match” uses the whole recorded history.',
+    'midwife.docTitle': 'Miss Contraction — Summary for the midwife',
+    'midwife.generatedOn': 'Generated on {date}',
+    'midwife.thresholdsTitle': 'Thresholds (current settings)',
+    'midwife.thresholdsHeading': 'Thresholds configured in the application:',
+    'midwife.thresholdsText':
+      '{count} consecutive contractions, interval between starts ≤ {interval} min, duration ≥ {duration} s each.',
+    'midwife.firstMatchTitle': 'First threshold match (whole history)',
+    'midwife.firstMatchAt':
+      'First time these criteria were met (over the whole history): {date}.',
+    'midwife.firstMatchNone': 'No recorded group meets these criteria yet.',
+    'midwife.firstMatchNoneLong':
+      'No group of consecutive contractions has met these criteria yet in the recorded history.',
+    'midwife.firstMatchNote':
+      'Time shown: end of the last contraction of the first group meeting both the configured interval and duration.',
+    'midwife.periodLine':
+      'Period for the table and averages: {mode} ({count} contraction(s)).',
+    'midwife.modeAllLower': 'the whole history',
+    'midwife.modeLastNLower': 'the last {n} contractions',
+    'midwife.emptySelection': 'No contraction in this selection.',
+    'midwife.averagesTitle': 'Averages — {mode} ({count})',
+    'midwife.averagesHeading': 'Averages over this selection:',
+    'midwife.statQty':
+      'Estimated quantity: ≈ {value} contraction(s) / h (steady rhythm)',
+    'midwife.statQtyLong':
+      'Estimated quantity: ≈ {value} contraction(s) / h (if the rhythm stayed steady).',
+    'midwife.statDuration': 'Average duration: {value} (mm:ss)',
+    'midwife.statDurationLong': 'Average duration: {value} (mm:ss).',
+    'midwife.statInterval': 'Average interval between starts: {value} (mm:ss)',
+    'midwife.statIntervalLong':
+      'Average interval between starts: {value} (mm:ss).',
+    'midwife.detailTitle': 'Detail (chronological order)',
+    'midwife.detailHeading': 'Detail (chronological order):',
+    'midwife.detailLine':
+      '{num}. {start} — duration {duration} — interval since previous: {interval}',
+    'midwife.detailIntensity': ' — intensity: {value}',
+    'midwife.detailNote': ' — note: {value}',
+    'midwife.col.num': 'No.',
+    'midwife.col.start': 'Start',
+    'midwife.col.duration': 'Duration',
+    'midwife.col.interval': 'Interval',
+    'midwife.col.note': 'Note',
+    'midwife.intensityShort': 'Int.',
+    'midwife.disclaimer': 'Indicative data — does not replace medical advice.',
+    'midwife.copied': 'Text copied to clipboard.',
+    'midwife.copyFailed':
+      'Copy failed — use Print or PDF, or copy the displayed text manually.',
+    'midwife.actionsAria': 'Copy, download or print the summary',
+    'midwife.copyText': 'Copy text',
+    'midwife.print': 'Print or PDF',
+    'midwife.printHint':
+      'In the print dialog, choose “Save as PDF” if you want a file.',
+    'midwife.detailedTable': 'Detailed table',
 
     'settings.language.title': 'Language',
     'settings.language.label': 'Application language',

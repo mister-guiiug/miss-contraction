@@ -7,6 +7,7 @@ import { useEffect, useMemo } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { loadRecords } from '../../storage';
 import { ViewLayout } from '../components/layout/ViewLayout';
+import { HistoryList } from '../components/home/HistoryList';
 import { t } from '../../i18n';
 import { getDefaultLocale } from '@mister-guiiug/dev-pwa-config/format';
 
@@ -142,6 +143,14 @@ export function TableView() {
 
         <p className="table-footnote">{t(language, 'table.footnote')}</p>
       </section>
+
+      {/*
+       * Le tableau se lit, cette liste se corrige : elle porte les boutons
+       * Modifier, Supprimer et Effacer l'historique. Elle vivait sur l'accueil,
+       * où elle rejouait une troisième fois des données déjà présentes
+       * au-dessus — l'accueil faisait cinq écrans de haut.
+       */}
+      <HistoryList />
 
       <p className="settings-back-wrap mobile-home-only">
         <Link

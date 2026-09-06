@@ -39,6 +39,7 @@ test.describe('Charge - Volume de contractions', () => {
     const elapsed = Date.now() - start;
 
     expect(elapsed).toBeLessThan(LOAD_TIMEOUT_MS);
+    await page.goto(ROUTES.TABLE);
     await expect(page.locator('[data-testid="history-items"]')).toBeVisible();
   });
 
@@ -261,6 +262,7 @@ test.describe('Stress - Formulaires', () => {
     await page.reload();
     await page.waitForLoadState('networkidle');
 
+    await page.goto(ROUTES.TABLE);
     await expect(page.locator('[data-testid="history-items"]')).toBeVisible();
 
     const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));

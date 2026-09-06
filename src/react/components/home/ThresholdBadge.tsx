@@ -1,90 +1,48 @@
 import { useMemo } from 'react';
 import { useAppStore } from '../../store/useAppStore';
-import { interpolate, t } from '../../../i18n';
-import { useNow } from '../../hooks/useNow';
+import { computeThresholdBadge } from '../../../statsHelpers';
+import { t } from '../../../i18n';
+
+const THRESHOLD_KEYS = {
+  match: 'stats.threshold.match',
+  approaching: 'stats.threshold.approaching',
+  calm: 'stats.threshold.calm',
+  empty: 'stats.threshold.empty',
+} as const;
 
 /**
- * Badge d'état du seuil avec animation et indicateur visuel
+ * L'état du seuil d'alerte, juste sous le chronomètre.
+ *
+ * UN SEUL BADGE, ET UN SEUL CALCUL. Ce composant tenait sa propre boucle de
+ * comptage pendant que `StatsSection` en affichait un second, alimenté par
+ * `computeThresholdBadge` : deux verdicts pouvaient se contredire sur la même
+ * page, à deux écrans d'écart. Pire, l'état « seuil atteint » réutilisait
+ * `timer.statusWithIntensity` et affichait « Appuyez à la fin. Intensité :
+ * 3/3/5 » — au moment précis où il fallait dire de partir.
  */
 export function ThresholdBadge() {
   const { records, settings } = useAppStore();
   const language = settings.language;
-  const now = useNow(1000);
 
-  const { state, message } = useMemo(() => {
-    if (records.length === 0) {
-      return {
-        state: 'empty' as const,
-        message: t(language, 'history.empty'),
-      };
-    }
+  const state = useMemo(
+    () => computeThresholdBadge(records, settings),
+    [records, settings]
+  );
 
-    // Filtrer selon la fenêtre de statistiques
-    const windowMs =
-      settings.statsWindowMinutes === 'all'
-        ? Infinity
-        : Number(settings.statsWindowMinutes) * 60 * 1000;
-
-    const filtered = records.filter(r => now - r.start <= windowMs);
-
-    // Vérifier les contractions consécutives sous le seuil
-    let consecutiveCount = 0;
-    const maxIntervalSec = settings.maxIntervalMin * 60;
-    const minDurationSec = settings.minDurationSec;
-
-    // Parcourir du plus récent au plus ancien
-    for (let i = filtered.length - 1; i >= 0; i--) {
-      const record = filtered[i];
-      if (!record) continue;
-      const durationSec = (record.end - record.start) / 1000;
-
-      // Vérifier la durée minimale
-      if (durationSec < minDurationSec) continue;
-
-      // Vérifier l'intervalle avec la contraction précédente
-      const prev = filtered[i - 1];
-      if (i > 0 && prev) {
-        const interval = (record.start - prev.start) / 1000;
-        if (interval > maxIntervalSec) break;
-      }
-
-      consecutiveCount++;
-      if (consecutiveCount >= settings.consecutiveCount) break;
-    }
-
-    if (consecutiveCount >= settings.consecutiveCount) {
-      return {
-        state: 'match' as const,
-        message: interpolate(t(language, 'timer.statusWithIntensity'), {
-          intensity: `${consecutiveCount}/${settings.consecutiveCount}`,
-        }),
-      };
-    }
-
-    if (consecutiveCount >= Math.ceil(settings.consecutiveCount / 2)) {
-      return {
-        state: 'approaching' as const,
-        message: `${t(language, 'stats.threshold.approaching')} (${consecutiveCount}/${settings.consecutiveCount})`,
-      };
-    }
-
-    return {
-      state: 'calm' as const,
-      message: `${t(language, 'stats.threshold.calm')} (${consecutiveCount}/${settings.consecutiveCount})`,
-    };
-  }, [language, now, records, settings]);
+  const alerte = state === 'match' || state === 'approaching';
 
   return (
     <div
       className="threshold-badge"
       data-state={state}
       data-testid="threshold-badge"
-      style={{
-        textAlign: 'center',
-        marginTop: '0.5rem',
-      }}
+      /*
+       * `role="status"` et non `aria-live` sur les chiffres voisins : c'est ce
+       * message-ci qui doit interrompre, pas la moyenne qui se recalcule.
+       */
+      role="status"
     >
-      {(state === 'match' || state === 'approaching') && (
+      {alerte && (
         <span className="threshold-icon" data-testid="threshold-icon">
           <svg
             viewBox="0 0 24 24"
@@ -102,7 +60,9 @@ export function ThresholdBadge() {
           </svg>
         </span>
       )}
-      <span data-testid="threshold-message">{message}</span>
+      <span data-testid="threshold-message">
+        {t(language, THRESHOLD_KEYS[state])}
+      </span>
     </div>
   );
 }

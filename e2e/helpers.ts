@@ -172,9 +172,16 @@ export function expectNoJSErrors(page: Page) {
 }
 
 /**
- * Attendre qu'une contraction s'affiche dans l'historique
+ * Attendre qu'une contraction s'affiche dans l'historique.
+ *
+ * L'historique éditable a quitté l'accueil pour `/historique` : le helper y
+ * navigue de lui-même, sinon chaque appelant devrait s'en souvenir.
  */
 export async function waitForContractionInHistory(page: Page) {
+  if (!new URL(page.url()).pathname.startsWith(ROUTES.TABLE)) {
+    await page.goto(ROUTES.TABLE);
+  }
+
   const historyList = page.locator(SELECTORS.HISTORY_LIST);
   await expect(historyList).toBeVisible({ timeout: TIMEOUTS.NORMAL });
 

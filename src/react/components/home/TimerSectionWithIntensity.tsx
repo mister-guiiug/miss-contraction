@@ -50,12 +50,16 @@ export function TimerSectionWithIntensity({
     x: number;
     y: number;
   } | null>(null);
-  // Une contraction restaurée après rechargement repart sur la même intensité
-  // par défaut qu'une contraction démarrée à la main (`handleToggle` pose 3).
-  // Sans ça, elle s'enregistrerait à 2 — le repli de `endContraction`.
-  const [currentIntensity, setCurrentIntensity] = useState<number | undefined>(
-    activeStart === null ? undefined : 3
-  );
+  /*
+   * AUCUNE INTENSITÉ PAR DÉFAUT. Le démarrage posait 3, et `endContraction`
+   * repliait sur 2 : toute contraction non notée entrait dans l'historique
+   * avec une douleur que personne n'avait déclarée, puis ressortait telle
+   * quelle dans le résumé remis à la sage-femme. Une échelle subjective
+   * pré-remplie ne mesure plus rien. Non renseignée, elle ne s'affiche pas.
+   */
+  const [currentIntensity, setCurrentIntensity] = useState<
+    number | undefined
+  >();
 
   // Écran allumé pendant une contraction — uniquement si le réglage
   // « garder l'écran allumé » est actif.
@@ -98,7 +102,7 @@ export function TimerSectionWithIntensity({
         setCurrentIntensity(undefined);
         if (onClearNote) onClearNote();
       } else {
-        setCurrentIntensity(3);
+        setCurrentIntensity(undefined);
         if (settings.vibrationEnabled) vibrate(40);
         startContraction();
       }

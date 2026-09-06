@@ -162,7 +162,8 @@ test.describe('Performance - Rendu avec données', () => {
     const elapsed = Date.now() - start;
     expect(elapsed).toBeLessThan(PERF_THRESHOLDS.RENDER_WITH_DATA_MS);
 
-    // Vérifier que l'historique s'affiche
+    // Vérifier que l'historique s'affiche — il vit sur `/historique`.
+    await page.goto(ROUTES.TABLE);
     await expect(page.locator('[data-testid="history-items"]')).toBeVisible();
   });
 

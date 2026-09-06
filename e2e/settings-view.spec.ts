@@ -246,16 +246,18 @@ test.describe('SettingsView - Paramètres', () => {
     await page.reload();
     await page.waitForLoadState('networkidle');
 
+    await page.goto(ROUTES.TABLE);
     await expect(page.locator(`${SELECTORS.HISTORY_ITEMS} > li`)).toHaveCount(
       2
     );
 
     await settings.clearAllData();
 
-    // Sans contraction, `HomeView` remplace toute la liste par l'état vide du
-    // socle : `history-empty` n'est jamais monté dans ce cas.
-    await expect(page.locator(SELECTORS.EMPTY_STATE)).toBeVisible();
+    // Sans contraction, `HistoryList` bascule sur son message vide et
+    // l'accueil montre l'état vide du socle.
     await expect(page.locator(SELECTORS.HISTORY_ITEMS)).toHaveCount(0);
+    await page.goto(ROUTES.HOME);
+    await expect(page.locator(SELECTORS.EMPTY_STATE)).toBeVisible();
   });
 
   test('persistance - les paramètres survivent au rechargement', async ({

@@ -69,6 +69,7 @@ test.describe('Mobile - Interactions tactiles', () => {
     await page.reload();
     await page.waitForLoadState('networkidle');
 
+    await page.goto(ROUTES.TABLE);
     const historyList = page.locator('[data-testid="history-items"]');
     await expect(historyList).toBeVisible();
 

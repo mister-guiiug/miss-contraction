@@ -78,7 +78,8 @@ test.describe('LocalStorage - Persistance des contractions', () => {
     await page.reload();
     await page.waitForLoadState('networkidle');
 
-    // L'historique doit afficher 3 entrées
+    // L'historique doit afficher 3 entrées — il vit sur `/historique`.
+    await page.goto(ROUTES.TABLE);
     const items = page.locator('[data-testid="history-items"] li');
     await expect(items).toHaveCount(3);
   });
@@ -211,7 +212,7 @@ test.describe('LocalStorage - Données corrompues', () => {
       [RECORDS_KEY, badRecords] as [string, typeof badRecords]
     );
 
-    await page.goto(ROUTES.HOME);
+    await page.goto(ROUTES.TABLE);
     await page.waitForLoadState('networkidle');
 
     // L'historique doit afficher seulement la contraction valide

@@ -59,13 +59,14 @@ test.describe('Parcours - Première utilisation', () => {
       await page.waitForTimeout(i < 2 ? 500 : 200);
     }
 
-    // Vérifier que les contractions sont dans l'historique
-    const historyItems = page.locator('[data-testid="history-items"] li');
-    await expect(historyItems).toHaveCount(3);
-
-    // === ÉTAPE 4 : Vérifier les stats ===
+    // === ÉTAPE 4 : Vérifier les stats, sur l'accueil ===
     const statsSection = page.locator('[data-testid="stats-section"]');
     await expect(statsSection).toBeVisible();
+
+    // Vérifier que les contractions sont dans l'historique, sur `/historique`
+    await page.goto(ROUTES.TABLE);
+    const historyItems = page.locator('[data-testid="history-items"] li');
+    await expect(historyItems).toHaveCount(3);
 
     // === ÉTAPE 5 : Consulter le tableau ===
     await page.goto(ROUTES.TABLE);
@@ -114,6 +115,7 @@ test.describe('Parcours - Première utilisation', () => {
     await page.waitForTimeout(300);
 
     // La contraction est enregistrée
+    await page.goto(ROUTES.TABLE);
     await expect(page.locator('[data-testid="history-items"] li')).toHaveCount(
       1
     );
@@ -208,6 +210,7 @@ test.describe('Parcours - Gestion des notes et intensité', () => {
     await page.reload();
     await page.waitForLoadState('networkidle');
 
+    await page.goto(ROUTES.TABLE);
     const items = page.locator('[data-testid="history-items"] li');
     await expect(items).toHaveCount(2);
 
@@ -349,6 +352,7 @@ test.describe('Parcours - Undo (annulation)', () => {
     await page.reload();
     await page.waitForLoadState('networkidle');
 
+    await page.goto(ROUTES.TABLE);
     const items = page.locator('[data-testid="history-items"] li');
     await expect(items).toHaveCount(1);
 
