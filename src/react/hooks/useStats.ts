@@ -5,7 +5,6 @@ import type {
   StatsWindowKey,
 } from '../../storage';
 import { filterRecordsByStatsWindow } from '../../statsHelpers';
-import { formatStatsClock } from '../../utils/formatStats';
 import { formatDuration } from '../../utils/formatDuration';
 import { interpolate, t, type AppLanguage } from '../../i18n';
 import { useNow } from './useNow';
@@ -76,9 +75,8 @@ export function useStats(
           ? String(Math.round(3600000 / meanInterval))
           : '—';
 
-      avgDuration = meanDur != null ? formatStatsClock(meanDur) : '—';
-      avgFrequency =
-        meanInterval != null ? formatStatsClock(meanInterval) : '—';
+      avgDuration = meanDur != null ? formatDuration(meanDur) : '—';
+      avgFrequency = meanInterval != null ? formatDuration(meanInterval) : '—';
 
       lastHourCount = countContractionsStartingInLastHour(allValid, now);
 

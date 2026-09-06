@@ -1,17 +1,4 @@
 import { getDefaultLocale } from '@mister-guiiug/dev-pwa-config/format';
-/**
- * Formate un nombre de millisecondes en horloge type 01:05
- * Utilisé pour les moyennes affichées dans les bandeaux statistiques
- * @param ms - Durée en millisecondes
- * @returns Texte formaté (ex: "01:05", ou "—" si invalide)
- */
-export function formatStatsClock(ms: number): string {
-  if (!Number.isFinite(ms) || ms < 0) return '—';
-  const totalSec = Math.round(ms / 1000);
-  const m = Math.floor(totalSec / 60);
-  const s = totalSec % 60;
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-}
 
 /**
  * Calcule une estimation de contractions par heure

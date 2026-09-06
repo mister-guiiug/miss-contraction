@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { formatClock } from '../../utils/formatDuration';
 
 interface TimerReturn {
   seconds: number;
@@ -48,10 +49,7 @@ export function useContractionTimer(activeStart: number | null): TimerReturn {
 
   const secondsValue = activeStart === null ? 0 : seconds;
 
-  // Formatage MM:SS
-  const formatted = `${String(Math.floor(secondsValue / 60)).padStart(2, '0')}:${String(
-    secondsValue % 60
-  ).padStart(2, '0')}`;
+  const formatted = formatClock(secondsValue);
 
   // Progression du cercle (0 à 1, 1 = 60 secondes)
   const progress = Math.min(secondsValue / MAX_SECONDS, 1);

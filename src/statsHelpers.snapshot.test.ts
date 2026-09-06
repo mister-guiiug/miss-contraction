@@ -11,11 +11,8 @@ import {
   computeThresholdBadge,
 } from './statsHelpers';
 import type { ContractionRecord, AppSettings } from './storage';
-import { formatDuration } from './utils/formatDuration';
-import {
-  formatStatsClock,
-  formatContractionsPerHour,
-} from './utils/formatStats';
+import { formatClock, formatDuration } from './utils/formatDuration';
+import { formatContractionsPerHour } from './utils/formatStats';
 
 // ============================================================
 // Fixtures
@@ -222,26 +219,25 @@ describe('Snapshot: formatDuration', () => {
 });
 
 // ============================================================
-// Snapshots - formatStatsClock
+// Snapshots - formatClock
 // ============================================================
 
-describe('Snapshot: formatStatsClock', () => {
-  const cases = [
-    0, 30_000, 45_000, 60_000, 90_000, 120_000, 180_000, 300_000, 3_600_000,
-  ];
+describe('Snapshot: formatClock', () => {
+  // En secondes : c'est ce que rendent les deux compteurs.
+  const cases = [0, 30, 45, 60, 90, 120, 180, 300, 3600, 3723];
 
-  for (const ms of cases) {
-    it(`formatStatsClock(${ms}ms) (snapshot)`, () => {
-      expect(formatStatsClock(ms)).toMatchSnapshot();
+  for (const s of cases) {
+    it(`formatClock(${s}s) (snapshot)`, () => {
+      expect(formatClock(s)).toMatchSnapshot();
     });
   }
 
-  it('formatStatsClock(-1) retourne "—" (snapshot)', () => {
-    expect(formatStatsClock(-1)).toMatchSnapshot();
+  it('formatClock(-1) retombe sur 00:00 (snapshot)', () => {
+    expect(formatClock(-1)).toMatchSnapshot();
   });
 
-  it('formatStatsClock(NaN) retourne "—" (snapshot)', () => {
-    expect(formatStatsClock(NaN)).toMatchSnapshot();
+  it('formatClock(NaN) retombe sur 00:00 (snapshot)', () => {
+    expect(formatClock(NaN)).toMatchSnapshot();
   });
 });
 

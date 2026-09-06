@@ -140,7 +140,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'stats.summaryAria': 'Synthèse des contractions',
     'stats.qty': 'Quantité / h',
     'stats.avgDuration': 'Durée moyenne',
-    'stats.avgFrequency': 'Fréquence moyenne',
+    'stats.avgFrequency': 'Intervalle moyen',
     'stats.lastHour': 'Contractions (dernière heure)',
     'stats.lastInterval': 'Dernier intervalle',
     'stats.lastDuration': 'Dernière durée',
@@ -332,11 +332,10 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
       'Quantité estimée : ≈ {value} contraction(s) / h (rythme constant)',
     'midwife.statQtyLong':
       'Quantité estimée : ≈ {value} contraction(s) / h (si le rythme restait constant).',
-    'midwife.statDuration': 'Durée moyenne : {value} (mm:ss)',
-    'midwife.statDurationLong': 'Durée moyenne : {value} (mm:ss).',
-    'midwife.statInterval': 'Intervalle moyen entre débuts : {value} (mm:ss)',
-    'midwife.statIntervalLong':
-      'Intervalle moyen entre débuts : {value} (mm:ss).',
+    'midwife.statDuration': 'Durée moyenne : {value}',
+    'midwife.statDurationLong': 'Durée moyenne : {value}.',
+    'midwife.statInterval': 'Intervalle moyen entre débuts : {value}',
+    'midwife.statIntervalLong': 'Intervalle moyen entre débuts : {value}.',
     'midwife.detailTitle': 'Détail (ordre chronologique)',
     'midwife.detailHeading': 'Détail (ordre chronologique) :',
     'midwife.detailLine':
@@ -479,7 +478,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'stats.summaryAria': 'Contraction summary',
     'stats.qty': 'Quantity / h',
     'stats.avgDuration': 'Average duration',
-    'stats.avgFrequency': 'Average frequency',
+    'stats.avgFrequency': 'Average interval',
     'stats.lastHour': 'Contractions (last hour)',
     'stats.lastInterval': 'Last interval',
     'stats.lastDuration': 'Last duration',
@@ -665,11 +664,10 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
       'Estimated quantity: ≈ {value} contraction(s) / h (steady rhythm)',
     'midwife.statQtyLong':
       'Estimated quantity: ≈ {value} contraction(s) / h (if the rhythm stayed steady).',
-    'midwife.statDuration': 'Average duration: {value} (mm:ss)',
-    'midwife.statDurationLong': 'Average duration: {value} (mm:ss).',
-    'midwife.statInterval': 'Average interval between starts: {value} (mm:ss)',
-    'midwife.statIntervalLong':
-      'Average interval between starts: {value} (mm:ss).',
+    'midwife.statDuration': 'Average duration: {value}',
+    'midwife.statDurationLong': 'Average duration: {value}.',
+    'midwife.statInterval': 'Average interval between starts: {value}',
+    'midwife.statIntervalLong': 'Average interval between starts: {value}.',
     'midwife.detailTitle': 'Detail (chronological order)',
     'midwife.detailHeading': 'Detail (chronological order):',
     'midwife.detailLine':

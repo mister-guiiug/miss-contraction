@@ -7,7 +7,7 @@
  */
 
 import type { ContractionRecord } from './storage';
-import { formatStatsClock } from './utils/formatStats';
+import { formatDuration } from './utils/formatDuration';
 import { interpolate, t, type AppLanguage } from './i18n';
 import { getDefaultLocale } from '@mister-guiiug/dev-pwa-config/format';
 
@@ -61,17 +61,6 @@ export function meanContractionDurationMs(
     sum += r.end - r.start;
   }
   return sum / done.length;
-}
-
-/**
- * Durée compacte m:ss (ex. 1:05), propre au résumé sage-femme —
- * ne pas confondre avec `utils/formatDuration` (« 2 min 15 s »).
- */
-export function formatDuration(ms: number): string {
-  const totalSec = Math.round(ms / 1000);
-  const m = Math.floor(totalSec / 60);
-  const s = totalSec % 60;
-  return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
 /** Début de contraction dans le détail (ex. « sam. 30 août, 14:05 »). */
@@ -169,12 +158,12 @@ export function buildMidwifeSummaryLines(input: MidwifeSummaryInput): string[] {
   lines.push(`— ${trv('midwife.statQtyLong', { value: qtyHour })}`);
   lines.push(
     `— ${trv('midwife.statDurationLong', {
-      value: meanDur != null ? formatStatsClock(meanDur) : '—',
+      value: meanDur != null ? formatDuration(meanDur) : '—',
     })}`
   );
   lines.push(
     `— ${trv('midwife.statIntervalLong', {
-      value: meanInterval != null ? formatStatsClock(meanInterval) : '—',
+      value: meanInterval != null ? formatDuration(meanInterval) : '—',
     })}`
   );
   lines.push('');

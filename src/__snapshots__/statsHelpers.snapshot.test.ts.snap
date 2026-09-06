@@ -55,6 +55,30 @@ exports[`Snapshot: filterRecordsByStatsWindow > filtre "all" retourne tout le ta
 ]
 `;
 
+exports[`Snapshot: formatClock > formatClock(-1) retombe sur 00:00 (snapshot) 1`] = `"00:00"`;
+
+exports[`Snapshot: formatClock > formatClock(0s) (snapshot) 1`] = `"00:00"`;
+
+exports[`Snapshot: formatClock > formatClock(30s) (snapshot) 1`] = `"00:30"`;
+
+exports[`Snapshot: formatClock > formatClock(45s) (snapshot) 1`] = `"00:45"`;
+
+exports[`Snapshot: formatClock > formatClock(60s) (snapshot) 1`] = `"01:00"`;
+
+exports[`Snapshot: formatClock > formatClock(90s) (snapshot) 1`] = `"01:30"`;
+
+exports[`Snapshot: formatClock > formatClock(120s) (snapshot) 1`] = `"02:00"`;
+
+exports[`Snapshot: formatClock > formatClock(180s) (snapshot) 1`] = `"03:00"`;
+
+exports[`Snapshot: formatClock > formatClock(300s) (snapshot) 1`] = `"05:00"`;
+
+exports[`Snapshot: formatClock > formatClock(3600s) (snapshot) 1`] = `"01:00:00"`;
+
+exports[`Snapshot: formatClock > formatClock(3723s) (snapshot) 1`] = `"01:02:03"`;
+
+exports[`Snapshot: formatClock > formatClock(NaN) retombe sur 00:00 (snapshot) 1`] = `"00:00"`;
+
 exports[`Snapshot: formatContractionsPerHour > intervalle de 5 min → ~12/h (snapshot) 1`] = `"≈ 12 / h"`;
 
 exports[`Snapshot: formatContractionsPerHour > intervalle de 10 min → ~6/h (snapshot) 1`] = `"≈ 6,0 / h"`;
@@ -73,39 +97,17 @@ exports[`Snapshot: formatDuration > formatDuration(60000ms) (snapshot) 1`] = `"6
 
 exports[`Snapshot: formatDuration > formatDuration(90000ms) (snapshot) 1`] = `"90 s"`;
 
-exports[`Snapshot: formatDuration > formatDuration(120000ms) (snapshot) 1`] = `"2 min 0 s"`;
+exports[`Snapshot: formatDuration > formatDuration(120000ms) (snapshot) 1`] = `"2 min"`;
 
-exports[`Snapshot: formatDuration > formatDuration(180000ms) (snapshot) 1`] = `"3 min 0 s"`;
+exports[`Snapshot: formatDuration > formatDuration(180000ms) (snapshot) 1`] = `"3 min"`;
 
-exports[`Snapshot: formatDuration > formatDuration(240000ms) (snapshot) 1`] = `"4 min 0 s"`;
+exports[`Snapshot: formatDuration > formatDuration(240000ms) (snapshot) 1`] = `"4 min"`;
 
-exports[`Snapshot: formatDuration > formatDuration(300000ms) (snapshot) 1`] = `"5 min 0 s"`;
+exports[`Snapshot: formatDuration > formatDuration(300000ms) (snapshot) 1`] = `"5 min"`;
 
-exports[`Snapshot: formatDuration > formatDuration(3600000ms) (snapshot) 1`] = `"60 min 0 s"`;
+exports[`Snapshot: formatDuration > formatDuration(3600000ms) (snapshot) 1`] = `"1 h"`;
 
-exports[`Snapshot: formatDuration > formatDuration(7200000ms) (snapshot) 1`] = `"120 min 0 s"`;
-
-exports[`Snapshot: formatStatsClock > formatStatsClock(-1) retourne "—" (snapshot) 1`] = `"—"`;
-
-exports[`Snapshot: formatStatsClock > formatStatsClock(0ms) (snapshot) 1`] = `"00:00"`;
-
-exports[`Snapshot: formatStatsClock > formatStatsClock(30000ms) (snapshot) 1`] = `"00:30"`;
-
-exports[`Snapshot: formatStatsClock > formatStatsClock(45000ms) (snapshot) 1`] = `"00:45"`;
-
-exports[`Snapshot: formatStatsClock > formatStatsClock(60000ms) (snapshot) 1`] = `"01:00"`;
-
-exports[`Snapshot: formatStatsClock > formatStatsClock(90000ms) (snapshot) 1`] = `"01:30"`;
-
-exports[`Snapshot: formatStatsClock > formatStatsClock(120000ms) (snapshot) 1`] = `"02:00"`;
-
-exports[`Snapshot: formatStatsClock > formatStatsClock(180000ms) (snapshot) 1`] = `"03:00"`;
-
-exports[`Snapshot: formatStatsClock > formatStatsClock(300000ms) (snapshot) 1`] = `"05:00"`;
-
-exports[`Snapshot: formatStatsClock > formatStatsClock(3600000ms) (snapshot) 1`] = `"60:00"`;
-
-exports[`Snapshot: formatStatsClock > formatStatsClock(NaN) retourne "—" (snapshot) 1`] = `"—"`;
+exports[`Snapshot: formatDuration > formatDuration(7200000ms) (snapshot) 1`] = `"2 h"`;
 
 exports[`Snapshot: getRecentIntervalsMs > intervalles limités à 3 (snapshot) 1`] = `
 [

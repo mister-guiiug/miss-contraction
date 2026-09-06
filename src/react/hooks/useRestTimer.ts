@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { formatClock } from '../../utils/formatDuration';
 
 interface RestTimerReturn {
   seconds: number;
@@ -75,22 +76,8 @@ export function useRestTimer(
 
   const secondsValue = lastEnd === null ? 0 : seconds;
 
-  // Formatage MM:SS ou HH:MM:SS
-  const formatTime = (totalSeconds: number) => {
-    const hrs = Math.floor(totalSeconds / 3600);
-    const mins = Math.floor((totalSeconds % 3600) / 60);
-    const secs = totalSeconds % 60;
-
-    const parts = [];
-    if (hrs > 0) parts.push(String(hrs).padStart(2, '0'));
-    parts.push(String(mins).padStart(2, '0'));
-    parts.push(String(secs).padStart(2, '0'));
-
-    return parts.join(':');
-  };
-
   return {
     seconds: secondsValue,
-    formatted: formatTime(secondsValue),
+    formatted: formatClock(secondsValue),
   };
 }
