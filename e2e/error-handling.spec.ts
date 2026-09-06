@@ -317,7 +317,8 @@ test.describe('Gestion d’erreurs - Édition de contractions', () => {
     await page.goto(ROUTES.HOME);
     await page.waitForLoadState('networkidle');
 
-    // Ouvrir le dialog d'édition
+    // Ouvrir le dialogue d'édition — il vit sur `/historique`.
+    await page.goto(ROUTES.TABLE);
     const editBtn = page.locator(`[data-testid^="edit-record-btn-"]`).first();
     await expect(editBtn).toBeVisible();
     await editBtn.click();

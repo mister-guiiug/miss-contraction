@@ -116,17 +116,22 @@ export class SettingsPage {
    * l'écouteur doit être posé AVANT le clic, sinon le dialogue reste ouvert et
    * le clic n'aboutit jamais.
    */
+  /**
+   * Vide l'historique par le bouton, confirmation comprise.
+   *
+   * Elle le cherchait sur l'accueil, DERRIÈRE UN `if (isVisible())` : depuis
+   * que l'historique vit sur `/historique`, le bouton n'y était plus, la
+   * branche ne s'exécutait plus, et la méthode ne vidait rien en silence. Le
+   * test qui l'appelle passait ensuite pour de mauvaises raisons.
+   */
   async clearAllData() {
-    await this.page.goto(ROUTES.HOME);
+    await this.page.goto(ROUTES.TABLE);
     await this.page.waitForLoadState('networkidle');
 
     const deleteBtn = this.page.locator(SELECTORS.CLEAR_HISTORY_BTN);
-    if (
-      await deleteBtn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)
-    ) {
-      this.page.once('dialog', dialog => dialog.accept());
-      await deleteBtn.click();
-    }
+    await expect(deleteBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
+    this.page.once('dialog', dialog => dialog.accept());
+    await deleteBtn.click();
   }
 
   async getSaveConfirmation() {

@@ -4,7 +4,7 @@
 
 import { expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import { SELECTORS, TIMEOUTS, QUICK_NOTES } from '../config';
+import { SELECTORS, TIMEOUTS, QUICK_NOTES, ROUTES } from '../config';
 import {
   createContraction,
   getDisplayedStats,
@@ -86,8 +86,23 @@ export class HomePage {
     await btn.click();
   }
 
+  /**
+   * Combien de contractions dans l'historique.
+   *
+   * IL A DÉMÉNAGÉ SUR `/historique`. Compté depuis l'accueil, ce nombre valait
+   * zéro quoi qu'il arrive — trois tests `@critical` échouaient là-dessus. La
+   * méthode y va, compte, et REVIENT : ses appelants enchaînent sur les stats
+   * de l'accueil, qui n'auraient plus été là.
+   */
   async getHistoryEntries() {
-    return await this.page.locator(`${SELECTORS.HISTORY_ITEMS} > li`).count();
+    const retour = this.page.url();
+    await this.page.goto(ROUTES.TABLE);
+    const n = await this.page
+      .locator(`${SELECTORS.HISTORY_ITEMS} > li`)
+      .count();
+    await this.page.goto(retour);
+    await this.page.waitForLoadState('networkidle');
+    return n;
   }
 
   /** Le bandeau « Enregistré ! » et son annulation vivent dans `Banners`. */
