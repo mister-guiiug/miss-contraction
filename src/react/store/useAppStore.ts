@@ -4,7 +4,11 @@
  */
 
 import { create } from 'zustand';
-import type { AppSettings, ContractionRecord } from '../../storage';
+import type {
+  AppSettings,
+  AppSnapshot,
+  ContractionRecord,
+} from '../../storage';
 import {
   loadSettings,
   saveSettings,
@@ -12,7 +16,7 @@ import {
   saveRecords,
   loadActiveStart,
   saveActiveStart,
-  KEY_ACTIVE_START,
+  SNAPSHOT_KEY,
 } from '../../storage';
 
 interface AppState {
@@ -31,6 +35,15 @@ interface AppState {
 
   updateSettings: (settings: Partial<AppSettings>) => void;
   saveSettings: () => void;
+
+  /**
+   * Recharger l'écran depuis un instantané qui vient d'être ÉCRIT (import).
+   *
+   * Il ne persiste rien : `importSnapshotJson` a déjà écrit, et valider deux
+   * fois la même donnée ferait diverger ce que l'écran montre de ce que le
+   * disque contient si la garde répare quelque chose au passage.
+   */
+  adoptSnapshot: (snapshot: AppSnapshot) => void;
 
   startContraction: () => void;
   endContraction: (note?: string, intensity?: number) => void;
@@ -92,6 +105,18 @@ export const useAppStore = create<AppState>((set, get) => ({
     saveSettings(get().settings);
   },
 
+  adoptSnapshot: snapshot => {
+    set({
+      records: snapshot.records,
+      settings: snapshot.settings,
+      // Relu plutôt que recopié : une contraction ouverte dans le fichier peut
+      // être périmée à l'instant où on le relit, et c'est `loadActiveStart`
+      // qui tient cette règle des cinq minutes.
+      activeStart: loadActiveStart(),
+      alertLatch: false,
+    });
+  },
+
   startContraction: () => {
     const start = Date.now();
     set({ activeStart: start });
@@ -126,18 +151,23 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 }));
 
-// Synchroniser avec localStorage (modifications vanilla)
+/*
+ * Synchroniser avec un AUTRE ONGLET.
+ *
+ * UNE SEULE CLÉ DÉSORMAIS. L'état tenait dans trois clés `localStorage`
+ * distinctes, et il fallait trois branches pour les suivre ; il tient dans un
+ * instantané versionné (`mc_app`). L'événement `storage` ne se déclenche que
+ * dans les AUTRES onglets, donc relire les trois morceaux d'un coup ne coûte
+ * rien et ne peut plus les laisser diverger.
+ */
 if (typeof window !== 'undefined') {
   window.addEventListener('storage', e => {
-    if (e.key === 'mc_settings_v1') {
-      useAppStore.setState({ settings: loadSettings() });
-    }
-    if (e.key === 'mc_contractions_v1') {
-      useAppStore.setState({ records: loadRecords() });
-    }
-    if (e.key === KEY_ACTIVE_START) {
-      useAppStore.setState({ activeStart: loadActiveStart() });
-    }
+    if (e.key !== SNAPSHOT_KEY) return;
+    useAppStore.setState({
+      settings: loadSettings(),
+      records: loadRecords(),
+      activeStart: loadActiveStart(),
+    });
   });
 }
 

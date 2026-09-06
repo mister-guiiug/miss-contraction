@@ -1,5 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ACTIVE_START_MAX_AGE_MS, KEY_ACTIVE_START } from '../../storage';
+import {
+  ACTIVE_START_MAX_AGE_MS,
+  KEY_ACTIVE_START,
+  loadSnapshot,
+} from '../../storage';
 
 /**
  * La contraction en cours survit-elle au redémarrage du store ?
@@ -34,8 +38,13 @@ describe('contraction en cours au démarrage du store', () => {
 
     store.getState().startContraction();
 
-    const persisted = localStorage.getItem(KEY_ACTIVE_START);
-    expect(persisted).toBe(String(store.getState().activeStart));
+    /*
+     * L'HORODATAGE N'EST PLUS SOUS SA PROPRE CLÉ : depuis le magasin
+     * versionné, il vit dans l'instantané `mc_app`. On interroge donc
+     * l'instantané — lire `mc_active_start_v1` rendrait `null` pour toujours,
+     * et le test passerait en croyant vérifier quelque chose.
+     */
+    expect(loadSnapshot().activeStart).toBe(store.getState().activeStart);
   });
 
   it('restaure une contraction commencée juste avant le rechargement', async () => {

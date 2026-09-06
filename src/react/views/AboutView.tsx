@@ -1,12 +1,17 @@
 import { useState } from 'react';
 import { FamilyApps } from '@mister-guiiug/dev-pwa-config/react';
+import { repoUrl } from '@mister-guiiug/dev-pwa-config/apps-catalog';
 import { applyUpdate } from '@mister-guiiug/dev-pwa-config/sw-update';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { useAppStore } from '../store/useAppStore';
+import { APP_ID } from '../../storage';
 import { t } from '../../i18n';
 import { appVersion } from '../../appVersion';
 
-const REPO_URL = 'https://github.com/mister-guiiug/miss-contraction';
+// Le catalogue de la famille, pas une chaîne recopiée : le pied de page en a
+// besoin lui aussi pour composer l'URL de signalement, et deux constantes
+// écrites à la main finissent par diverger.
+const REPO_URL = repoUrl(APP_ID);
 const COFFEE_URL = 'https://buymeacoffee.com/mister.guiiug';
 
 function IconRefresh({ spinning }: { spinning: boolean }) {

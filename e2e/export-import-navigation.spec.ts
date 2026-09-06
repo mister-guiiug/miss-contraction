@@ -1,11 +1,52 @@
 /**
  * Tests E2E - Export/Import & Navigation
  * Couverture: export JSON, import, navigation routes, redirects
+ *
+ * ── CE FICHIER PASSAIT À VIDE ────────────────────────────────────────────────
+ *
+ * Trois des sept tests d'export tenaient dans un
+ * `if (await bouton.isVisible(...))`. Il n'existait AUCUN code d'export dans
+ * `src/` : le bouton n'était jamais visible, le corps du test ne s'exécutait
+ * jamais, et la suite restait verte. Les quatre autres relisaient
+ * `localStorage` juste après l'avoir semé eux-mêmes — ils prouvaient que
+ * `setItem` suivi de `getItem` rend la même chaîne, pas que l'application sait
+ * exporter quoi que ce soit.
+ *
+ * Ils sont désormais inconditionnels, et ils cliquent de vrais boutons.
  */
 
-import { test, expect } from '@playwright/test';
-import { ROUTES, KEY_RECORDS, KEY_SETTINGS } from './config';
+import { readFile } from 'node:fs/promises';
+import { test, expect, type Page } from '@playwright/test';
+import {
+  ROUTES,
+  SELECTORS,
+  KEY_RECORDS,
+  KEY_SETTINGS,
+  SNAPSHOT_KEY,
+} from './config';
 import { clickNavLink } from './helpers';
+
+/** L'instantané versionné tel qu'il est sur le disque, enveloppe comprise. */
+async function readSnapshot(page: Page) {
+  return page.evaluate(
+    key => JSON.parse(localStorage.getItem(key) ?? 'null'),
+    SNAPSHOT_KEY
+  );
+}
+
+/** Clique « Exporter le fichier » et rend le contenu du fichier téléchargé. */
+async function exportToText(
+  page: Page
+): Promise<{ filename: string; text: string }> {
+  const downloadPromise = page.waitForEvent('download');
+  await page.locator(SELECTORS.EXPORT_BACKUP_BTN).click();
+  const download = await downloadPromise;
+  const path = await download.path();
+  return {
+    filename: download.suggestedFilename(),
+    text: await readFile(path, 'utf8'),
+  };
+}
 
 test.describe('Export & Import', () => {
   test.beforeEach(async ({ page }) => {
@@ -15,6 +56,10 @@ test.describe('Export & Import', () => {
      * « export - inclut les paramètres » lisait `mc_settings_v1` alors que
      * rien ne l'avait jamais créé — il tombait sur `null` et levait un
      * `TypeError` en lisant `.maternityLabel`.
+     *
+     * ON SÈME LA FORME HÉRITÉE, ET C'EST VOLONTAIRE : c'est celle qui dort sur
+     * les téléphones. Le rechargement qui suit fait donc tourner la migration
+     * 0 → 1 pour de vrai, avant chacun de ces tests.
      */
     await page.goto(ROUTES.HOME);
     await page.evaluate(
@@ -46,124 +91,196 @@ test.describe('Export & Import', () => {
     await page.waitForLoadState('networkidle');
   });
 
+  test('migration - les clés d’hier deviennent l’instantané d’aujourd’hui', async ({
+    page,
+  }) => {
+    const snapshot = await readSnapshot(page);
+
+    expect(snapshot.v).toBe(1);
+    expect(snapshot.data.app).toBe('miss-contraction');
+    expect(snapshot.data.records).toHaveLength(3);
+    expect(snapshot.data.settings.maternityLabel).toBe('Maternité de test');
+
+    // Les clés héritées sont parties — et leurs octets dorment dans la copie
+    // de côté que le socle range avant toute transformation.
+    const restes = await page.evaluate(
+      keys => keys.map(k => localStorage.getItem(k)),
+      [KEY_RECORDS, KEY_SETTINGS]
+    );
+    expect(restes).toEqual([null, null]);
+  });
+
   test('export - télécharge un fichier JSON', async ({ page }) => {
-    const exportButton = page
-      .locator('button')
-      .filter({ hasText: /Export|Sauvegarder|Télécharger/ })
-      .first();
+    await page.goto(ROUTES.SETTINGS);
+    await expect(page.locator(SELECTORS.EXPORT_BACKUP_BTN)).toBeVisible();
 
-    if (await exportButton.isVisible({ timeout: 500 }).catch(() => false)) {
-      const downloadPromise = page.waitForEvent('download');
-      await exportButton.click();
+    const { filename } = await exportToText(page);
 
-      const download = await downloadPromise;
-      expect(download.suggestedFilename()).toMatch(/\.(json|JSON)$/);
-    }
+    expect(filename).toMatch(/^miss-contraction-\d{4}-\d{2}-\d{2}\.json$/);
   });
 
-  test('export - inclut les enregistrements', async ({ page }) => {
-    const exportData = await page.evaluate(() => {
-      const records = localStorage.getItem('mc_contractions_v1');
-      return records ? JSON.parse(records) : null;
+  test('export - le fichier porte l’historique et les réglages', async ({
+    page,
+  }) => {
+    await page.goto(ROUTES.SETTINGS);
+    const { text } = await exportToText(page);
+    const fichier = JSON.parse(text);
+
+    // L'enveloppe du magasin versionné : c'est ELLE qui rendra le fichier
+    // relisible par une version future de l'application.
+    expect(fichier.v).toBe(1);
+    expect(fichier.data.app).toBe('miss-contraction');
+    expect(fichier.data.records).toHaveLength(3);
+    expect(fichier.data.records[0].id).toBe('e1');
+    expect(fichier.data.settings.maternityLabel).toBe('Maternité de test');
+  });
+
+  test('import - un fichier d’une autre application est refusé sans rien effacer', async ({
+    page,
+  }) => {
+    await page.goto(ROUTES.SETTINGS);
+    page.on('dialog', dialog => void dialog.accept());
+
+    await page.locator(SELECTORS.IMPORT_BACKUP_INPUT).setInputFiles({
+      name: 'notes-2026-09-06.json',
+      mimeType: 'application/json',
+      // Le format du squelette de la famille : même enveloppe, autre donnée.
+      buffer: Buffer.from(JSON.stringify({ v: 1, data: { notes: [] } })),
     });
 
-    expect(exportData).toBeDefined();
-    expect(Array.isArray(exportData)).toBe(true);
-    expect(exportData.length).toBeGreaterThan(0);
+    await expect(page.locator(SELECTORS.BACKUP_FEEDBACK)).toContainText(
+      /refusé/i
+    );
+
+    const snapshot = await readSnapshot(page);
+    expect(snapshot.data.records).toHaveLength(3);
   });
 
-  test('export - inclut les paramètres', async ({ page }) => {
-    const exportData = await page.evaluate(() => {
-      const settings = localStorage.getItem('mc_settings_v1');
-      return settings ? JSON.parse(settings) : null;
+  test('import - un fichier tronqué est refusé sans rien effacer', async ({
+    page,
+  }) => {
+    await page.goto(ROUTES.SETTINGS);
+    page.on('dialog', dialog => void dialog.accept());
+
+    await page.locator(SELECTORS.IMPORT_BACKUP_INPUT).setInputFiles({
+      name: 'coupe.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from('{"v":1,"data":{"app"'),
     });
 
-    expect(exportData).toBeDefined();
-    expect(exportData.maternityLabel).toBeDefined();
-    expect(exportData.maxIntervalMin).toBeDefined();
+    await expect(page.locator(SELECTORS.BACKUP_FEEDBACK)).toContainText(
+      /refusé/i
+    );
+
+    const snapshot = await readSnapshot(page);
+    expect(snapshot.data.records).toHaveLength(3);
   });
 
-  test('import - restaure les données depuis JSON', async ({ page }) => {
-    // Exporter les données actuelles
-    const originalData = await page.evaluate(() => {
-      return {
-        records: JSON.parse(localStorage.getItem('mc_contractions_v1') || '[]'),
-        settings: JSON.parse(localStorage.getItem('mc_settings_v1') || '{}'),
-      };
+  test('@critical exporter, effacer, réimporter, retrouver les contractions', async ({
+    page,
+  }) => {
+    // Toutes les confirmations de ce parcours sont des `confirm()` natifs :
+    // effacer l'historique, puis remplacer les données à l'import.
+    page.on('dialog', dialog => void dialog.accept());
+
+    // 1. Exporter.
+    await page.goto(ROUTES.SETTINGS);
+    const { filename, text } = await exportToText(page);
+    expect(JSON.parse(text).data.records).toHaveLength(3);
+
+    // 2. Effacer, avec le bouton de l'application — pas avec `localStorage`.
+    await page.goto(ROUTES.TABLE);
+    await page.locator(SELECTORS.CLEAR_HISTORY_BTN).click();
+    await expect(page.locator(SELECTORS.TABLE_EMPTY)).toBeVisible();
+
+    // 3. Réimporter le fichier tel qu'il a été téléchargé.
+    await page.goto(ROUTES.SETTINGS);
+    await page.locator(SELECTORS.IMPORT_BACKUP_INPUT).setInputFiles({
+      name: filename,
+      mimeType: 'application/json',
+      buffer: Buffer.from(text),
     });
+    await expect(page.locator(SELECTORS.BACKUP_FEEDBACK)).toContainText('3');
 
-    // Nettoyer
-    await page.evaluate(() => localStorage.clear());
+    // 4. Les contractions sont de retour, à l'écran et sur le disque.
+    await page.goto(ROUTES.TABLE);
+    await expect(
+      page.locator(`${SELECTORS.CONTRACTIONS_TABLE} tbody tr`)
+    ).toHaveCount(3);
 
-    // Importer les données
-    const importButton = page
-      .locator('button')
-      .filter({ hasText: /Import|Importer|Charger/ })
-      .first();
-
-    if (await importButton.isVisible({ timeout: 500 }).catch(() => false)) {
-      // Créer un fichier JSON de test
-      const jsonData = JSON.stringify(originalData);
-
-      // Simuler l'import
-      await page.evaluate(json => {
-        const data = JSON.parse(json);
-        if (data.records)
-          localStorage.setItem(
-            'mc_contractions_v1',
-            JSON.stringify(data.records)
-          );
-        if (data.settings)
-          localStorage.setItem('mc_settings_v1', JSON.stringify(data.settings));
-      }, jsonData);
-
-      // Vérifier que les données sont restaurées
-      const restoredData = await page.evaluate(() => {
-        return {
-          records: JSON.parse(
-            localStorage.getItem('mc_contractions_v1') || '[]'
-          ),
-          settings: JSON.parse(localStorage.getItem('mc_settings_v1') || '{}'),
-        };
-      });
-
-      expect(restoredData.records.length).toBe(originalData.records.length);
-    }
+    const snapshot = await readSnapshot(page);
+    expect(snapshot.data.records.map((r: { id: string }) => r.id)).toEqual([
+      'e1',
+      'e2',
+      'e3',
+    ]);
   });
 
-  test('export - format correct du fichier', async ({ page }) => {
-    const exportData = await page.evaluate(() => {
-      return {
-        records: JSON.parse(localStorage.getItem('mc_contractions_v1') || '[]'),
-        settings: JSON.parse(localStorage.getItem('mc_settings_v1') || '{}'),
-      };
-    });
+  test('sauvegarde - le bandeau de rappel mène à la section Sauvegarde', async ({
+    page,
+  }) => {
+    /*
+     * LE BANDEAU POINTAIT VERS RIEN. Il réclamait « Pensez à exporter une
+     * sauvegarde (Partager / Exporter) » tous les sept jours, et aucun bouton
+     * d'export n'existait dans l'application. On vérifie donc le lien ET son
+     * point de chute.
+     *
+     * `Banners` ne rend qu'UN bandeau, et le rappel de sauvegarde est le
+     * dernier de la file. On resème donc UN SEUL enregistrement : les trois
+     * intervalles de cinq minutes du `beforeEach` déclenchent la pré-alerte
+     * sous `maxIntervalMin: 5`, et un rappel de sauvegarde n'a rien à
+     * disputer à une alerte d'accouchement imminent — la priorité est bonne,
+     * c'est au test de ne pas la provoquer.
+     *
+     * Le bandeau d'annulation, lui, ne gêne plus : il ne répond qu'à un ajout
+     * survenu sous les yeux de l'utilisatrice, et non au simple chargement
+     * (voir `Banners.exportNudge.test.tsx`, qui fige les deux cas).
+     */
+    await page.evaluate(
+      ([recordsKey, settingsKey, snapshotKey]) => {
+        localStorage.removeItem(snapshotKey);
+        const now = Date.now();
+        localStorage.setItem(
+          recordsKey,
+          JSON.stringify([{ id: 'seul', start: now - 900000, end: now - 840000 }])
+        );
+        localStorage.setItem(
+          settingsKey,
+          JSON.stringify({ language: 'fr', consecutiveCount: 3 })
+        );
+      },
+      [KEY_RECORDS, KEY_SETTINGS, SNAPSHOT_KEY] as const
+    );
+    await page.reload();
+    await page.waitForLoadState('networkidle');
 
-    // Vérifier la structure
-    expect(exportData.records).toBeDefined();
-    expect(exportData.settings).toBeDefined();
+    const lien = page.locator(SELECTORS.EXPORT_NUDGE_LINK);
+    await expect(lien).toBeVisible();
+    await lien.click();
 
-    // Vérifier les champs des enregistrements
-    if (exportData.records.length > 0) {
-      const record = exportData.records[0];
-      expect(record.id).toBeDefined();
-      expect(record.start).toBeDefined();
-      expect(record.end).toBeDefined();
-    }
+    await expect(page.locator(SELECTORS.EXPORT_BACKUP_BTN)).toBeVisible();
   });
+});
 
-  test('sauvegarde - notification de rappel', async ({ page }) => {
-    // Chercher le bouton de rappel de sauvegarde
-    const saveReminderButton = page
-      .locator('button')
-      .filter({ hasText: /Sauvegarder|Exporter/ })
-      .first();
+test.describe('Signaler un problème', () => {
+  test('le pied de page ouvre le gabarit `bug.yml` prérempli', async ({
+    page,
+  }) => {
+    await page.goto(ROUTES.HOME);
 
-    if (
-      await saveReminderButton.isVisible({ timeout: 500 }).catch(() => false)
-    ) {
-      await expect(saveReminderButton).toBeVisible();
-    }
+    const lien = page.locator(SELECTORS.FOOTER_ISSUES_LINK);
+    await expect(lien).toBeVisible();
+
+    const href = await lien.getAttribute('href');
+    expect(href).toContain(
+      'https://github.com/mister-guiiug/miss-contraction/issues/new'
+    );
+    expect(href).toContain('template=bug.yml');
+    // L'environnement est rempli par l'application, pas par l'utilisatrice :
+    // c'est tout l'intérêt du lien.
+    expect(href).toContain('environnement=');
+    await expect(lien).toHaveAttribute('target', '_blank');
+    await expect(lien).toHaveAttribute('rel', /noopener/);
   });
 });
 

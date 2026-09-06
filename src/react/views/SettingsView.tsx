@@ -4,16 +4,39 @@ import { Link } from 'react-router-dom';
  * Cette version React coexiste avec la version vanilla
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { downloadText } from '@mister-guiiug/dev-pwa-config/download';
+import { shareOrCopy } from '@mister-guiiug/dev-pwa-config/share';
 import { useAppStore } from '../store/useAppStore';
 import {
+  backupFileName,
+  exportSnapshotJson,
+  importSnapshotJson,
   setSnoozeUntilMs,
   clearSnoozeUntil,
   loadSettings,
 } from '../../storage';
-import { LANGUAGE_LABELS, t, type AppLanguage } from '../../i18n';
+import { LANGUAGE_LABELS, interpolate, t, type AppLanguage } from '../../i18n';
 import { HighContrastToggle } from '../components/settings/HighContrastToggle';
 import { ViewLayout } from '../components/layout/ViewLayout';
+import { BACKUP_SECTION_ID } from './backupSection';
+
+/**
+ * Le message d'un import refusé, dit à quelqu'un et non à un journal.
+ *
+ * `versioned-store.import()` lève une phrase préfixée de son propre nom et
+ * range la vraie raison dans `cause` — c'est la garde de l'application qui
+ * sait dire « fichier d'une autre application », le socle ne sait dire que
+ * « le format ne correspond pas ». On préfère donc la cause quand elle existe,
+ * et l'on retire le préfixe technique sinon : « version 3 inconnue — fichier
+ * exporté par une version plus récente de l'app ? » se lit très bien.
+ */
+function importErrorMessage(error: unknown): string {
+  if (!(error instanceof Error)) return String(error);
+  const cause = error.cause;
+  if (cause instanceof Error && cause.message) return cause.message;
+  return error.message.replace(/^versioned-store:\s*/, '');
+}
 
 const SETTINGS_COPY = {
   fr: {
@@ -48,11 +71,17 @@ const SETTINGS_COPY = {
 } as const;
 
 export function SettingsView() {
-  const { settings, updateSettings, saveSettings } = useAppStore();
+  const { settings, records, updateSettings, saveSettings, adoptSnapshot } =
+    useAppStore();
   const language = settings.language;
   const copy = language === 'fr' ? SETTINGS_COPY.fr : SETTINGS_COPY.en;
   const [formData, setFormData] = useState(() => loadSettings());
   const [saveStatus, setSaveStatus] = useState('');
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [backupStatus, setBackupStatus] = useState<{
+    tone: 'ok' | 'error';
+    text: string;
+  } | null>(null);
   const [notifyPermission, setNotifyPermission] =
     useState<NotificationPermission>(() => {
       if (typeof window !== 'undefined' && 'Notification' in window) {
@@ -125,6 +154,111 @@ export function SettingsView() {
     setTimeout(() => setSaveStatus(''), 3000);
   };
 
+  /* ── Sauvegarde : exporter, partager, réimporter ───────────────────────── */
+
+  const download = (json: string) => {
+    const filename = backupFileName();
+    const ok = downloadText(json, filename, 'application/json');
+    setBackupStatus(
+      ok
+        ? {
+            tone: 'ok',
+            text: interpolate(t(language, 'backup.exported'), {
+              file: filename,
+            }),
+          }
+        : { tone: 'error', text: t(language, 'backup.failed') }
+    );
+  };
+
+  const handleExport = () => {
+    const json = exportSnapshotJson();
+    if (json === null) {
+      setBackupStatus({ tone: 'error', text: t(language, 'backup.failed') });
+      return;
+    }
+    download(json);
+  };
+
+  /**
+   * Le partage natif d'abord, le téléchargement en repli.
+   *
+   * L'app est faite pour TRANSMETTRE — tout un écran ne sert qu'à composer le
+   * message pour la maternité. Envoyer le fichier depuis la feuille de partage
+   * du téléphone est donc le geste attendu, et non un raffinement.
+   *
+   * `navigator.share` est interrogé AVANT `shareOrCopy` : sans lui, le socle
+   * se rabat sur le presse-papiers, et un journal de contractions dans le
+   * presse-papiers n'est pas une sauvegarde. Là où le partage n'existe pas, un
+   * fichier téléchargé, lui, en est une.
+   */
+  const handleShare = async () => {
+    const json = exportSnapshotJson();
+    if (json === null) {
+      setBackupStatus({ tone: 'error', text: t(language, 'backup.failed') });
+      return;
+    }
+    const canShare =
+      typeof navigator !== 'undefined' && typeof navigator.share === 'function';
+    if (!canShare) {
+      download(json);
+      return;
+    }
+    const result = await shareOrCopy({
+      title: `${t(language, 'app.name')} — ${backupFileName()}`,
+      text: json,
+    });
+    if (result === 'shared') {
+      setBackupStatus({ tone: 'ok', text: t(language, 'backup.shared') });
+    } else if (result === 'copied') {
+      setBackupStatus({ tone: 'ok', text: t(language, 'backup.copied') });
+    } else if (result === 'failed') {
+      download(json);
+    }
+    // « cancelled » : elle a fermé la feuille de partage. Ne rien afficher.
+  };
+
+  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    // Remis à zéro tout de suite : rechoisir DEUX fois le même fichier doit
+    // relancer l'import, et un `<input type=file>` ne signale pas un choix
+    // identique au précédent.
+    e.target.value = '';
+    if (!file) return;
+
+    // L'import REMPLACE. On ne le demande que s'il y a quelque chose à perdre.
+    if (
+      records.length > 0 &&
+      !confirm(
+        interpolate(t(language, 'backup.confirmReplace'), {
+          count: records.length,
+        })
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const text = await file.text();
+      const snapshot = importSnapshotJson(text);
+      adoptSnapshot(snapshot);
+      setFormData(snapshot.settings);
+      setBackupStatus({
+        tone: 'ok',
+        text: interpolate(t(language, 'backup.imported'), {
+          count: snapshot.records.length,
+        }),
+      });
+    } catch (error) {
+      setBackupStatus({
+        tone: 'error',
+        text: interpolate(t(language, 'backup.importFailed'), {
+          error: importErrorMessage(error),
+        }),
+      });
+    }
+  };
+
   return (
     <ViewLayout
       className="settings-page"
@@ -168,6 +302,11 @@ export function SettingsView() {
           <li>
             <a className="settings-toc-link" href="#settings-section-modules">
               {copy.sectionModules}
+            </a>
+          </li>
+          <li>
+            <a className="settings-toc-link" href={`#${BACKUP_SECTION_ID}`}>
+              {t(language, 'backup.title')}
             </a>
           </li>
         </ul>
@@ -640,6 +779,86 @@ export function SettingsView() {
                 : 'Message to maternity or contacts (SMS, WhatsApp)'}
             </span>
           </label>
+        </section>
+
+        {/*
+          Section Sauvegarde.
+
+          LA PROMESSE DU README EXISTE ENFIN. « Export JSON — téléchargement ou
+          partage natif de l'historique et des réglages » était écrit depuis le
+          premier jour, et le bandeau de l'accueil l'a répété tous les sept
+          jours à des utilisatrices qui n'ont jamais trouvé le bouton : il n'y
+          avait aucun code d'export dans `src/`.
+
+          Les boutons ne sont PAS `type="submit"` : ils vivent dans le
+          formulaire des réglages pour hériter de sa mise en page, mais aucun
+          d'eux n'enregistre les réglages.
+        */}
+        <section
+          className="card settings-card"
+          id={BACKUP_SECTION_ID}
+          aria-labelledby="backup-heading"
+          data-testid="settings-section-backup"
+        >
+          <h2 id="backup-heading" className="section-title">
+            {t(language, 'backup.title')}
+          </h2>
+          <p className="settings-intro settings-intro--tight">
+            {t(language, 'backup.intro')}
+          </p>
+          <div className="snooze-actions">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              data-testid="export-backup-btn"
+              onClick={handleExport}
+            >
+              {t(language, 'backup.export')}
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              data-testid="share-backup-btn"
+              onClick={() => void handleShare()}
+            >
+              {t(language, 'backup.share')}
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              data-testid="import-backup-btn"
+              onClick={() => fileInput.current?.click()}
+            >
+              {t(language, 'backup.import')}
+            </button>
+          </div>
+          {/*
+            Le vrai champ est masqué visuellement, pas retiré de l'arbre : il
+            garde son nom accessible, et un test peut lui donner un fichier
+            sans passer par la boîte de dialogue du système.
+          */}
+          <input
+            ref={fileInput}
+            type="file"
+            accept="application/json,.json"
+            className="sr-only"
+            aria-label={t(language, 'backup.import')}
+            data-testid="import-backup-input"
+            onChange={e => void handleImportFile(e)}
+          />
+          <p className="settings-intro settings-intro--tight">
+            {t(language, 'backup.importHelp')}
+          </p>
+          {backupStatus && (
+            <p
+              className="settings-save-feedback"
+              role={backupStatus.tone === 'error' ? 'alert' : 'status'}
+              aria-live="polite"
+              data-testid="backup-feedback"
+            >
+              {backupStatus.text}
+            </p>
+          )}
         </section>
       </form>
 

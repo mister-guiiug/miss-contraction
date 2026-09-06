@@ -1,7 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { useAppStore } from '../../store/useAppStore';
 import { useAlerts } from '../../hooks/useAlerts';
-import { KEY_EXPORT_NUDGE_DISMISSED } from '../../../storage';
+import { BACKUP_SECTION_ID } from '../../views/backupSection';
+import { getRoutePath } from '../../../routes-i18n';
+import {
+  loadExportNudgeDismissedAt,
+  setExportNudgeDismissedAt,
+} from '../../../storage';
 import { interpolate, t } from '../../../i18n';
 
 const EXPORT_NUDGE_INTERVAL_MS = 7 * 24 * 60 * 60 * 1000; // 7 jours
@@ -15,13 +21,8 @@ export function Banners() {
     settings
   );
   const [showExportNudge, setShowExportNudge] = useState<boolean>(() => {
-    try {
-      const dismissedAt =
-        Number(localStorage.getItem(KEY_EXPORT_NUDGE_DISMISSED)) || 0;
-      return Date.now() - dismissedAt >= EXPORT_NUDGE_INTERVAL_MS;
-    } catch {
-      return true;
-    }
+    const dismissedAt = loadExportNudgeDismissedAt();
+    return Date.now() - dismissedAt >= EXPORT_NUDGE_INTERVAL_MS;
   });
 
   // Undo state
@@ -38,6 +39,8 @@ export function Banners() {
   // Afficher undo banner quand une contraction est ajoutée (pas supprimée)
   const lastRecordIdRef = useRef<string | null>(null);
   const lastCountRef = useRef<number>(0);
+  /** Le premier passage de l'effet sert à s'aligner, pas à annoncer un ajout. */
+  const amorceRef = useRef<boolean>(false);
 
   // Nettoyer les timers au unmount
   useEffect(() => {
@@ -56,6 +59,33 @@ export function Banners() {
   };
 
   useEffect(() => {
+    /*
+     * LE PREMIER PASSAGE NE COMPTE PAS, ET C'EST TOUT L'ENJEU.
+     *
+     * `lastCountRef` partait de 0 et `records` arrive peuplé dès le montage :
+     * `records.length > 0` suffisait, si bien que CHARGER l'application
+     * proposait d'annuler un enregistrement qu'on n'avait pas fait — et
+     * « Annuler » supprime une vraie contraction, la dernière. Sur une
+     * application de suivi de travail, ouverte et rouverte à une main entre
+     * deux contractions, c'est une perte à un clic de distance.
+     *
+     * Second effet, celui qui se voit : `Banners` ne rend qu'UN bandeau, et
+     * l'annulation passe avant le rappel de sauvegarde. Trente secondes après
+     * chaque chargement, le rappel « Pensez à exporter une sauvegarde » était
+     * donc invisible — le bandeau qui devait mener au bouton d'export ne
+     * s'affichait pratiquement jamais.
+     *
+     * On amorce donc le compteur sur ce qui est déjà là : le bandeau ne
+     * répond plus qu'à un ajout survenu SOUS LES YEUX de l'utilisatrice.
+     */
+    if (!amorceRef.current) {
+      amorceRef.current = true;
+      lastCountRef.current = records.length;
+      const dernier = records[records.length - 1];
+      if (dernier) lastRecordIdRef.current = dernier.id;
+      return;
+    }
+
     // Ne montrer la bannière que si un NOUVEAU record a été ajouté
     // (ignore les suppressions et modifications)
     if (records.length > lastCountRef.current) {
@@ -107,11 +137,7 @@ export function Banners() {
   };
 
   const dismissExportNudge = () => {
-    try {
-      localStorage.setItem(KEY_EXPORT_NUDGE_DISMISSED, String(Date.now()));
-    } catch {
-      /* ignore */
-    }
+    setExportNudgeDismissedAt(Date.now());
     setShowExportNudge(false);
   };
 
@@ -158,13 +184,30 @@ export function Banners() {
     );
   }
 
-  // Export nudge (priorité basse)
+  /*
+   * Export nudge (priorité basse).
+   *
+   * IL POINTE MAINTENANT VERS UN BOUTON QUI EXISTE. Ce bandeau disait
+   * « Pensez à exporter une sauvegarde (Partager / Exporter) » depuis des
+   * mois, et il n'y avait AUCUN code d'export dans l'application : il envoyait
+   * chercher un bouton introuvable, tous les sept jours, à quelqu'un qui a
+   * autre chose à faire. Le lien mène désormais droit à la section
+   * « Sauvegarde » des réglages.
+   */
   if (hasValidRecords && showExportNudge) {
     return (
       <div className="app-banner app-banner--muted" id="banner-export-nudge">
         <span className="app-banner-text">
           {t(language, 'banner.exportNudge')}
         </span>
+        <Link
+          to={`${getRoutePath('settings', language)}#${BACKUP_SECTION_ID}`}
+          className="btn btn-secondary btn-small"
+          id="link-export-nudge"
+          data-testid="export-nudge-link"
+        >
+          {t(language, 'banner.exportNow')}
+        </Link>
         <button
           type="button"
           className="btn btn-ghost btn-small"

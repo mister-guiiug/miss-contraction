@@ -198,6 +198,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'banner.secondsLeft': '{seconds} s restantes',
     'banner.exportNudge':
       'Pensez à exporter une sauvegarde (Partager / Exporter) avant un changement de téléphone.',
+    'banner.exportNow': 'Sauvegarder',
     'banner.later': 'Plus tard',
     'quicknotes.placeholder': 'Note personnelle...',
 
@@ -365,6 +366,26 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'settings.language.help':
       'Le changement est appliqué immédiatement sur la navigation et les écrans pris en charge.',
     'settings.language.changed': 'Langue changée immédiatement !',
+
+    'backup.title': 'Sauvegarde',
+    'backup.intro':
+      'Tout reste sur cet appareil. Le fichier de sauvegarde contient l’historique et les réglages : gardez-le avant de changer de téléphone, ou envoyez-le à votre sage-femme.',
+    'backup.export': 'Exporter le fichier',
+    'backup.share': 'Partager la sauvegarde',
+    'backup.import': 'Importer une sauvegarde',
+    'backup.importHelp':
+      'Un fichier qui ne vient pas de Miss Contraction est refusé sans rien effacer.',
+    'backup.confirmReplace':
+      'Remplacer les {count} contractions enregistrées sur cet appareil ?',
+    'backup.exported': 'Sauvegarde téléchargée : {file}',
+    'backup.shared': 'Sauvegarde partagée.',
+    'backup.copied': 'Sauvegarde copiée dans le presse-papiers.',
+    'backup.imported': '{count} contractions restaurées.',
+    'backup.importFailed': 'Import refusé — {error}',
+    'backup.failed':
+      'Sauvegarde impossible sur cet appareil (stockage indisponible).',
+
+    'footer.issues': 'Signaler un problème',
   },
   en: {
     'app.name': 'Miss Contraction',
@@ -533,6 +554,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'banner.secondsLeft': '{seconds}s left',
     'banner.exportNudge':
       'Remember to export a backup (Share / Export) before changing phones.',
+    'banner.exportNow': 'Back up',
     'banner.later': 'Later',
     'quicknotes.placeholder': 'Personal note...',
 
@@ -696,6 +718,25 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'settings.language.help':
       'Changes are applied immediately on navigation and supported screens.',
     'settings.language.changed': 'Language changed immediately!',
+
+    'backup.title': 'Backup',
+    'backup.intro':
+      'Everything stays on this device. The backup file holds your history and settings: keep it before changing phones, or send it to your midwife.',
+    'backup.export': 'Export the file',
+    'backup.share': 'Share the backup',
+    'backup.import': 'Import a backup',
+    'backup.importHelp':
+      'A file that does not come from Miss Contraction is refused without erasing anything.',
+    'backup.confirmReplace':
+      'Replace the {count} contractions stored on this device?',
+    'backup.exported': 'Backup downloaded: {file}',
+    'backup.shared': 'Backup shared.',
+    'backup.copied': 'Backup copied to the clipboard.',
+    'backup.imported': '{count} contractions restored.',
+    'backup.importFailed': 'Import refused — {error}',
+    'backup.failed': 'Backup impossible on this device (storage unavailable).',
+
+    'footer.issues': 'Report a problem',
   },
   es: {
     'app.name': 'Miss Contraction',
