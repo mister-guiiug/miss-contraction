@@ -2847,7 +2847,13 @@ a.btn {
   gap: 1rem;
 }
 
+/*
+ * `display: flex` est ici, et pas hérité de `.field` : la valise maternité
+ * pose `field-check` seul, sans `field`. Les trois propriétés qui suivent y
+ * étaient donc inertes, la bascule et son libellé retombant en flux normal.
+ */
 .field-check {
+  display: flex;
   flex-direction: row;
   align-items: flex-start;
   gap: 0;
