@@ -9,6 +9,12 @@ dist/
 playwright-report/
 test-results/
 
+# Captures de référence de la régression visuelle. Elles sont produites
+# localement, dépendent de la plateforme (`-chromium-win32`) et la suite ne
+# tourne dans aucune CI : versionner des références Windows tromperait le jour
+# où elle tournera ailleurs. Elles entraient dans l'index à chaque `git add -A`.
+e2e/__snapshots__/
+
 # Lighthouse CI (rapports locaux)
 .lighthouseci/
 

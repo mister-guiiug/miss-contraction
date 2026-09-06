@@ -40,7 +40,7 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
     errorHandler.verify();
   });
 
-  test('@critical chronomètre - démarre une contraction', async ({ page }) => {
+  test('@critical chronomètre - démarre une contraction', async () => {
     // Un seul bouton, qui bascule : on éprouve donc le changement d'état, pas
     // l'apparition d'un second bouton. `getStopButton` visait un
     // `data-testid` qui n'a jamais existé.
@@ -140,7 +140,7 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
     await homePage.stopContraction();
   });
 
-  test('@critical statistiques - affiche les valeurs', async ({ page }) => {
+  test('@critical statistiques - affiche les valeurs', async () => {
     // Créer une contraction
     await homePage.createContraction(500);
 
@@ -180,7 +180,7 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
     expect(statsAll).toBeTruthy();
   });
 
-  test('@critical historique - affiche les contractions', async ({ page }) => {
+  test('@critical historique - affiche les contractions', async () => {
     const initialCount = await homePage.getHistoryEntries();
 
     await homePage.createContraction(500);
@@ -189,9 +189,7 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
     expect(newCount).toBeGreaterThan(initialCount);
   });
 
-  test('@smoke annulation (undo) - supprime la dernière contraction', async ({
-    page,
-  }) => {
+  test('@smoke annulation (undo) - supprime la dernière contraction', async () => {
     await homePage.createContraction(500);
     const countBefore = await homePage.getHistoryEntries();
 
@@ -202,7 +200,7 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
     expect(countAfter).toBeLessThanOrEqual(countBefore);
   });
 
-  test('@smoke état vide - affichage initial', async ({ page }) => {
+  test('@smoke état vide - affichage initial', async () => {
     const isEmpty = await homePage.isEmptyStateVisible();
     // Au démarrage, soit on a un empty state, soit on a du contenu
     expect(typeof isEmpty).toBe('boolean');

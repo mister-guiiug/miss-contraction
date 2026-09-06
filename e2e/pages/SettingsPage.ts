@@ -8,7 +8,8 @@
  * ils portent un `id`, respectivement dans `HighContrastToggle` et `Shell`.
  */
 
-import { Page, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { SELECTORS, TIMEOUTS, ROUTES } from '../config';
 import { updateSetting, saveSettings, toggleCheckbox } from '../helpers';
 

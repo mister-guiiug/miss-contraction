@@ -4,7 +4,8 @@
  * @tag @visual
  */
 
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { ROUTES } from './config';
 
 // Tous les viewports à tester
@@ -163,7 +164,6 @@ test.describe('Régression visuelle - Thèmes', () => {
   });
 
   test('@visual thème sombre (prefers-color-scheme: dark)', async ({
-    page,
     browser,
   }) => {
     // Ouvrir une page avec la préférence dark

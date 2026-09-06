@@ -2,7 +2,8 @@
  * Page Object pour HomeView
  */
 
-import { Page, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { SELECTORS, TIMEOUTS, QUICK_NOTES } from '../config';
 import {
   createContraction,

@@ -12,7 +12,7 @@
  * éprouvent la navigation elle-même.
  */
 
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { SELECTORS, TIMEOUTS, ROUTES } from '../config';
 import { navigateTo, clickNavLink } from '../helpers';
 

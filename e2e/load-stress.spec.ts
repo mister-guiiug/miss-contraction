@@ -155,8 +155,6 @@ test.describe('Stress - Actions rapides', () => {
 
     await page.waitForTimeout(800);
 
-    // L'UI doit être dans un état stable (pas de timer orphelin)
-    const timerDisplay = page.locator('[data-testid="timer-display"]');
     // Peu importe l'état final, il ne doit pas y avoir d'erreur
     const errors: string[] = [];
     page.on('pageerror', e => errors.push(e.message));
