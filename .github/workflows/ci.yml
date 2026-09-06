@@ -16,4 +16,5 @@ jobs:
     uses: mister-guiiug/dev-pwa-config/.github/workflows/pwa-ci.yml@v4
     secrets: inherit
     with:
+      run-doctor: true # la checklist du parc, lue sur le dépôt et sur dist/ (AMELIORATIONS.md, T2)
       run-e2e: false
