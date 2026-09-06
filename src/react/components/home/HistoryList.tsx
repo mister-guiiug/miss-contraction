@@ -1,6 +1,8 @@
 import {
   useState,
   useCallback,
+  useEffect,
+  useRef,
   type Dispatch,
   type SetStateAction,
 } from 'react';
@@ -279,8 +281,33 @@ function EditDialog({
     setIntensity(intensity === value ? undefined : value);
   };
 
+  /*
+   * `showModal()` PLUTÔT QUE L'ATTRIBUT `open`.
+   *
+   * Un `<dialog open>` reste dans le flux : sur un écran de 667 px de haut, ce
+   * dialogue en mesure 584 et ses boutons tombaient SOUS la barre de
+   * navigation, fixée par-dessus. Playwright a fini par le dire — « bottom-nav
+   * intercepts pointer events » — mais un doigt n'a pas de message d'erreur :
+   * on ne pouvait tout simplement pas enregistrer une correction.
+   *
+   * Le mode modal place le dialogue dans la couche supérieure, au-dessus de
+   * tout et sans z-index à négocier, rend l'arrière-plan inerte, piège le
+   * focus, et fait enfin exister le `::backdrop` que la feuille de style
+   * habillait déjà pour rien. `onCancel` récupère la touche Échap.
+   */
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const el = dialogRef.current;
+    if (el && !el.open) el.showModal();
+  }, []);
+
   return (
-    <dialog className="edit-dialog" open data-testid="edit-dialog">
+    <dialog
+      ref={dialogRef}
+      className="edit-dialog"
+      data-testid="edit-dialog"
+      onCancel={onClose}
+    >
       <form className="edit-dialog-form" onSubmit={handleSubmit}>
         <h3
           id="edit-dialog-title"

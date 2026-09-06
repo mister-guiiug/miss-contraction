@@ -257,27 +257,36 @@ test.describe('Parcours - Navigation complète', () => {
     expect(criticalErrors).toHaveLength(0);
   });
 
-  test('@journey la navigation retour fonctionne depuis les vues secondaires', async ({
+  test('@journey le retour à l’accueil fonctionne depuis les vues secondaires', async ({
     page,
+    viewport,
   }) => {
-    // Paramètres → Retour
-    await page.goto(ROUTES.SETTINGS);
-    await page.waitForLoadState('networkidle');
-    const backLink = page.locator('[data-testid="settings-back-link"]');
-    await expect(backLink).toBeVisible();
-    await backLink.click();
-    await expect(page).toHaveURL(new RegExp(ROUTES.HOME + '.*'));
+    /*
+     * DEUX CHEMINS DE RETOUR, ET ILS S'EXCLUENT. Sous 768 px, les liens
+     * « Accueil » des vues secondaires sont masqués (`mobile-home-link`) : la
+     * barre du bas fait ce travail, et l'afficher deux fois n'aurait pas de
+     * sens. Ce test cliquait le lien sans regarder la largeur et échouait sur
+     * le seul projet `mobile-chrome` — sur un défaut qui n'en était pas un.
+     */
+    const surMobile = (viewport?.width ?? 1280) < 768;
 
-    // Table → Retour
-    await page.goto(ROUTES.TABLE);
-    await page.waitForLoadState('networkidle');
-    const tableBackLink = page.locator('[data-testid="table-back-link"]');
-    await expect(tableBackLink).toBeVisible();
-    await tableBackLink.click();
-    await page.waitForLoadState('networkidle');
-    await expect(
-      page.locator('[data-testid="toggle-contraction-btn"]')
-    ).toBeVisible();
+    for (const chemin of [ROUTES.SETTINGS, ROUTES.TABLE]) {
+      await page.goto(chemin);
+      await page.waitForLoadState('networkidle');
+
+      const retour = surMobile
+        ? page.locator(`${SELECTORS.BOTTOM_NAV} a[href="/"]`)
+        : page.locator(
+            chemin === ROUTES.SETTINGS
+              ? '[data-testid="settings-back-link"]'
+              : '[data-testid="table-back-link"]'
+          );
+
+      await expect(retour).toBeVisible();
+      await retour.click();
+      await page.waitForLoadState('networkidle');
+      await expect(page.locator(SELECTORS.TOGGLE_BTN)).toBeVisible();
+    }
   });
 });
 

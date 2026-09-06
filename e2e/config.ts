@@ -48,6 +48,7 @@ export const SELECTORS = {
   TABLE_VIEW: '[data-testid="table-view"]',
   MATERNITY_VIEW: '[data-testid="maternity-view"]',
   MESSAGE_VIEW: '[data-testid="message-view"]',
+  MIDWIFE_VIEW: '[data-testid="midwife-view"]',
 
   // Éléments affichage
   TIMER_DISPLAY: '[data-testid="timer-display"]',

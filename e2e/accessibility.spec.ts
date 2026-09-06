@@ -38,6 +38,13 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
   });
 
   test('@a11y @wcag HomeView - pas de violations', async ({ page }) => {
+    /*
+     * Un scan axe complet sur Firefox, sous plusieurs workers, dépasse les
+     * trente secondes par défaut. `test.slow()` triple le budget : la lenteur
+     * est celle de l'outil de mesure, pas de l'application.
+     */
+    test.slow();
+
     await injectAxe(page);
     try {
       /*
@@ -56,6 +63,13 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
 
   test('@a11y @wcag SettingsView - pas de violations', async ({ page }) => {
     await page.goto(ROUTES.SETTINGS);
+    /*
+     * Un scan axe complet sur Firefox, sous plusieurs workers, dépasse les
+     * trente secondes par défaut. `test.slow()` triple le budget : la lenteur
+     * est celle de l'outil de mesure, pas de l'application.
+     */
+    test.slow();
+
     await injectAxe(page);
 
     try {
@@ -68,6 +82,13 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
   });
 
   test('@a11y @wcag TableView - pas de violations', async ({ page }) => {
+    /*
+     * Un scan axe complet sur Firefox, sous plusieurs workers, dépasse les
+     * trente secondes par défaut. `test.slow()` triple le budget : la lenteur
+     * est celle de l'outil de mesure, pas de l'application.
+     */
+    test.slow();
+
     // Créer quelques contractions d'abord. Testid stable : un filtre par
     // texte (/Début/) matchait aussi la bannière d'accueil, pas le bouton.
     await page.goto(ROUTES.HOME);
@@ -232,7 +253,20 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
 
   test('@a11y focus visible - gestion du focus au clavier', async ({
     page,
+    browserName,
+    isMobile,
   }) => {
+    /*
+     * WebKit émulé en mobile ne déplace pas le focus sur `Tab` : un iPhone n'a
+     * pas de clavier, et Playwright s'aligne dessus. `document.activeElement`
+     * reste `BODY`, et le test échouait systématiquement sur ce seul projet.
+     * Le parcours au clavier est éprouvé sur les quatre autres.
+     */
+    test.skip(
+      browserName === 'webkit' && isMobile,
+      'WebKit mobile ne parcourt pas au clavier'
+    );
+
     await page.goto(ROUTES.HOME);
 
     // Simuler la navigation au clavier

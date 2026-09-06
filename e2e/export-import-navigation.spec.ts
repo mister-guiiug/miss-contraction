@@ -242,7 +242,9 @@ test.describe('Export & Import', () => {
         const now = Date.now();
         localStorage.setItem(
           recordsKey,
-          JSON.stringify([{ id: 'seul', start: now - 900000, end: now - 840000 }])
+          JSON.stringify([
+            { id: 'seul', start: now - 900000, end: now - 840000 },
+          ])
         );
         localStorage.setItem(
           settingsKey,
@@ -290,49 +292,36 @@ test.describe('Navigation & Routing', () => {
     await page.evaluate(() => localStorage.clear());
   });
 
-  test('navigation - accueil', async ({ page }) => {
-    await page.goto('/');
-    const homeView = page.locator('#view-home, [class*="home"]').first();
-    await expect(homeView).toBeVisible();
-  });
+  /*
+   * CHAQUE VUE PORTE SON `data-testid` ; ces tests devinaient des classes.
+   * « accueil » visait `#view-home, [class*="home"]` et `.first()` tombait sur
+   * `<ol class="top-bar-bc-list--home">` — le fil d'Ariane, masqué sur mobile :
+   * échec sur le seul projet `mobile-chrome`. Trois des six se protégeaient en
+   * plus derrière un `if (isVisible())` qui les rendait incapables d'échouer.
+   */
+  const VUES = [
+    { nom: 'accueil', chemin: ROUTES.HOME, vue: SELECTORS.HOME_VIEW },
+    {
+      nom: 'paramètres',
+      chemin: ROUTES.SETTINGS,
+      vue: SELECTORS.SETTINGS_VIEW,
+    },
+    { nom: 'historique', chemin: ROUTES.TABLE, vue: SELECTORS.TABLE_VIEW },
+    {
+      nom: 'maternité',
+      chemin: ROUTES.MATERNITY,
+      vue: SELECTORS.MATERNITY_VIEW,
+    },
+    { nom: 'message', chemin: ROUTES.MESSAGE, vue: SELECTORS.MESSAGE_VIEW },
+    { nom: 'sage-femme', chemin: ROUTES.MIDWIFE, vue: SELECTORS.MIDWIFE_VIEW },
+  ];
 
-  test('navigation - paramètres', async ({ page }) => {
-    await page.goto('/parametres');
-    const settingsView = page.locator('[class*="settings"], form').first();
-    await expect(settingsView).toBeVisible();
-  });
-
-  test('navigation - historique', async ({ page }) => {
-    await page.goto('/historique');
-    const tableView = page.locator('table, .table-page, [role="grid"]').first();
-    if (await tableView.isVisible({ timeout: 500 }).catch(() => false)) {
-      await expect(tableView).toBeVisible();
-    }
-  });
-
-  test('navigation - maternité', async ({ page }) => {
-    await page.goto('/maternite');
-    const maternityView = page.locator('[class*="maternity"]').first();
-    await expect(maternityView).toBeVisible();
-  });
-
-  test('navigation - message', async ({ page }) => {
-    await page.goto('/message');
-    const messageView = page.locator('textarea, [class*="message"]').first();
-    if (await messageView.isVisible({ timeout: 500 }).catch(() => false)) {
-      await expect(messageView).toBeVisible();
-    }
-  });
-
-  test('navigation - sage-femme', async ({ page }) => {
-    await page.goto('/sage-femme');
-    const midwifeView = page
-      .locator('[class*="midwife"], [class*="sage"]')
-      .first();
-    if (await midwifeView.isVisible({ timeout: 500 }).catch(() => false)) {
-      await expect(midwifeView).toBeVisible();
-    }
-  });
+  for (const { nom, chemin, vue } of VUES) {
+    test(`navigation - ${nom}`, async ({ page }) => {
+      await page.goto(chemin);
+      await expect(page.locator(vue)).toBeVisible();
+    });
+  }
 
   /*
    * `/settings` N'EST PAS UNE REDIRECTION, c'est un ALIAS. `AppRouter` déclare
