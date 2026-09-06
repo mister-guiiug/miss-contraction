@@ -16,6 +16,7 @@
  */
 import { test, expect, type Page } from '@playwright/test';
 import { ROUTES, TIMEOUTS } from './config';
+import { zonesVolatiles } from './helpers';
 
 /**
  * ── LES POLICES DISTANTES SONT COUPÉES POUR LES CAPTURES ─────────────────────
@@ -42,6 +43,34 @@ async function couperPolicesDistantes(page: Page) {
 test.beforeEach(async ({ page }) => {
   await couperPolicesDistantes(page);
 });
+
+/*
+ * DES DONNÉES SEMÉES, PAS CHRONOMÉTRÉES. Ces deux captures créaient leurs
+ * contractions en cliquant : leur durée était le temps réel écoulé entre deux
+ * clics, différent à chaque exécution et d'un navigateur à l'autre. Les
+ * références ne se reproduisaient donc pas — quatre échecs sur firefox et
+ * webkit, sans qu'une ligne de l'application ait bougé.
+ *
+ * Les instants restent relatifs à maintenant : la colonne « Début » et les
+ * heures de la timeline sont masquées par `zonesVolatiles`.
+ */
+async function semerContractions(page: Page, count: number) {
+  const now = Date.now();
+  const records = Array.from({ length: count }, (_, i) => ({
+    id: `v${i}`,
+    start: now - (count - i) * 300000,
+    end: now - (count - i) * 300000 + 60000,
+    intensity: (i % 5) + 1,
+  }));
+  await page.evaluate(
+    ([key, recs]) => {
+      localStorage.setItem(key, JSON.stringify(recs));
+    },
+    ['mc_contractions_v1', records] as [string, typeof records]
+  );
+  await page.reload();
+  await page.waitForLoadState('networkidle');
+}
 
 test.describe('Snapshots Visuels - Régression Design', () => {
   test.beforeEach(async ({ page }) => {
@@ -71,23 +100,10 @@ test.describe('Snapshots Visuels - Régression Design', () => {
   });
 
   test('@visual HomeView - avec contractions', async ({ page }) => {
-    // Créer quelques contractions
-    const startBtn = page
-      .locator('button')
-      .filter({ hasText: /Début|Start/ })
-      .first();
-    for (let i = 0; i < 2; i++) {
-      await startBtn.click();
-      await page.waitForTimeout(200);
-      const stopBtn = page
-        .locator('button')
-        .filter({ hasText: /Fin|Stop/ })
-        .first();
-      await stopBtn.click();
-      await page.waitForTimeout(300);
-    }
+    await semerContractions(page, 2);
 
     await expect(page).toHaveScreenshot('home-view-with-contractions.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 150,
     });
   });
@@ -98,6 +114,7 @@ test.describe('Snapshots Visuels - Régression Design', () => {
     await page.evaluate(() => document.fonts.ready);
 
     await expect(page).toHaveScreenshot('settings-view.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 100,
     });
   });
@@ -108,39 +125,21 @@ test.describe('Snapshots Visuels - Régression Design', () => {
     await page.evaluate(() => document.fonts.ready);
 
     await expect(page).toHaveScreenshot('table-view-empty.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 100,
     });
   });
 
   test('@visual TableView - avec données', async ({ page }) => {
-    // Créer quelques contractions
     await page.goto(ROUTES.HOME);
-    const startBtn = page
-      .locator('button')
-      .filter({ hasText: /Début|Start/ })
-      .first();
-    for (let i = 0; i < 3; i++) {
-      await startBtn.click();
-      await page.waitForTimeout(200);
-      const stopBtn = page
-        .locator('button')
-        .filter({ hasText: /Fin|Stop/ })
-        .first();
-      await stopBtn.click();
-      await page.waitForTimeout(300);
-    }
+    await semerContractions(page, 3);
 
     await page.goto(ROUTES.TABLE);
     await page.waitForLoadState('networkidle');
     await page.evaluate(() => document.fonts.ready);
 
-    /*
-     * La colonne « Début » affiche l'heure réelle d'enregistrement : elle
-     * change à chaque exécution. On la masque plutôt que d'élargir la
-     * tolérance, qui finirait par laisser passer de vraies régressions.
-     */
     await expect(page).toHaveScreenshot('table-view-with-data.png', {
-      mask: [page.locator('[data-testid="table-cell-date"]')],
+      mask: zonesVolatiles(page),
       maxDiffPixels: 150,
     });
   });
@@ -151,6 +150,7 @@ test.describe('Snapshots Visuels - Régression Design', () => {
     await page.evaluate(() => document.fonts.ready);
 
     await expect(page).toHaveScreenshot('maternity-view.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 100,
     });
   });
@@ -161,6 +161,7 @@ test.describe('Snapshots Visuels - Régression Design', () => {
     await page.evaluate(() => document.fonts.ready);
 
     await expect(page).toHaveScreenshot('message-view.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 100,
     });
   });
@@ -175,6 +176,7 @@ test.describe('Snapshots Visuels - Régression Design', () => {
     await expect(startBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
 
     await expect(page).toHaveScreenshot('home-view-mobile.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 100,
     });
   });
@@ -186,6 +188,7 @@ test.describe('Snapshots Visuels - Régression Design', () => {
     await page.evaluate(() => document.fonts.ready);
 
     await expect(page).toHaveScreenshot('settings-view-mobile.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 100,
     });
   });
@@ -197,6 +200,7 @@ test.describe('Snapshots Visuels - Régression Design', () => {
     });
 
     await expect(page).toHaveScreenshot('home-view-dark.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 100,
     });
   });
@@ -210,6 +214,7 @@ test.describe('Snapshots Visuels - Régression Design', () => {
     });
 
     await expect(page).toHaveScreenshot('home-view-high-contrast.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 120,
     });
   });
@@ -221,6 +226,7 @@ test.describe('Snapshots Visuels - Régression Design', () => {
     });
 
     await expect(page).toHaveScreenshot('home-view-large-text.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 120,
     });
   });
@@ -235,6 +241,7 @@ test.describe('Snapshots Visuels - Régression Design', () => {
 
     // État initial (empty)
     await expect(page).toHaveScreenshot('badge-state-empty.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 50,
     });
 
@@ -254,6 +261,7 @@ test.describe('Snapshots Visuels - Régression Design', () => {
     if (state !== 'empty') {
       await expect(page)
         .toHaveScreenshot(`badge-state-${state}.png`, {
+          mask: zonesVolatiles(page),
           maxDiffPixels: 50,
         })
         .catch(() => {
@@ -285,6 +293,7 @@ test.describe('Snapshots Responsif - Breakpoints', () => {
     await expect(startBtn).toBeVisible({ timeout: TIMEOUTS.ELEMENT_READY });
 
     await expect(page).toHaveScreenshot('responsive-320.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 150,
     });
   });
@@ -296,6 +305,7 @@ test.describe('Snapshots Responsif - Breakpoints', () => {
     await page.evaluate(() => document.fonts.ready);
 
     await expect(page).toHaveScreenshot('responsive-768.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 150,
     });
   });
@@ -307,6 +317,7 @@ test.describe('Snapshots Responsif - Breakpoints', () => {
     await page.evaluate(() => document.fonts.ready);
 
     await expect(page).toHaveScreenshot('responsive-1280.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 150,
     });
   });
@@ -318,6 +329,7 @@ test.describe('Snapshots Responsif - Breakpoints', () => {
     await page.evaluate(() => document.fonts.ready);
 
     await expect(page).toHaveScreenshot('responsive-1920.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 150,
     });
   });

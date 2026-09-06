@@ -7,6 +7,7 @@
 import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { ROUTES } from './config';
+import { zonesVolatiles } from './helpers';
 
 // Tous les viewports à tester
 const VIEWPORTS = [
@@ -82,6 +83,7 @@ for (const viewport of VIEWPORTS) {
       await clearAndLoad(page, ROUTES.HOME);
 
       await expect(page).toHaveScreenshot(`home-empty-${viewport.name}.png`, {
+        mask: zonesVolatiles(page),
         maxDiffPixels: 200,
       });
     });
@@ -96,6 +98,7 @@ for (const viewport of VIEWPORTS) {
       await expect(page).toHaveScreenshot(
         `home-with-data-${viewport.name}.png`,
         {
+          mask: zonesVolatiles(page),
           maxDiffPixels: 200,
         }
       );
@@ -105,6 +108,7 @@ for (const viewport of VIEWPORTS) {
       await clearAndLoad(page, ROUTES.SETTINGS);
 
       await expect(page).toHaveScreenshot(`settings-${viewport.name}.png`, {
+        mask: zonesVolatiles(page),
         maxDiffPixels: 200,
       });
     });
@@ -113,6 +117,7 @@ for (const viewport of VIEWPORTS) {
       await clearAndLoad(page, ROUTES.TABLE);
 
       await expect(page).toHaveScreenshot(`table-empty-${viewport.name}.png`, {
+        mask: zonesVolatiles(page),
         maxDiffPixels: 200,
       });
     });
@@ -125,6 +130,7 @@ for (const viewport of VIEWPORTS) {
       await page.waitForLoadState('networkidle');
 
       await expect(page).toHaveScreenshot(`table-data-${viewport.name}.png`, {
+        mask: zonesVolatiles(page),
         maxDiffPixels: 200,
       });
     });
@@ -133,6 +139,7 @@ for (const viewport of VIEWPORTS) {
       await clearAndLoad(page, ROUTES.MATERNITY);
 
       await expect(page).toHaveScreenshot(`maternity-${viewport.name}.png`, {
+        mask: zonesVolatiles(page),
         maxDiffPixels: 200,
       });
     });
@@ -141,6 +148,7 @@ for (const viewport of VIEWPORTS) {
       await clearAndLoad(page, ROUTES.MESSAGE);
 
       await expect(page).toHaveScreenshot(`message-${viewport.name}.png`, {
+        mask: zonesVolatiles(page),
         maxDiffPixels: 200,
       });
     });
@@ -159,6 +167,7 @@ test.describe('Régression visuelle - Thèmes', () => {
     await page.waitForLoadState('networkidle');
 
     await expect(page).toHaveScreenshot('home-theme-light.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 150,
     });
   });
@@ -176,6 +185,7 @@ test.describe('Régression visuelle - Thèmes', () => {
     await darkPage.waitForLoadState('networkidle');
 
     await expect(darkPage).toHaveScreenshot('home-theme-dark.png', {
+      mask: zonesVolatiles(darkPage),
       maxDiffPixels: 150,
     });
 
@@ -196,6 +206,7 @@ test.describe('Régression visuelle - Thèmes', () => {
     await page.waitForLoadState('networkidle');
 
     await expect(page).toHaveScreenshot('home-large-mode.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 200,
     });
   });
@@ -223,6 +234,7 @@ test.describe('Régression visuelle - États UI', () => {
     });
 
     await expect(page).toHaveScreenshot('home-timer-active.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 300, // Plus large car certains éléments animés
     });
 
@@ -242,7 +254,10 @@ test.describe('Régression visuelle - États UI', () => {
 
     await expect(
       page.locator('[data-testid="history-items"]')
-    ).toHaveScreenshot('history-list-5items.png', { maxDiffPixels: 150 });
+    ).toHaveScreenshot('history-list-5items.png', {
+      mask: zonesVolatiles(page),
+      maxDiffPixels: 150,
+    });
   });
 
   test('@visual stats section avec données', async ({ page }) => {
@@ -256,6 +271,7 @@ test.describe('Régression visuelle - États UI', () => {
     await expect(statsSection).toBeVisible();
 
     await expect(statsSection).toHaveScreenshot('stats-section-8items.png', {
+      mask: zonesVolatiles(page),
       maxDiffPixels: 150,
     });
   });
@@ -280,7 +296,10 @@ test.describe('Régression visuelle - États UI', () => {
 
     await expect(
       page.locator('[data-testid="settings-view"]')
-    ).toHaveScreenshot('settings-filled.png', { maxDiffPixels: 150 });
+    ).toHaveScreenshot('settings-filled.png', {
+      mask: zonesVolatiles(page),
+      maxDiffPixels: 150,
+    });
   });
 
   test('@visual maternité configurée', async ({ page }) => {
@@ -300,6 +319,9 @@ test.describe('Régression visuelle - États UI', () => {
 
     await expect(
       page.locator('[data-testid="maternity-view"]')
-    ).toHaveScreenshot('maternity-configured.png', { maxDiffPixels: 150 });
+    ).toHaveScreenshot('maternity-configured.png', {
+      mask: zonesVolatiles(page),
+      maxDiffPixels: 150,
+    });
   });
 });
