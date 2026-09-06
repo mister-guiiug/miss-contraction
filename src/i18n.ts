@@ -155,6 +155,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'empty.title': 'Prête pour suivre vos contractions ?',
     'empty.text':
       "Appuyez sur le bouton Début de contraction quand vous ressentez la première contraction. L'application calcule automatiquement les intervalles et durées.",
+    'empty.maternityNumber': 'Numéro de la maternité',
     'empty.configure': 'Configurer les alertes',
     'empty.checklist': 'Valise maternité',
 
@@ -207,8 +208,12 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'maternity.number': 'Numéro',
     'maternity.readonly': 'Lecture seule',
     'maternity.call': 'Appeler {destName}',
-    'maternity.noNumber':
-      'Aucun numéro enregistré. Indiquez-le dans les paramètres.',
+    'maternity.noNumberInline':
+      'Aucun numéro enregistré. Ajoutez-le maintenant : il sera prêt le jour venu.',
+    'maternity.numberPlaceholder': 'ex. 0123456789',
+    'maternity.saveNumber': 'Enregistrer le numéro',
+    'maternity.numberInvalid': 'Indiquez un numéro de téléphone.',
+    'maternity.moreInSettings': 'Nom et adresse se règlent dans les',
     'maternity.address': 'Adresse',
     'maternity.noAddress':
       'Aucune adresse enregistrée. Indiquez-la dans les paramètres.',
@@ -444,6 +449,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'empty.title': 'Ready to track your contractions?',
     'empty.text':
       'Press Start contraction when the first contraction begins. The app automatically computes intervals and durations.',
+    'empty.maternityNumber': 'Maternity phone number',
     'empty.configure': 'Configure alerts',
     'empty.checklist': 'Hospital bag',
 
@@ -496,7 +502,12 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'maternity.number': 'Phone number',
     'maternity.readonly': 'Read-only',
     'maternity.call': 'Call {destName}',
-    'maternity.noNumber': 'No phone number saved. Add it in settings.',
+    'maternity.noNumberInline':
+      'No phone number saved. Add it now — it will be ready when the day comes.',
+    'maternity.numberPlaceholder': 'e.g. 0123456789',
+    'maternity.saveNumber': 'Save number',
+    'maternity.numberInvalid': 'Enter a phone number.',
+    'maternity.moreInSettings': 'Name and address are set in',
     'maternity.address': 'Address',
     'maternity.noAddress': 'No address saved. Add it in settings.',
     'maternity.maps': 'Route in Maps',

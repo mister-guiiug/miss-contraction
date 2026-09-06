@@ -73,6 +73,17 @@ const Illustration = (
 
 export function EmptyState() {
   const language = useAppStore(state => state.settings.language);
+  const maternityPhone = useAppStore(state => state.settings.maternityPhone);
+
+  /*
+   * Tant que le numéro manque, il passe devant tout le reste.
+   *
+   * C'est le seul écran que l'application montre avant le travail, et la
+   * pastille téléphone — son contrôle le plus visible — ne mène à rien sans
+   * lui. Le proposer ici, c'est le demander au moment où on a le temps d'y
+   * répondre ; une fois enregistré, la proposition disparaît.
+   */
+  const sansNumero = maternityPhone.trim().length === 0;
 
   return (
     <DwcEmptyState
@@ -82,6 +93,15 @@ export function EmptyState() {
       description={t(language, 'empty.text')}
       action={
         <>
+          {sansNumero && (
+            <Link
+              to="/maternite"
+              className="btn btn-primary btn-small"
+              data-testid="empty-maternity-link"
+            >
+              {t(language, 'empty.maternityNumber')}
+            </Link>
+          )}
           <Link to="/parametres" className="btn btn-secondary btn-small">
             {t(language, 'empty.configure')}
           </Link>

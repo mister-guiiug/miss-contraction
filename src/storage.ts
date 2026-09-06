@@ -248,7 +248,14 @@ export function saveSettings(s: AppSettings): void {
   localStorage.setItem(KEY_SETTINGS, JSON.stringify(s));
 }
 
-function sanitizePhone(s: string): string {
+/**
+ * Ne garde que ce qui se compose : chiffres et `+`.
+ *
+ * Exportée parce que l'écran « Maternité » enregistre lui-même le numéro
+ * quand il manque. Deux nettoyages écrits séparément finiraient par diverger,
+ * et c'est le numéro qu'on appelle en urgence.
+ */
+export function sanitizePhone(s: string): string {
   return s.replace(/[^\d+]/g, '').slice(0, 20);
 }
 

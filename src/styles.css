@@ -1118,12 +1118,6 @@ body {
   }
 }
 
-.field--wide input,
-.field--wide select {
-  max-width: 100%;
-  width: 100%;
-}
-
 .settings-intro--tight {
   margin-bottom: 0.65rem;
 }
@@ -1346,6 +1340,37 @@ body {
 }
 
 .maternity-page-phone-placeholder a {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Saisie du numéro, quand il manque encore. */
+.maternity-page-phone-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.maternity-page-phone-form .field {
+  margin: 0;
+}
+
+.maternity-page-phone-error {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--danger);
+}
+
+.maternity-page-phone-hint {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.maternity-page-phone-hint a {
   color: var(--primary);
   font-weight: 600;
 }
@@ -2449,6 +2474,19 @@ a.btn {
   background: var(--surface-input);
   color: var(--text);
   max-width: 12rem;
+}
+
+/*
+ * `field--wide` était déclaré AVANT `.field input`, à même spécificité : la
+ * seconde règle gagnait, et le modificateur ne servait à rien. Les `<select>`
+ * et `<textarea>` s'élargissaient bien — eux n'ont pas de plafond — mais les
+ * deux seuls `<input>` concernés restaient à 12 rem : le nom et le numéro de
+ * la maternité.
+ */
+.field--wide input,
+.field--wide select {
+  max-width: 100%;
+  width: 100%;
 }
 
 .notify-status {
