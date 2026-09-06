@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react';
 import { INTENSITY_DATA } from '../../../utils/intensity';
+import { useAppStore } from '../../store/useAppStore';
+import { interpolate, t } from '../../../i18n';
 
 interface IntensityPickerProps {
   value?: number;
@@ -19,6 +21,7 @@ export function IntensityPicker({
   compact = false,
 }: IntensityPickerProps) {
   const [hovered, setHovered] = useState<number | null>(null);
+  const language = useAppStore(state => state.settings.language);
 
   const handleSelect = useCallback(
     (level: number) => {
@@ -56,7 +59,10 @@ export function IntensityPicker({
                   '--intensity-color': intensity.color,
                 } as React.CSSProperties
               }
-              aria-label={`Intensité ${intensity.level} : ${intensity.label}`}
+              aria-label={interpolate(t(language, 'intensity.aria'), {
+                level: intensity.level,
+                label: t(language, `intensity.${intensity.level}.label`),
+              })}
               aria-pressed={isSelected}
             >
               <span
@@ -68,7 +74,8 @@ export function IntensityPicker({
               <span className="intensity-option-label">{intensity.level}</span>
               {isHovered && !compact && (
                 <span className="intensity-option-tooltip">
-                  {intensity.label} — {intensity.description}
+                  {t(language, `intensity.${intensity.level}.label`)} —{' '}
+                  {t(language, `intensity.${intensity.level}.desc`)}
                 </span>
               )}
             </button>
@@ -78,7 +85,9 @@ export function IntensityPicker({
 
       {/* Légende de l'échelle */}
       <div className="intensity-legend">
-        <span className="intensity-legend-start">Léger</span>
+        <span className="intensity-legend-start">
+          {t(language, 'intensity.legendStart')}
+        </span>
         <svg
           className="intensity-legend-bar"
           viewBox="0 0 200 8"
@@ -101,7 +110,9 @@ export function IntensityPicker({
           </defs>
           <rect width="200" height="8" fill="url(#intensityGradient)" rx="4" />
         </svg>
-        <span className="intensity-legend-end">Maximum</span>
+        <span className="intensity-legend-end">
+          {t(language, 'intensity.legendEnd')}
+        </span>
       </div>
     </div>
   );

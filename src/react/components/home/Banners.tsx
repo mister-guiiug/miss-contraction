@@ -2,12 +2,14 @@ import { useState, useEffect, useRef } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { useAlerts } from '../../hooks/useAlerts';
 import { KEY_EXPORT_NUDGE_DISMISSED } from '../../../storage';
+import { interpolate, t } from '../../../i18n';
 
 const EXPORT_NUDGE_INTERVAL_MS = 7 * 24 * 60 * 60 * 1000; // 7 jours
 const UNDO_MS = 30_000;
 
 export function Banners() {
   const { records, settings, deleteRecord, setAlertLatch } = useAppStore();
+  const language = settings.language;
   const { showPreAlertBanner, dismissPreAlertBanner } = useAlerts(
     records,
     settings
@@ -118,8 +120,7 @@ export function Banners() {
     return (
       <div className="app-banner app-banner--accent" id="banner-pre-alert">
         <p className="app-banner-text" id="banner-pre-alert-text">
-          Rythme qui se resserre — restez attentive aux consignes de votre
-          sage-femme.
+          {t(language, 'banner.preAlert')}
         </p>
         <button
           type="button"
@@ -127,7 +128,7 @@ export function Banners() {
           id="btn-dismiss-pre"
           onClick={dismissPreAlertBanner}
         >
-          Fermer
+          {t(language, 'banner.close')}
         </button>
       </div>
     );
@@ -138,18 +139,20 @@ export function Banners() {
     return (
       <div className="app-banner app-banner--info banner-undo" id="banner-undo">
         <div className="banner-undo-top">
-          <span className="app-banner-text">Enregistré !</span>
+          <span className="app-banner-text">{t(language, 'banner.saved')}</span>
           <button
             type="button"
             className="btn btn-ghost btn-small"
             id="btn-undo-add"
             onClick={handleUndo}
           >
-            Annuler
+            {t(language, 'banner.undo')}
           </button>
         </div>
         <p style={{ fontSize: '12px', opacity: 0.8, marginTop: '4px' }}>
-          {undoState.remainingTime}s restantes
+          {interpolate(t(language, 'banner.secondsLeft'), {
+            seconds: undoState.remainingTime,
+          })}
         </p>
       </div>
     );
@@ -160,8 +163,7 @@ export function Banners() {
     return (
       <div className="app-banner app-banner--muted" id="banner-export-nudge">
         <span className="app-banner-text">
-          Pensez à exporter une sauvegarde (Partager / Exporter) avant un
-          changement de téléphone.
+          {t(language, 'banner.exportNudge')}
         </span>
         <button
           type="button"
@@ -169,7 +171,7 @@ export function Banners() {
           id="btn-dismiss-export-nudge"
           onClick={dismissExportNudge}
         >
-          Plus tard
+          {t(language, 'banner.later')}
         </button>
       </div>
     );

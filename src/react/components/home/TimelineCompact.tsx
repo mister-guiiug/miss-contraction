@@ -1,13 +1,15 @@
 import { useMemo } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { getDefaultLocale } from '@mister-guiiug/dev-pwa-config/format';
+import { t } from '../../../i18n';
 
 /**
  * Timeline compacte horizontale pour les 5 dernières contractions
  * avec indicateur de tendance (s'accélère / ralentit)
  */
 export function TimelineCompact() {
-  const { records } = useAppStore();
+  const { records, settings } = useAppStore();
+  const language = settings.language;
 
   const { lastFive, trend } = useMemo(() => {
     if (records.length === 0) return { lastFive: [], trend: null };
@@ -64,9 +66,9 @@ export function TimelineCompact() {
   };
 
   const trendLabel = {
-    faster: "S'accélère ↗",
-    slower: 'Ralentit ↘',
-    stable: 'Stable →',
+    faster: t(language, 'timeline.trend.faster'),
+    slower: t(language, 'timeline.trend.slower'),
+    stable: t(language, 'timeline.trend.stable'),
   };
 
   const trendClass = {
@@ -78,7 +80,7 @@ export function TimelineCompact() {
   return (
     <div className="card">
       <div className="section-head">
-        <h3 className="section-title">Dernières contractions</h3>
+        <h3 className="section-title">{t(language, 'timeline.title')}</h3>
         {trend && (
           <span className={`trend-indicator ${trendClass[trend]}`}>
             {trendLabel[trend]}
