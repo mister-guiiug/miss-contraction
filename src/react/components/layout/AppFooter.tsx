@@ -1,8 +1,28 @@
 import { Link } from 'react-router-dom';
 import { AppFooter as SocleFooter } from '@mister-guiiug/dev-pwa-config/react/app-footer';
+import { repoUrl } from '@mister-guiiug/dev-pwa-config/apps-catalog';
+import { currentIssueReportUrl } from '@mister-guiiug/dev-pwa-config/issue-report';
 import { useAppStore } from '../../store/useAppStore';
+import { APP_ID } from '../../../storage';
 import { t } from '../../../i18n';
 import { appVersion } from '../../../appVersion';
+
+/** Le dépôt, lu dans le catalogue de la famille — pas recopié à la main. */
+const REPO_URL = repoUrl(APP_ID);
+
+/**
+ * Le signalement, tel que le socle le compose : `issues/new` du dépôt, gabarit
+ * `bug.yml` prêté par le dépôt `.github` du compte, et les champs `version` et
+ * `environnement` déjà remplis avec ce que la page SAIT et que l'utilisatrice
+ * ne saura jamais dire — version et commit du build, écran courant, navigateur,
+ * système, application installée ou non.
+ *
+ * APPELÉE AU CLIC AUTANT QU'AU RENDU. `currentIssueReportUrl` lit la route
+ * courante ; or le pied de page ne se rend pas à chaque navigation. Sans ce
+ * recalcul, tous les signalements diraient « écran / » — c'est exactement ce
+ * que fait le pied de page du socle, et pour la même raison.
+ */
+const issueUrl = () => currentIssueReportUrl({ repoUrl: REPO_URL });
 
 /**
  * Pied de page de l'app, monté sur `react/app-footer` du socle.
@@ -57,6 +77,34 @@ export function AppFooter() {
             </svg>
             {t(language, 'footer.about')}
           </Link>
+          <span className="footer__sep" aria-hidden="true">
+            ·
+          </span>
+          <a
+            href={issueUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-link footer-link--issues"
+            data-testid="footer-issues-link"
+            onClick={event => {
+              event.currentTarget.href = issueUrl();
+            }}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            </svg>
+            {t(language, 'footer.issues')}
+          </a>
           <span className="footer__sep" aria-hidden="true">
             ·
           </span>
