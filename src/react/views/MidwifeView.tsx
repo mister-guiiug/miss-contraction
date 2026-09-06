@@ -8,7 +8,6 @@ import { useAppStore } from '../store/useAppStore';
 import { downloadMidwifePdf } from '../../midwifePdf';
 import {
   buildMidwifeSummaryText,
-  formatDuration,
   meanContractionDurationMs,
   meanStartIntervalMs,
   midwifeDateTimeFmt as dateTimeFmt,
@@ -18,7 +17,7 @@ import {
 import { findFirstThresholdMatchEndMs } from '../../statsHelpers';
 import { loadRecords } from '../../storage';
 import type { ContractionRecord } from '../../storage';
-import { formatStatsClock } from '../../utils/formatStats';
+import { formatDuration } from '../../utils/formatDuration';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { interpolate, t } from '../../i18n';
 import { getDefaultLocale } from '@mister-guiiug/dev-pwa-config/format';
@@ -220,7 +219,7 @@ export function MidwifeView() {
                       {trv('midwife.statDuration', {
                         value:
                           stats.meanDur != null
-                            ? formatStatsClock(stats.meanDur)
+                            ? formatDuration(stats.meanDur)
                             : '—',
                       })}
                     </li>
@@ -228,7 +227,7 @@ export function MidwifeView() {
                       {trv('midwife.statInterval', {
                         value:
                           stats.meanInterval != null
-                            ? formatStatsClock(stats.meanInterval)
+                            ? formatDuration(stats.meanInterval)
                             : '—',
                       })}
                     </li>

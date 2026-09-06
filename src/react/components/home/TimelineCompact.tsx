@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { getDefaultLocale } from '@mister-guiiug/dev-pwa-config/format';
 import { t } from '../../../i18n';
+import { formatDuration } from '../../../utils/formatDuration';
 
 /**
  * Timeline compacte horizontale pour les 5 dernières contractions
@@ -56,15 +57,6 @@ export function TimelineCompact() {
     });
   };
 
-  const formatDuration = (startMs: number, endMs: number) => {
-    const seconds = Math.floor((endMs - startMs) / 1000);
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return mins > 0
-      ? `${mins}:${secs.toString().padStart(2, '0')}`
-      : `${secs}s`;
-  };
-
   const trendLabel = {
     faster: t(language, 'timeline.trend.faster'),
     slower: t(language, 'timeline.trend.slower'),
@@ -95,7 +87,7 @@ export function TimelineCompact() {
               {formatTime(record.start)}
             </div>
             <div className="timeline-compact-duration">
-              {formatDuration(record.start, record.end)}
+              {formatDuration(record.end - record.start)}
             </div>
             {record.intensity && (
               <div

@@ -8,6 +8,8 @@ import { useAppStore } from '../store/useAppStore';
 import { loadRecords } from '../../storage';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { HistoryList } from '../components/home/HistoryList';
+import { formatDuration } from '../../utils/formatDuration';
+import { formatContractionsPerHour } from '../../utils/formatStats';
 import { t } from '../../i18n';
 import { getDefaultLocale } from '@mister-guiiug/dev-pwa-config/format';
 
@@ -18,22 +20,6 @@ const dateTimeFmt = new Intl.DateTimeFormat(getDefaultLocale(), {
   hour: '2-digit',
   minute: '2-digit',
 });
-
-function formatDuration(ms: number): string {
-  const totalSec = Math.round(ms / 1000);
-  const m = Math.floor(totalSec / 60);
-  const s = totalSec % 60;
-  return `${m}:${s.toString().padStart(2, '0')}`;
-}
-
-function formatContractionsPerHour(meanIntervalMs: number): string {
-  if (meanIntervalMs <= 0 || !Number.isFinite(meanIntervalMs)) return '—';
-  const n = 3600000 / meanIntervalMs;
-  if (!Number.isFinite(n) || n <= 0) return '—';
-  const dec = n >= 12 ? 0 : 1;
-  const s = n.toFixed(dec).replace('.', ',');
-  return `≈ ${s} / h`;
-}
 
 export function TableView() {
   const { records, setRecords, settings } = useAppStore();

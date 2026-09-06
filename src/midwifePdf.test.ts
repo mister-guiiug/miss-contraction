@@ -69,14 +69,18 @@ describe('buildMidwifePdfLines', () => {
     expect(pdfLines).toContain(
       '- Quantité estimée : ~ 12 contraction(s) / h (si le rythme restait constant).'
     );
-    expect(pdfLines).toContain('- Durée moyenne : 01:00 (mm:ss).');
-    expect(pdfLines).toContain(
-      '- Intervalle moyen entre débuts : 05:00 (mm:ss).'
-    );
+    expect(pdfLines).toContain('- Durée moyenne : 60 s.');
+    expect(pdfLines).toContain('- Intervalle moyen entre débuts : 5 min.');
 
+    /*
+     * UN SEUL FORMAT DE DURÉE DANS TOUT LE DOCUMENT. Le résumé mélangeait
+     * `01:00` pour les moyennes et `1:00` pour le détail, et annotait
+     * « (mm:ss) » pour s'expliquer. Il s'écrit désormais dans les unités des
+     * seuils que l'utilisatrice a réglés — « durée ≥ 45 s ».
+     */
     const detail1 = pdfLines.find(l => l.startsWith('1. '));
     expect(detail1).toMatch(
-      /^1\. .+ - durée 1:00 - écart depuis précédente : -$/
+      /^1\. .+ - durée 60 s - écart depuis précédente : -$/
     );
     const detail2 = pdfLines.find(l => l.startsWith('2. '));
     expect(detail2).toContain(' - intensité : 4');
