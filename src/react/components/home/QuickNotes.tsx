@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { t } from '../../../i18n';
+import { noteLabel, type NoteTypeId } from '../../../noteTypes';
 
 interface QuickNotesProps {
   onNoteSelect?: (note: string) => void;
@@ -16,8 +17,7 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
 
   const predefinedNotes = [
     {
-      id: 'waters',
-      label: 'Rupture des eaux',
+      id: 'waters' as NoteTypeId,
       icon: (
         <svg
           viewBox="0 0 24 24"
@@ -31,8 +31,7 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
       ),
     },
     {
-      id: 'shower',
-      label: 'Douche chaude',
+      id: 'shower' as NoteTypeId,
       icon: (
         <svg
           viewBox="0 0 24 24"
@@ -48,8 +47,7 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
       ),
     },
     {
-      id: 'ball',
-      label: 'Ballon de gymnastique',
+      id: 'ball' as NoteTypeId,
       icon: (
         <svg
           viewBox="0 0 24 24"
@@ -65,8 +63,7 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
       ),
     },
     {
-      id: 'medication',
-      label: 'Médicament pris',
+      id: 'medication' as NoteTypeId,
       icon: (
         <svg
           viewBox="0 0 24 24"
@@ -84,8 +81,7 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
       ),
     },
     {
-      id: 'rest',
-      label: 'Pause / Repos',
+      id: 'rest' as NoteTypeId,
       icon: (
         <svg
           viewBox="0 0 24 24"
@@ -122,10 +118,11 @@ export function QuickNotes({ onNoteSelect }: QuickNotesProps) {
           key={note.id}
           type="button"
           className={`note-tag note-tag--${note.id}`}
-          onClick={() => handleNoteClick(note.label)}
+          data-testid={`note-chip-${note.id}`}
+          onClick={() => handleNoteClick(noteLabel(language, note.id))}
         >
           {note.icon}
-          <span>{note.label}</span>
+          <span>{noteLabel(language, note.id)}</span>
         </button>
       ))}
 

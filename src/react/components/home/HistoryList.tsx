@@ -9,6 +9,7 @@ import { formatDateTime } from '../../../utils/formatStats';
 import { formatDuration } from '../../../utils/formatDuration';
 import type { ContractionRecord } from '../../../storage';
 import { t, type AppLanguage } from '../../../i18n';
+import { NOTE_TYPE_IDS, noteLabel } from '../../../noteTypes';
 
 type EditDialogState = {
   record: ContractionRecord | null;
@@ -380,42 +381,28 @@ function EditDialog({
           id="edit-quick-notes"
           data-testid="edit-quick-notes"
         >
-          <button
-            type="button"
-            className="btn btn-ghost btn-tiny"
-            data-note="Balloon"
-            data-testid="quick-note-balloon"
-            onClick={() => addQuickNote(setNote, 'Balloon')}
-          >
-            Balloon
-          </button>
-          <button
-            type="button"
-            className="btn btn-ghost btn-tiny"
-            data-note="Walk"
-            data-testid="quick-note-walk"
-            onClick={() => addQuickNote(setNote, 'Walk')}
-          >
-            Walk
-          </button>
-          <button
-            type="button"
-            className="btn btn-ghost btn-tiny"
-            data-note="Rest"
-            data-testid="quick-note-rest"
-            onClick={() => addQuickNote(setNote, 'Rest')}
-          >
-            Rest
-          </button>
-          <button
-            type="button"
-            className="btn btn-ghost btn-tiny"
-            data-note="Shower"
-            data-testid="quick-note-shower"
-            onClick={() => addQuickNote(setNote, 'Shower')}
-          >
-            Shower
-          </button>
+          {/*
+           * Le même vocabulaire que l'accueil, et traduit. Ces quatre boutons
+           * portaient « Balloon », « Walk », « Rest », « Shower » écrits en
+           * anglais dans le code : le texte partait tel quel dans la note,
+           * puis dans le résumé sage-femme, à côté des libellés français que
+           * l'accueil, lui, enregistrait.
+           */}
+          {NOTE_TYPE_IDS.map(id => {
+            const label = noteLabel(language, id);
+            return (
+              <button
+                key={id}
+                type="button"
+                className="btn btn-ghost btn-tiny"
+                data-note={id}
+                data-testid={`quick-note-${id}`}
+                onClick={() => addQuickNote(setNote, label)}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
 
         <div className="edit-dialog-buttons">

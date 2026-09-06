@@ -194,9 +194,7 @@ export function AboutView() {
             </ul>
             <p>{t(language, 'about.storyEssence')}</p>
             <p>
-              {language === 'fr'
-                ? "Si vous aimez ce projet et souhaitez le soutenir, vous pouvez m'offrir un café via"
-                : 'If you like this project and want to support it, you can buy me a coffee via'}{' '}
+              {t(language, 'about.coffeeText')}{' '}
               <a href={COFFEE_URL} target="_blank" rel="noopener noreferrer">
                 {COFFEE_URL}
               </a>
@@ -239,7 +237,7 @@ export function AboutView() {
             href={REPO_URL}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Voir le code source sur GitHub (nouvel onglet)"
+            aria-label={t(language, 'about.sourceAria')}
           >
             <span className="about-link-card__icon" aria-hidden="true">
               <svg
@@ -273,7 +271,7 @@ export function AboutView() {
             href={COFFEE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Buy me a coffee (nouvel onglet)"
+            aria-label={t(language, 'about.coffeeAria')}
           >
             <span className="about-link-card__icon" aria-hidden="true">
               <IconCoffee />

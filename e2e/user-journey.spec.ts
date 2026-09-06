@@ -5,7 +5,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { ROUTES, TEST_DATA } from './config';
+import { ROUTES, SELECTORS, TEST_DATA } from './config';
 
 test.describe('Parcours - Première utilisation', () => {
   test.beforeEach(async ({ page }) => {
@@ -130,13 +130,18 @@ test.describe('Parcours - Gestion des notes et intensité', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  test('@journey ajouter une note rapide via balloon', async ({ page }) => {
-    // Sélectionner une note rapide avant la contraction
-    const walkBtn = page.locator('[data-testid="quick-note-walk"]');
-    if (await walkBtn.isVisible()) {
-      await walkBtn.click();
-      await page.waitForTimeout(200);
-    }
+  test('@journey ajouter une note rapide via une pastille', async ({
+    page,
+  }) => {
+    /*
+     * Le harnais visait `quick-note-walk` derrière un `if (isVisible())` : ce
+     * testid n'a jamais été posé sur l'accueil, la branche ne s'exécutait
+     * jamais, et le test passait en n'ayant rien noté.
+     */
+    const chip = page.locator(SELECTORS.NOTE_CHIP_BALL);
+    await expect(chip).toBeVisible();
+    await chip.click();
+    await page.waitForTimeout(200);
 
     const btn = page.locator('[data-testid="toggle-contraction-btn"]');
     await btn.click();
@@ -144,13 +149,15 @@ test.describe('Parcours - Gestion des notes et intensité', () => {
     await btn.click();
     await page.waitForTimeout(300);
 
-    // La contraction enregistrée doit avoir une note
+    // La contraction enregistrée doit avoir une note — le test l'annonçait
+    // sans jamais la vérifier.
     const records = await page.evaluate(() => {
       const raw = localStorage.getItem('mc_contractions_v1');
       return raw ? JSON.parse(raw) : [];
     });
 
     expect(records.length).toBe(1);
+    expect(records[0].note).toBeTruthy();
   });
 
   test('@journey modifier une contraction existante', async ({ page }) => {

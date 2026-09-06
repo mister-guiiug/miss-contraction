@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { INTENSITY_DATA } from './utils/intensity';
+import { MESSAGES, t } from './i18n';
 
 /*
  * On lit la feuille depuis le disque, et pas par `import './styles.css?raw'` :
@@ -127,8 +128,24 @@ describe("échelle d'intensité", () => {
       const bg = token(`intensity-${entry.level}-bg`);
       expect(
         contrast(ink, bg),
-        `niveau ${entry.level} (${entry.label}) : ${ink} sur ${bg}`
+        `niveau ${entry.level} (${t('fr', `intensity.${entry.level}.label`)}) : ${ink} sur ${bg}`
       ).toBeGreaterThanOrEqual(AA);
+    }
+  });
+
+  /*
+   * Les libellés de l'échelle ont quitté `intensity.ts` pour le dictionnaire :
+   * ils y étaient écrits en français, et l'échelle restait donc française dans
+   * les sept langues. Ce test empêche qu'un niveau reparte sans son libellé.
+   */
+  it('a son libellé et sa description dans les deux langues complètes', () => {
+    for (const { level } of INTENSITY_DATA) {
+      for (const langue of ['fr', 'en'] as const) {
+        for (const suffixe of ['label', 'desc']) {
+          const cle = `intensity.${level}.${suffixe}`;
+          expect(MESSAGES[langue][cle], `${langue} · ${cle}`).toBeTruthy();
+        }
+      }
     }
   });
 

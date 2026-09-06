@@ -14,40 +14,34 @@
  *
  * `textColor` a disparu : personne ne la lisait, et l'encre des pastilles est
  * désormais `--intensity-ink`, posée par le même bloc que les fonds.
+ *
+ * `label` et `description` ont suivi, vers `i18n` : ils étaient écrits en
+ * français ici, et l'échelle restait donc française dans les sept langues —
+ * jusque dans les `aria-label` du sélecteur.
  */
 export const INTENSITY_DATA = [
   {
     level: 1,
-    label: 'Léger',
-    description: 'Peu perceptible',
     color: 'var(--intensity-1-bg)',
     emoji: '😊',
   },
   {
     level: 2,
-    label: 'Modéré',
-    description: 'Gérable',
     color: 'var(--intensity-2-bg)',
     emoji: '🙂',
   },
   {
     level: 3,
-    label: 'Soutenu',
-    description: 'Requiert de la concentration',
     color: 'var(--intensity-3-bg)',
     emoji: '😐',
   },
   {
     level: 4,
-    label: 'Fort',
-    description: 'Difficile à supporter',
     color: 'var(--intensity-4-bg)',
     emoji: '😣',
   },
   {
     level: 5,
-    label: 'Très fort',
-    description: 'Maximum',
     color: 'var(--intensity-5-bg)',
     emoji: '😫',
   },

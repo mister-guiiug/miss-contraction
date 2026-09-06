@@ -30,7 +30,7 @@ export function MaternityView() {
   const hasPhone = phone.length > 0;
   const hasLabel = label.length > 0;
   const hasAddress = addr.length > 0;
-  const destName = hasLabel ? label : 'la maternité';
+  const destName = hasLabel ? label : t(language, 'maternity.defaultName');
   const mapsDest = hasLabel ? `${label} - ${addr}` : addr;
   const mapsHref = hasAddress
     ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(addr)}`
@@ -223,7 +223,9 @@ export function MaternityView() {
               data-testid="maternity-maps-btn"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`Ouvrir Google Maps : itinéraire vers ${mapsDest}`}
+              aria-label={interpolate(t(language, 'maternity.mapsAria'), {
+                dest: mapsDest,
+              })}
             >
               <span className="maternity-page-maps-icon" aria-hidden="true">
                 <svg

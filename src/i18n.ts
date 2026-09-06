@@ -80,6 +80,10 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'about.sourceTitle': 'Code source',
     'about.sourceText':
       'Projet open-source sous licence MIT, hébergé sur GitHub.',
+    'about.sourceAria': 'Voir le code source sur GitHub (nouvel onglet)',
+    'about.coffeeAria': 'Buy me a coffee (nouvel onglet)',
+    'about.coffeeText':
+      'Si vous aimez ce projet et souhaitez le soutenir, vous pouvez m’offrir un café via',
     'about.supportTitle': 'Soutenir le projet',
     'about.otherAppsTitle': 'Nos autres applications',
     'about.otherAppsLead':
@@ -160,6 +164,40 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'empty.checklist': 'Valise maternité',
 
     'quicknotes.custom': 'Personnalisée',
+    'note.waters': 'Rupture des eaux',
+    'note.shower': 'Douche chaude',
+    'note.ball': 'Ballon de gymnastique',
+    'note.medication': 'Médicament pris',
+    'note.rest': 'Pause / Repos',
+
+    'intensity.aria': 'Intensité {level} : {label}',
+    'intensity.legendStart': 'Léger',
+    'intensity.legendEnd': 'Maximum',
+    'intensity.1.label': 'Léger',
+    'intensity.1.desc': 'Peu perceptible',
+    'intensity.2.label': 'Modéré',
+    'intensity.2.desc': 'Gérable',
+    'intensity.3.label': 'Soutenu',
+    'intensity.3.desc': 'Requiert de la concentration',
+    'intensity.4.label': 'Fort',
+    'intensity.4.desc': 'Difficile à supporter',
+    'intensity.5.label': 'Très fort',
+    'intensity.5.desc': 'Maximum',
+
+    'timeline.title': 'Dernières contractions',
+    'timeline.trend.faster': 'S’accélère ↗',
+    'timeline.trend.slower': 'Ralentit ↘',
+    'timeline.trend.stable': 'Stable →',
+
+    'banner.preAlert':
+      'Rythme qui se resserre — restez attentive aux consignes de votre sage-femme.',
+    'banner.close': 'Fermer',
+    'banner.saved': 'Enregistré !',
+    'banner.undo': 'Annuler',
+    'banner.secondsLeft': '{seconds} s restantes',
+    'banner.exportNudge':
+      'Pensez à exporter une sauvegarde (Partager / Exporter) avant un changement de téléphone.',
+    'banner.later': 'Plus tard',
     'quicknotes.placeholder': 'Note personnelle...',
 
     'history.title': 'Historique',
@@ -223,6 +261,8 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'maternity.mapsHint':
       "Ouvre Google Maps dans un nouvel onglet pour un itinéraire vers l'adresse ci-dessus.",
     'maternity.settings': 'Paramètres',
+    'maternity.defaultName': 'la maternité',
+    'maternity.mapsAria': 'Ouvrir Google Maps : itinéraire vers {dest}',
 
     'message.title': 'Message à la maternité',
     'message.lead':
@@ -378,6 +418,10 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'about.hostedOn': 'Hosted on',
     'about.sourceTitle': 'Source code',
     'about.sourceText': 'Open-source MIT project hosted on GitHub.',
+    'about.sourceAria': 'View the source code on GitHub (new tab)',
+    'about.coffeeAria': 'Buy me a coffee (new tab)',
+    'about.coffeeText':
+      'If you like this project and want to support it, you can buy me a coffee via',
     'about.supportTitle': 'Support the project',
     'about.otherAppsTitle': 'Our other apps',
     'about.otherAppsLead':
@@ -456,6 +500,39 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'empty.checklist': 'Hospital bag',
 
     'quicknotes.custom': 'Custom',
+    'note.waters': 'Waters broke',
+    'note.shower': 'Warm shower',
+    'note.ball': 'Birthing ball',
+    'note.medication': 'Medication taken',
+    'note.rest': 'Break / Rest',
+
+    'intensity.aria': 'Intensity {level}: {label}',
+    'intensity.legendStart': 'Light',
+    'intensity.legendEnd': 'Maximum',
+    'intensity.1.label': 'Light',
+    'intensity.1.desc': 'Barely noticeable',
+    'intensity.2.label': 'Moderate',
+    'intensity.2.desc': 'Manageable',
+    'intensity.3.label': 'Sustained',
+    'intensity.3.desc': 'Requires focus',
+    'intensity.4.label': 'Strong',
+    'intensity.4.desc': 'Hard to bear',
+    'intensity.5.label': 'Very strong',
+    'intensity.5.desc': 'Maximum',
+
+    'timeline.title': 'Latest contractions',
+    'timeline.trend.faster': 'Speeding up ↗',
+    'timeline.trend.slower': 'Slowing down ↘',
+    'timeline.trend.stable': 'Steady →',
+
+    'banner.preAlert': 'Rhythm is tightening — follow your midwife’s guidance.',
+    'banner.close': 'Close',
+    'banner.saved': 'Saved!',
+    'banner.undo': 'Undo',
+    'banner.secondsLeft': '{seconds}s left',
+    'banner.exportNudge':
+      'Remember to export a backup (Share / Export) before changing phones.',
+    'banner.later': 'Later',
     'quicknotes.placeholder': 'Personal note...',
 
     'history.title': 'History',
@@ -518,6 +595,8 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'maternity.mapsHint':
       'Opens Google Maps in a new tab for directions to the address above.',
     'maternity.settings': 'Settings',
+    'maternity.defaultName': 'the maternity ward',
+    'maternity.mapsAria': 'Open Google Maps: directions to {dest}',
 
     'message.title': 'Maternity message',
     'message.lead':

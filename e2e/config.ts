@@ -65,6 +65,17 @@ export const SELECTORS = {
   THRESHOLD_BADGE: '[data-testid="threshold-badge"]',
 
   /*
+   * Les notes rapides existent à deux endroits et tirent désormais le MÊME
+   * vocabulaire de `src/noteTypes.ts` : les pastilles de l'accueil
+   * (`note-chip-*`) et les raccourcis du dialogue d'édition (`quick-note-*`).
+   * Le harnais visait `quick-note-walk`, qui n'a jamais été posé sur
+   * l'accueil — et que le dialogue n'affiche plus.
+   */
+  NOTE_CHIP_BALL: '[data-testid="note-chip-ball"]',
+  NOTE_CHIP_REST: '[data-testid="note-chip-rest"]',
+  EDIT_QUICK_NOTE_BALL: '[data-testid="quick-note-ball"]',
+
+  /*
    * L'HISTORIQUE ÉDITABLE VIT SUR `/historique`, PLUS SUR L'ACCUEIL. Il y
    * rejouait une troisième fois des données déjà affichées au-dessus.
    */
