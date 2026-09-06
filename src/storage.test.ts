@@ -8,6 +8,7 @@ import {
   saveActiveStart,
   ACTIVE_START_MAX_AGE_MS,
   KEY_ACTIVE_START,
+  loadSnapshot,
 } from './storage';
 import type { ContractionRecord } from './storage';
 
@@ -173,10 +174,12 @@ describe('loadActiveStart / saveActiveStart', () => {
     expect(loadActiveStart(NOW)).toBeNull();
   });
 
-  it('efface la clé quand la contraction se termine', () => {
+  it('efface l’horodatage quand la contraction se termine', () => {
     saveActiveStart(NOW - 20_000);
     saveActiveStart(null);
-    expect(localStorage.getItem(KEY_ACTIVE_START)).toBeNull();
+    // Depuis le magasin versionné, la valeur vit dans l'instantané : la
+    // chercher sous `mc_active_start_v1` rendrait `null` sans rien prouver.
+    expect(loadSnapshot().activeStart).toBeNull();
     expect(loadActiveStart(NOW)).toBeNull();
   });
 });

@@ -6,7 +6,19 @@
 
 import { test, expect } from '@playwright/test';
 import { ROUTES, TEST_DATA } from './config';
+import { readStoredRecords, readStoredSettings } from './helpers';
 
+/*
+ * ON SÈME LA FORME HÉRITÉE, ON RELIT L'INSTANTANÉ.
+ *
+ * Ces deux clés ne sont plus celles que l'application écrit : depuis le
+ * magasin versionné, elle range tout sous `mc_app`, et la migration 0 → 1
+ * relit ces cinq clés-ci une fois avant de les retirer. Les semer reste donc
+ * la bonne façon de préparer un test — c'est ce qui dort sur les téléphones,
+ * et le rechargement éprouve la migration — mais les RELIRE après une écriture
+ * de l'application ne prouverait plus rien : `readStoredRecords` et
+ * `readStoredSettings` vont chercher l'instantané.
+ */
 const RECORDS_KEY = 'mc_contractions_v1';
 const SETTINGS_KEY = 'mc_settings_v1';
 
@@ -29,14 +41,9 @@ test.describe('LocalStorage - Persistance des contractions', () => {
     await btn.click();
     await page.waitForTimeout(300);
 
-    // Vérifier que localStorage contient les données
-    const records = await page.evaluate(key => {
-      const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : null;
-    }, RECORDS_KEY);
+    // Vérifier que l'instantané contient les données
+    const records = await readStoredRecords(page);
 
-    expect(records).not.toBeNull();
-    expect(Array.isArray(records)).toBe(true);
     expect(records.length).toBeGreaterThanOrEqual(1);
     expect(records[0]).toMatchObject({
       id: expect.any(String),
@@ -48,13 +55,10 @@ test.describe('LocalStorage - Persistance des contractions', () => {
     await page.reload();
     await page.waitForLoadState('networkidle');
 
-    const afterReload = await page.evaluate(key => {
-      const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : null;
-    }, RECORDS_KEY);
+    const afterReload = await readStoredRecords(page);
 
     expect(afterReload).toHaveLength(records.length);
-    expect(afterReload[0].id).toBe(records[0].id);
+    expect(afterReload[0]?.id).toBe(records[0]?.id);
   });
 
   test('@storage les contractions s’affichent bien dans l’historique après rechargement', async ({
@@ -99,13 +103,10 @@ test.describe('LocalStorage - Persistance des contractions', () => {
     await saveBtn.click();
     await page.waitForTimeout(500);
 
-    // Vérifier dans localStorage
-    const savedSettings = await page.evaluate(key => {
-      const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : null;
-    }, SETTINGS_KEY);
+    // Vérifier dans l'instantané
+    const savedSettings = await readStoredSettings(page);
 
-    expect(savedSettings?.maxIntervalMin).toBe(7);
+    expect(savedSettings.maxIntervalMin).toBe(7);
 
     // Recharger et vérifier
     await page.reload();
@@ -142,15 +143,8 @@ test.describe('LocalStorage - Persistance des contractions', () => {
     await clearBtn.click();
     await page.waitForTimeout(300);
 
-    // Vérifier que localStorage est vide (ou tableau vide)
-    const records = await page.evaluate(key => {
-      const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : null;
-    }, RECORDS_KEY);
-
-    expect(
-      records === null || (Array.isArray(records) && records.length === 0)
-    ).toBe(true);
+    // Vérifier que l'instantané ne porte plus aucune contraction
+    expect(await readStoredRecords(page)).toEqual([]);
   });
 });
 

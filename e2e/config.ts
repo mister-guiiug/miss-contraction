@@ -115,6 +115,24 @@ export const SELECTORS = {
   STATS_WINDOW_SELECT: '[data-testid="stats-window-select"]',
   SETTINGS_SAVE_FEEDBACK: '[data-testid="settings-save-feedback"]',
 
+  /*
+   * SAUVEGARDE. Le bandeau de l'accueil réclamait « Partager / Exporter »
+   * depuis des mois en désignant des boutons qui n'existaient pas ; ces
+   * crochets-ci sont ceux des boutons qui existent. `import-backup-input` est
+   * le champ `<input type=file>` masqué — c'est par lui qu'un test donne un
+   * fichier, la boîte de dialogue du système n'étant pas pilotable.
+   */
+  SETTINGS_SECTION_BACKUP: '[data-testid="settings-section-backup"]',
+  EXPORT_BACKUP_BTN: '[data-testid="export-backup-btn"]',
+  SHARE_BACKUP_BTN: '[data-testid="share-backup-btn"]',
+  IMPORT_BACKUP_BTN: '[data-testid="import-backup-btn"]',
+  IMPORT_BACKUP_INPUT: '[data-testid="import-backup-input"]',
+  BACKUP_FEEDBACK: '[data-testid="backup-feedback"]',
+  EXPORT_NUDGE_LINK: '[data-testid="export-nudge-link"]',
+
+  /** Le lien « Signaler un problème » du pied de page. */
+  FOOTER_ISSUES_LINK: '[data-testid="footer-issues-link"]',
+
   // Maternité
   MATERNITY_LABEL: '[data-testid="maternity-label"]',
   MATERNITY_CALL_BTN: '[data-testid="maternity-call-btn"]',
@@ -148,6 +166,18 @@ export const SELECTORS = {
  * quarante-deux occurrences, les tests semaient et relisaient un stockage que
  * l'application n'ouvre jamais : ils passaient ou échouaient sans rapport avec
  * son comportement réel. On importe la source.
+ *
+ * ── DEUX FAMILLES DE CLÉS DEPUIS LE MAGASIN VERSIONNÉ ────────────────────────
+ *
+ * `SNAPSHOT_KEY` (`mc_app`) est ce que l'application ÉCRIT : un instantané
+ * enveloppé `{ v, data }`. Les cinq `KEY_*` sont la forme HÉRITÉE, celle qui
+ * dort sur les téléphones et que la migration 0 → 1 relit une fois avant de
+ * la retirer.
+ *
+ * Semer les clés héritées puis recharger reste donc parfaitement valable — et
+ * c'est même mieux qu'avant : le test éprouve la migration en même temps que
+ * l'écran. En revanche, RELIRE une clé héritée après une écriture de
+ * l'application ne prouve plus rien : il faut lire `SNAPSHOT_KEY`.
  */
 export {
   KEY_RECORDS,
@@ -155,6 +185,8 @@ export {
   KEY_ACTIVE_START,
   KEY_SNOOZE_UNTIL,
   KEY_EXPORT_NUDGE_DISMISSED,
+  SNAPSHOT_KEY,
+  BACKUP_V0_KEY,
 } from '../src/storage';
 
 /*

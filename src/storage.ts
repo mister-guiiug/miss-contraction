@@ -1,105 +1,69 @@
-export type StatsWindowKey = 'all' | '30' | '60' | '120';
+/**
+ * La façade de persistance de l'application.
+ *
+ * ELLE N'ÉCRIT PLUS DANS `localStorage` DIRECTEMENT. Sous elle, un seul
+ * instantané versionné (`appSnapshot.ts`, clé `mc_app`, enveloppe `{ v, data }`)
+ * remplace les cinq clés nues d'avant — lesquelles n'avaient ni schéma, ni
+ * numéro de version, ni chaîne de migration. La migration 0 → 1 les relit une
+ * fois et les retire, après que le socle en a rangé les octets de côté.
+ *
+ * POURQUOI GARDER CETTE FAÇADE plutôt que d'appeler l'instantané partout :
+ * dix-huit fichiers importent `./storage`, et le harnais de bout en bout
+ * importe ses clés d'ici. Les signatures ne bougent pas ; seuls les octets
+ * derrière elles changent. Un renommage de plus n'aurait rien prouvé.
+ *
+ * CE QUI RESTE AU MOMENT DE LA LECTURE, et pas à celui de l'écriture : la
+ * péremption d'une contraction ouverte. Elle dépend de l'heure qu'il est.
+ */
 
 import {
-  detectBrowserLanguage,
-  isSupportedLanguage,
-  type AppLanguage,
-} from './i18n';
+  loadSnapshot,
+  updateSnapshot,
+  type AppSettings,
+  type AppSnapshot,
+  type ContractionRecord,
+  type StatsWindowKey,
+} from './appSnapshot';
 
-export type ContractionRecord = {
-  id: string;
-  start: number;
-  end: number;
-  /** Note libre (optionnelle), ex. contexte. */
-  note?: string;
-  /** Intensité de la douleur (1 à 5). */
-  intensity?: number;
-};
+export type { AppSettings, AppSnapshot, ContractionRecord, StatsWindowKey };
 
-export type AppSettings = {
-  language: AppLanguage;
-  maxIntervalMin: number;
-  minDurationSec: number;
-  consecutiveCount: number;
-  notificationsEnabled: boolean;
-  /** Fenêtre pour stats et graphique : toutes les données ou N dernières minutes. */
-  statsWindowMinutes: StatsWindowKey;
-  /** Notification « rythme soutenu » avant le seuil strict. */
-  preAlertEnabled: boolean;
-  /** Rappel si « début » sans « fin » après N minutes (2–30). */
-  openContractionReminderMin: number;
-  /** Nom affiché (ex. maternité, service). */
-  maternityLabel: string;
-  /** Numéro maternité pour appel rapide (chiffres et +). */
-  maternityPhone: string;
-  /** Adresse ou consignes d’accès (affichée sur la page maternité). */
-  maternityAddress: string;
-  /** Textes et boutons plus grands. */
-  largeMode: boolean;
-  /** Garder l’écran allumé pendant une contraction en cours. */
-  keepAwakeDuringContraction: boolean;
-  /** Vibrations courtes au début / fin (si supporté). */
-  vibrationEnabled: boolean;
-  /** Annoncer la durée de la contraction vocalement à la fin. */
-  voiceAnnounceDuration: boolean;
-  /** Commande vocale expérimentale (début / fin). */
-  voiceCommandsEnabled: boolean;
-  /** Afficher le module commande vocale (menu / réglages / bouton). */
-  moduleVoiceCommands: boolean;
-  /** Afficher l’écran « message maternité » et l’entrée du menu. */
-  moduleMaternityMessage: boolean;
-};
+export {
+  APP_ID,
+  BACKUP_V0_KEY,
+  SNAPSHOT_KEY,
+  SNAPSHOT_VERSION,
+  backupFileName,
+  clearSnapshot,
+  defaultSettings,
+  exportSnapshotJson,
+  importSnapshotJson,
+  loadSnapshot,
+  saveSnapshot,
+  sanitizePhone,
+  updateSnapshot,
+} from './appSnapshot';
 
 /*
- * LES CLÉS SONT TOUTES EXPORTÉES, ET C'EST LE HARNAIS E2E QUI L'A EXIGÉ.
- * Trois d'entre elles étaient privées, alors que les tests de bout en bout
- * doivent semer et relire `localStorage`. Ils en tenaient donc leur propre
- * copie — `mc_records`, `mc_settings`, `mc_snooze_until_ms` — dont AUCUNE ne
- * correspondait à la vraie clé. Quarante-deux occurrences écrivaient et
- * relisaient un stockage que l'application n'a jamais lu. Une seule
- * définition ferme la porte.
+ * LES CLÉS HÉRITÉES SONT TOUJOURS EXPORTÉES, ET C'EST TOUJOURS LE HARNAIS E2E
+ * QUI L'EXIGE. Elles ne désignent plus ce que l'application écrit — elles
+ * désignent ce qu'elle SAIT RELIRE. Le harnais sème cette forme-là, puis
+ * recharge : il éprouve donc la migration en même temps que l'écran.
  */
-export const KEY_RECORDS = 'mc_contractions_v1';
-export const KEY_SETTINGS = 'mc_settings_v1';
-export const KEY_ACTIVE_START = 'mc_active_start_v1';
-export const KEY_SNOOZE_UNTIL = 'mc_snooze_until';
-export const KEY_EXPORT_NUDGE_DISMISSED = 'mc_export_nudge_dismissed_at';
-
-const defaultSettings: AppSettings = {
-  language: detectBrowserLanguage(),
-  maxIntervalMin: 5,
-  minDurationSec: 45,
-  consecutiveCount: 3,
-  notificationsEnabled: false,
-  statsWindowMinutes: 'all',
-  preAlertEnabled: true,
-  openContractionReminderMin: 4,
-  maternityLabel: '',
-  maternityPhone: '',
-  maternityAddress: '',
-  largeMode: false,
-  keepAwakeDuringContraction: true,
-  vibrationEnabled: true,
-  voiceAnnounceDuration: false,
-  voiceCommandsEnabled: false,
-  moduleVoiceCommands: true,
-  moduleMaternityMessage: true,
-};
+export {
+  KEY_ACTIVE_START,
+  KEY_EXPORT_NUDGE_DISMISSED,
+  KEY_RECORDS,
+  KEY_SETTINGS,
+  KEY_SNOOZE_UNTIL,
+  LEGACY_KEYS,
+} from './legacyKeys';
 
 export function loadRecords(): ContractionRecord[] {
-  try {
-    const raw = localStorage.getItem(KEY_RECORDS);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as unknown;
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter(isRecord);
-  } catch {
-    return [];
-  }
+  return loadSnapshot().records;
 }
 
 export function saveRecords(records: ContractionRecord[]): void {
-  localStorage.setItem(KEY_RECORDS, JSON.stringify(records));
+  updateSnapshot({ records });
 }
 
 /**
@@ -125,190 +89,47 @@ export const ACTIVE_START_MAX_AGE_MS = 5 * 60_000;
 /**
  * Horodatage de la contraction en cours de chronométrage, ou `null`.
  *
- * Écarte silencieusement une valeur illisible, future (horloge reculée) ou
- * plus vieille que `ACTIVE_START_MAX_AGE_MS`.
+ * Écarte silencieusement une valeur future (horloge reculée) ou plus vieille
+ * que `ACTIVE_START_MAX_AGE_MS`. Le tri des valeurs illisibles, lui, a
+ * remonté d'un cran : c'est la garde de l'instantané qui le fait désormais.
  */
 export function loadActiveStart(now: number = Date.now()): number | null {
-  try {
-    const raw = localStorage.getItem(KEY_ACTIVE_START);
-    if (!raw) return null;
-    const start = Number(raw);
-    if (!Number.isFinite(start) || start <= 0) return null;
-    if (start > now) return null;
-    if (now - start > ACTIVE_START_MAX_AGE_MS) return null;
-    return start;
-  } catch {
-    return null;
-  }
+  const start = loadSnapshot().activeStart;
+  if (start === null) return null;
+  if (start > now) return null;
+  if (now - start > ACTIVE_START_MAX_AGE_MS) return null;
+  return start;
 }
 
 export function saveActiveStart(start: number | null): void {
-  if (start === null) {
-    localStorage.removeItem(KEY_ACTIVE_START);
-    return;
-  }
-  localStorage.setItem(KEY_ACTIVE_START, String(start));
-}
-
-function parseStatsWindow(v: unknown): StatsWindowKey {
-  if (v === '30' || v === '60' || v === '120' || v === 'all') return v;
-  return defaultSettings.statsWindowMinutes;
+  updateSnapshot({ activeStart: start });
 }
 
 export function loadSettings(): AppSettings {
-  try {
-    const raw = localStorage.getItem(KEY_SETTINGS);
-    if (!raw) return { ...defaultSettings };
-    const o = JSON.parse(raw) as Partial<AppSettings>;
-    const moduleVoiceCommands =
-      typeof o.moduleVoiceCommands === 'boolean'
-        ? o.moduleVoiceCommands
-        : defaultSettings.moduleVoiceCommands;
-
-    const voiceCommandsEnabled =
-      moduleVoiceCommands && typeof o.voiceCommandsEnabled === 'boolean'
-        ? o.voiceCommandsEnabled
-        : false;
-
-    return {
-      language: isSupportedLanguage(o.language)
-        ? o.language
-        : defaultSettings.language,
-      maxIntervalMin: clampNum(
-        o.maxIntervalMin,
-        1,
-        30,
-        defaultSettings.maxIntervalMin
-      ),
-      minDurationSec: clampNum(
-        o.minDurationSec,
-        10,
-        180,
-        defaultSettings.minDurationSec
-      ),
-      consecutiveCount: clampNum(
-        o.consecutiveCount,
-        2,
-        12,
-        defaultSettings.consecutiveCount
-      ),
-      notificationsEnabled: Boolean(o.notificationsEnabled),
-      statsWindowMinutes: parseStatsWindow(o.statsWindowMinutes),
-      preAlertEnabled:
-        typeof o.preAlertEnabled === 'boolean'
-          ? o.preAlertEnabled
-          : defaultSettings.preAlertEnabled,
-      openContractionReminderMin: clampNum(
-        o.openContractionReminderMin,
-        2,
-        30,
-        defaultSettings.openContractionReminderMin
-      ),
-      maternityLabel:
-        typeof o.maternityLabel === 'string'
-          ? sanitizeMaternityLabel(o.maternityLabel)
-          : '',
-      maternityPhone:
-        typeof o.maternityPhone === 'string'
-          ? sanitizePhone(o.maternityPhone)
-          : '',
-      maternityAddress:
-        typeof o.maternityAddress === 'string'
-          ? sanitizeMaternityAddress(o.maternityAddress)
-          : '',
-      largeMode:
-        typeof o.largeMode === 'boolean'
-          ? o.largeMode
-          : defaultSettings.largeMode,
-      keepAwakeDuringContraction:
-        typeof o.keepAwakeDuringContraction === 'boolean'
-          ? o.keepAwakeDuringContraction
-          : defaultSettings.keepAwakeDuringContraction,
-      vibrationEnabled:
-        typeof o.vibrationEnabled === 'boolean'
-          ? o.vibrationEnabled
-          : defaultSettings.vibrationEnabled,
-      voiceAnnounceDuration:
-        typeof o.voiceAnnounceDuration === 'boolean'
-          ? o.voiceAnnounceDuration
-          : defaultSettings.voiceAnnounceDuration,
-      voiceCommandsEnabled,
-      moduleVoiceCommands,
-      moduleMaternityMessage:
-        typeof o.moduleMaternityMessage === 'boolean'
-          ? o.moduleMaternityMessage
-          : defaultSettings.moduleMaternityMessage,
-    };
-  } catch {
-    return { ...defaultSettings };
-  }
+  return loadSnapshot().settings;
 }
 
 export function saveSettings(s: AppSettings): void {
-  localStorage.setItem(KEY_SETTINGS, JSON.stringify(s));
-}
-
-/**
- * Ne garde que ce qui se compose : chiffres et `+`.
- *
- * Exportée parce que l'écran « Maternité » enregistre lui-même le numéro
- * quand il manque. Deux nettoyages écrits séparément finiraient par diverger,
- * et c'est le numéro qu'on appelle en urgence.
- */
-export function sanitizePhone(s: string): string {
-  return s.replace(/[^\d+]/g, '').slice(0, 20);
-}
-
-function sanitizeMaternityAddress(s: string): string {
-  return s.replace(/\r\n/g, '\n').trim().slice(0, 800);
-}
-
-function sanitizeMaternityLabel(s: string): string {
-  return s.replace(/\s+/g, ' ').trim().slice(0, 120);
-}
-
-function isRecord(x: unknown): x is ContractionRecord {
-  if (typeof x !== 'object' || x === null) return false;
-  const r = x as ContractionRecord;
-  if (
-    typeof r.id !== 'string' ||
-    typeof r.start !== 'number' ||
-    typeof r.end !== 'number' ||
-    r.end < r.start
-  )
-    return false;
-  if (r.note !== undefined && typeof r.note !== 'string') return false;
-  if (
-    r.intensity !== undefined &&
-    (typeof r.intensity !== 'number' || r.intensity < 1 || r.intensity > 5)
-  )
-    return false;
-  return true;
-}
-
-function clampNum(
-  v: unknown,
-  min: number,
-  max: number,
-  fallback: number
-): number {
-  const n = typeof v === 'number' && Number.isFinite(v) ? v : fallback;
-  return Math.min(max, Math.max(min, n));
+  updateSnapshot({ settings: s });
 }
 
 export function loadSnoozeUntil(): number {
-  try {
-    const t = Number(localStorage.getItem(KEY_SNOOZE_UNTIL));
-    return Number.isFinite(t) ? t : 0;
-  } catch {
-    return 0;
-  }
+  return loadSnapshot().snoozeUntil;
 }
 
 export function setSnoozeUntilMs(ms: number): void {
-  localStorage.setItem(KEY_SNOOZE_UNTIL, String(ms));
+  updateSnapshot({ snoozeUntil: ms });
 }
 
 export function clearSnoozeUntil(): void {
-  localStorage.removeItem(KEY_SNOOZE_UNTIL);
+  updateSnapshot({ snoozeUntil: 0 });
+}
+
+/** Dernier « Plus tard » du bandeau de sauvegarde ; `0` s'il n'a jamais été fermé. */
+export function loadExportNudgeDismissedAt(): number {
+  return loadSnapshot().exportNudgeDismissedAt;
+}
+
+export function setExportNudgeDismissedAt(ms: number): void {
+  updateSnapshot({ exportNudgeDismissedAt: ms });
 }

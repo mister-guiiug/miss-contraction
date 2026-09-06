@@ -128,16 +128,23 @@ describe('clés localStorage du harnais e2e', () => {
    * tenue à la main ici. `LS_THEME` est à part : le script anti-FOUC engendré
    * au build la lit en contexte Node, elle ne pouvait pas vivre dans
    * `storage.ts`.
+   *
+   * DEUX FAMILLES DEPUIS LE MAGASIN VERSIONNÉ. `SNAPSHOT_KEY` (`mc_app`) et sa
+   * copie de côté sont ce que l'application écrit ; les cinq `KEY_*` sont la
+   * forme héritée que la migration 0 → 1 relit. Le harnais a le droit de citer
+   * les deux — il sème l'ancienne et vérifie la nouvelle.
    */
   const real = new Set([
     ...Object.entries(storage)
       .filter(([k, v]) => k.startsWith('KEY_') && typeof v === 'string')
       .map(([, v]) => v as string),
+    storage.SNAPSHOT_KEY,
+    storage.BACKUP_V0_KEY,
     LS_THEME,
   ]);
 
-  it("l'application en expose six", () => {
-    expect(real.size).toBe(6);
+  it("l'application en expose huit", () => {
+    expect(real.size).toBe(8);
   });
 
   it('les tests e2e ne citent que des clés réelles', () => {

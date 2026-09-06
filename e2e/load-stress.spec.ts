@@ -6,6 +6,7 @@
 
 import { test, expect } from '@playwright/test';
 import { ROUTES } from './config';
+import { readStoredRecords, readStoredSettings } from './helpers';
 
 const LOAD_TIMEOUT_MS = 8000;
 
@@ -130,12 +131,9 @@ test.describe('Stress - Actions rapides', () => {
     await page.waitForTimeout(500);
 
     // Toutes les contractions doivent être enregistrées
-    const records = await page.evaluate(() => {
-      const raw = localStorage.getItem('mc_contractions_v1');
-      return raw ? JSON.parse(raw) : [];
-    });
+    const records = await readStoredRecords(page);
 
-    const validRecords = (records as any[]).filter((r: any) => r.end > r.start);
+    const validRecords = records.filter(r => r.end > r.start);
     expect(validRecords.length).toBeGreaterThanOrEqual(8); // tolérance 20%
 
     const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
@@ -226,11 +224,8 @@ test.describe('Stress - Formulaires', () => {
     expect(criticalErrors).toHaveLength(0);
 
     // La dernière valeur doit être persistée
-    const settings = await page.evaluate(() => {
-      const raw = localStorage.getItem('mc_settings_v1');
-      return raw ? JSON.parse(raw) : null;
-    });
-    expect(settings?.maxIntervalMin).toBe(9); // 5 + 4 (dernier index)
+    const settings = await readStoredSettings(page);
+    expect(settings.maxIntervalMin).toBe(9); // 5 + 4 (dernier index)
   });
 
   test('@stress note de contraction très longue (500 chars)', async ({

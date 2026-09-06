@@ -13,8 +13,17 @@
     // n'existent pas.
     "lib": ["ES2025", "DOM", "DOM.Iterable"]
   },
-  // Les trois fichiers de `src` que le harnais importe sont listés ici plutôt
-  // que référencés : une référence de projet exige que le projet cible émette,
-  // et `tsconfig.app` est en `noEmit`.
-  "include": ["e2e", "src/storage.ts", "src/i18n.ts", "src/themeKey.ts"]
+  // Les fichiers de `src` que le harnais importe sont listés ici plutôt que
+  // référencés : une référence de projet exige que le projet cible émette, et
+  // `tsconfig.app` est en `noEmit`. `appSnapshot` et `legacyKeys` s'y ajoutent
+  // parce que `storage.ts` n'est plus qu'une façade : c'est sous elle que
+  // vivent désormais les clés et l'instantané que le harnais lit.
+  "include": [
+    "e2e",
+    "src/storage.ts",
+    "src/appSnapshot.ts",
+    "src/legacyKeys.ts",
+    "src/i18n.ts",
+    "src/themeKey.ts"
+  ]
 }

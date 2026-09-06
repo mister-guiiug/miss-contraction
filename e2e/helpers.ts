@@ -4,7 +4,7 @@
 
 import { expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import { TIMEOUTS, SELECTORS, ROUTES } from './config';
+import { TIMEOUTS, SELECTORS, ROUTES, SNAPSHOT_KEY } from './config';
 
 /**
  * Initialiser un test propre (localStorage vide, page chargée)
@@ -367,4 +367,63 @@ export function zonesVolatiles(page: Page) {
     page.locator('[data-testid="rest-timer"]'),
     page.locator('[data-testid="timer-value"]'),
   ];
+}
+
+/*
+ * ── LIRE CE QUE L'APPLICATION A ÉCRIT ────────────────────────────────────────
+ *
+ * L'état ne tient plus dans cinq clés nues mais dans UN instantané versionné
+ * (`mc_app`, enveloppe `{ v, data }`). Les tests qui relisaient
+ * `mc_contractions_v1` après une écriture de l'application liraient désormais
+ * `null` — et, comme la plupart d'entre eux gardaient leur vérification dans
+ * un `if`, ils passeraient à vide sans que personne le voie. Ces trois
+ * lecteurs remplacent ces relectures.
+ *
+ * Semer la forme héritée reste légitime : c'est ce qui dort sur les
+ * téléphones, et le rechargement qui suit éprouve la migration 0 → 1.
+ */
+
+export type StoredRecord = {
+  id: string;
+  start: number;
+  end: number;
+  note?: string;
+  intensity?: number;
+};
+
+export type StoredSnapshot = {
+  v: number;
+  data: {
+    app: string;
+    records: StoredRecord[];
+    settings: Record<string, number | string | boolean>;
+    activeStart: number | null;
+    snoozeUntil: number;
+    exportNudgeDismissedAt: number;
+  };
+};
+
+/** L'instantané tel qu'il est sur le disque, ou `null` s'il n'a rien écrit. */
+export async function readSnapshot(page: Page): Promise<StoredSnapshot | null> {
+  return page.evaluate(
+    key => JSON.parse(localStorage.getItem(key) ?? 'null') as StoredSnapshot,
+    SNAPSHOT_KEY
+  );
+}
+
+/** Les contractions enregistrées, dans l'ordre. */
+export async function readStoredRecords(page: Page): Promise<StoredRecord[]> {
+  return (await readSnapshot(page))?.data.records ?? [];
+}
+
+/** Les réglages enregistrés, bornés et nettoyés comme l'application les range. */
+export async function readStoredSettings(
+  page: Page
+): Promise<Record<string, number | string | boolean>> {
+  return (await readSnapshot(page))?.data.settings ?? {};
+}
+
+/** L'horodatage de fin du report d'alertes ; `0` quand il n'y en a pas. */
+export async function readStoredSnoozeUntil(page: Page): Promise<number> {
+  return (await readSnapshot(page))?.data.snoozeUntil ?? 0;
 }

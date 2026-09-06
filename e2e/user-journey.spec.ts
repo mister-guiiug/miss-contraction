@@ -6,6 +6,7 @@
 
 import { test, expect } from '@playwright/test';
 import { ROUTES, SELECTORS, TEST_DATA } from './config';
+import { readStoredRecords } from './helpers';
 
 test.describe('Parcours - Première utilisation', () => {
   test.beforeEach(async ({ page }) => {
@@ -151,13 +152,10 @@ test.describe('Parcours - Gestion des notes et intensité', () => {
 
     // La contraction enregistrée doit avoir une note — le test l'annonçait
     // sans jamais la vérifier.
-    const records = await page.evaluate(() => {
-      const raw = localStorage.getItem('mc_contractions_v1');
-      return raw ? JSON.parse(raw) : [];
-    });
+    const records = await readStoredRecords(page);
 
     expect(records.length).toBe(1);
-    expect(records[0].note).toBeTruthy();
+    expect(records[0]?.note).toBeTruthy();
   });
 
   test('@journey modifier une contraction existante', async ({ page }) => {
@@ -195,11 +193,8 @@ test.describe('Parcours - Gestion des notes et intensité', () => {
     await expect(dialog).not.toBeVisible();
 
     // La note est persistée
-    const records = await page.evaluate(() => {
-      const raw = localStorage.getItem('mc_contractions_v1');
-      return raw ? JSON.parse(raw) : [];
-    });
-    expect(records[0].note).toBe('Note de test modifiée');
+    const records = await readStoredRecords(page);
+    expect(records[0]?.note).toBe('Note de test modifiée');
   });
 
   test('@journey supprimer une contraction', async ({ page }) => {

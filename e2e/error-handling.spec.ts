@@ -6,6 +6,7 @@
 
 import { test, expect } from '@playwright/test';
 import { ROUTES } from './config';
+import { readStoredRecords } from './helpers';
 
 test.describe('Gestion d’erreurs - API manquantes', () => {
   test('@errors l’app fonctionne sans API Notification', async ({ page }) => {
@@ -259,13 +260,10 @@ test.describe('Gestion d’erreurs - Double-clic et race conditions', () => {
     await page.waitForTimeout(500);
 
     // Vérifier l'état cohérent (pas de contraction "fantôme" non fermée)
-    const records = await page.evaluate(() => {
-      const raw = localStorage.getItem('mc_contractions_v1');
-      return raw ? JSON.parse(raw) : [];
-    });
+    const records = await readStoredRecords(page);
 
     // Les records mal formés (end <= start) doivent être filtrés
-    const validRecords = (records as any[]).filter((r: any) => r.end > r.start);
+    const validRecords = records.filter(r => r.end > r.start);
     // Au plus 1 contraction validée après double-clic
     expect(validRecords.length).toBeLessThanOrEqual(1);
   });

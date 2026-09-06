@@ -5,6 +5,7 @@
 
 import { test, expect } from '@playwright/test';
 import { ROUTES, KEY_RECORDS } from './config';
+import { readStoredSettings, readStoredSnoozeUntil } from './helpers';
 
 test.describe('Alertes & Notifications', () => {
   test.beforeEach(async ({ page }) => {
@@ -178,12 +179,9 @@ test.describe('Alertes & Notifications', () => {
       await snoozeButton.click();
 
       // Vérifier que le snooze est enregistré
-      const snoozeUntil = await page.evaluate(() => {
-        return localStorage.getItem('mc_snooze_until');
-      });
+      const snoozeMs = await readStoredSnoozeUntil(page);
 
-      if (snoozeUntil) {
-        const snoozeMs = parseInt(snoozeUntil);
+      if (snoozeMs) {
         const expectedMin = beforeSnooze + 30 * 60 * 1000 - 5000;
         const expectedMax = beforeSnooze + 30 * 60 * 1000 + 5000;
         expect(snoozeMs).toBeGreaterThan(expectedMin);
@@ -203,12 +201,9 @@ test.describe('Alertes & Notifications', () => {
       const beforeSnooze = Date.now();
       await snoozeButton.click();
 
-      const snoozeUntil = await page.evaluate(() => {
-        return localStorage.getItem('mc_snooze_until');
-      });
+      const snoozeMs = await readStoredSnoozeUntil(page);
 
-      if (snoozeUntil) {
-        const snoozeMs = parseInt(snoozeUntil);
+      if (snoozeMs) {
         const expectedMin = beforeSnooze + 60 * 60 * 1000 - 5000;
         const expectedMax = beforeSnooze + 60 * 60 * 1000 + 5000;
         expect(snoozeMs).toBeGreaterThan(expectedMin);
@@ -238,11 +233,7 @@ test.describe('Alertes & Notifications', () => {
         await cancelButton.click();
 
         // Vérifier que le snooze est annulé
-        const snoozeUntil = await page.evaluate(() => {
-          return localStorage.getItem('mc_snooze_until');
-        });
-
-        expect(snoozeUntil === null || parseInt(snoozeUntil) === 0).toBe(true);
+        expect(await readStoredSnoozeUntil(page)).toBe(0);
       }
     }
   });
@@ -284,10 +275,7 @@ test.describe('Alertes & Notifications', () => {
       }
 
       // Vérifier que le paramètre est sauvegardé
-      const savedValue = await page.evaluate(() => {
-        const settings = localStorage.getItem('mc_settings_v1');
-        return settings ? JSON.parse(settings).maxIntervalMin : null;
-      });
+      const savedValue = (await readStoredSettings(page)).maxIntervalMin;
 
       expect(savedValue).toBe(2);
     }
@@ -306,10 +294,7 @@ test.describe('Alertes & Notifications', () => {
         await submitButton.click();
       }
 
-      const savedValue = await page.evaluate(() => {
-        const settings = localStorage.getItem('mc_settings_v1');
-        return settings ? JSON.parse(settings).minDurationSec : null;
-      });
+      const savedValue = (await readStoredSettings(page)).minDurationSec;
 
       expect(savedValue).toBe(40);
     }
@@ -330,10 +315,7 @@ test.describe('Alertes & Notifications', () => {
         await submitButton.click();
       }
 
-      const savedValue = await page.evaluate(() => {
-        const settings = localStorage.getItem('mc_settings_v1');
-        return settings ? JSON.parse(settings).consecutiveCount : null;
-      });
+      const savedValue = (await readStoredSettings(page)).consecutiveCount;
 
       expect(savedValue).toBe(5);
     }
