@@ -132,7 +132,8 @@ test.describe('LocalStorage - Persistance des contractions', () => {
     await page.reload();
     await page.waitForLoadState('networkidle');
 
-    // Cliquer effacer l'historique
+    // Cliquer effacer l'historique — le bouton vit sur `/historique`.
+    await page.goto(ROUTES.TABLE);
     const clearBtn = page.locator('[data-testid="clear-history-btn"]');
     await expect(clearBtn).toBeVisible();
 

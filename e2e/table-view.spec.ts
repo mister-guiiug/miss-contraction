@@ -104,7 +104,9 @@ test.describe('TableView - Tableau des contractions', () => {
     // rendue au format `m:ss`.
     expect(dates).toHaveLength(3);
     for (const d of dates) expect(d).toMatch(/\d{1,2}:\d{2}/);
-    expect(durations).toEqual(['1:00', '1:00', '1:00']);
+    // Une durée enregistrée s'écrit dans les unités des seuils réglés par
+    // l'utilisatrice — « durée ≥ 45 s » — et non en `m:ss`.
+    expect(durations).toEqual(['60 s', '60 s', '60 s']);
   });
 
   test('tableau - intervalle vide sur la première ligne, six minutes ensuite', async ({
