@@ -13,4 +13,6 @@ permissions:
 jobs:
   lighthouse:
     uses: mister-guiiug/dev-pwa-config/.github/workflows/pwa-lighthouse.yml@v4
-    secrets: inherit
+    # PAS de `secrets: inherit` : ce workflow n'en déclare aucun, et
+    # `GITHUB_TOKEN` lui est fourni d'office. Hériter enverrait TOUS les
+    # secrets du dépôt à un workflow qui n'en demande pas un seul.

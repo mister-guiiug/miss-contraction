@@ -14,6 +14,9 @@ permissions:
 jobs:
   deploy:
     uses: mister-guiiug/dev-pwa-config/.github/workflows/pwa-deploy.yml@v4
-    secrets: inherit
+    # PAS de `secrets: inherit` : le seul secret déclaré par
+    # `pwa-deploy.yml` est `FIREBASE_SERVICE_ACCOUNT_KEY`, et ce dépôt ne
+    # déploie pas sur Firebase. Hériter enverrait TOUS les secrets du dépôt
+    # à un workflow qui n'en attend aucun ici.
     with:
       use-base-path: true
