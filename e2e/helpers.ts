@@ -345,3 +345,26 @@ export async function toggleCheckbox(page: Page, selector: string) {
 export async function takeScreenshot(page: Page, name: string) {
   return await page.screenshot({ path: `e2e/screenshots/${name}.png` });
 }
+
+/*
+ * CE QUI CHANGE À CHAQUE SECONDE NE PEUT PAS SERVIR DE RÉFÉRENCE.
+ *
+ * Les contractions sont semées depuis `Date.now()` : les dates rendues dans le
+ * tableau et l'historique diffèrent d'un lancement à l'autre. Le compteur de
+ * repos, lui, avance pendant la capture. Régénérer les références ne suffisait
+ * donc pas — elles échouaient de nouveau au lancement suivant, sans qu'une
+ * seule ligne de l'application ait bougé.
+ *
+ * On masque ces zones plutôt que de figer l'horloge : `page.clock` gèlerait
+ * aussi les minuteries de l'application, et c'est justement leur rendu qu'on
+ * photographie.
+ */
+export function zonesVolatiles(page: Page) {
+  return [
+    page.locator('[data-testid="table-cell-date"]'),
+    page.locator('[data-testid="record-time"]'),
+    page.locator('.timeline-compact-time'),
+    page.locator('[data-testid="rest-timer"]'),
+    page.locator('[data-testid="timer-value"]'),
+  ];
+}
