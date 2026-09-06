@@ -375,6 +375,29 @@ html {
     min-height: 44px;
     min-width: 44px;
   }
+
+  /*
+   * LE MÊME DOIGT SAISIT LES CHAMPS. La règle ne couvrait que les boutons :
+   * les champs restaient à 39 px, les listes déroulantes à 40, et les
+   * bascules de la valise maternité à 34 — avec 14 px de vide non cliquable
+   * entre chacune, alors qu'on les coche l'une après l'autre.
+   *
+   * `min-width` n'est PAS repris ici : un champ est déjà large, et l'imposer
+   * écraserait les trois nombres alignés en grille dans les paramètres.
+   *
+   * CASES ET BOUTONS RADIO EXCLUS, SOUS PEINE DE TOUT CASSER. Les leurs sont
+   * masqués (`position: absolute; height: 1px`) au profit d'une bascule ou
+   * d'une pastille dessinée ; `min-height` l'emporte sur `height` et les
+   * ferait réapparaître en 44 px au milieu de la mise en page. C'est le
+   * libellé qui porte la cible — d'où `.field-check` dans la liste.
+   */
+  :where(
+    input:not([type='checkbox']):not([type='radio']),
+    select,
+    .field-check
+  ) {
+    min-height: 44px;
+  }
 }
 
 /* Focus visible amélioré — voir `enhanced-ui.css`, qui porte la règle unique. */

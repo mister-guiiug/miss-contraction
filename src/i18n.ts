@@ -184,6 +184,8 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'history.clearIntensity': 'Effacer',
     'history.noteOptional': 'Note (optionnelle)',
     'history.notePlaceholder': 'Ex. plus intense, repos...',
+    'history.cancel': 'Annuler',
+    'history.save': 'Enregistrer',
 
     'table.title': 'Tableau des contractions',
     'table.lead':
@@ -478,6 +480,8 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'history.clearIntensity': 'Clear',
     'history.noteOptional': 'Note (optional)',
     'history.notePlaceholder': 'e.g. stronger, rest...',
+    'history.cancel': 'Cancel',
+    'history.save': 'Save',
 
     'table.title': 'Contractions table',
     'table.lead':
