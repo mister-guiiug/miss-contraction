@@ -19,6 +19,7 @@ export const NOTE_TYPE_IDS = [
   'ball',
   'medication',
   'rest',
+  'walk',
 ] as const;
 
 export type NoteTypeId = (typeof NOTE_TYPE_IDS)[number];

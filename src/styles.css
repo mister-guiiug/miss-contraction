@@ -148,6 +148,7 @@ html[data-theme='light'] {
   --accent-orange: #9a3412;
   --accent-red: #b91c1c;
   --accent-green: #166534;
+  --accent-blue: #1e40af;
 
   /* ── Typographie ─────────────────────────────────────────── */
   /*
@@ -261,12 +262,13 @@ html[data-theme='dark'] {
   --cta-hint-color: rgba(var(--ink-rgb), 0.8);
 
   /* Voir le thème clair. Sur fond sombre les mêmes teintes doivent s'éclaircir
-   * au lieu de s'assombrir ; 8,2:1 au pire des cinq. */
+   * au lieu de s'assombrir. `designTokens.test.ts` mesure les six. */
   --accent-cyan: #67e8f9;
   --accent-violet: #c4b5fd;
   --accent-orange: #fdba74;
   --accent-red: #fca5a5;
   --accent-green: #86efac;
+  --accent-blue: #93c5fd;
 }
 
 /* ── Échelle d'intensité — LA source des cinq couleurs ─────────────────────

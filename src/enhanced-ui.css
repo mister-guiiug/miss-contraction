@@ -856,11 +856,16 @@ html[data-contrast='high'] {
  * déduisent. Les trois valeurs étaient auparavant écrites côte à côte, et
  * identiques dans les deux thèmes — d'où un texte `#7c3aed` à 3,0:1 sur fond
  * sombre.
+ *
+ * `--rest` manquait à cette liste : seule pastille sans teinte, elle retombait
+ * sur le fond neutre pendant que ses cinq voisines portaient la leur.
  */
 .note-tag--waters,
 .note-tag--shower,
 .note-tag--ball,
 .note-tag--medication,
+.note-tag--rest,
+.note-tag--walk,
 .note-tag--custom {
   background: color-mix(in srgb, currentColor 8%, transparent);
   border-color: color-mix(in srgb, currentColor 20%, transparent);
@@ -880,6 +885,14 @@ html[data-contrast='high'] {
 
 .note-tag--medication {
   color: var(--accent-red);
+}
+
+.note-tag--rest {
+  color: var(--accent-green);
+}
+
+.note-tag--walk {
+  color: var(--accent-blue);
 }
 
 .note-tag--custom {
