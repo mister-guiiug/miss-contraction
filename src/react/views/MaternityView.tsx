@@ -3,17 +3,19 @@ import { Link } from 'react-router-dom';
  * Vue Maternité - Coordonnées et contact
  */
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppStore, useRefreshSettings } from '../store/useAppStore';
-import { loadSettings } from '../../storage';
+import { loadSettings, sanitizePhone } from '../../storage';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { interpolate, t } from '../../i18n';
 
 export function MaternityView() {
-  const { settings } = useAppStore();
+  const { settings, saveSettings } = useAppStore();
   const language = settings.language;
   const updateSettings = useRefreshSettings();
   const { maternityLabel, maternityPhone, maternityAddress } = settings;
+  const [draftPhone, setDraftPhone] = useState('');
+  const [phoneError, setPhoneError] = useState(false);
 
   // Recharger les settings au montage (synchronisation vanilla ↔ React)
   useEffect(() => {
@@ -25,10 +27,6 @@ export function MaternityView() {
   const addr = maternityAddress.trim();
   const telHref = phone ? `tel:${phone.replace(/\s/g, '')}` : '#';
 
-  useEffect(() => {
-    document.title = 'Maternité - Contractions';
-  }, []);
-
   const hasPhone = phone.length > 0;
   const hasLabel = label.length > 0;
   const hasAddress = addr.length > 0;
@@ -37,6 +35,29 @@ export function MaternityView() {
   const mapsHref = hasAddress
     ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(addr)}`
     : '#';
+
+  /*
+   * Le numéro s'enregistre ICI quand il manque, et pas seulement dans les
+   * paramètres. La pastille téléphone de la barre du bas — le contrôle le plus
+   * visible de l'application — mène à cet écran ; au premier lancement il n'y
+   * annonçait qu'une absence et renvoyait ailleurs. Un bouton qui promet
+   * d'appeler doit au moins permettre de dire qui.
+   *
+   * La lecture seule reste la règle DÈS QU'UN NUMÉRO EXISTE : on ne modifie pas
+   * par mégarde, en pleine contraction, le numéro qu'on s'apprête à composer.
+   * Le reste — nom, adresse — continue de se régler dans les paramètres.
+   */
+  const handleSavePhone = (e: React.FormEvent) => {
+    e.preventDefault();
+    const nettoye = sanitizePhone(draftPhone);
+    if (!/\d/.test(nettoye)) {
+      setPhoneError(true);
+      return;
+    }
+    setPhoneError(false);
+    updateSettings({ maternityPhone: nettoye });
+    saveSettings();
+  };
 
   return (
     <ViewLayout
@@ -65,9 +86,11 @@ export function MaternityView() {
             <p className="maternity-page-subheading">
               {t(language, 'maternity.number')}
             </p>
-            <span className="maternity-page-readonly-badge">
-              {t(language, 'maternity.readonly')}
-            </span>
+            {hasPhone && (
+              <span className="maternity-page-readonly-badge">
+                {t(language, 'maternity.readonly')}
+              </span>
+            )}
           </div>
 
           {hasPhone ? (
@@ -107,13 +130,58 @@ export function MaternityView() {
               </div>
             </>
           ) : (
-            <p
-              className="maternity-page-phone-placeholder"
-              data-testid="maternity-phone-placeholder"
+            <form
+              className="maternity-page-phone-form"
+              onSubmit={handleSavePhone}
+              data-testid="maternity-phone-form"
             >
-              {t(language, 'maternity.noNumber')}{' '}
-              <Link to="/parametres">{t(language, 'route.settings')}</Link>.
-            </p>
+              <p
+                className="maternity-page-phone-placeholder"
+                data-testid="maternity-phone-placeholder"
+              >
+                {t(language, 'maternity.noNumberInline')}
+              </p>
+              <label className="field field--wide">
+                <span className="sr-only">
+                  {t(language, 'maternity.number')}
+                </span>
+                <input
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  maxLength={20}
+                  placeholder={t(language, 'maternity.numberPlaceholder')}
+                  value={draftPhone}
+                  onChange={e => setDraftPhone(e.target.value)}
+                  aria-invalid={phoneError}
+                  aria-describedby={
+                    phoneError ? 'maternity-phone-error' : undefined
+                  }
+                  data-testid="maternity-inline-phone-input"
+                />
+              </label>
+              {phoneError && (
+                <p
+                  className="maternity-page-phone-error"
+                  id="maternity-phone-error"
+                  role="alert"
+                  data-testid="maternity-phone-error"
+                >
+                  {t(language, 'maternity.numberInvalid')}
+                </p>
+              )}
+              <button
+                type="submit"
+                className="btn btn-primary"
+                data-testid="maternity-phone-save-btn"
+              >
+                {t(language, 'maternity.saveNumber')}
+              </button>
+              <p className="maternity-page-phone-hint">
+                {t(language, 'maternity.moreInSettings')}{' '}
+                <Link to="/parametres">{t(language, 'route.settings')}</Link>.
+              </p>
+            </form>
           )}
         </div>
 

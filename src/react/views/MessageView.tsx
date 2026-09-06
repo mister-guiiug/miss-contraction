@@ -84,10 +84,6 @@ export function MessageView() {
     window.open(url, '_blank');
   }, [message]);
 
-  useEffect(() => {
-    document.title = 'Message maternité - Miss Contraction';
-  }, []);
-
   return (
     <ViewLayout
       className="message-page"

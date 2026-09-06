@@ -16,11 +16,6 @@ export function HomeView() {
   const [selectedNote, setSelectedNote] = useState<string | null>(null);
   const language = settings.language;
 
-  // Mettre à jour le titre de la page
-  useEffect(() => {
-    document.title = 'Miss Contraction';
-  }, []);
-
   // Mettre à jour les classes globales
   useEffect(() => {
     document.documentElement.classList.toggle(
