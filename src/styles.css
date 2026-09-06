@@ -3449,33 +3449,6 @@ a.btn {
   color: var(--primary-contrast);
 }
 
-.intensity-option-tooltip {
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-8px);
-  padding: 0.4rem 0.65rem;
-  background: var(--text);
-  color: var(--bg);
-  font-size: 0.7rem;
-  font-weight: 600;
-  border-radius: 0.4rem;
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 10;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.intensity-option-tooltip::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 4px solid transparent;
-  border-top-color: var(--text);
-}
-
 .intensity-legend {
   display: flex;
   align-items: center;
