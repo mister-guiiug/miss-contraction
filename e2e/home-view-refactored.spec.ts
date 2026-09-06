@@ -155,6 +155,13 @@ test.describe('HomeView - Vue principale [REFACTORISÉ]', () => {
   });
 
   test('@smoke fenêtre temporelle - change les stats', async ({ page }) => {
+    /*
+     * Trois contractions, quatre navigations et deux enregistrements : Firefox
+     * dépasse les trente secondes quand plusieurs workers se partagent la
+     * machine. Le parcours est long par nature, pas lent par défaut.
+     */
+    test.slow();
+
     await createMultipleContractions(page, 3, 500, 300);
 
     /*

@@ -2397,6 +2397,13 @@ a.btn {
   border-radius: 1rem;
   padding: 0;
   max-width: min(22rem, calc(100vw - 2rem));
+  /*
+   * Et une hauteur maximale, sans quoi le contenu déborde par le bas : c'est
+   * ce qui poussait les boutons hors de l'écran sur un téléphone. `dvh` suit
+   * la barre d'adresse mobile, qui se rétracte au défilement.
+   */
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
   box-shadow: var(--shadow);
   background: var(--surface);
   color: var(--text);

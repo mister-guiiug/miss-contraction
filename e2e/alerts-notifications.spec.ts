@@ -12,9 +12,18 @@ test.describe('Alertes & Notifications', () => {
     await page.goto('/');
     await page.evaluate(() => localStorage.clear());
 
-    // Mock notification permission
+    /*
+     * SAFARI IOS N'A PAS D'API `Notification`. Le mock la touchait sans
+     * précaution : `ReferenceError` dans le `beforeEach`, et les DOUZE tests du
+     * fichier tombaient sur le projet `mobile-safari` — alors qu'aucun, hormis
+     * celui des permissions, n'en a besoin. L'application, elle, se garde déjà
+     * (`'Notification' in window`).
+     */
     await page.evaluate(() => {
-      (Notification as any).permission = 'granted';
+      if (typeof Notification !== 'undefined') {
+        (Notification as unknown as { permission: string }).permission =
+          'granted';
+      }
     });
   });
 

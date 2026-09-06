@@ -96,12 +96,32 @@ export class HomePage {
    */
   async getHistoryEntries() {
     const retour = this.page.url();
-    await this.page.goto(ROUTES.TABLE);
+    const dejaSurPlace = new URL(retour).pathname.startsWith(ROUTES.TABLE);
+
+    if (!dejaSurPlace) await this.page.goto(ROUTES.TABLE);
+
+    /*
+     * ON ATTEND QUE LA LISTE EXISTE AVANT DE COMPTER. `count()` ne patiente
+     * pas : il rendait zéro sur mobile-safari, le plus lent à rendre, pendant
+     * que les autres navigateurs arrivaient à temps. Deux tests `@critical`
+     * échouaient sur ce seul projet.
+     *
+     * L'un des deux repères apparaît toujours — la liste, ou le message qui
+     * dit qu'elle est vide.
+     */
+    await this.page
+      .locator(`${SELECTORS.HISTORY_ITEMS}, ${SELECTORS.HISTORY_EMPTY}`)
+      .first()
+      .waitFor({ state: 'visible', timeout: TIMEOUTS.ELEMENT_READY });
+
     const n = await this.page
       .locator(`${SELECTORS.HISTORY_ITEMS} > li`)
       .count();
-    await this.page.goto(retour);
-    await this.page.waitForLoadState('networkidle');
+
+    if (!dejaSurPlace) {
+      await this.page.goto(retour);
+      await this.page.waitForLoadState('networkidle');
+    }
     return n;
   }
 

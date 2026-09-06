@@ -166,8 +166,13 @@ test.describe('MessageView - Message SMS/WhatsApp', () => {
   test('message - copier le texte affiche une confirmation', async ({
     page,
     context,
+    browserName,
   }) => {
-    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    // `clipboard-read` n'existe que dans Chromium : ailleurs, l'appel lève
+    // `Unknown permission` avant même le clic.
+    if (browserName === 'chromium') {
+      await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    }
 
     await page.locator(SELECTORS.MESSAGE_COPY_BTN).click();
 

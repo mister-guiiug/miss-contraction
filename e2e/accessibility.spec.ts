@@ -38,6 +38,13 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
   });
 
   test('@a11y @wcag HomeView - pas de violations', async ({ page }) => {
+    /*
+     * Un scan axe complet sur Firefox, sous plusieurs workers, dépasse les
+     * trente secondes par défaut. `test.slow()` triple le budget : la lenteur
+     * est celle de l'outil de mesure, pas de l'application.
+     */
+    test.slow();
+
     await injectAxe(page);
     try {
       /*
@@ -56,6 +63,13 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
 
   test('@a11y @wcag SettingsView - pas de violations', async ({ page }) => {
     await page.goto(ROUTES.SETTINGS);
+    /*
+     * Un scan axe complet sur Firefox, sous plusieurs workers, dépasse les
+     * trente secondes par défaut. `test.slow()` triple le budget : la lenteur
+     * est celle de l'outil de mesure, pas de l'application.
+     */
+    test.slow();
+
     await injectAxe(page);
 
     try {
@@ -68,6 +82,13 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
   });
 
   test('@a11y @wcag TableView - pas de violations', async ({ page }) => {
+    /*
+     * Un scan axe complet sur Firefox, sous plusieurs workers, dépasse les
+     * trente secondes par défaut. `test.slow()` triple le budget : la lenteur
+     * est celle de l'outil de mesure, pas de l'application.
+     */
+    test.slow();
+
     // Créer quelques contractions d'abord. Testid stable : un filtre par
     // texte (/Début/) matchait aussi la bannière d'accueil, pas le bouton.
     await page.goto(ROUTES.HOME);
@@ -232,22 +253,43 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
 
   test('@a11y focus visible - gestion du focus au clavier', async ({
     page,
+    browserName,
+    isMobile,
   }) => {
+    /*
+     * WebKit émulé en mobile ne déplace pas le focus sur `Tab` : un iPhone n'a
+     * pas de clavier, et Playwright s'aligne dessus. `document.activeElement`
+     * reste `BODY`, et le test échouait systématiquement sur ce seul projet.
+     * Le parcours au clavier est éprouvé sur les quatre autres.
+     */
+    test.skip(
+      browserName === 'webkit' && isMobile,
+      'WebKit mobile ne parcourt pas au clavier'
+    );
+
     await page.goto(ROUTES.HOME);
 
-    // Simuler la navigation au clavier
-    await page.keyboard.press('Tab');
+    /*
+     * PLUSIEURS `Tab`, PAS UN SEUL. Le premier appui sert parfois à faire
+     * ENTRER le focus dans le document plutôt qu'à le déplacer dedans, et
+     * WebKit ne s'arrête pas sur les liens tant que « navigation clavier
+     * complète » n'est pas activée. Un test qui n'en pressait qu'un dépendait
+     * donc du moteur et de l'instant : il passait sur webkit un jour, échouait
+     * le lendemain. Ce qu'on veut savoir, c'est que le clavier ATTEINT un
+     * élément interactif — pas en combien de coups.
+     */
+    const ATTENDUS = ['BUTTON', 'A', 'INPUT', 'TEXTAREA', 'SELECT'];
+    let atteint: string | null = null;
 
-    const focusedElement = await page.evaluate(() => {
-      const el = document.activeElement;
-      return el ? (el as any).tagName : null;
-    });
+    for (let i = 0; i < 5 && atteint === null; i++) {
+      await page.keyboard.press('Tab');
+      const tag = await page.evaluate(
+        () => document.activeElement?.tagName ?? null
+      );
+      if (tag && ATTENDUS.includes(tag)) atteint = tag;
+    }
 
-    // Un élément doit être en focus
-    expect(focusedElement).toBeTruthy();
-    expect(['BUTTON', 'A', 'INPUT', 'TEXTAREA', 'SELECT']).toContain(
-      focusedElement
-    );
+    expect(ATTENDUS).toContain(atteint);
   });
 
   test('@a11y aria-live regions - pour les mises à jour dynamiques', async ({
