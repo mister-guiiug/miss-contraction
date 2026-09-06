@@ -169,6 +169,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'note.ball': 'Ballon de gymnastique',
     'note.medication': 'Médicament pris',
     'note.rest': 'Pause / Repos',
+    'note.walk': 'Marche',
 
     'intensity.aria': 'Intensité {level} : {label}',
     'intensity.legendStart': 'Léger',
@@ -505,6 +506,7 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'note.ball': 'Birthing ball',
     'note.medication': 'Medication taken',
     'note.rest': 'Break / Rest',
+    'note.walk': 'Walking',
 
     'intensity.aria': 'Intensity {level}: {label}',
     'intensity.legendStart': 'Light',

@@ -181,7 +181,7 @@ describe('encre posée sur les surfaces pleines', () => {
 });
 
 describe("teintes d'accent des pastilles", () => {
-  const HUES = ['cyan', 'violet', 'orange', 'red', 'green'];
+  const HUES = ['cyan', 'violet', 'orange', 'red', 'green', 'blue'];
 
   /*
    * Les pastilles posent leur teinte derrière un texte de cette même teinte :
