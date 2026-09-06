@@ -139,8 +139,9 @@ test.describe('Alertes & Notifications', () => {
     await page.reload();
     await page.waitForLoadState('networkidle');
 
+    // Un seul badge de seuil désormais, sous le chronomètre.
     await expect(
-      page.locator('[data-testid="stats-threshold-badge"]')
+      page.locator('[data-testid="threshold-badge"]')
     ).toHaveAttribute('data-state', 'match');
   });
 

@@ -234,7 +234,7 @@ test.describe('Régression visuelle - États UI', () => {
     await page.goto(ROUTES.HOME);
     await page.evaluate(() => localStorage.clear());
     await injectContractions(page, 5);
-    await page.reload();
+    await page.goto(ROUTES.TABLE);
     await page.waitForLoadState('networkidle');
 
     const historyItems = page.locator('[data-testid="history-items"]');

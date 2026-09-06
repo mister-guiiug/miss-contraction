@@ -1,23 +1,15 @@
 import { useAppStore } from '../../store/useAppStore';
 import { useStats } from '../../hooks/useStats';
-import { formatDuration } from '../../../utils/formatDuration';
-import type { ContractionRecord } from '../../../storage';
-import { t, type AppLanguage } from '../../../i18n';
+import { t } from '../../../i18n';
 
-const THRESHOLD_ICONS: Record<string, string> = {
-  match: '🏥',
-  approaching: '🎯',
-  calm: '😌',
-  empty: '📊',
-};
-
-const THRESHOLD_KEYS: Record<string, string> = {
-  match: 'stats.threshold.match',
-  approaching: 'stats.threshold.approaching',
-  calm: 'stats.threshold.calm',
-  empty: 'stats.threshold.empty',
-};
-
+/**
+ * Les indicateurs de l'accueil : trois moyennes et trois repères bruts.
+ *
+ * Le verdict de seuil n'est plus ici — il est remonté sous le chronomètre,
+ * dans `ThresholdBadge`. Les intervalles détaillés non plus : la colonne
+ * « Écart » du tableau de `/historique` les donne déjà, avec la date et la
+ * fréquence en prime.
+ */
 export function StatsSection() {
   const { records, settings } = useAppStore();
   const language = settings.language;
@@ -40,22 +32,14 @@ export function StatsSection() {
       >
         <div className="stat-card" data-testid="stat-card-quantity">
           <span className="stat-card-icon" aria-hidden="true" />
-          <span
-            className="stat-card-value"
-            aria-live="polite"
-            data-testid="stat-value-qty"
-          >
+          <span className="stat-card-value" data-testid="stat-value-qty">
             {data.qtyPerHour}
           </span>
           <span className="stat-card-label">{t(language, 'stats.qty')}</span>
         </div>
         <div className="stat-card" data-testid="stat-card-duration">
           <span className="stat-card-icon" aria-hidden="true" />
-          <span
-            className="stat-card-value"
-            aria-live="polite"
-            data-testid="stat-value-duration"
-          >
+          <span className="stat-card-value" data-testid="stat-value-duration">
             {data.avgDuration}
           </span>
           <span className="stat-card-label">
@@ -64,11 +48,7 @@ export function StatsSection() {
         </div>
         <div className="stat-card" data-testid="stat-card-frequency">
           <span className="stat-card-icon" aria-hidden="true" />
-          <span
-            className="stat-card-value"
-            aria-live="polite"
-            data-testid="stat-value-frequency"
-          >
+          <span className="stat-card-value" data-testid="stat-value-frequency">
             {data.avgFrequency}
           </span>
           <span className="stat-card-label">
@@ -83,22 +63,6 @@ export function StatsSection() {
       >
         {windowLabel}
       </p>
-      <p
-        className={`threshold-badge threshold-badge-enhanced threshold-badge-${data.thresholdKind}`}
-        id="threshold-badge"
-        data-state={data.thresholdKind}
-        data-testid="stats-threshold-badge"
-      >
-        <span className="badge-icon" aria-hidden="true">
-          {THRESHOLD_ICONS[data.thresholdKind] ?? ''}
-        </span>
-        <span data-testid="threshold-message">
-          {t(
-            language,
-            THRESHOLD_KEYS[data.thresholdKind] ?? 'stats.threshold.empty'
-          )}
-        </span>
-      </p>
       {!isEmpty && (
         <dl
           className="summary summary-extra"
@@ -107,80 +71,12 @@ export function StatsSection() {
         >
           <dt>{t(language, 'stats.lastHour')}</dt>
           <dd>{data.lastHourCount}</dd>
-          <dt>{t(language, 'stats.detailEstimation')}</dt>
-          <dd>{data.perHourFromMean}</dd>
           <dt>{t(language, 'stats.lastInterval')}</dt>
           <dd>{data.lastInterval}</dd>
           <dt>{t(language, 'stats.lastDuration')}</dt>
           <dd>{data.lastDuration}</dd>
         </dl>
       )}
-
-      <div
-        className="section-divider"
-        role="separator"
-        aria-orientation="horizontal"
-      />
-
-      <IntervalChart
-        intervals={data.intervals}
-        recordsForChart={data.recordsForChart}
-        language={language}
-      />
     </section>
-  );
-}
-
-function IntervalChart({
-  intervals,
-  recordsForChart,
-  language,
-}: {
-  intervals: number[];
-  recordsForChart: ContractionRecord[];
-  language: AppLanguage;
-}) {
-  if (intervals.length === 0) return null;
-
-  return (
-    <div className="interval-list" data-testid="interval-chart">
-      <h3 className="chart-title">{t(language, 'stats.intervalsTitle')}</h3>
-      <ul className="interval-items" role="list" data-testid="interval-items">
-        {intervals.map((ms, i) => {
-          const record = recordsForChart[i + 1];
-          const intensity = record?.intensity;
-          const date = record ? new Date(record.start) : null;
-          const timeLabel = date
-            ? `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
-            : '—';
-
-          return (
-            <li
-              key={i}
-              className="interval-item"
-              data-testid={`interval-item-${i}`}
-            >
-              <span className="interval-time">{timeLabel}</span>
-              <span className="interval-sep">›</span>
-              <span
-                className="interval-value"
-                data-testid={`interval-value-${i}`}
-              >
-                {formatDuration(ms)}
-              </span>
-              {intensity && (
-                <span
-                  className="interval-intensity"
-                  data-intensity={intensity}
-                  data-testid={`interval-intensity-${i}`}
-                >
-                  {intensity}
-                </span>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
   );
 }

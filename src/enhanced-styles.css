@@ -217,59 +217,6 @@
    4. BADGES DE SEUILS DYNAMIQUES
    ======================================== */
 
-.threshold-badge-enhanced {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  border-radius: 32px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.threshold-badge-match {
-  background: linear-gradient(
-    135deg,
-    var(--primary) 0%,
-    var(--primary-hover) 100%
-  );
-  color: var(--primary-contrast);
-  box-shadow: 0 4px 16px rgba(var(--accent-rgb), 0.4);
-  animation: matchAlert 1.5s ease-in-out infinite;
-}
-
-@keyframes matchAlert {
-  0%,
-  100% {
-    transform: scale(1);
-    box-shadow: 0 4px 16px rgba(var(--accent-rgb), 0.4);
-  }
-  50% {
-    transform: scale(1.05);
-    box-shadow: 0 8px 24px rgba(var(--accent-rgb), 0.6);
-  }
-}
-
-.threshold-badge-approaching {
-  background: var(--badge-approaching-bg);
-  color: var(--badge-approaching-text);
-  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
-  animation: approachingPulse 2s ease-in-out infinite;
-}
-
-@keyframes approachingPulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.02);
-  }
-}
-
 /* ========================================
    5. ANIMATIONS DE TRANSITIONS
    ======================================== */

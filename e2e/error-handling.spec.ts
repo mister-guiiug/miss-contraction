@@ -236,7 +236,8 @@ test.describe('Gestion d’erreurs - Valeurs limites dans les formulaires', () =
     const criticalErrors = errors.filter(e => !e.includes('ResizeObserver'));
     expect(criticalErrors).toHaveLength(0);
 
-    // L'historique doit toujours s'afficher
+    // L'historique doit toujours s'afficher — il vit sur `/historique`.
+    await page.goto(ROUTES.TABLE);
     await expect(page.locator('[data-testid="history-items"]')).toBeVisible();
   });
 });
@@ -293,6 +294,7 @@ test.describe('Gestion d’erreurs - Double-clic et race conditions', () => {
 
     // Et l'invariant tient toujours : une contraction EN COURS n'est pas une
     // contraction ENREGISTRÉE. Rien n'entre dans l'historique avant « Fin ».
+    await page.goto(ROUTES.TABLE);
     const historyItems = page.locator('[data-testid="history-items"] li');
     const count = await historyItems.count().catch(() => 0);
     expect(count).toBe(0);

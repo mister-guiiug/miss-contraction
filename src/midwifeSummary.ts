@@ -8,6 +8,7 @@
 
 import type { ContractionRecord } from './storage';
 import { formatStatsClock } from './utils/formatStats';
+import { interpolate, t, type AppLanguage } from './i18n';
 import { getDefaultLocale } from '@mister-guiiug/dev-pwa-config/format';
 
 /** Période affichée : N dernières contractions ou tout l'historique. */
@@ -32,6 +33,12 @@ export interface MidwifeSummaryInput {
   firstThresholdEndMs: number | null;
   /** Instant de génération affiché dans l'en-tête. */
   generatedAtMs: number;
+  /**
+   * Langue du résumé. Le texte était écrit en français dans le code, pour
+   * tout le monde : l'écran, le presse-papiers et le PDF doivent parler la
+   * même langue que le reste de l'application.
+   */
+  language: AppLanguage;
 }
 
 /** Moyenne des écarts entre débuts consécutifs, en ms (null si < 2). */
@@ -98,6 +105,7 @@ export function buildMidwifeSummaryLines(input: MidwifeSummaryInput): string[] {
     mode,
     firstThresholdEndMs,
     generatedAtMs,
+    language,
   } = input;
   const meanInterval = meanStartIntervalMs(selectedRecords);
   const meanDur = meanContractionDurationMs(selectedRecords);
@@ -106,63 +114,94 @@ export function buildMidwifeSummaryLines(input: MidwifeSummaryInput): string[] {
       ? String(Math.round(3600000 / meanInterval))
       : '—';
 
+  const tr = (key: string) => t(language, key);
+  const trv = (key: string, values: Record<string, string | number>) =>
+    interpolate(t(language, key), values);
+
   const lines: string[] = [];
-  lines.push('Miss Contraction — Résumé pour la sage-femme');
-  lines.push(`Généré le ${midwifeHeaderFmt.format(generatedAtMs)}`);
-  lines.push('');
-  lines.push("Seuils configurés dans l'application :");
+  lines.push(tr('midwife.docTitle'));
   lines.push(
-    `— ${settings.consecutiveCount} contractions consécutives, écart entre débuts ≤ ${settings.maxIntervalMin} min, durée ≥ ${settings.minDurationSec} s chacune.`
+    trv('midwife.generatedOn', {
+      date: midwifeHeaderFmt.format(generatedAtMs),
+    })
+  );
+  lines.push('');
+  // `renderMidwifePdf` met en gras toute ligne finissant par « : » — les
+  // traductions des têtes de section doivent conserver ce deux-points.
+  lines.push(tr('midwife.thresholdsHeading'));
+  lines.push(
+    `— ${trv('midwife.thresholdsText', {
+      count: settings.consecutiveCount,
+      interval: settings.maxIntervalMin,
+      duration: settings.minDurationSec,
+    })}`
   );
   lines.push('');
   if (firstThresholdEndMs != null) {
     lines.push(
-      `Première fois où ces critères ont été remplis (sur tout l'historique) : ${midwifeDateTimeFmtLong.format(firstThresholdEndMs)}.`
+      trv('midwife.firstMatchAt', {
+        date: midwifeDateTimeFmtLong.format(firstThresholdEndMs),
+      })
     );
   } else {
-    lines.push(
-      "Aucun groupe de contractions consécutives n'a encore rempli ces critères dans l'historique enregistré."
-    );
+    lines.push(tr('midwife.firstMatchNoneLong'));
   }
   lines.push('');
   const modeLabel =
-    mode === 'all' ? "tout l'historique" : `les ${mode} dernières contractions`;
+    mode === 'all'
+      ? tr('midwife.modeAllLower')
+      : trv('midwife.modeLastNLower', { n: mode });
   lines.push(
-    `Période du tableau et des moyennes : ${modeLabel} (${selectedRecords.length} contraction(s)).`
+    trv('midwife.periodLine', {
+      mode: modeLabel,
+      count: selectedRecords.length,
+    })
   );
   lines.push('');
   if (selectedRecords.length === 0) {
-    lines.push('Aucune contraction dans cette sélection.');
+    lines.push(tr('midwife.emptySelection'));
     lines.push('');
     lines.push('—');
-    lines.push('Données indicatives — ne remplacent pas un avis médical.');
+    lines.push(tr('midwife.disclaimer'));
     return lines;
   }
-  lines.push('Moyennes sur cette sélection :');
+  lines.push(tr('midwife.averagesHeading'));
+  lines.push(`— ${trv('midwife.statQtyLong', { value: qtyHour })}`);
   lines.push(
-    `— Quantité estimée : ≈ ${qtyHour} contraction(s) / h (si le rythme restait constant).`
+    `— ${trv('midwife.statDurationLong', {
+      value: meanDur != null ? formatStatsClock(meanDur) : '—',
+    })}`
   );
   lines.push(
-    `— Durée moyenne : ${meanDur != null ? formatStatsClock(meanDur) : '—'} (mm:ss).`
-  );
-  lines.push(
-    `— Intervalle moyen entre débuts : ${meanInterval != null ? formatStatsClock(meanInterval) : '—'} (mm:ss).`
+    `— ${trv('midwife.statIntervalLong', {
+      value: meanInterval != null ? formatStatsClock(meanInterval) : '—',
+    })}`
   );
   lines.push('');
-  lines.push('Détail (ordre chronologique) :');
+  lines.push(tr('midwife.detailHeading'));
   for (let i = 0; i < selectedRecords.length; i++) {
     const r = selectedRecords[i]!;
     const intervalMs = i > 0 ? r.start - selectedRecords[i - 1]!.start : null;
     const intervalStr = intervalMs != null ? formatDuration(intervalMs) : '—';
     const note = r.note?.trim();
-    const intensity = r.intensity ? ` — intensité : ${r.intensity}` : '';
+    const intensity = r.intensity
+      ? trv('midwife.detailIntensity', { value: r.intensity })
+      : '';
+    const noteText = note ? trv('midwife.detailNote', { value: note }) : '';
     lines.push(
-      `${i + 1}. ${midwifeDateTimeFmt.format(r.start)} — durée ${formatDuration(r.end - r.start)} — écart depuis précédente : ${intervalStr}${intensity}${note ? ` — note : ${note}` : ''}`
+      trv('midwife.detailLine', {
+        num: i + 1,
+        start: midwifeDateTimeFmt.format(r.start),
+        duration: formatDuration(r.end - r.start),
+        interval: intervalStr,
+      }) +
+        intensity +
+        noteText
     );
   }
   lines.push('');
   lines.push('—');
-  lines.push('Données indicatives — ne remplacent pas un avis médical.');
+  lines.push(tr('midwife.disclaimer'));
   return lines;
 }
 

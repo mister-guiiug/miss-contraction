@@ -4,17 +4,10 @@ import type {
   AppSettings,
   StatsWindowKey,
 } from '../../storage';
-import {
-  filterRecordsByStatsWindow,
-  getRecentIntervalsMs,
-  computeThresholdBadge,
-  type ThresholdBadgeKind,
-} from '../../statsHelpers';
-import {
-  formatStatsClock,
-  formatContractionsPerHour,
-} from '../../utils/formatStats';
+import { filterRecordsByStatsWindow } from '../../statsHelpers';
+import { formatStatsClock } from '../../utils/formatStats';
 import { formatDuration } from '../../utils/formatDuration';
+import { interpolate, t, type AppLanguage } from '../../i18n';
 import { useNow } from './useNow';
 
 interface StatsData {
@@ -22,13 +15,8 @@ interface StatsData {
   avgDuration: string;
   avgFrequency: string;
   lastHourCount: number;
-  perHourFromMean: string;
   lastInterval: string;
   lastDuration: string;
-  humanSummary: string;
-  thresholdKind: ThresholdBadgeKind;
-  intervals: number[];
-  recordsForChart: ContractionRecord[];
 }
 
 interface StatsReturn {
@@ -38,26 +26,28 @@ interface StatsReturn {
 }
 
 /**
- * Calcule les statistiques pour la page d'accueil
+ * Les indicateurs de l'accueil.
+ *
+ * `qtyPerHour` était calculé deux fois : ici en entier, et une seconde fois
+ * dans `formatContractionsPerHour` à la décimale près. L'écran affichait donc
+ * « 9 » et « ≈ 9,2 / h » côte à côte, sous deux libellés, pour la même
+ * division. Une seule valeur sort désormais d'ici.
  */
 export function useStats(
   records: ContractionRecord[],
   settings: AppSettings
 ): StatsReturn {
   const now = useNow(1000);
+  const language = settings.language;
+
   const {
     avgDuration,
     avgFrequency,
     isEmpty,
-    intervals,
     lastDuration,
     lastHourCount,
     lastInterval,
-    perHourFromMean,
     qtyPerHour,
-    recordsForChart,
-    thresholdKind,
-    humanSummary,
     windowLabel,
   } = useMemo(() => {
     const allValid = records.filter(r => r.end > r.start);
@@ -70,23 +60,15 @@ export function useStats(
 
     const isEmpty = done.length === 0;
 
-    // Intervalles pour le graphique
-    const intervals = getRecentIntervalsMs(done, 14);
-    const recordsForChart = done.slice(-intervals.length - 1);
-
-    // Stats principales
     let qtyPerHour = '—';
     let avgDuration = '—';
     let avgFrequency = '—';
     let lastHourCount = 0;
-    let perHourFromMean = '—';
     let lastInterval = '—';
     let lastDuration = '—';
 
     if (!isEmpty) {
-      // Moyenne intervalle
       const meanInterval = meanStartIntervalMs(done);
-      // Moyenne durée
       const meanDur = meanContractionDurationMs(done);
 
       qtyPerHour =
@@ -99,8 +81,6 @@ export function useStats(
         meanInterval != null ? formatStatsClock(meanInterval) : '—';
 
       lastHourCount = countContractionsStartingInLastHour(allValid, now);
-      perHourFromMean =
-        meanInterval != null ? formatContractionsPerHour(meanInterval) : '—';
 
       const last = sorted.length > 0 ? sorted[sorted.length - 1]! : null;
       lastDuration = last ? formatDuration(last.end - last.start) : '—';
@@ -111,59 +91,19 @@ export function useStats(
       }
     }
 
-    // Calcul du résumé en langage naturel
-    let humanSummary = '';
-    if (!isEmpty) {
-      if (sorted.length >= 3) {
-        const last = sorted[sorted.length - 1]!;
-        const prev = sorted[sorted.length - 2]!;
-        const prev2 = sorted[sorted.length - 3]!;
-
-        const lastIntervalVal = last.start - prev.start;
-        const prevIntervalVal = prev.start - prev2.start;
-
-        if (lastIntervalVal < prevIntervalVal * 0.9) {
-          humanSummary = 'Les contractions se rapprochent.';
-        } else if (lastIntervalVal > prevIntervalVal * 1.1) {
-          humanSummary = 'Le rythme semble se calmer un peu.';
-        } else {
-          humanSummary = 'Le rythme est stable.';
-        }
-
-        if (
-          last.intensity &&
-          prev.intensity &&
-          last.intensity > prev.intensity
-        ) {
-          humanSummary += ' L’intensité augmente.';
-        }
-      } else {
-        humanSummary = 'Suivi en cours...';
-      }
-    }
-
-    // Badge de seuil
-    const thresholdKind = computeThresholdBadge(records, settings);
-
-    // Label de fenêtre
-    const windowLabel = statsWindowLabel(settings.statsWindowMinutes);
+    const windowLabel = statsWindowLabel(language, settings.statsWindowMinutes);
 
     return {
       qtyPerHour,
       avgDuration,
       avgFrequency,
       lastHourCount,
-      perHourFromMean,
       lastInterval,
       lastDuration,
-      humanSummary,
-      thresholdKind,
-      intervals,
-      recordsForChart,
       windowLabel,
       isEmpty,
     };
-  }, [now, records, settings]);
+  }, [language, now, records, settings]);
 
   return {
     data: {
@@ -171,13 +111,8 @@ export function useStats(
       avgDuration,
       avgFrequency,
       lastHourCount,
-      perHourFromMean,
       lastInterval,
       lastDuration,
-      humanSummary,
-      thresholdKind,
-      intervals,
-      recordsForChart,
     },
     windowLabel,
     isEmpty,
@@ -210,8 +145,8 @@ function countContractionsStartingInLastHour(
   return done.filter(r => r.start >= t0).length;
 }
 
-function statsWindowLabel(key: StatsWindowKey): string {
-  if (key === 'all') return 'Moyennes sur toutes les données enregistrées.';
+function statsWindowLabel(language: AppLanguage, key: StatsWindowKey): string {
+  if (key === 'all') return t(language, 'stats.windowAll');
   const n = key === '30' ? 30 : key === '60' ? 60 : 120;
-  return `Moyennes sur les ${n} dernières minutes (début de contraction).`;
+  return interpolate(t(language, 'stats.windowMinutes'), { minutes: n });
 }

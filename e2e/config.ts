@@ -58,25 +58,25 @@ export const SELECTORS = {
   STAT_VALUE_FREQUENCY: '[data-testid="stat-value-frequency"]',
 
   /*
-   * DEUX BADGES DE SEUIL, ET ILS NE DISENT PAS LA MÊME CHOSE.
-   * `threshold-badge` est le bandeau autonome de l'accueil ;
-   * `stats-threshold-badge` est la ligne de synthèse au bas des statistiques.
-   * Les deux portent `data-state`. Le harnais n'en connaissait qu'un.
+   * UN SEUL BADGE DE SEUIL, SOUS LE CHRONOMÈTRE. Il y en avait deux, alimentés
+   * par deux calculs distincts : ils pouvaient afficher des verdicts opposés
+   * sur la même page. `stats-threshold-badge` a disparu avec le second.
    */
   THRESHOLD_BADGE: '[data-testid="threshold-badge"]',
-  STATS_THRESHOLD_BADGE: '[data-testid="stats-threshold-badge"]',
 
-  // Historique
+  /*
+   * L'HISTORIQUE ÉDITABLE VIT SUR `/historique`, PLUS SUR L'ACCUEIL. Il y
+   * rejouait une troisième fois des données déjà affichées au-dessus.
+   */
   HISTORY_LIST: '[data-testid="history-list"]',
   HISTORY_ITEMS: '[data-testid="history-items"]',
 
   /*
-   * DEUX « ÉTATS VIDES », ET UN SEUL SE VOIT. `HomeView` ne monte
-   * `HistoryList` que lorsqu'il y a des contractions : sans aucune, c'est
-   * `EmptyState` — le composant du socle — qui occupe la place.
-   * `history-empty` est donc une branche défensive, atteignable seulement si
-   * des enregistrements existent mais qu'aucun n'est valide. Les tests qui
-   * vérifient « la liste est vide » doivent viser `EMPTY_STATE`.
+   * L'accueil sans contraction affiche `EmptyState` — le composant du socle.
+   * `history-empty` est la branche défensive de `HistoryList`, sur
+   * `/historique`, atteignable seulement si des enregistrements existent mais
+   * qu'aucun n'est valide. Les tests qui vérifient « l'accueil est vide »
+   * doivent viser `EMPTY_STATE`.
    */
   EMPTY_STATE: '[data-dwc="empty-state"]',
   HISTORY_EMPTY: '[data-testid="history-empty"]',

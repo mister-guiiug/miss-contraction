@@ -36,6 +36,7 @@ const baseInput: MidwifeSummaryInput = {
   mode: '12',
   firstThresholdEndMs: T0 + 11 * MIN,
   generatedAtMs: T0 + 30 * MIN,
+  language: 'fr',
 };
 
 describe('buildMidwifePdfLines', () => {

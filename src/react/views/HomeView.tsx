@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { TimerSectionWithIntensity } from '../components/home/TimerSectionWithIntensity';
 import { StatsSection } from '../components/home/StatsSection';
-import { HistoryList } from '../components/home/HistoryList';
 import { Banners } from '../components/home/Banners';
 import { EmptyState } from '../components/home/EmptyState';
 import { TimelineCompact } from '../components/home/TimelineCompact';
@@ -99,7 +98,6 @@ export function HomeView() {
         <>
           <TimelineCompact />
           <StatsSection />
-          <HistoryList />
         </>
       )}
     </ViewLayout>

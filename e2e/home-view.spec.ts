@@ -5,7 +5,7 @@
 
 import { test, expect } from '@playwright/test';
 import { SettingsPage } from './pages/SettingsPage';
-import { ROUTES } from './config';
+import { ROUTES, SELECTORS } from './config';
 
 test.describe('HomeView - Vue principale', () => {
   test.beforeEach(async ({ page }) => {
@@ -54,10 +54,13 @@ test.describe('HomeView - Vue principale', () => {
       .first();
     await stopButton.click();
 
-    // Vérifier qu'une contraction est enregistrée dans l'historique
-    await expect(
-      page.locator('.history-list, .contraction-entry, [data-testid*="record"]')
-    ).toBeDefined();
+    // Vérifier qu'une contraction est enregistrée dans l'historique.
+    // `toBeDefined()` sur un Locator ne vérifiait rien : un Locator existe
+    // toujours, même quand rien ne lui correspond dans la page.
+    await page.goto(ROUTES.TABLE);
+    await expect(page.locator(`${SELECTORS.HISTORY_ITEMS} > li`)).toHaveCount(
+      1
+    );
   });
 
   test('chronomètre - affiche le temps écoulé', async ({ page }) => {
