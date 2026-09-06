@@ -1132,7 +1132,12 @@ html[data-contrast='high'] {
     animation: none !important;
   }
 
-  body.contraction-active .app > *:not(.panel-cta),
+  /*
+   * Descendant et non enfant direct : la vue a gagné un niveau depuis que
+   * `<main>` ne contient plus que le contenu. `.app > *` ne l'atteignait plus,
+   * et c'est elle que le mode focus fait varier.
+   */
+  body.contraction-active .app *:not(.panel-cta),
   body.contraction-active .panel-cta {
     transition: none;
   }

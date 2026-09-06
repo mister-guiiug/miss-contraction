@@ -484,7 +484,24 @@ export function Shell({ children }: ShellProps) {
         </div>
       </nav>
 
-      <main className="app" id="main-content" tabIndex={-1}>
+      {/*
+       * `.app` N'EST QU'UNE COLONNE, PLUS LE CONTENU PRINCIPAL.
+       *
+       * `<main id="main-content">` enveloppait la barre du haut ET la barre du
+       * bas. Trois conséquences, toutes silencieuses :
+       *
+       * — le lien d'évitement ne sautait rien. Il menait à `#main-content`,
+       *   dont le premier élément focalisable était le bouton de thème :
+       *   exactement ce qu'on voulait passer.
+       * — aucun repère `banner` n'existait. Un `<header>` placé dans `<main>`
+       *   ne compte pas comme tel ; celui-ci était donc invisible à la
+       *   navigation par repères.
+       * — la navigation principale était annoncée À L'INTÉRIEUR du contenu.
+       *
+       * La classe reste sur le conteneur : c'est elle qui porte la largeur, le
+       * centrage et la réserve pour la barre fixe du bas.
+       */}
+      <div className="app">
         <header className="top-bar">
           <div className="top-bar-brand">
             <h1 className="top-bar-h1">
@@ -529,10 +546,12 @@ export function Shell({ children }: ShellProps) {
           </button>
         </header>
 
-        {children}
+        <main id="main-content" tabIndex={-1}>
+          {children}
+        </main>
 
         <BottomNav onMenuClick={toggleDrawer} isMenuOpen={isDrawerOpen} />
-      </main>
+      </div>
     </>
   );
 }
