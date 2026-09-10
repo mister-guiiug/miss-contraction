@@ -344,8 +344,13 @@ export default defineConfig(({ command }) => {
               type: 'image/png',
               purpose: 'any',
             },
+            // UNE IMAGE PAR USAGE. icon-512.png était déclaré ICI UNE
+            // SECONDE FOIS, en `maskable` : la même tuile arrondie sur fond
+            // blanc servait au navigateur, qui la montre telle quelle, et à
+            // Android, qui la rogne — coins coupés, liseré blanc autour du
+            // rose.
             {
-              src: 'icons/icon-512.png',
+              src: 'icons/icon-maskable.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'maskable',
