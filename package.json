@@ -44,7 +44,8 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.8.0",
-    "@mister-guiiug/dev-pwa-config": "^4.7.0",
+    "@eslint/js": "^9.39.4",
+    "@mister-guiiug/dev-pwa-config": "^4.10.0",
     "@playwright/test": "^1.49.1",
     "@sentry/vite-plugin": "^5.0.0",
     "@tailwindcss/vite": "^4.3.0",
@@ -56,6 +57,7 @@
     "@vitejs/plugin-react": "^6.0.0",
     "axe-core": "^4.8.0",
     "cross-env": "^10.1.0",
+    "eslint": "^9.39.4",
     "husky": "^9.1.7",
     "jsdom": "^26.0.0",
     "lint-staged": "^16.4.0",
