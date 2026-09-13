@@ -18,6 +18,12 @@ e2e/__snapshots__/
 # Lighthouse CI (rapports locaux)
 .lighthouseci/
 
+# Rapport engendré par `vitest run --coverage` (28 fichiers, 428 Ko mesurés sur
+# `mister-molkky`). Ce dépôt n'en produit pas encore ; la ligne se pose avant,
+# car elle couvre deux outils d'un coup — git, et Prettier, qui honore
+# `.gitignore` depuis la 3.x. ESLint, lui, ne le lit pas : c'est le socle.
+coverage/
+
 # Copies complètes du dépôt, créées par les agents lancés en `isolation:
 # worktree`. Elles étaient masquées par `.git/info/exclude`, qui est LOCAL :
 # invisible à `git status` ici, absent partout ailleurs. Versionnée, la ligne
