@@ -1,8 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
-  <rect width="512" height="512" rx="96" fill="#3d2438"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Miss Contraction">
+  <title>Miss Contraction</title>
+  <!--
+    SOURCE UNIQUE DE L'IDENTITÉ. `scripts/generate-pwa-icons.mjs` produit les
+    quatre PNG à partir de ce fichier, et `vite.config.ts` le désigne en
+    `logoPath` pour l'og:image. Les deux vivaient auparavant sur des images
+    différentes, qui ne se ressemblaient plus.
+
+    La spirale est CREUSÉE dans le disque, pas posée dessus : c'est
+    l'enfermement qui porte le sens — un disque qui contient se lit comme un
+    ventre, et la boucle qu'il enferme comme un corps replié. Posée sur le
+    fond, la même spirale ne dirait rien de tel.
+
+    Le disque fait 168 de rayon, soit 66 % de la demi-largeur : il tient dans
+    la zone de sécurité de 80 % qu'Android rogne sur une icône `maskable`. Ne
+    pas l'agrandir sans refaire ce calcul.
+  -->
+  <rect width="512" height="512" rx="112" fill="#3d2438" />
+  <circle cx="256" cy="256" r="168" fill="#f4c2c2" />
   <path
-    fill="#f4c2c2"
-    d="M256 128c-48 0-88 36-88 80 0 64 88 176 88 176s88-112 88-176c0-44-40-80-88-80zm0 112a32 32 0 1 1 0-64 32 32 0 0 1 0 64z"
+    d="M 256 256 A 20 20 0 0 1 216 256 A 63 63 0 0 1 342 256 A 109 109 0 0 1 124 256"
+    fill="none"
+    stroke="#3d2438"
+    stroke-width="34"
+    stroke-linecap="round"
   />
-  <path stroke="#e8a0a8" stroke-width="12" stroke-linecap="round" d="M128 352h256M160 400h192"/>
 </svg>

@@ -1,77 +1,61 @@
 /**
- * Génère les PNG PWA à partir de docs/assets/Designer.png
+ * Génère les PNG PWA à partir de `public/icon.svg`.
  * Exécuter : npm run icons
+ *
+ * LA SOURCE EST REDEVENUE VECTORIELLE, ET IL N'Y EN A PLUS QU'UNE. Ce script
+ * partait d'une illustration matricielle de 1,6 Mo rangée dans `docs/assets/`,
+ * pendant que `vite.config.ts` désignait `public/icon.svg` pour l'og:image :
+ * deux images sans rapport l'une avec l'autre servaient la même identité, et
+ * rien ne le signalait. L'illustration a été retirée avec ce changement ;
+ * elle reste dans l'historique git si quelqu'un la cherche.
+ *
+ * Tout ce que l'ancien script reconstruisait — rognage, extraction du centre,
+ * flou pour remplir la toile du `maskable` — n'existait que pour rattraper une
+ * source matricielle à fond transparent. Un SVG n'a besoin d'aucun de ces
+ * détours : on l'aplatit sur la couleur de la tuile, et le fond est plein par
+ * construction.
  */
 import { mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const root = join(__dirname, '..');
-// Le fichier a déménagé dans docs/assets/ sans que ce chemin suive : le
-// script échouait sur « Input file is missing ». Personne ne s'en apercevait,
-// puisque les PNG produits sont versionnés et qu'on ne les régénère jamais.
-const input = join(root, 'docs', 'assets', 'Designer.png');
-const outDir = join(root, 'public', 'icons');
+const racine = join(dirname(fileURLToPath(import.meta.url)), '..');
+const source = join(racine, 'public', 'icon.svg');
+const sortie = join(racine, 'public', 'icons');
 
-await mkdir(outDir, { recursive: true });
-
-const sizes = [
-  { w: 192, h: 192, name: 'icon-192.png' },
-  { w: 512, h: 512, name: 'icon-512.png' },
-  { w: 180, h: 180, name: 'apple-touch-icon.png' },
-];
-
-for (const { w, h, name } of sizes) {
-  await sharp(input)
-    .resize(w, h, { fit: 'cover', position: 'center' })
-    .png()
-    .toFile(join(outDir, name));
-}
+/** La couleur de la tuile, celle du `rect` de `icon.svg`. */
+const TUILE = { r: 0x3d, g: 0x24, b: 0x38, alpha: 1 };
 
 /**
- * LE MASKABLE EST UNE AUTRE IMAGE, PAS LA MÊME.
- *
- * Le manifeste déclarait DEUX FOIS icon-512.png, une fois en `any`, une fois
- * en `maskable`. C'est la même image pour deux usages qui n'ont pas les mêmes
- * règles : le navigateur la montre telle quelle, Android la rogne à son
- * masque. Or cette image est une TUILE ARRONDIE sur fond blanc — le masque lui
- * coupait les coins, et le blanc formait un liseré autour du rose.
- *
- * Ici la toile est remplie EN ENTIER, et par l'illustration elle-même : un
- * carré pris au centre de la tuile, agrandi et fondu. Il n'y a pas de blanc
- * dedans, et ses couleurs sont, à la place près, celles de la tuile posée
- * par-dessus — le raccord n'a donc rien à cacher.
- *
- * La tuile occupe 88 % de la toile : ses coins arrondis se fondent dans le
- * fond, et l'illustration tient dans la zone de sécurité, le disque de 80 %.
+ * Le SVG est rasterisé à 2048 avant d'être réduit : rendre directement à 180
+ * laisse des bords durs sur les arcs, réduire depuis quatre fois la taille
+ * donne un lissage propre.
  */
-const rogne = await sharp(input).trim().png().toBuffer();
-const { width: largeurTuile } = await sharp(rogne).metadata();
-const cote = Math.round(largeurTuile * 0.5);
-const fond = await sharp(rogne)
-  .extract({
-    left: Math.round(largeurTuile * 0.25),
-    top: Math.round(largeurTuile * 0.25),
-    width: cote,
-    height: cote,
-  })
-  .resize(512, 512, { fit: 'cover' })
-  .blur(34)
-  .png()
-  .toBuffer();
-const tuile = await sharp(rogne)
-  .resize(448, 448, {
-    fit: 'contain',
-    background: { r: 0, g: 0, b: 0, alpha: 0 },
-  })
-  .png()
-  .toBuffer();
-await sharp(fond)
-  .composite([{ input: tuile, top: 32, left: 32 }])
-  .png()
-  .toFile(join(outDir, 'icon-maskable.png'));
+const rendre = (taille, { aplati = false } = {}) => {
+  const image = sharp(source, { density: 288 });
+  return (aplati ? image.flatten({ background: TUILE }) : image)
+    .resize(taille, taille)
+    .png();
+};
+
+await mkdir(sortie, { recursive: true });
+
+// `purpose: any` — le navigateur montre l'image telle quelle, coins arrondis
+// compris : on garde donc la transparence autour de la tuile.
+await rendre(192).toFile(join(sortie, 'icon-192.png'));
+await rendre(512).toFile(join(sortie, 'icon-512.png'));
+
+// iOS pose SON masque par-dessus. Une tuile déjà arrondie y serait arrondie
+// deux fois, et les coins transparents viraient au noir : on aplatit.
+await rendre(180, { aplati: true }).toFile(
+  join(sortie, 'apple-touch-icon.png')
+);
+
+// Android rogne à sa guise dans les 20 % de bord. La toile doit donc être
+// pleine, et le motif tenir dans le disque central — c'est la contrainte que
+// `icon.svg` documente sur le rayon de son disque.
+await rendre(512, { aplati: true }).toFile(join(sortie, 'icon-maskable.png'));
 
 console.log(
   'Icônes écrites dans public/icons/ (192, 512, apple-touch 180, maskable 512).'
