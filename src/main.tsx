@@ -28,7 +28,7 @@ void initSentry({
 // pas lire `import.meta.env`. En développement, un worker resté d'une session
 // précédente sert du cache périmé et se bat contre le HMR.
 //
-// EN PRODUCTION, l'enregistrement est confié à `<AppUpdates>` (ci-dessous) :
+// EN PRODUCTION, l'enregistrement est confié à `<AppUpdates checkEvery="1h">` (ci-dessous) :
 // le plugin est en `registerType: 'prompt'` (`vite.config.ts`), la nouvelle
 // version est téléchargée en fond et c'est l'utilisatrice qui recharge, depuis
 // le bandeau du socle. Avant le 02/09/2026, l'app était en `autoUpdate` : un
