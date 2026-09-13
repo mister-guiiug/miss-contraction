@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAppStore } from '../store/useAppStore';
+import { PwaInstallPrompt } from '@mister-guiiug/dev-pwa-config/react/pwa-install-prompt';
 import { TimerSectionWithIntensity } from '../components/home/TimerSectionWithIntensity';
 import { StatsSection } from '../components/home/StatsSection';
 import { Banners } from '../components/home/Banners';
@@ -95,6 +96,17 @@ export function HomeView() {
           <StatsSection />
         </>
       )}
+
+      {/* SUR L'ACCUEIL, ET PAS DANS LA COQUILLE : une invite ne doit pas
+          paraître par-dessus un chronomètre de contraction en cours. Ne rend
+          rien tant qu'une installation n'est pas possible, ni une fois
+          l'application installée — et sur iOS, où l'événement natif n'existe
+          pas, donne la marche à suivre. Cadence du socle : au premier
+          lancement, puis une fois par mois, trois fois.
+
+          L'habillage est dans `enhanced-ui.css` : l'app n'importe pas
+          `components.css`, le composant arrive donc nu, comme l'état vide. */}
+      <PwaInstallPrompt />
     </ViewLayout>
   );
 }

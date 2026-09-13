@@ -1123,3 +1123,71 @@ html[data-contrast='high'] {
     transition: none;
   }
 }
+
+/* ── 12. INVITE D'INSTALLATION (`PwaInstallPrompt` du socle) ──────────────────
+   Même cas que l'état vide plus haut : le composant arrive NU — Miss
+   Contraction n'importe pas `components.css` — et c'est donc ici qu'il est
+   habillé, avec les jetons de l'app.
+
+   LE BLOC, PAS LA RANGÉE. Le socle empile un titre, une description et une
+   barre d'actions, parce que sur iOS il n'y a pas de bouton d'installation à
+   proposer : c'est la description qui PORTE la marche à suivre. D'où
+   `data-method`, qui dit laquelle des deux formes est rendue. */
+[data-dwc='pwa-install-prompt'] {
+  margin-top: 1.25rem;
+  padding: 0.9rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--chrome-radius);
+}
+
+[data-dwc='pwa-install-title'] {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+[data-dwc='pwa-install-desc'] {
+  margin: 0.2rem 0 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+/* La marche à suivre n'est pas un argument de vente : en mode instructions
+   elle porte la seule information utile, et reprend l'encre du texte. */
+[data-dwc='pwa-install-prompt'][data-method='instructions']
+  [data-dwc='pwa-install-desc'] {
+  color: var(--text);
+}
+
+[data-dwc='pwa-install-actions'] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+[data-dwc='pwa-install-actions'] button {
+  min-height: 2.75rem;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* L'aplat ne va qu'au bouton d'installation, et SEULEMENT quand il existe :
+   en mode instructions la seule sortie est « Plus tard », qui ne doit pas
+   hériter du poids visuel de l'action principale. */
+[data-dwc='pwa-install-prompt'][data-method='prompt']
+  [data-dwc='pwa-install-actions']
+  button:first-child {
+  background: var(--primary);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+}
