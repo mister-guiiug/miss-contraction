@@ -3,10 +3,11 @@
  * Exécuter : npm run icons
  *
  * LA SOURCE EST REDEVENUE VECTORIELLE, ET IL N'Y EN A PLUS QU'UNE. Ce script
- * partait de `docs/assets/Designer.png`, une illustration de 1,6 Mo, pendant
- * que `vite.config.ts` désignait `public/icon.svg` pour l'og:image : deux
- * images sans rapport l'une avec l'autre servaient la même identité, et rien
- * ne le signalait.
+ * partait d'une illustration matricielle de 1,6 Mo rangée dans `docs/assets/`,
+ * pendant que `vite.config.ts` désignait `public/icon.svg` pour l'og:image :
+ * deux images sans rapport l'une avec l'autre servaient la même identité, et
+ * rien ne le signalait. L'illustration a été retirée avec ce changement ;
+ * elle reste dans l'historique git si quelqu'un la cherche.
  *
  * Tout ce que l'ancien script reconstruisait — rognage, extraction du centre,
  * flou pour remplir la toile du `maskable` — n'existait que pour rattraper une
