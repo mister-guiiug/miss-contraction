@@ -69,7 +69,10 @@ if (rootElement) {
       >
         {/* En développement, `registerSW` vaut `undefined` : aucun worker n'est
             enregistré et le bandeau ne peut pas apparaître. */}
-        <AppUpdates registerSW={import.meta.env.PROD ? registerSW : undefined}>
+        <AppUpdates
+          checkEvery="1h"
+          registerSW={import.meta.env.PROD ? registerSW : undefined}
+        >
           <App />
         </AppUpdates>
       </ErrorBoundary>
