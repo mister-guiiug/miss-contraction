@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { ClipboardList, Milk, Shirt, Users } from 'lucide-react';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { AppFooter } from '../components/layout/AppFooter';
 import { t } from '../../i18n';
@@ -90,14 +91,25 @@ export function ChecklistView() {
     );
   };
 
+  // Des icônes tracées, et non des emojis : un emoji est rendu par la police du
+  // système, donc d'une couleur, d'une graisse et d'un style différents sur
+  // chaque plateforme — et les trois précédents (🤰 👶 👫) représentaient des
+  // personnes, avec le genre et la teinte de peau choisis par le fabricant.
+  //
+  // `Shirt` pour « pour maman » nomme ce que la liste contient — tenues,
+  // soutiens-gorge, trousse de toilette. Lucide n'a pas d'icône de grossesse.
   const categories = [
-    { id: 'docs', label: t(language, 'checklist.category.docs'), icon: '📄' },
-    { id: 'mama', label: t(language, 'checklist.category.mama'), icon: '🤰' },
-    { id: 'baby', label: t(language, 'checklist.category.baby'), icon: '👶' },
+    {
+      id: 'docs',
+      label: t(language, 'checklist.category.docs'),
+      Icon: ClipboardList,
+    },
+    { id: 'mama', label: t(language, 'checklist.category.mama'), Icon: Shirt },
+    { id: 'baby', label: t(language, 'checklist.category.baby'), Icon: Milk },
     {
       id: 'partner',
       label: t(language, 'checklist.category.partner'),
-      icon: '👫',
+      Icon: Users,
     },
   ];
 
@@ -110,8 +122,10 @@ export function ChecklistView() {
     >
       {categories.map(cat => (
         <div key={cat.id} className="card">
-          <h3 className="section-title">
-            <span style={{ marginRight: '0.5rem' }}>{cat.icon}</span>
+          <h3 className="section-title titre-categorie">
+            <span className="pastille-categorie" aria-hidden="true">
+              <cat.Icon size={16} strokeWidth={1.75} />
+            </span>
             {cat.label}
           </h3>
           <div className="form" style={{ marginTop: '0.5rem' }}>

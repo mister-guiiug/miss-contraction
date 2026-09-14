@@ -1914,6 +1914,41 @@ a.btn {
   font-size: 1.05rem;
 }
 
+/*
+ * Titre de catégorie porteur d'une icône — valise maternité.
+ *
+ * `.section-title` seul reste en `display: block`, et doit y rester : neuf
+ * fichiers l'emploient, dont SettingsView sept fois. Passer la règle de base en
+ * flex changerait quinze titres pour en corriger quatre.
+ *
+ * Le flex est ici une nécessité, pas un goût : un emoji est du texte et s'assoit
+ * sur la ligne de base, un `<svg>` inline y pose le BAS de sa boîte et paraît
+ * donc trop bas. `align-items: center` recentre sur la hauteur de ligne.
+ */
+.titre-categorie {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/*
+ * La teinte se construit sur `--accent-rgb`, qui vaut 160,48,154 en clair et
+ * 214,120,207 en sombre : un `rgba()` figé serait juste dans un thème et faux
+ * dans l'autre. Contraste de l'icône sur la pastille composée, mesuré :
+ * 4,81 en clair et 5,05 en sombre — le seuil d'un élément non textuel est 3.
+ */
+.pastille-categorie {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.5rem;
+  background: rgba(var(--accent-rgb), 0.16);
+  color: var(--primary);
+}
+
 .section-head {
   display: flex;
   align-items: center;
