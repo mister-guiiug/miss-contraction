@@ -55,10 +55,7 @@ function AppRoutes() {
       {/* Une `region`, pas une boîte modale : elle ne recouvre rien et ne
           piège pas le focus. Ne rend RIEN tant que `VITE_GA_MEASUREMENT_ID`
           n'est pas posée — sans identifiant, il n'y a rien à demander. */}
-      <ConsentBanner
-        gtmContainerId={import.meta.env.VITE_GTM_CONTAINER_ID}
-        gaMeasurementId={import.meta.env.VITE_GA_MEASUREMENT_ID}
-      />
+      <ConsentBanner gaMeasurementId={import.meta.env.VITE_GA_MEASUREMENT_ID} />
       <Routes>
         {/* Home */}
         <Route path="/" element={<HomeView />} />

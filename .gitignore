@@ -4,6 +4,10 @@ dist/
 *.log
 .env
 .env.*
+# `.env.*` avalait `.env.example`, qui n'a donc JAMAIS été versionné ici — seul
+# dépôt du parc dans ce cas. Ce fichier ne contient aucune valeur secrète : il
+# documente les variables attendues, et `pwa-doctor` s'appuie dessus.
+!.env.example
 
 # Playwright artifacts
 playwright-report/
