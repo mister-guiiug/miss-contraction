@@ -13,16 +13,16 @@ const { version } = JSON.parse(readFileSync('./package.json', 'utf-8')) as {
   version: string;
 };
 
-// `GTM-M2GSG3V4` et `G-B44CK4VR08` ont quitté ce fichier : ce sont désormais
-// les variables `VITE_GTM_CONTAINER_ID` et `VITE_GA_MEASUREMENT_ID` du dépôt,
-// lues par `ConsentBanner`. Écrits ici, ils partaient au build sans condition.
+// `GTM-M2GSG3V4` et `G-B44CK4VR08` ont quitté ce fichier ; écrits ici, ils
+// partaient au build sans condition. Seul GA4 subsiste, en variable de dépôt
+// `VITE_GA_MEASUREMENT_ID` lue par `ConsentBanner` : le conteneur GTM est
+// abandonné, une voie de mesure valant mieux que deux qui se doublent.
 //
-// `GA_COOKIE_DOMAIN` disparaît avec eux : il ancrait le cookie GA sur
-// `mister-guiiug.github.io` parce que GitHub Pages sert cette app sous un
-// sous-CHEMIN et non un sous-domaine. Le réglage reste nécessaire — mais il
-// appartient maintenant au conteneur GTM, pas au build : c'est lui qui
-// configure GA4, et c'est là qu'on le règle une fois pour toutes les apps de
-// la famille, qui partagent ce domaine.
+// `GA_COOKIE_DOMAIN` disparaît avec eux, et rien ne le remplace : il ancrait
+// le cookie sur `mister-guiiug.github.io` parce que GitHub Pages sert cette
+// app sous un sous-CHEMIN. Le défaut `auto` de GA4 y aboutit déjà — `github.io`
+// est sur la Public Suffix List, le navigateur refuse donc tout cookie posé
+// plus haut, et `auto` retombe sur l'hôte complet.
 const GSC_VERIFICATION = 'iUfQ7_dOztC3XoSGesC2b7IkxyNL2O9fegKXECoOg30';
 
 // Dépôt GitHub Pages : https://<user>.github.io/miss-contraction/

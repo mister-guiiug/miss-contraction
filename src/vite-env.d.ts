@@ -9,12 +9,6 @@ interface ImportMetaEnv {
    * indépendant.
    */
   readonly VITE_GA_MEASUREMENT_ID?: string;
-  /**
-   * Conteneur GTM (`GTM-…`). Si les DEUX sont posés, le socle ne charge que
-   * GTM — GA4 se configure dedans. L'injection au build, retirée le
-   * 15/09/2026, chargeait les deux : chaque évènement était compté deux fois.
-   */
-  readonly VITE_GTM_CONTAINER_ID?: string;
   readonly VITE_SENTRY_DSN?: string;
 }
 
