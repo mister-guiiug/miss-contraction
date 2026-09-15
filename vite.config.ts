@@ -75,6 +75,27 @@ export default defineConfig(({ command }) => {
 
             const norm = id.replace(/\\/g, '/');
 
+            /*
+             * SENTRY DANS SON PROPRE MORCEAU, ET C'EST UNE CORRECTION, PAS UN
+             * RÉGLAGE FIN.
+             *
+             * `react/observability` du socle charge `@sentry/react` par un
+             * `import()` DYNAMIQUE : il ne doit partir que si un DSN existe.
+             * Mais `manualChunks` a le dernier mot sur Rollup, et la ligne
+             * `return 'vendor'` en bas de cette fonction attrapait Sentry au
+             * passage — dans un morceau STATIQUE, préchargé par `index.html`.
+             *
+             * Mesuré le 15/09/2026 : `vendor` pesait 144,4 kB gzip, `captureException`
+             * dedans. Or ce dépôt n'a AUCUN `VITE_SENTRY_DSN` — ni en secret, ni
+             * en variable. `initSentry` sort donc sur `if (!dsn) return null`
+             * sans jamais toucher au SDK : ces kilo-octets étaient téléchargés
+             * par chaque visiteur pour un Sentry qui ne s'allume jamais.
+             *
+             * Le jour où un DSN sera posé, ce morceau se chargera à la demande,
+             * après le premier rendu, au lieu de bloquer avec le reste.
+             */
+            if (norm.includes('/@sentry/')) return 'sentry';
+
             // Séparer les librairies principales
             if (
               norm.includes('/vite-plugin-pwa/') ||
