@@ -3937,6 +3937,122 @@ html[data-theme='dark'] .about-link-card--coffee .about-link-card__icon {
   line-height: 1.45;
 }
 
+/* ── Bandeau « Mise à jour disponible » (dev-pwa-config) ────────────────────
+   Le composant du socle est livré SANS STYLES, et son en-tête le dit :
+   « Non stylé : cibler [data-dwc="update-banner"] ». Quinze apps du parc
+   importent `components.css` du socle, qui les porte ; celle-ci ne l'importe
+   pas — et ne peut pas : `components.css` redéfinit `.btn` et `.btn-secondary`,
+   que ce fichier possède déjà avec un tout autre dessin.
+
+   SANS CES RÈGLES, LE BANDEAU ÉTAIT INATTEIGNABLE. Mesuré dans le navigateur :
+   le conteneur sortait en `position: static`, `padding: 0`, fond transparent,
+   et se posait à 1584 px dans une page de 1608 — parce qu'`AppUpdates` le rend
+   APRÈS `children`, donc en flux tout en bas du document. Ses `<button>`, eux,
+   rendaient `background: rgba(0,0,0,0)`, `border: 0`, `padding: 0` : le
+   preflight de Tailwind — que cette app garde EXPRÈS, voir `tailwind.css` —
+   les avait dépouillés. Il ne restait que du texte, hors de vue.
+
+   LA PLACE TIENT COMPTE DE LA BARRE BASSE. `.bottom-nav` est fixe sous 768 px,
+   sur 4,85 rem et en `z-index: 50` : le bandeau se pose au-dessus d'elle, et
+   passe devant.
+   ───────────────────────────────────────────────────────────────────────── */
+
+[data-dwc='update-banner'],
+[data-dwc='offline-ready'] {
+  position: fixed;
+  inset-inline: 0;
+  bottom: calc(1rem + max(env(safe-area-inset-bottom), 0px));
+  z-index: 60;
+  width: min(100% - 2rem, 32rem);
+  margin-inline: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--chrome-border);
+  border-radius: var(--chrome-radius);
+  background: var(--surface);
+  box-shadow: 0 -8px 26px rgba(var(--ink-rgb), 0.18);
+}
+
+@media (max-width: 767px) {
+  [data-dwc='update-banner'],
+  [data-dwc='offline-ready'] {
+    /* 4,85 rem est la hauteur minimale de `.bottom-nav`, qui porte déjà
+       l'encoche dans son propre padding. */
+    bottom: calc(4.85rem + max(env(safe-area-inset-bottom), 0px) + 0.5rem);
+  }
+}
+
+[data-dwc='update-banner-title'],
+[data-dwc='offline-ready-title'] {
+  flex: 1 1 11rem;
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+/* Sous 480 px, le titre prend toute la ligne : sinon il n'en laisse assez que
+   pour UN bouton, et le second tombe seul en dessous — relevé en 375×812. Les
+   deux sorties restent alors côte à côte, ce qui se lit comme un choix. */
+@media (max-width: 480px) {
+  [data-dwc='update-banner-title'],
+  [data-dwc='offline-ready-title'] {
+    flex-basis: 100%;
+  }
+}
+
+/* Les boutons reprennent la pilule maison de `.btn`, en plus compact : les
+   3,25 rem de hauteur minimale d'un bouton d'écran écraseraient le bandeau. */
+[data-dwc='update-banner-update'],
+[data-dwc='update-banner-dismiss'],
+[data-dwc='update-banner-ignore'],
+[data-dwc='offline-ready-dismiss'] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
+  padding: 0 1.1rem;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+[data-dwc='update-banner-update'] {
+  background: var(--primary);
+  color: var(--primary-contrast);
+}
+
+[data-dwc='update-banner-update']:hover {
+  background: var(--primary-hover);
+}
+
+[data-dwc='update-banner-dismiss'],
+[data-dwc='update-banner-ignore'],
+[data-dwc='offline-ready-dismiss'] {
+  background: rgba(var(--accent-rgb), 0.12);
+  color: var(--text);
+}
+
+[data-dwc='update-banner-dismiss']:hover,
+[data-dwc='update-banner-ignore']:hover,
+[data-dwc='offline-ready-dismiss']:hover {
+  background: rgba(var(--accent-rgb), 0.2);
+}
+
+/* Pendant la mise à jour, le socle pose `aria-busy` et `aria-disabled` plutôt
+   que `disabled` — pour que le bouton reste annonçable. Le rendu doit suivre. */
+[data-dwc='update-banner-update'][aria-disabled='true'] {
+  opacity: 0.7;
+  cursor: progress;
+}
+
 /* Écran de secours du composant partagé ErrorBoundary (dev-pwa-config). */
 [data-dwc='error-boundary'] {
   min-height: 100dvh;
