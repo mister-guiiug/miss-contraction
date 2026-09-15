@@ -19,9 +19,22 @@ import { getDocumentTitle } from '../routes';
 import { getRouteFromPath, getRoutePath } from '../routes-i18n';
 import { useAppStore } from './store/useAppStore';
 import { AppLabelsProvider } from './providers/AppLabelsProvider';
+import { ConsentBanner } from '@mister-guiiug/dev-pwa-config/react/consent-banner';
+import { usePageViews } from '@mister-guiiug/dev-pwa-config/react/use-page-views';
 
 function DocumentTitle() {
   const location = useLocation();
+
+  /*
+   * LA VUE DE PAGE VIT ICI, avec le titre du document : ce composant est déjà
+   * celui qui écoute la route et ne rend rien. GA4 n'envoie `page_view` qu'au
+   * chargement du document, et `initAnalytics` pose en plus
+   * `send_page_view: false` pour que la première vue passe par ce hook comme
+   * les autres — sinon l'écran d'entrée serait compté deux fois.
+   *
+   * Ne fait rien tant que le consentement n'est pas accordé.
+   */
+  usePageViews(location.pathname);
   const language = useAppStore(state => state.settings.language);
 
   useEffect(() => {
@@ -39,6 +52,13 @@ function AppRoutes() {
   return (
     <Shell>
       <DocumentTitle />
+      {/* Une `region`, pas une boîte modale : elle ne recouvre rien et ne
+          piège pas le focus. Ne rend RIEN tant que `VITE_GA_MEASUREMENT_ID`
+          n'est pas posée — sans identifiant, il n'y a rien à demander. */}
+      <ConsentBanner
+        gtmContainerId={import.meta.env.VITE_GTM_CONTAINER_ID}
+        gaMeasurementId={import.meta.env.VITE_GA_MEASUREMENT_ID}
+      />
       <Routes>
         {/* Home */}
         <Route path="/" element={<HomeView />} />
