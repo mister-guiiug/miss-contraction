@@ -13,13 +13,17 @@ const { version } = JSON.parse(readFileSync('./package.json', 'utf-8')) as {
   version: string;
 };
 
-const GTM_ID = 'GTM-M2GSG3V4';
-const GA_ID = 'G-B44CK4VR08';
+// `GTM-M2GSG3V4` et `G-B44CK4VR08` ont quitté ce fichier : ce sont désormais
+// les variables `VITE_GTM_CONTAINER_ID` et `VITE_GA_MEASUREMENT_ID` du dépôt,
+// lues par `ConsentBanner`. Écrits ici, ils partaient au build sans condition.
+//
+// `GA_COOKIE_DOMAIN` disparaît avec eux : il ancrait le cookie GA sur
+// `mister-guiiug.github.io` parce que GitHub Pages sert cette app sous un
+// sous-CHEMIN et non un sous-domaine. Le réglage reste nécessaire — mais il
+// appartient maintenant au conteneur GTM, pas au build : c'est lui qui
+// configure GA4, et c'est là qu'on le règle une fois pour toutes les apps de
+// la famille, qui partagent ce domaine.
 const GSC_VERIFICATION = 'iUfQ7_dOztC3XoSGesC2b7IkxyNL2O9fegKXECoOg30';
-
-// Domaine racine pour les cookies GA (GitHub Pages utilise un sous-chemin,
-// pas un sous-domaine — le cookie doit être ancré sur le domaine réel).
-const GA_COOKIE_DOMAIN = 'mister-guiiug.github.io';
 
 // Dépôt GitHub Pages : https://<user>.github.io/miss-contraction/
 // Preview React : https://<user>.github.io/miss-contraction-react/
@@ -169,6 +173,22 @@ export default defineConfig(({ command }) => {
         transformIndexHtml() {
           if (command !== 'build') return [];
           return [
+            /*
+             * SEULE LA VÉRIFICATION DE PROPRIÉTÉ RESTE ICI.
+             *
+             * Ce plugin injectait aussi, au build et SANS AUCUNE CONDITION, le
+             * bootstrap de Google Tag Manager, son iframe `noscript`, le script
+             * `gtag/js` et un `gtag('config', …)`. Tout partait dans le `<head>`,
+             * donc AVANT le premier rendu : avant que quiconque ait pu accepter,
+             * et avant même que le mode consentement de Google ait pu déclarer
+             * son état par défaut — lequel n'a aucun effet rétroactif une fois le
+             * tag évalué.
+             *
+             * La mesure passe désormais par `ConsentBanner`, et les identifiants
+             * viennent des variables du dépôt. La balise ci-dessous, elle, ne
+             * dépose rien chez l'utilisateur : elle prouve à Google que le
+             * domaine est à nous, et n'a pas à attendre un consentement.
+             */
             {
               tag: 'meta',
               injectTo: 'head',
@@ -176,29 +196,6 @@ export default defineConfig(({ command }) => {
                 name: 'google-site-verification',
                 content: GSC_VERIFICATION,
               },
-            },
-            {
-              tag: 'script',
-              injectTo: 'head',
-              children: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+i:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');`,
-            },
-            {
-              tag: 'noscript',
-              injectTo: 'body-prepend',
-              children: `<iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
-            },
-            {
-              tag: 'script',
-              injectTo: 'head',
-              attrs: {
-                async: true,
-                src: `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`,
-              },
-            },
-            {
-              tag: 'script',
-              injectTo: 'head',
-              children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}',{'cookie_domain':'${GA_COOKIE_DOMAIN}'});`,
             },
           ];
         },

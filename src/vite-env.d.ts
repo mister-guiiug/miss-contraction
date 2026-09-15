@@ -2,6 +2,19 @@
 /// <reference types="vite-plugin-pwa/client" />
 
 interface ImportMetaEnv {
+  /**
+   * Identifiant de mesure GA4 (`G-…`), propre à CETTE application. Absent, le
+   * bandeau de consentement ne rend rien et rien n'est mesuré : c'est le seul
+   * interrupteur, et une propriété par site est ce qui rend le suivi
+   * indépendant.
+   */
+  readonly VITE_GA_MEASUREMENT_ID?: string;
+  /**
+   * Conteneur GTM (`GTM-…`). Si les DEUX sont posés, le socle ne charge que
+   * GTM — GA4 se configure dedans. L'injection au build, retirée le
+   * 15/09/2026, chargeait les deux : chaque évènement était compté deux fois.
+   */
+  readonly VITE_GTM_CONTAINER_ID?: string;
   readonly VITE_SENTRY_DSN?: string;
 }
 
