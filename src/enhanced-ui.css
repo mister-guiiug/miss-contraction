@@ -1191,3 +1191,61 @@ html[data-contrast='high'] {
   color: #fff;
   font-weight: 600;
 }
+
+/* ── 13. BANDEAU DE CONSENTEMENT (`ConsentBanner` du socle) ───────────────────
+   Troisième pièce du socle qui arrive NUE ici, après l'état vide et l'invite
+   d'installation : Miss Contraction n'importe pas `components.css`. Relevé le
+   16/09/2026 sur le site déployé, `[data-dwc='consent-actions']` rendait
+   `display: block` — « Accepter » et « Refuser » se touchaient, sans cible
+   tactile. Les seize apps qui importent la feuille du socle rendaient `flex`.
+
+   EN FLUX, PAS EN SURCOUCHE. Le composant est une `region`, pas une boîte
+   modale : il ne recouvre rien et ne piège pas le focus. Une barre fixe en bas
+   d'écran l'aurait transformé en péage, ce que le RGPD nomme « dark pattern ». */
+[data-dwc='consent-banner'] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.75rem 1rem 0;
+  padding: 0.9rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--chrome-radius);
+}
+
+[data-dwc='consent-message'] {
+  margin: 0;
+  flex: 1 1 16rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+/* `flex-wrap` ici AUSSI : sous 360 px le message passe au-dessus et les deux
+   boutons restent côte à côte. Les empiler mettrait « Refuser » plus bas
+   qu'« Accepter », donc plus coûteux — par la mise en page plutôt que par le
+   nombre de clics, ce qui ne vaut pas mieux. */
+[data-dwc='consent-actions'] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* LES DEUX BOUTONS SUR LA MÊME RÈGLE, et c'est tout l'enjeu : même taille,
+   même contraste, même cible tactile. Aucun aplat de couleur primaire sur
+   « Accepter » — contrairement à l'invite d'installation plus haut, où l'action
+   principale est légitime. Ici, privilégier visuellement l'acceptation rendrait
+   le consentement irrégulier sans qu'aucun test de comportement ne le voie. */
+[data-dwc='consent-accept'],
+[data-dwc='consent-refuse'] {
+  min-height: 2.75rem;
+  padding: 0.45rem 0.95rem;
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
