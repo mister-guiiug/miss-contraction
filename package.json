@@ -41,9 +41,10 @@
     "check:vscode:tasks": "node scripts/sync-vscode-tasks.mjs --check"
   },
   "bundleBudget": {
-    "totalGzipKb": 270,
+    "totalGzipKb": 334,
     "_pourquoiPreload": "Posé le 16/09/2026, socle 4.18.0. Le total gzip compte TOUS les morceaux, asynchrones compris, et ne dit donc rien du chemin critique : il est identique que Sentry soit préchargé ou non. Cette borne compte ce que dist/index.html référence. Mesuré 170,2 kB, budget à +10 %.",
-    "preloadGzipKb": 188
+    "preloadGzipKb": 188,
+    "_pourquoi": " — RELEVÉ DE 270 À 334 LE 16/09/2026 avec @sentry/react 8→10 : le SDK passe de 345 à 464 KiB bruts (151,1 kB gzip), dans un morceau ASYNCHRONE hors du précache. 303,4 kB mesurés, 334 = mesure + 10 %. Le chemin critique, lui, ne bouge pas : c est preloadGzipKb qui le garde."
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
@@ -74,7 +75,7 @@
     "web-vitals": "^4.2.0"
   },
   "dependencies": {
-    "@sentry/react": "^8.45.0",
+    "@sentry/react": "^10.75.0",
     "lucide-react": "^1.45.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
