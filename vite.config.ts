@@ -259,6 +259,24 @@ export default defineConfig(({ command }) => {
         ],
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,svg,png,woff2,webmanifest}'],
+          /*
+           * LE MORCEAU SENTRY HORS DU PRÉCACHE, ET C'EST TOUT L'INTÉRÊT DE
+           * L'AVOIR SORTI DE `vendor` plus haut.
+           *
+           * `manualChunks` le range dans son propre morceau, que le socle ne
+           * charge que si un DSN est posé — mais `globPatterns` ci-dessus
+           * ramasse TOUT le JS émis, `import()` ou pas. Mesuré le 16/09/2026
+           * sur la production : `sw.js` listait `sentry-CwaqS02s.js`, 345 KiB
+           * bruts, téléchargés par chaque visiteur à l'installation du service
+           * worker, alors qu'aucune variable `VITE_SENTRY_DSN` n'est posée sur
+           * ce dépôt. Le découpage paresseux était vrai, et entièrement défait
+           * un cran plus loin.
+           *
+           * Hors précache, il est cherché sur le réseau à la première erreur —
+           * et jamais si l'observabilité reste éteinte. Ne pas l'avoir hors
+           * ligne est sans conséquence : rapporter une erreur demande le réseau.
+           */
+          globIgnores: ['**/sentry-*.js'],
         },
         manifest: {
           id: isNetlify
