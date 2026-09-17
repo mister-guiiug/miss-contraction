@@ -6,7 +6,6 @@ import { ViewLayout } from '../components/layout/ViewLayout';
 import { useAppStore } from '../store/useAppStore';
 import { APP_ID } from '../../storage';
 import { t } from '../../i18n';
-import { appVersion } from '../../appVersion';
 
 // Le catalogue de la famille, pas une chaîne recopiée : le pied de page en a
 // besoin lui aussi pour composer l'URL de signalement, et deux constantes
@@ -173,9 +172,6 @@ export function AboutView() {
           </div>
           <div className="about-hero__body">
             <span className="about-hero__name">Miss Contraction</span>
-            <span className="about-hero__version">
-              {appVersion.deploymentVersion}
-            </span>
           </div>
         </div>
 
@@ -207,27 +203,8 @@ export function AboutView() {
           </div>
         </section>
 
-        {/* Version */}
-        <section className="about-section" aria-labelledby="about-version-lbl">
-          <h3 id="about-version-lbl" className="about-section__title">
-            {t(language, 'about.versionDeployed')}
-          </h3>
-          <p className="about-version">
-            <span className="about-version__tag">
-              {appVersion.deploymentVersion}
-            </span>
-            <span className="about-version__note">
-              Build {appVersion.shortBuildId} · {t(language, 'about.hostedOn')}
-              <a
-                href="https://mister-guiiug.github.io/miss-contraction/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                GitHub Pages
-              </a>
-            </span>
-          </p>
-        </section>
+        {/* PLUS DE SECTION « VERSION DÉPLOYÉE ». Elle nommait le build —
+            numéro et identifiant court — sans rien permettre d'en faire. */}
 
         {/* Code source */}
         <section className="about-section" aria-labelledby="about-source-lbl">

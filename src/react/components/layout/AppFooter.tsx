@@ -5,7 +5,6 @@ import { currentIssueReportUrl } from '@mister-guiiug/dev-pwa-config/issue-repor
 import { useAppStore } from '../../store/useAppStore';
 import { APP_ID } from '../../../storage';
 import { t } from '../../../i18n';
-import { appVersion } from '../../../appVersion';
 
 /** Le dépôt, lu dans le catalogue de la famille — pas recopié à la main. */
 const REPO_URL = repoUrl(APP_ID);
@@ -109,11 +108,6 @@ export function AppFooter() {
             ·
           </span>
         </>
-      }
-      after={
-        <p className="footer__version" data-testid="footer-version">
-          {appVersion.deploymentVersion}
-        </p>
       }
     >
       <p className="footer__disclaimer">{t(language, 'footer.disclaimer')}</p>
