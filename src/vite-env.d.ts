@@ -3,12 +3,15 @@
 
 interface ImportMetaEnv {
   /**
-   * Identifiant de mesure GA4 (`G-…`), propre à CETTE application. Absent, le
-   * bandeau de consentement ne rend rien et rien n'est mesuré : c'est le seul
-   * interrupteur, et une propriété par site est ce qui rend le suivi
-   * indépendant.
+   * Clé de projet PostHog (`phc_…`), nuage EUROPÉEN — ADR 0012. LA MÊME pour
+   * tout le parc, et c'est délibéré : un seul projet, les applications
+   * distinguées dedans par la super-propriété `app_name` que le socle déduit
+   * du chemin de base. L'inverse — un projet par dépôt — rendait le total
+   * illisible. Publique par conception (elle part dans le bundle), donc
+   * `vars` et jamais `secrets`. Absente, le bandeau de consentement ne rend
+   * rien et rien n'est mesuré : c'est le seul interrupteur.
    */
-  readonly VITE_GA_MEASUREMENT_ID?: string;
+  readonly VITE_POSTHOG_KEY?: string;
   readonly VITE_SENTRY_DSN?: string;
 }
 
@@ -19,11 +22,6 @@ interface ImportMeta {
 declare const __APP_VERSION__: string;
 declare const __APP_BUILD_ID__: string;
 declare const __APP_DEPLOYMENT_VERSION__: string;
-
-/** Google Analytics (gtag) — injecté au build par le plugin GTM local. */
-interface Window {
-  gtag?: (...args: unknown[]) => void;
-}
 
 /** Reconnaissance vocale (Chrome / Safari préfixé). */
 type SpeechRecognitionCtor = new () => SpeechRecognitionInstance;

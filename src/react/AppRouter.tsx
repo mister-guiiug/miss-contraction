@@ -27,10 +27,11 @@ function DocumentTitle() {
 
   /*
    * LA VUE DE PAGE VIT ICI, avec le titre du document : ce composant est déjà
-   * celui qui écoute la route et ne rend rien. GA4 n'envoie `page_view` qu'au
-   * chargement du document, et `initAnalytics` pose en plus
-   * `send_page_view: false` pour que la première vue passe par ce hook comme
-   * les autres — sinon l'écran d'entrée serait compté deux fois.
+   * celui qui écoute la route et ne rend rien. `initAnalytics` pose
+   * `capture_pageview: false` pour que la première vue passe par ce hook comme
+   * les autres : laissé à lui-même, PostHog en envoie une au chargement ET à
+   * chaque changement d'historique, et l'écran d'entrée serait compté deux
+   * fois.
    *
    * Ne fait rien tant que le consentement n'est pas accordé.
    */
@@ -53,9 +54,12 @@ function AppRoutes() {
     <Shell>
       <DocumentTitle />
       {/* Une `region`, pas une boîte modale : elle ne recouvre rien et ne
-          piège pas le focus. Ne rend RIEN tant que `VITE_GA_MEASUREMENT_ID`
+          piège pas le focus. Ne rend RIEN tant que `VITE_POSTHOG_KEY`
           n'est pas posée — sans identifiant, il n'y a rien à demander. */}
-      <ConsentBanner gaMeasurementId={import.meta.env.VITE_GA_MEASUREMENT_ID} />
+      <ConsentBanner
+        posthogKey={import.meta.env.VITE_POSTHOG_KEY}
+        loader={() => import('posthog-js/dist/module.slim.js')}
+      />
       <Routes>
         {/* Home */}
         <Route path="/" element={<HomeView />} />

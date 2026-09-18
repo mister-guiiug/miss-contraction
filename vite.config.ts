@@ -14,9 +14,10 @@ const { version } = JSON.parse(readFileSync('./package.json', 'utf-8')) as {
 };
 
 // `GTM-M2GSG3V4` et `G-B44CK4VR08` ont quitté ce fichier ; écrits ici, ils
-// partaient au build sans condition. Seul GA4 subsiste, en variable de dépôt
-// `VITE_GA_MEASUREMENT_ID` lue par `ConsentBanner` : le conteneur GTM est
-// abandonné, une voie de mesure valant mieux que deux qui se doublent.
+// partaient au build sans condition. Puis Google est parti tout entier
+// (ADR 0012) : la mesure est une clé de projet PostHog, en variable de dépôt
+// `VITE_POSTHOG_KEY`, lue par `ConsentBanner` et chargée seulement après
+// l'accord.
 //
 // `GA_COOKIE_DOMAIN` a quitté ce fichier lui aussi — mais ce qui était écrit
 // ici de son remplacement était FAUX, et la mesure l'a dit.
@@ -109,6 +110,14 @@ export default defineConfig(({ command }) => {
              * après le premier rendu, au lieu de bloquer avec le reste.
              */
             if (norm.includes('/@sentry/')) return 'sentry';
+            // ET POSTHOG POUR LA MÊME RAISON, EN PLUS GRAVE. Sentry préchargé
+            // coûtait du poids ; PostHog préchargé casse une PROMESSE : l'ADR
+            // 0012 dit que rien n'est chargé avant l'accord, et le socle ne
+            // l'appelle qu'après. Sans cette ligne, la bibliothèque tombe
+            // dans `vendor`, qui est PRÉCHARGÉ — elle serait donc
+            // téléchargée chez un visiteur qui refuse. C'est `preloadGzipKb`
+            // qui le voit, jamais le total.
+            if (norm.includes('/posthog-js/')) return 'posthog';
 
             // Séparer les librairies principales
             if (
