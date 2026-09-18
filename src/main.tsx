@@ -11,6 +11,7 @@ import {
   recordError,
 } from '@mister-guiiug/dev-pwa-config/react/observability';
 import { initWebVitals } from '@mister-guiiug/dev-pwa-config/web-vitals';
+import { trackEvent } from '@mister-guiiug/dev-pwa-config/analytics';
 import { unregisterServiceWorkers } from '@mister-guiiug/dev-pwa-config/sw-update';
 import { registerSW } from 'virtual:pwa-register';
 import { AppUpdates } from '@mister-guiiug/dev-pwa-config/react/app-updates';
@@ -37,21 +38,31 @@ if (import.meta.env.DEV) {
   void unregisterServiceWorkers();
 }
 
-// Web Vitals via le socle (INP au lieu de FID, métriques indépendantes) :
-// log en dev, relai vers GA4 quand gtag est injecté au build.
+// Web Vitals via le socle (INP au lieu de FID, métriques indépendantes) : log
+// en dev, remontée à la mesure d'audience en production.
+//
+// CE RELAIS PASSAIT PAR `window.gtag?.(…)`, ET IL SERAIT DEVENU MUET. Ce
+// global n'existait que parce que `gtag.js` le posait ; PostHog ne pose rien de
+// tel, et l'appel optionnel se serait tu SANS ERREUR — un relais toujours
+// présent dans le code, ne remontant plus jamais rien. C'est exactement le mode
+// de panne que ce parc passe son temps à traquer.
+//
+// `trackEvent` du socle fait mieux que remplacer : il respecte le consentement
+// (il rend `false` et n'envoie rien tant que l'accord n'est pas donné), là où
+// `window.gtag` écrivait dans la file dès que le script était là.
 void initWebVitals({
   onMetric: metric => {
     if (import.meta.env.DEV) {
       console.log('[Web Vitals]', metric);
     }
-    window.gtag?.('event', metric.name, {
-      event_category: 'Web Vitals',
-      event_label: metric.id,
-      value: Math.round(
+    trackEvent(metric.name, {
+      categorie: 'web-vitals',
+      // La valeur entière : PostHog n'a pas de notion de `value` d'événement,
+      // c'est une propriété comme une autre — nommée, donc lisible.
+      valeur: Math.round(
         metric.name === 'CLS' ? metric.value * 1000 : metric.value
       ),
-      non_interaction: true,
-      custom_map: { metric_rating: metric.rating },
+      appreciation: metric.rating,
     });
   },
 });

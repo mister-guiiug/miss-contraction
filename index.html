@@ -9,17 +9,26 @@
       (theme-boot) et les styles JIT de Tailwind 4 / vite-plugin-pwa.
 
       PLUS AUCUN EXTRAIT DE MESURE N'EST INJECTÉ AU BUILD. Les marqueurs
-      `__ANALYTICS_*__` ont été retirés du parc en septembre 2026 : le tag de
-      Google n'est chargé qu'APRÈS un accord explicite, par `ConsentBanner`.
-      `www.googletagmanager.com` reste autorisé parce que c'est de là que GA4
-      se sert — mais rien n'en part avant le consentement. GTM, lui, n'est plus
-      utilisé (cf. l'ADR 0011 du squelette).
+      `__ANALYTICS_*__` ont été retirés du parc en septembre 2026 : le client
+      de mesure n'est chargé qu'APRÈS un accord explicite, par `ConsentBanner`.
 
-      Autorisations tierces limitées à Google Fonts (styles/polices) et GA4.
+      LES HÔTES GOOGLE SONT PARTIS (ADR 0012) : le parc a quitté GA4 pour
+      PostHog sur le nuage EUROPÉEN. Restent `eu.i.posthog.com` pour
+      l'ingestion et `eu-assets.i.posthog.com` en `script-src` — mesuré le
+      19/09/2026, la bibliothèque y charge sa configuration distante à chaque
+      `init` ; l'omettre couperait la mesure en silence.
+
+      `frame-ancestors` A ÉTÉ RETIRÉE, et ce n'est pas un oubli : la
+      spécification l'IGNORE dans une politique posée par `<meta>`. Elle n'a
+      donc jamais protégé cette page du clickjacking, tout en en donnant
+      l'apparence. Elle demande un en-tête HTTP, que GitHub Pages ne permet pas
+      de poser.
+
+      Autorisations tierces limitées à Google Fonts (styles/polices) et PostHog.
     -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://www.googletagmanager.com https://*.google-analytics.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://eu-assets.i.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://eu.i.posthog.com https://eu-assets.i.posthog.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
     />
     <!--
       Script anti-FOUC : engendré par `themeBootSource` du socle et injecté en

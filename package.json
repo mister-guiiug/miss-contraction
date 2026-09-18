@@ -41,15 +41,15 @@
     "check:vscode:tasks": "node scripts/sync-vscode-tasks.mjs --check"
   },
   "bundleBudget": {
-    "totalGzipKb": 334,
+    "totalGzipKb": 392,
     "_pourquoiPreload": "Posé le 16/09/2026, socle 4.18.0. Le total gzip compte TOUS les morceaux, asynchrones compris, et ne dit donc rien du chemin critique : il est identique que Sentry soit préchargé ou non. Cette borne compte ce que dist/index.html référence. Mesuré 170,2 kB, budget à +10 %.",
     "preloadGzipKb": 188,
-    "_pourquoi": " — RELEVÉ DE 270 À 334 LE 16/09/2026 avec @sentry/react 8→10 : le SDK passe de 345 à 464 KiB bruts (151,1 kB gzip), dans un morceau ASYNCHRONE hors du précache. 303,4 kB mesurés, 334 = mesure + 10 %. Le chemin critique, lui, ne bouge pas : c est preloadGzipKb qui le garde."
+    "_pourquoi": " — RELEVÉ DE 270 À 334 LE 16/09/2026 avec @sentry/react 8→10 : le SDK passe de 345 à 464 KiB bruts (151,1 kB gzip), dans un morceau ASYNCHRONE hors du précache. 303,4 kB mesurés, 334 = mesure + 10 %. Le chemin critique, lui, ne bouge pas : c est preloadGzipKb qui le garde. — RELEVÉ DE 334 À 392 LE 19/09/2026 : `posthog-js` entre avec l'ADR 0012, le parc quittant GA4 pour PostHog en Europe. 356,1 kB mesurés, 392 = mesure + 10 % (la formule du cliquet du socle). LE MORCEAU EST DIFFÉRÉ ET LE RESTE : il n'est chargé qu'APRÈS l'accord, et un visiteur qui refuse ne le télécharge jamais — c'est `preloadGzipKb`, inchangé par ce commit, qui garde le chemin critique. Le `loader` vise `posthog-js/dist/module.slim.js` : 48,9 kB gzip au lieu de 97,6 pour l'entrée par défaut, en laissant dehors l'enregistrement de session, l'autocapture, les sondages et la barre d'outils — que l'ADR 0012 coupe de toute façon. MESURER EN CI, PAS EN LOCAL."
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^10.0.1",
-    "@mister-guiiug/dev-pwa-config": "^4.21.3",
+    "@mister-guiiug/dev-pwa-config": "^6.0.1",
     "@playwright/test": "^1.63.0",
     "@sentry/vite-plugin": "^5.4.0",
     "@tailwindcss/vite": "^4.3.3",
@@ -77,6 +77,7 @@
   "dependencies": {
     "@sentry/react": "^10.75.0",
     "lucide-react": "^1.47.0",
+    "posthog-js": "^1.434.2",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-router-dom": "^7.18.4",
