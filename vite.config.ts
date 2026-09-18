@@ -18,11 +18,21 @@ const { version } = JSON.parse(readFileSync('./package.json', 'utf-8')) as {
 // `VITE_GA_MEASUREMENT_ID` lue par `ConsentBanner` : le conteneur GTM est
 // abandonné, une voie de mesure valant mieux que deux qui se doublent.
 //
-// `GA_COOKIE_DOMAIN` disparaît avec eux, et rien ne le remplace : il ancrait
-// le cookie sur `mister-guiiug.github.io` parce que GitHub Pages sert cette
-// app sous un sous-CHEMIN. Le défaut `auto` de GA4 y aboutit déjà — `github.io`
-// est sur la Public Suffix List, le navigateur refuse donc tout cookie posé
-// plus haut, et `auto` retombe sur l'hôte complet.
+// `GA_COOKIE_DOMAIN` a quitté ce fichier lui aussi — mais ce qui était écrit
+// ici de son remplacement était FAUX, et la mesure l'a dit.
+//
+// On lisait : « le défaut `auto` de GA4 y aboutit déjà, le navigateur refuse
+// tout cookie posé plus haut et `auto` retombe sur l'hôte complet ». Il ne
+// retombe pas proprement. Mesuré en production le 18/09/2026 : `auto` vise
+// d'abord le domaine enregistrable, donc `github.io`, qui est sur la Public
+// Suffix List — et Firefox annonçait le refus dans la console de CHAQUE
+// visiteur des dix-neuf sites (« Le cookie « _ga » a été rejeté car le domaine
+// est invalide »).
+//
+// C'est le socle qui le traite depuis la 4.21.3, et il le MESURE au lieu de le
+// deviner : `domaineDeCookie()` pose un cookie jetable par candidat, du plus
+// large au plus étroit, et garde le premier qui tient. Une liste de suffixes
+// publics ne se calcule pas en lisant un nom d'hôte.
 const GSC_VERIFICATION = 'iUfQ7_dOztC3XoSGesC2b7IkxyNL2O9fegKXECoOg30';
 
 // Dépôt GitHub Pages : https://<user>.github.io/miss-contraction/
@@ -152,9 +162,10 @@ export default defineConfig(({ command }) => {
       react(),
       tailwindcss(),
       // SEO partagé famille : canonical via placeholder index.html +
-      // sitemap.xml/robots.txt générés au build. L'analytics reste géré par
-      // le plugin local ci-dessous (GTM + GA4 avec cookie_domain + GSC,
-      // plus riche que l'injection du plugin partagé).
+      // sitemap.xml/robots.txt générés au build. La MESURE, elle, n'est plus
+      // ici du tout : `ConsentBanner` la monte à l'exécution, après accord.
+      // Le plugin local ci-dessous ne pose plus que la balise de vérification
+      // de propriété Google, qui ne dépose rien chez le visiteur.
       pwaSeoPlugin({
         // Deux <meta name="theme-color"> par schéma : la barre du navigateur suit
         // le mode sombre dès le premier rendu (relevé du 02/09/2026 : 5 apps sur 16).
