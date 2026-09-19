@@ -3,33 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <!--
-      Content-Security-Policy en défense en profondeur.
-
-      'unsafe-inline' : le script anti-FOUC injecté au build par pwaSeoPlugin
-      (theme-boot) et les styles JIT de Tailwind 4 / vite-plugin-pwa.
-
-      PLUS AUCUN EXTRAIT DE MESURE N'EST INJECTÉ AU BUILD. Les marqueurs
-      `__ANALYTICS_*__` ont été retirés du parc en septembre 2026 : le client
-      de mesure n'est chargé qu'APRÈS un accord explicite, par `ConsentBanner`.
-
-      LES HÔTES GOOGLE SONT PARTIS (ADR 0012) : le parc a quitté GA4 pour
-      PostHog sur le nuage EUROPÉEN. Restent `eu.i.posthog.com` pour
-      l'ingestion et `eu-assets.i.posthog.com` en `script-src` — mesuré le
-      19/09/2026, la bibliothèque y charge sa configuration distante à chaque
-      `init` ; l'omettre couperait la mesure en silence.
-
-      `frame-ancestors` A ÉTÉ RETIRÉE, et ce n'est pas un oubli : la
-      spécification l'IGNORE dans une politique posée par `<meta>`. Elle n'a
-      donc jamais protégé cette page du clickjacking, tout en en donnant
-      l'apparence. Elle demande un en-tête HTTP, que GitHub Pages ne permet pas
-      de poser.
-
-      Autorisations tierces limitées à Google Fonts (styles/polices) et PostHog.
+      LA CSP EST POSÉE AU BUILD PAR `cspPlugin` (vite.config.ts), plus ici.
+      Elle vivait dans ce fichier, recopiée à la main : le 19/09/2026 le socle
+      a ouvert `connect-src` à l’hôte du DSN Sentry pour tout le parc, et cette
+      app ne l’a pas reçu — aucune montée de paquet n’atteint une chaîne de
+      caractères. Le greffon apporte en prime `script-src` par HASH des scripts
+      inline en production, là où cette balise gardait `'unsafe-inline'`.
     -->
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://eu-assets.i.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://eu.i.posthog.com https://eu-assets.i.posthog.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
-    />
     <!--
       Script anti-FOUC : engendré par `themeBootSource` du socle et injecté en
       tête de `<head>` par `pwaSeoPlugin` (voir `vite.config.ts`). Il lit la
