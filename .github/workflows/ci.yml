@@ -19,4 +19,22 @@ jobs:
     # secrets du dépôt à un workflow qui n'en demande pas un seul.
     with:
       run-doctor: true # la checklist du parc, lue sur le dépôt et sur dist/ (AMELIORATIONS.md, T2)
-      run-e2e: false
+      # `doctor-strict` reste à `false`, et voici pourquoi. Relevé du 19/09/2026 :
+      # le docteur rend « 0 défaut(s) » ici, mais pas « 0 dette(s) » — et
+      # `--strict` échoue sur une dette (pwa-doctor.mjs:1631). Ce qui bloque,
+      # cette PR appliquée :
+      #   · code source + soutien sur 3 écrans (AboutView, ChecklistView, HomeView) : deux au plus
+      # Le mode strict s'active quand cette liste est vide. Pas avant : une CI
+      # rouge sur une dette connue et non traitée n'apprend rien à personne.
+      # La suite existait et ne tournait nulle part : le docteur le disait en
+      # dette (« les e2e ne tournent pas en CI »), et rien ne peut échouer sur
+      # une dette. Mesuré le 19/09/2026 avec la commande exacte du
+      # réutilisable : 31 tests, 1 min 20, tous verts.
+      #
+      # PAS `.*` ici, et c'est délibéré : la suite entière compte 308 tests en
+      # 18 fichiers — @load, @stress, @visual, @performance, @mobile. Ce sont
+      # des campagnes locales (`npm run test:e2e:load`, `:visual`, …), pas un
+      # portillon de PR. Le docteur signalera donc les 13 fichiers que le
+      # filtre laisse dehors, et c'est un progrès : la dette remplacée disait
+      # « aucun e2e en CI », la nouvelle nomme exactement ce qui n'y est pas.
+      run-e2e: true
