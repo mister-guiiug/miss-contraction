@@ -4,6 +4,7 @@ import { LS_THEME } from './src/themeKey';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { pwaSeoPlugin } from '@mister-guiiug/dev-pwa-config/vite-pwa-base';
+import { cspPlugin } from '@mister-guiiug/dev-pwa-config/vite-csp';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { readFileSync } from 'node:fs';
 import { versionPlugin } from '@mister-guiiug/dev-pwa-config/vite-version';
@@ -187,6 +188,30 @@ export default defineConfig(({ command }) => {
         // `dwc_theme`, partagée par la famille, et l'adopter donnerait à cette
         // app le thème réglé dans une autre. Voir `src/theme.ts`.
         themeBoot: { storageKey: LS_THEME },
+      }),
+      // LA CSP VIENT DU SOCLE, ET PLUS D'UNE BALISE ÉCRITE À LA MAIN.
+      //
+      // `index.html` portait sa propre `<meta http-equiv>`, entretenue ici
+      // seule. Ce que ça a coûté : le 19/09/2026, le socle a ouvert
+      // `connect-src` à l'hôte du DSN Sentry pour tout le parc — et cette app
+      // ne l'a pas reçu, parce qu'aucune montée de paquet n'atteint une chaîne
+      // de caractères. Elle embarque pourtant un DSN : sa remontée d'erreurs
+      // était entièrement morte, et rien ne pouvait le dire.
+      //
+      // Le greffon apporte en prime `script-src` par HASH des scripts inline
+      // en production, au lieu de `'unsafe-inline'`. Il hache le HTML FINAL
+      // (`order: 'post'`), donc il voit le script anti-FOUC de `pwaSeoPlugin`
+      // quelle que soit sa place dans cette liste.
+      cspPlugin({
+        dev: command === 'serve',
+        // Ouvre les hôtes de PostHog — le nuage EUROPÉEN (ADR 0012).
+        analytics: true,
+        // Les polices Google, telles que la balise les autorisait déjà : la
+        // feuille vient de `fonts.googleapis.com`, les fichiers de
+        // `fonts.gstatic.com`. En oublier un affiche la page en police de
+        // repli, sans autre signal qu'une ligne de console.
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
       }),
       {
         name: 'google-tag-manager',
