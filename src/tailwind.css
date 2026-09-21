@@ -23,8 +23,45 @@
  * échelles fluides sont la base toute prête si l'on tokenise un jour les 41
  * tailles de police et 56 valeurs d'espacement de l'app.
  *
- * `tokens.css` ET `components.css` DU SOCLE NE SONT PAS IMPORTÉS, exprès.
- * Voir `docs/DESIGN_SYSTEM.md`, section « Le socle ».
+ * `tokens.css` ET `components.css` DU SOCLE NE SONT TOUJOURS PAS IMPORTÉS,
+ * exprès — mais le refus visait la feuille ENTIÈRE, dont la raison inscrite
+ * était : « restylerait `EmptyState` et `ErrorBoundary`, déjà habillés ici ».
+ * Le paquet publie aussi ses sections une par une. Celle qui porte AppFooter
+ * et FamilyApps ne contient pas une règle d'`EmptyState` ni d'`ErrorBoundary` :
+ * la raison du refus ne la concerne pas. Voir `docs/DESIGN_SYSTEM.md`.
  */
 @import 'tailwindcss';
 @import '@mister-guiiug/dev-pwa-config/tailwind-preset.css';
+/* `base.css` d'abord : la section le suppose (replis, focus, contraste forcé,
+   impression). Tout est en `@layer components`, donc chaque règle des trois
+   feuilles de l'app continue de gagner — le paquet ne comble que les trous. */
+@import '@mister-guiiug/dev-pwa-config/components/base.css';
+@import '@mister-guiiug/dev-pwa-config/components/app-footer.css';
+
+/*
+ * Le contrat `--dwc-*`, branché sur les jetons de l'app — un PONT, pas un
+ * second contrat : aucune couleur n'est posée ici, toutes sont lues chez
+ * `styles.css`, et suivent donc le thème sombre sans qu'on le redise.
+ * C'est ce qui distingue ce bloc de `tokens.css` du socle, toujours refusé.
+ */
+:root {
+  --dwc-surface: var(--surface);
+  --dwc-surface-2: var(--surface-highlight);
+  --dwc-text: var(--text);
+  --dwc-text-soft: var(--muted);
+  --dwc-border: var(--border);
+  /* Le pourtour d'un CONTRÔLE, pas un filet : WCAG 1.4.11 demande 3:1, que
+     `--border` (une transparence de 28 %) ne tient pas. */
+  --dwc-border-strong: var(--muted);
+  --dwc-primary: var(--primary);
+  --dwc-primary-contrast: var(--primary-contrast);
+  --dwc-primary-soft: rgba(var(--accent-rgb), 0.12);
+  /* Les quatre tons d'état reprennent les accents de l'app, dont
+     `designTokens.test.ts` mesure déjà les six déclinaisons. */
+  --dwc-success: var(--accent-green);
+  --dwc-warning: var(--accent-orange);
+  --dwc-danger: var(--danger);
+  --dwc-info: var(--accent-blue);
+  --dwc-radius: 0.75rem;
+  --dwc-shadow: var(--shadow);
+}
