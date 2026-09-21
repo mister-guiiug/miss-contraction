@@ -3722,16 +3722,23 @@ html[data-theme='dark'] .about-link-card--coffee .about-link-card__icon {
 
 /* Famille — grille « Nos autres applications » (composant partagé FamilyApps).
    Le composant pose des attributs [data-dwc="…"] ; tout est scopé sous
-   .about-family pour rester local à la vue À propos. */
-/* La grille partagée fournit son propre titre : on le masque (la vue rend son
-   propre <h3> + une phrase d'intro) et on laisse sa <section> remonter dans la
-   carte « about-section » via display:contents. */
+   .about-family pour rester local à la vue À propos.
+
+   L'HABILLAGE VIENT DÉSORMAIS DU PAQUET. Cette app n'importait aucune feuille
+   du socle : ses composants partagés sortaient en couleurs système, et c'est
+   ce qui l'a obligée à réécrire onze règles pour cette seule grille. Elle
+   importe maintenant `components/base.css` et `components/app-footer.css` —
+   la section qui porte AppFooter et FamilyApps, et elle seule — avec le
+   contrat `--dwc-*` branché dans `tailwind.css`.
+
+   Les deux réglages sans équivalent sont devenus des props :
+   `showTitle={false}`, la vue rendant son propre <h3> et sa phrase d'intro,
+   et `layout="list"`, l'app refaisant la grille en une colonne.
+
+   La <section> continue de remonter dans la carte « about-section » par
+   display:contents. */
 .about-family [data-dwc='family-apps'] {
   display: contents;
-}
-
-.about-family [data-dwc='family-apps-title'] {
-  display: none;
 }
 
 .about-family__lead {
@@ -3739,37 +3746,6 @@ html[data-theme='dark'] .about-link-card--coffee .about-link-card__icon {
   font-size: 0.85rem;
   line-height: 1.5;
   color: var(--muted);
-}
-
-.about-family [data-dwc='family-app-list'] {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.about-family [data-dwc='family-app'] {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background: var(--surface-highlight);
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  padding: 0.6rem 0.8rem;
-  text-decoration: none;
-  color: var(--text);
-  transition:
-    background 0.15s,
-    border-color 0.15s,
-    transform 0.15s;
-}
-
-.about-family [data-dwc='family-app']:hover {
-  background: rgba(var(--accent-rgb), 0.07);
-  border-color: rgba(var(--accent-rgb), 0.3);
-  transform: translateY(-1px);
 }
 
 .about-family [data-dwc='family-app-icon'] {
@@ -3787,77 +3763,17 @@ html[data-theme='dark'] .about-link-card--coffee .about-link-card__icon {
   object-fit: cover;
 }
 
-.about-family [data-dwc='family-app-body'] {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  flex: 1;
-  min-width: 0;
-}
-
-.about-family [data-dwc='family-app-head'] {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.about-family [data-dwc='family-app-name'] {
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
 .about-family [data-dwc='family-app-desc'] {
   font-size: 0.78rem;
   color: var(--muted);
   line-height: 1.4;
 }
 
-.about-family [data-dwc='family-app-arrow'] {
-  color: var(--muted);
-  flex-shrink: 0;
-  display: flex;
-}
-
-/* Badge de maturité : 3 couleurs (alpha / beta / stable). */
-.about-family [data-dwc='maturity'] {
-  font-size: 0.62rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0.12em 0.5em;
-  border-radius: 999px;
-  white-space: nowrap;
-  border: 1px solid transparent;
-}
-
-/*
- * Badges de maturité — même patron que les pastilles de note : on ne pose que
- * la teinte, le fond et la bordure s'en déduisent.
- *
- * Les six valeurs qui vivaient ici étaient bien déclinées par thème, mais deux
- * échouaient quand même : « STABLE » donnait 3,8:1 et « BETA » 4,1:1 en thème
- * clair — du texte de 0,62 rem en capitales, là où WCAG AA demande 4,5:1. Les
- * teintes d'accent sont, elles, vérifiées par `designTokens.test.ts`.
- */
-.about-family [data-maturity='stable'],
-.about-family [data-maturity='beta'],
-.about-family [data-maturity='alpha'] {
-  background: color-mix(in srgb, currentColor 12%, transparent);
-  border-color: color-mix(in srgb, currentColor 30%, transparent);
-}
-
-.about-family [data-maturity='stable'] {
-  color: var(--accent-green);
-}
-
-.about-family [data-maturity='beta'] {
-  color: var(--accent-orange);
-}
-
-.about-family [data-maturity='alpha'] {
-  color: var(--accent-violet);
-}
+/* Les couleurs de maturité viennent du paquet. Le commentaire qui vivait ici
+   racontait que « STABLE » donnait 3,8:1 et « BETA » 4,1:1 en thème clair, et
+   que les teintes avaient dû être reprises. Le paquet résout le même problème
+   d'une autre façon : il mélange la couleur de signal vers la couleur de texte
+   de l'app, à 60 %, valeur mesurée sur trente-six palettes. */
 
 /* Hero card */
 .about-hero {

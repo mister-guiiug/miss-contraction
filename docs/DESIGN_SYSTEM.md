@@ -7,19 +7,30 @@ c'est lui qu'il faut corriger.
 
 ## Le socle
 
-L'application dépend de `@mister-guiiug/dev-pwa-config`, qui expose trois
-feuilles de style. **Une seule est importée.**
+L'application dépend de `@mister-guiiug/dev-pwa-config`, qui expose ses styles
+en une feuille entière **et en sections indépendantes**. Ce sont les sections
+qui sont importées, pas la feuille.
 
-| Feuille du socle      | Importée ? | Pourquoi                                                                   |
-| --------------------- | ---------- | -------------------------------------------------------------------------- |
-| `tailwind-preset.css` | ✅         | Breakpoints en rem, échelles fluides, utilitaires de zone sûre iOS         |
-| `tokens.css`          | ❌         | Poserait un second contrat de couleur (`--dwc-*`) à côté de celui de l'app |
-| `components.css`      | ❌         | Restylerait `EmptyState` et `ErrorBoundary`, déjà habillés ici             |
+| Feuille du socle            | Importée ? | Pourquoi                                                                   |
+| --------------------------- | ---------- | -------------------------------------------------------------------------- |
+| `tailwind-preset.css`       | ✅         | Breakpoints en rem, échelles fluides, utilitaires de zone sûre iOS         |
+| `components/base.css`       | ✅         | Ce que toute section suppose : replis, focus, contraste forcé, impression  |
+| `components/app-footer.css` | ✅         | La section `AppFooter` + `FamilyApps`, et elle seule                       |
+| `tokens.css`                | ❌         | Poserait un second contrat de couleur (`--dwc-*`) à côté de celui de l'app |
+| `components.css`            | ❌         | Restylerait `EmptyState` et `ErrorBoundary`, déjà habillés ici             |
+
+**Pourquoi les deux derniers refus tiennent toujours.** `components.css` entier
+restylerait `EmptyState` et `ErrorBoundary` ; la section importée ne contient
+pas une règle pour l'un ni pour l'autre. Quant à `tokens.css`, il poserait des
+COULEURS ; le bloc `--dwc-*` de `tailwind.css` n'en pose aucune — il lit celles
+de `styles.css`. C'est un pont, pas une seconde source, et il suit donc le
+thème sombre sans qu'on le redise.
 
 Le socle habille ses composants React par des attributs `[data-dwc="…"]` —
-134 crochets, 2 012 lignes. L'application en restyle **23** dans ses propres
-feuilles : pied de page, liste des applications de la famille, état vide,
-barre de navigation, `ErrorBoundary`.
+134 crochets, 2 012 lignes. L'application en restyle **12** dans ses propres
+feuilles : pied de page, état vide, barre de navigation, `ErrorBoundary`. Les
+onze règles de la grille des applications de la famille sont parties le
+2026-09-21 : elles redisaient la section désormais importée.
 
 **Le coût, à connaître.** Une montée de version du socle peut renommer ou
 déplacer un `[data-dwc]` sans rien casser de visible : la règle de l'app cesse

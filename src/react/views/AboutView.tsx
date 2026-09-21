@@ -284,6 +284,12 @@ export function AboutView() {
             currentAppId="miss-contraction"
             showSource={false}
             showSponsor={false}
+            // Les deux réglages que `styles.css` posait en CSS : la vue rend
+            // son propre <h3> juste au-dessus, et refaisait la grille en flex.
+            showTitle={false}
+            layout="list"
+            // Dix-neuf cartes d'affilée : repliées par catégorie, sept lignes.
+            groupBy="category"
             labels={{
               otherApps: t(language, 'about.otherAppsTitle'),
               maturity: {
