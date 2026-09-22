@@ -16,7 +16,7 @@ jobs:
   commits:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # Il faut l'historique des deux côtés pour lister les commits de la
           # branche ; `fetch-depth: 0` est le plus simple et le dépôt est petit.
