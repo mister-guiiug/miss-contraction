@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Prune old workflow runs
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const keep = Math.max(1, parseInt(`${{ inputs.keep }}`, 10) || 3);
