@@ -86,6 +86,29 @@ export default defineConfig(({ command }) => {
       chunkSizeWarningLimit: 800,
       rollupOptions: {
         output: {
+          /*
+           * LE MORCEAU SENTRY GARDE SON NOM, SANS EMPREINTE — parce qu'il est
+           * exclu du précache (`globIgnores` plus bas) et qu'une URL empreintée
+           * y meurt à chaque déploiement.
+           *
+           * Le service worker sert la coquille précachée jusqu'à ce que
+           * l'utilisateur accepte la mise à jour ; cette coquille demande
+           * l'ANCIENNE empreinte, que le déploiement suivant a supprimée de
+           * `assets/`. Mesuré en production sur mister-qowa le 22/09/2026 :
+           * HTTP 404, « Échec du chargement pour le module » dans la console.
+           * `initSentry` avale l'échec (son `try/catch`), donc l'application ne
+           * casse pas — elle rapporte ses erreurs à personne, sans le dire.
+           *
+           * Rien n'est perdu au cache : GitHub Pages répond
+           * `Cache-Control: max-age=600` sur TOUS les fichiers, empreinte ou pas.
+           *
+           * `pwa-doctor` tient l'invariant depuis le socle 6.8.0
+           * (règle `chunk-hors-precache`).
+           */
+          chunkFileNames: chunk =>
+            chunk.name === 'sentry'
+              ? 'assets/sentry.js'
+              : 'assets/[name]-[hash].js',
           manualChunks(id) {
             if (!id.includes('node_modules')) return;
 
@@ -321,7 +344,7 @@ export default defineConfig(({ command }) => {
            * et jamais si l'observabilité reste éteinte. Ne pas l'avoir hors
            * ligne est sans conséquence : rapporter une erreur demande le réseau.
            */
-          globIgnores: ['**/sentry-*.js'],
+          globIgnores: ['**/sentry.js', '**/sentry-*.js'],
         },
         manifest: {
           id: isNetlify
