@@ -205,7 +205,7 @@ export default defineConfig(({ command }) => {
         themeColor: { light: '#f8f2fc', dark: '#160b1c' },
         siteName: 'Miss Contraction',
         basePath,
-        logoPath: '/icon.svg',
+        logoPath: '/icons/icon-512.png',
         // Script anti-FOUC engendré au lieu d'être recopié dans `index.html`.
         // `storageKey` est passée explicitement : le défaut du socle est
         // `dwc_theme`, partagée par la famille, et l'adopter donnerait à cette
