@@ -5,8 +5,9 @@
 
 import { test, expect } from '@playwright/test';
 import { SELECTORS } from './config';
+import { readStoredRecords } from './helpers';
 
-test.describe('PWA - Progressive Web App', () => {
+test.describe('PWA - Progressive Web App @fonctionnel', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
   });
@@ -106,7 +107,7 @@ test.describe('PWA - Progressive Web App', () => {
   });
 });
 
-test.describe('Accessibilité', () => {
+test.describe('Accessibilité @fonctionnel', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.evaluate(() => localStorage.clear());
@@ -238,7 +239,7 @@ test.describe('Accessibilité', () => {
   });
 });
 
-test.describe('Performance', () => {
+test.describe('Performance @fonctionnel', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
   });
@@ -330,7 +331,7 @@ test.describe('Performance', () => {
   });
 });
 
-test.describe('Stabilité & Robustesse', () => {
+test.describe('Stabilité & Robustesse @fonctionnel', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.evaluate(() => localStorage.clear());
@@ -392,11 +393,10 @@ test.describe('Stabilité & Robustesse', () => {
       await page.waitForTimeout(40);
     }
 
-    const enregistres = await page.evaluate(() => {
-      const brut = localStorage.getItem('mc_contractions_v1');
-      return brut ? (JSON.parse(brut) as unknown[]).length : 0;
-    });
-    expect(enregistres).toBe(TOURS);
+    // L'INSTANTANÉ, pas `mc_contractions_v1` : cette clé héritée n'est plus
+    // écrite depuis le magasin versionné, et le test comptait zéro quoi qu'il
+    // arrive — sans que personne le voie, le fichier ne tournant nulle part.
+    expect(await readStoredRecords(page)).toHaveLength(TOURS);
   });
 
   test("récupération d'erreur - parse JSON cassé", async ({ page }) => {
@@ -532,7 +532,7 @@ test.describe('Stabilité & Robustesse', () => {
   });
 });
 
-test.describe('Compatibilité Navigateurs', () => {
+test.describe('Compatibilité Navigateurs @fonctionnel', () => {
   test('page se charge sur Chromium', async ({ page }) => {
     await page.goto('/');
     const content = page.locator('body');

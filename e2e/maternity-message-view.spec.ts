@@ -45,7 +45,7 @@ async function captureWindowOpen(page: Page) {
     page.evaluate(() => (window as unknown as { __opened: string[] }).__opened);
 }
 
-test.describe('MaternityView - Maternité', () => {
+test.describe('MaternityView - Maternité @fonctionnel', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(ROUTES.HOME);
     await page.evaluate(() => localStorage.clear());
@@ -139,7 +139,7 @@ test.describe('MaternityView - Maternité', () => {
   }
 });
 
-test.describe('MessageView - Message SMS/WhatsApp', () => {
+test.describe('MessageView - Message SMS/WhatsApp @fonctionnel', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(ROUTES.HOME);
     await page.evaluate(() => localStorage.clear());

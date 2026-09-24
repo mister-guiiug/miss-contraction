@@ -32,12 +32,19 @@ jobs:
       # réutilisable : 31 tests, 1 min 20, tous verts.
       #
       # PAS `.*` ici, et c'est délibéré : la suite entière compte 308 tests en
-      # 18 fichiers — @load, @stress, @visual, @performance, @mobile. Ce sont
-      # des campagnes locales (`npm run test:e2e:load`, `:visual`, …), pas un
-      # portillon de PR. Le docteur signalera donc les 13 fichiers que le
-      # filtre laisse dehors, et c'est un progrès : la dette remplacée disait
-      # « aucun e2e en CI », la nouvelle nomme exactement ce qui n'y est pas.
+      # 18 fichiers, dont des CAMPAGNES LOCALES — @load, @stress, @visual,
+      # @performance, @mobile, @errors (`npm run test:e2e:load`, `:visual`, …) —
+      # qui ne sont pas un portillon de PR. Elles sont déclarées dans
+      # `pwaDoctor.refus` (package.json).
+      #
+      # `@fonctionnel` (24/09/2026). Sept fichiers n'avaient AUCUNE étiquette :
+      # ni campagne, ni portillon, ils ne tournaient nulle part. Rejoués ce
+      # jour-là, 110 tests sur 120 passaient ; les sept autres lisaient les clés
+      # `localStorage` d'avant le magasin versionné et comptaient zéro quoi qu'on
+      # enregistre — l'application, elle, persistait bien. Réparés, étiquetés,
+      # ils gardent désormais les PR : 150 tests au lieu de 31.
       run-e2e: true
+      e2e-grep: '@critical|@a11y|@fonctionnel'
       # Second avis TypeScript 7, NON BLOQUANT. La 6 reste la référence : c'est
       # elle que typescript-eslint résout, et il refuse la 7.0 par une assertion
       # à l'import. Le jour où typescript-eslint#10940 se ferme, cette entrée

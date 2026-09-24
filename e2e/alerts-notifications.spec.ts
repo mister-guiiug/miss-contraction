@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 import { ROUTES, KEY_RECORDS } from './config';
 import { readStoredSettings, readStoredSnoozeUntil } from './helpers';
 
-test.describe('Alertes & Notifications', () => {
+test.describe('Alertes & Notifications @fonctionnel', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.evaluate(() => localStorage.clear());
