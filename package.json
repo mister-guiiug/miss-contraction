@@ -50,9 +50,8 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^10.0.1",
-    "@mister-guiiug/dev-pwa-config": "^6.13.0",
+    "@mister-guiiug/dev-pwa-config": "^6.15.1",
     "@playwright/test": "^1.63.0",
-    "@sentry/vite-plugin": "^5.4.0",
     "@tailwindcss/vite": "^4.3.3",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
@@ -77,7 +76,7 @@
     "web-vitals": "^6.2.2"
   },
   "dependencies": {
-    "@sentry/react": "^10.75.3",
+    "@sentry/react": "^11.0.0",
     "lucide-react": "^1.47.0",
     "posthog-js": "^1.434.11",
     "react": "^19.3.0",
@@ -90,6 +89,11 @@
   "overrides": {
     "eslint-plugin-jsx-a11y": {
       "eslint": "$eslint"
+    }
+  },
+  "pwaDoctor": {
+    "refus": {
+      "e2e-hors-filtre": "Six fichiers restent hors du portillon de PR, et c'est voulu : ce sont des CAMPAGNES LOCALES, chacune avec son script — error-handling.spec.ts (@errors, npm run test:e2e:errors), load-stress.spec.ts (@load/@stress, test:e2e:load), mobile.spec.ts (@mobile, test:e2e:mobile, deux projets mobiles), performance.spec.ts (@performance, test:e2e:perf), visual-regression.spec.ts et visual-snapshots.spec.ts (@visual, test:e2e:visual, captures de référence propres au poste). Les sept fichiers fonctionnels qui ne tournaient nulle part sont entrés dans la CI sous @fonctionnel le 24/09/2026."
     }
   }
 }
