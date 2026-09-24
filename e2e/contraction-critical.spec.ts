@@ -4,7 +4,7 @@
 
 import { test, expect } from '@playwright/test';
 
-test.describe('miss-contraction - Fonctionnalités critiques', () => {
+test.describe('miss-contraction - Fonctionnalités critiques @fonctionnel', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
   });

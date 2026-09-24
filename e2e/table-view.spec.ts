@@ -50,7 +50,7 @@ async function seed(page: import('@playwright/test').Page, count = 3) {
   await page.waitForLoadState('networkidle');
 }
 
-test.describe('TableView - Tableau des contractions', () => {
+test.describe('TableView - Tableau des contractions @fonctionnel', () => {
   test.beforeEach(async ({ page }) => {
     await seed(page);
   });

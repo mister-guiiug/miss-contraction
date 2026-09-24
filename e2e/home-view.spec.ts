@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 import { SettingsPage } from './pages/SettingsPage';
 import { ROUTES, SELECTORS } from './config';
 
-test.describe('HomeView - Vue principale', () => {
+test.describe('HomeView - Vue principale @fonctionnel', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     // Nettoyer localStorage avant chaque test

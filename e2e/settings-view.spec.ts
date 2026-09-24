@@ -19,33 +19,27 @@
 
 import { test, expect } from '@playwright/test';
 import { SettingsPage } from './pages/SettingsPage';
-import {
-  ROUTES,
-  SELECTORS,
-  TEST_DATA,
-  KEY_SETTINGS,
-  KEY_SNOOZE_UNTIL,
-  KEY_RECORDS,
-  LS_THEME,
-} from './config';
+import { readStoredSettings, readStoredSnoozeUntil } from './helpers';
+import { ROUTES, SELECTORS, TEST_DATA, KEY_RECORDS, LS_THEME } from './config';
+
+/*
+ * CES DEUX LECTURES VISAIENT LES CLÉS HÉRITÉES (`mc_settings_v1`,
+ * `mc_snooze_until`), que l'application n'écrit plus depuis le magasin
+ * versionné : elles rendaient `null` quoi qu'on enregistre. Personne ne l'a vu
+ * parce que ce fichier, sans étiquette, ne tournait nulle part. Elles lisent
+ * désormais l'instantané que l'application écrit (`SNAPSHOT_KEY`, cf. config.ts).
+ */
 
 /** Relit l'échéance du report d'alertes, ou `null` si aucun n'est posé. */
 async function snoozeUntil(page: import('@playwright/test').Page) {
-  return await page.evaluate(key => {
-    const raw = localStorage.getItem(key);
-    return raw ? Number(raw) : null;
-  }, KEY_SNOOZE_UNTIL);
+  const echeance = await readStoredSnoozeUntil(page);
+  return echeance > 0 ? echeance : null;
 }
 
 /** Relit les réglages persistés, tels que l'application les a écrits. */
-async function storedSettings(page: import('@playwright/test').Page) {
-  return await page.evaluate(key => {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : null;
-  }, KEY_SETTINGS);
-}
+const storedSettings = readStoredSettings;
 
-test.describe('SettingsView - Paramètres', () => {
+test.describe('SettingsView - Paramètres @fonctionnel', () => {
   let settings: SettingsPage;
 
   test.beforeEach(async ({ page }) => {
