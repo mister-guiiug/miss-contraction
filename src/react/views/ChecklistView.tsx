@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ClipboardList, Milk, Shirt, Users } from 'lucide-react';
 import { ViewLayout } from '../components/layout/ViewLayout';
-import { AppFooter } from '../components/layout/AppFooter';
 import { t } from '../../i18n';
 import { useAppStore } from '../store/useAppStore';
 import { createLogger } from '@mister-guiiug/dev-pwa-config/logger';
@@ -118,7 +117,11 @@ export function ChecklistView() {
       id="view-checklist"
       title={t(language, 'checklist.title')}
       lead={t(language, 'checklist.lead')}
-      footer={<AppFooter />}
+      // PAS DE PIED DE PAGE ICI, comme sur les six autres écrans hors de
+      // l'accueil : la règle famille du 06/09/2026 réserve le code source, le
+      // soutien et le signalement à l'accueil et à À propos. L'avertissement
+      // médical que porte aussi ce pied de page reste sur l'accueil, l'écran
+      // du minuteur ; une liste d'affaires pour la maternité n'en appelle pas.
     >
       {categories.map(cat => (
         <div key={cat.id} className="card">
