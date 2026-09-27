@@ -54,7 +54,7 @@ En fin de grossesse, des contractions peuvent aussi apparaître sans que le trav
 
 ## Comment Miss Contraction vous aide
 
-Miss Contraction est une application gratuite qui s'ouvre dans le navigateur du téléphone et s'installe sur l'écran d'accueil.
+[Miss Contraction](https://mister-guiiug.github.io/miss-contraction/) est une application gratuite qui s'ouvre dans le navigateur du téléphone et s'installe sur l'écran d'accueil.
 
 - **Un gros bouton pour le début, le même pour la fin.** L'application calcule la durée de chaque contraction et l'intervalle entre deux débuts, et vous pouvez noter l'intensité de 1 à 5.
 - **Des indicateurs lisibles** : durée moyenne, intervalle moyen et nombre de contractions par heure, sur tout l'historique ou sur les 30, 60 ou 120 dernières minutes. Un tableau détaille chaque contraction.
