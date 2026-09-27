@@ -78,7 +78,7 @@
   "dependencies": {
     "@sentry/react": "^11.0.0",
     "lucide-react": "^1.48.0",
-    "posthog-js": "^1.434.14",
+    "posthog-js": "^1.434.15",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-router-dom": "^7.18.4",
