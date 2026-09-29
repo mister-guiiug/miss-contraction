@@ -1,6 +1,9 @@
 ---
 title: Chronométrer ses contractions : durée, intervalle et fréquence
 description: Chronométrer ses contractions sans erreur : mesurer la durée, calculer l'intervalle entre deux débuts, suivre la fréquence. Exemple chiffré et outil gratuit.
+date: 2026-09-25
+updated: 2026-09-29
+answer: Notez l'heure du début et de la fin de chaque contraction : la durée va du début à la fin, l'intervalle se mesure d'un début au début suivant. Relevez plusieurs contractions d'affilée : des débuts espacés de 7, 6 puis 5 minutes donnent un intervalle moyen de 6 minutes, soit environ 10 contractions par heure.
 ---
 
 # Chronométrer ses contractions : la méthode pas à pas
@@ -48,7 +51,7 @@ Mesuré de la fin de la première (21 h 00 min 50 s) au début de la deuxième (
 
 Il n'existe pas de règle unique valable pour toutes. Les repères donnés aux futures mères associent souvent un intervalle entre contractions, une durée et le temps depuis lequel ce rythme se maintient. Mais ces repères varient d'une maternité à l'autre, selon qu'il s'agit d'un premier accouchement ou non, selon la distance à parcourir et selon le déroulement de la grossesse.
 
-C'est donc l'équipe qui vous suit qui vous dit quand venir. Demandez-lui ses repères lors d'une consultation et notez-les. Elle vous dira aussi dans quelles situations appeler sans attendre, quel que soit le rythme des contractions.
+C'est donc l'équipe qui vous suit qui vous dit quand venir. Demandez-lui ses repères lors d'une consultation et notez-les. Elle vous dira aussi dans quelles situations appeler sans attendre, quel que soit le rythme des contractions. Les repères publiés par deux maternités publiques, et ces situations, sont détaillés dans [Quand partir à la maternité](quand-partir-a-la-maternite.html).
 
 En fin de grossesse, des contractions peuvent aussi apparaître sans que le travail ait commencé. Suivre leur rythme sur la durée montre si elles se régularisent et se rapprochent, mais seul un examen permet de dire où en est le travail.
 
@@ -59,7 +62,7 @@ En fin de grossesse, des contractions peuvent aussi apparaître sans que le trav
 - **Un gros bouton pour le début, le même pour la fin.** L'application calcule la durée de chaque contraction et l'intervalle entre deux débuts, et vous pouvez noter l'intensité de 1 à 5.
 - **Des indicateurs lisibles** : durée moyenne, intervalle moyen et nombre de contractions par heure, sur tout l'historique ou sur les 30, 60 ou 120 dernières minutes. Un tableau détaille chaque contraction.
 - **Des seuils que vous réglez vous-même** : écart maximal entre deux débuts, durée minimale, nombre de contractions consécutives. Réglez-les selon les repères donnés par votre maternité. L'écran signale quand les dernières contractions y correspondent, et le téléphone vibre sur les appareils qui le permettent.
-- **Des notes rapides** d'un toucher : rupture des eaux, douche chaude, marche, repos, médicament pris.
+- **Des notes rapides** d'un toucher : rupture des eaux, douche chaude, ballon de gymnastique, marche, repos, médicament pris.
 - **Un résumé pour la sage-femme**, à copier, imprimer ou télécharger en PDF, et une fiche maternité avec le numéro à appeler en un geste, l'adresse et l'itinéraire.
 - **Vos données restent sur votre appareil**, sans compte à créer. Une sauvegarde peut être exportée avant un changement de téléphone.
 
@@ -75,8 +78,16 @@ Non. Elle compare vos contractions aux seuils que vous avez réglés et vous sig
 
 ### Mes données sont-elles envoyées quelque part ?
 
-L'historique des contractions et les réglages sont enregistrés dans le navigateur de votre téléphone. Aucun compte n'est nécessaire. Vous pouvez exporter un fichier de sauvegarde, ou tout effacer.
+L'historique des contractions et les réglages sont enregistrés dans le navigateur de votre téléphone. Aucun compte n'est nécessaire. Vous pouvez exporter un fichier de sauvegarde, ou tout effacer. D'autres informations partent, elles : des rapports d'erreur technique vers Sentry et, si vous l'acceptez, une mesure d'audience vers PostHog.
 
 ### L'application fonctionne-t-elle sans connexion ?
 
 Une fois ouverte une première fois, elle peut s'installer sur l'écran d'accueil et continuer à chronométrer sans réseau. L'appel à la maternité, lui, passe par le téléphone.
+
+## Sources
+
+- [Comment se déroule un accouchement ?](https://www.ameli.fr/assure/sante/devenir-parent/accouchement-nouveau-ne-et-retour-la-maison/accouchement), ameli.fr : des contractions d'abord brèves et espacées, puis de plus en plus rapprochées, régulières et intenses.
+- [Suivi mensuel de la grossesse à partir du 4e mois](https://www.ameli.fr/assure/sante/devenir-parent/grossesse/grossesse-en-bonne-sante/grossesse/consultation-suivi-mensuel), ameli.fr : les contractions de la grossesse, et quand consulter sans tarder.
+- [Votre accouchement](https://gynecologieobstetrique-psl.aphp.fr/votre-accouchement/), maternité de la Pitié-Salpêtrière (AP-HP) : les repères de cette maternité pour venir.
+- [Accouchement normal : accompagnement de la physiologie et interventions médicales](https://www.has-sante.fr/jcms/c_2820336/fr/accouchement-normal-accompagnement-de-la-physiologie-et-interventions-medicales), Haute Autorité de santé : les phases du travail, définies par la dilatation du col.
+- [Les numéros en cas d'urgence](https://www.service-public.gouv.fr/particuliers/vosdroits/F33954), service-public.gouv.fr : le 15 pour joindre le Samu.

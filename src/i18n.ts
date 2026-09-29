@@ -1,3 +1,5 @@
+import { isCrawlerUserAgent } from '@mister-guiiug/dev-pwa-config/crawler';
+
 export const SUPPORTED_LANGUAGES = [
   'fr',
   'en',
@@ -29,6 +31,9 @@ export const LANGUAGE_LABELS: Record<AppLanguage, string> = {
 export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
   fr: {
     'app.name': 'Miss Contraction',
+    'app.homeTitle': 'Miss Contraction - minuteur de contractions et alertes',
+    'app.aboutTitle':
+      'À propos de Miss Contraction : code source et mises à jour',
     'route.home': 'Accueil',
     'route.settings': 'Paramètres',
     'route.message': 'Message maternité',
@@ -387,6 +392,9 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
   },
   en: {
     'app.name': 'Miss Contraction',
+    'app.homeTitle':
+      'Miss Contraction - contraction timer with maternity alerts',
+    'app.aboutTitle': 'About Miss Contraction: source code and app updates',
     'route.home': 'Home',
     'route.settings': 'Settings',
     'route.message': 'Maternity message',
@@ -736,6 +744,10 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
   },
   es: {
     'app.name': 'Miss Contraction',
+    'app.homeTitle':
+      'Miss Contraction - cronómetro de contracciones con alertas',
+    'app.aboutTitle':
+      'Acerca de Miss Contraction: código fuente y actualizaciones',
     'route.home': 'Inicio',
     'route.settings': 'Ajustes',
     'route.message': 'Mensaje maternidad',
@@ -795,6 +807,9 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
   },
   de: {
     'app.name': 'Miss Contraction',
+    'app.homeTitle':
+      'Miss Contraction - Wehentimer mit Warnhinweisen zur Geburt',
+    'app.aboutTitle': 'Über Miss Contraction: Quellcode und Aktualisierungen',
     'route.home': 'Start',
     'route.settings': 'Einstellungen',
     'route.message': 'Nachricht Kreißsaal',
@@ -854,6 +869,9 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
   },
   it: {
     'app.name': 'Miss Contraction',
+    'app.homeTitle': 'Miss Contraction - timer delle contrazioni con avvisi',
+    'app.aboutTitle':
+      'Informazioni su Miss Contraction: codice sorgente e aggiornamenti',
     'route.home': 'Home',
     'route.settings': 'Impostazioni',
     'route.message': 'Messaggio maternita',
@@ -913,6 +931,8 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
   },
   pt: {
     'app.name': 'Miss Contraction',
+    'app.homeTitle': 'Miss Contraction - cronómetro de contrações com alertas',
+    'app.aboutTitle': 'Sobre o Miss Contraction: código-fonte e atualizações',
     'route.home': 'Inicio',
     'route.settings': 'Definicoes',
     'route.message': 'Mensagem maternidade',
@@ -972,6 +992,9 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
   },
   nl: {
     'app.name': 'Miss Contraction',
+    'app.homeTitle':
+      'Miss Contraction - weeëntimer met meldingen voor de bevalling',
+    'app.aboutTitle': 'Over Miss Contraction: broncode en updates van de app',
     'route.home': 'Start',
     'route.settings': 'Instellingen',
     'route.message': 'Bericht kraamzorg',
@@ -1037,6 +1060,9 @@ export function isSupportedLanguage(value: unknown): value is AppLanguage {
 
 export function detectBrowserLanguage(): AppLanguage {
   if (typeof navigator === 'undefined') return 'fr';
+  // Un robot reçoit la langue du HTML servi : le moteur de rendu de Google se
+  // présente en `en-US`, et la Search Console voyait l'accueil en anglais.
+  if (isCrawlerUserAgent(navigator.userAgent)) return 'fr';
   const primary = navigator.language?.slice(0, 2).toLowerCase() ?? 'fr';
   return isSupportedLanguage(primary) ? primary : 'fr';
 }

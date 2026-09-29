@@ -23,8 +23,15 @@ function getRouteMeta(
 } {
   const appName = t(language, 'app.name');
   const breadcrumb = t(language, `route.${route}`);
+  // L'accueil et « À propos », seules pages publiques, gardent un titre long
+  // (≥ 50 caractères), celui du HTML servi en français : Google et Bing
+  // indexent le titre APRÈS rendu, et classent un titre court comme défaut.
   const documentTitle =
-    route === 'home' ? appName : `${breadcrumb} - ${appName}`;
+    route === 'home'
+      ? t(language, 'app.homeTitle')
+      : route === 'about'
+        ? t(language, 'app.aboutTitle')
+        : `${breadcrumb} - ${appName}`;
   return { documentTitle, breadcrumb };
 }
 

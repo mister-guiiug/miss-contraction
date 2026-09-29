@@ -212,6 +212,17 @@ export default defineConfig(({ command }) => {
         // `dwc_theme`, partagée par la famille, et l'adopter donnerait à cette
         // app le thème réglé dans une autre. Voir `src/theme.ts`.
         themeBoot: { storageKey: LS_THEME },
+        // « À propos » est une vraie URL (`BrowserRouter`) : sans fichier,
+        // GitHub Pages la servait en 404. Le socle l'écrit au build, avec son
+        // titre, sa description et sa canonique, et la met au plan de site.
+        routes: [
+          {
+            path: 'a-propos',
+            title: 'À propos de Miss Contraction : code source et mises à jour',
+            description:
+              'Pourquoi Miss Contraction existe : chronométrer ses contractions sans compte, sans données personnelles ni paiement. Code source libre (MIT).',
+          },
+        ],
       }),
       // LA CSP VIENT DU SOCLE, ET PLUS D'UNE BALISE ÉCRITE À LA MAIN.
       //
