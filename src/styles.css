@@ -3853,6 +3853,21 @@ html[data-theme='dark'] .about-link-card--coffee .about-link-card__icon {
   line-height: 1.45;
 }
 
+/* La mesure d'audience (`ConsentSection` du socle) arrive nue ici, faute de
+   `components.css` : son texte prend l'allure de `.about-section__text`, et
+   son bouton garde sa largeur au lieu de s'étirer dans la colonne, comme
+   celui du rechargement juste au-dessus. */
+.about-section [data-dwc='consent-section-text'] {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.about-section [data-dwc='consent-section-action'] {
+  align-self: flex-start;
+}
+
 /* ── Bandeau « Mise à jour disponible » (dev-pwa-config) ────────────────────
    Le composant du socle est livré SANS STYLES, et son en-tête le dit :
    « Non stylé : cibler [data-dwc="update-banner"] ». Quinze apps du parc

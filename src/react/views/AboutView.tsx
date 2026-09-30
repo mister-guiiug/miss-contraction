@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FamilyApps } from '@mister-guiiug/dev-pwa-config/react';
 import { repoUrl } from '@mister-guiiug/dev-pwa-config/apps-catalog';
 import { applyUpdate } from '@mister-guiiug/dev-pwa-config/sw-update';
+import { ConsentSection } from '@mister-guiiug/dev-pwa-config/react/consent-section';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { useAppStore } from '../store/useAppStore';
 import { APP_ID } from '../../storage';
@@ -320,6 +321,18 @@ export function AboutView() {
               : t(language, 'about.forceReload')}
           </button>
         </section>
+
+        {/* Revenir sur son choix de mesure d'audience : le retrait se fait ici,
+            en un clic (RGPD, art. 7.3). Mêmes clé et chargeur que le bandeau.
+            Ses libellés suivent la langue par `AppLabelsProvider`. */}
+        <ConsentSection
+          posthogKey={import.meta.env.VITE_POSTHOG_KEY}
+          loader={() => import('posthog-js/dist/module.slim.js')}
+          className="about-section"
+          titleClassName="about-section__title"
+          headingLevel={3}
+          actionClassName="btn btn-secondary"
+        />
 
         {/* Avertissement */}
         <p className="about-disclaimer">
