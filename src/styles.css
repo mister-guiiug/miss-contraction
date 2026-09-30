@@ -3934,6 +3934,17 @@ html[data-theme='dark'] .about-link-card--coffee .about-link-card__icon {
   }
 }
 
+/* LE SOCLE GROUPE LES GESTES DEPUIS LA 6.21.0, dans `update-banner-actions`.
+   Cette app n'importe pas la section du socle qui dispose ce conteneur : sans
+   règle, il restait un bloc, et les deux pilules s'y collaient. `contents` le
+   rend transparent à la mise en page, et les boutons redeviennent des
+   éléments du bandeau, comme avant ; la règle des 480 px ci-dessus garde les
+   deux sorties côte à côte. Un `div` sans rôle : rien ne change pour un
+   lecteur d'écran. */
+[data-dwc='update-banner-actions'] {
+  display: contents;
+}
+
 /* Les boutons reprennent la pilule maison de `.btn`, en plus compact : les
    3,25 rem de hauteur minimale d'un bouton d'écran écraseraient le bandeau. */
 [data-dwc='update-banner-update'],
