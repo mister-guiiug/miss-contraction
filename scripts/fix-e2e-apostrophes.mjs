@@ -12,6 +12,20 @@ import { join } from 'node:path';
 
 const E2E_DIR = 'e2e';
 
+/** Échappe les " d'un texte source de chaîne, en sautant les séquences déjà échappées. */
+function echapperGuillemets(source) {
+  let out = '';
+  for (let k = 0; k < source.length; k++) {
+    if (source[k] === '\\') {
+      out += source[k] + (source[k + 1] ?? '');
+      k++;
+      continue;
+    }
+    out += source[k] === '"' ? '\\"' : source[k];
+  }
+  return out;
+}
+
 function fixLine(line) {
   // Cherche des single-quoted strings problématiques.
   // Idée : on tokenize basique et on transforme les strings dont la fermeture
@@ -52,8 +66,10 @@ function fixLine(line) {
       if (segments.length > 1) {
         // String avec apostrophes internes → convertir en double-quoted
         const merged = segments.join('’');
-        // Si la string contient des " littérales, on les escape
-        const escaped = merged.replace(/"/g, '\\"');
+        // Si la string contient des " littérales, on les escape. Les
+        // échappements déjà là (\n, \', \\) passent tels quels : les
+        // segments les ont recopiés, et les doubler en changerait le sens.
+        const escaped = echapperGuillemets(merged);
         result.push('"' + escaped + '"');
         changed = true;
       } else {
