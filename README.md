@@ -157,6 +157,8 @@ Votre suivi reste sur votre appareil : l'historique, les notes et les réglages 
 | Mesure d'audience           | Seulement si vous l'acceptez dans le bandeau de consentement : pages vues et indicateurs de performance (Web Vitals), envoyés à PostHog (hébergement européen), sans cookie ni profil de personne |
 | Erreurs techniques          | Rapports d'erreur envoyés à Sentry, pour corriger les pannes                                                                                                                                      |
 
+Le détail est dans l'écran « À propos », rubrique « Vos données » : qui est responsable du traitement, combien de temps les données sont conservées, à quel titre partent les rapports d'erreur, et à quelle adresse exercer vos droits. C'est là aussi, juste en dessous, que l'on retire son consentement.
+
 L'application ne nécessite pas de compte ni d'inscription, et fonctionne sans connexion internet une fois installée.
 
 ---

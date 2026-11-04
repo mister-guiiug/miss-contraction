@@ -37,6 +37,10 @@
    feuilles de l'app continue de gagner — le paquet ne comble que les trous. */
 @import '@mister-guiiug/dev-pwa-config/components/base.css';
 @import '@mister-guiiug/dev-pwa-config/components/app-footer.css';
+/* Le panneau « Vos données » de l'écran « À propos » : un texte de conformité
+   rendu en `<dl>` nu décalerait ses descriptions et confondrait ses termes avec
+   le corps. La section ne touche à aucun autre composant. */
+@import '@mister-guiiug/dev-pwa-config/components/privacy-notice.css';
 
 /*
  * Le contrat `--dwc-*`, branché sur les jetons de l'app — un PONT, pas un

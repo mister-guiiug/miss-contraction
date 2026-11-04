@@ -31,5 +31,9 @@ jobs:
       # rien par elle-même : elle rend la variable capable d'agir.
       build-env: |
         VITE_POSTHOG_KEY=${{ vars.VITE_POSTHOG_KEY }}
+        VITE_PRIVACY_CONTACT=${{ vars.VITE_PRIVACY_CONTACT }}
+        VITE_PRIVACY_CONTROLLER=${{ vars.VITE_PRIVACY_CONTROLLER }}
+        VITE_PRIVACY_ERROR_BASIS=${{ vars.VITE_PRIVACY_ERROR_BASIS }}
+        VITE_PRIVACY_RETENTION_MONTHS=${{ vars.VITE_PRIVACY_RETENTION_MONTHS }}
         VITE_SENTRY_DSN=${{ vars.VITE_SENTRY_DSN }}
         VITE_SENTRY_ENVIRONMENT=${{ vars.VITE_SENTRY_ENVIRONMENT }}

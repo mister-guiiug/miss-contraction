@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { FamilyApps } from '@mister-guiiug/dev-pwa-config/react';
 import { repoUrl } from '@mister-guiiug/dev-pwa-config/apps-catalog';
 import { applyUpdate } from '@mister-guiiug/dev-pwa-config/sw-update';
+import { parsePosthogKey } from '@mister-guiiug/dev-pwa-config/analytics';
 import { ConsentSection } from '@mister-guiiug/dev-pwa-config/react/consent-section';
+import { PrivacyNotice } from '@mister-guiiug/dev-pwa-config/react/privacy-notice';
 import { ViewLayout } from '../components/layout/ViewLayout';
 import { useAppStore } from '../store/useAppStore';
 import { APP_ID } from '../../storage';
@@ -97,6 +99,16 @@ function IconExternalLink() {
       <path d="M7 17 17 7M7 7h10v10" />
     </svg>
   );
+}
+
+/**
+ * `Number('')` vaut 0 : une variable posée vide ferait annoncer une conservation
+ * de « 0 mois » au lieu de la mention manquante que le socle affiche.
+ */
+function moisDeConservation(brut: string | undefined): number | undefined {
+  if (!brut?.trim()) return undefined;
+  const mois = Number(brut);
+  return Number.isFinite(mois) ? mois : undefined;
 }
 
 export function AboutView() {
@@ -321,6 +333,26 @@ export function AboutView() {
               : t(language, 'about.forceReload')}
           </button>
         </section>
+
+        {/* Ce que la mesure et les rapports d'erreur font, dit avant le geste
+            qui permet d'en sortir. Les mentions de l'exploitant sont des
+            variables du dépôt que `deploy.yml` passe au build ; le socle en
+            affiche l'absence plutôt que de se taire. Pas de clé passée au
+            panneau : `ConsentSection`, juste dessous, reste le seul endroit où
+            revenir sur son choix. Et sans clé que le socle accepte, rien n'est
+            mesuré : le panneau décrirait une mesure qui n'a pas lieu. */}
+        {parsePosthogKey(import.meta.env.VITE_POSTHOG_KEY) ? (
+          <PrivacyNotice
+            className="about-section about-privacy"
+            controller={import.meta.env.VITE_PRIVACY_CONTROLLER}
+            contact={import.meta.env.VITE_PRIVACY_CONTACT}
+            retentionMonths={moisDeConservation(
+              import.meta.env.VITE_PRIVACY_RETENTION_MONTHS
+            )}
+            sentryDsn={import.meta.env.VITE_SENTRY_DSN}
+            errorBasis={import.meta.env.VITE_PRIVACY_ERROR_BASIS}
+          />
+        ) : null}
 
         {/* Revenir sur son choix de mesure d'audience : le retrait se fait ici,
             en un clic (RGPD, art. 7.3). Mêmes clé et chargeur que le bandeau.
