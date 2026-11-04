@@ -106,24 +106,37 @@ describe('« À propos » - le panneau « Vos données »', () => {
     ).toBeInTheDocument();
   });
 
-  it('se tait quand le build ne mesure rien', () => {
+  it('se tait quand le build n’envoie rien, ni mesure ni erreur', () => {
     poser(MENTIONS);
     vi.stubEnv('VITE_POSTHOG_KEY', '');
+    vi.stubEnv('VITE_SENTRY_DSN', '');
     rendre();
 
     expect(screen.queryByRole('region', { name: 'Vos données' })).toBeNull();
   });
 
   // Le socle refuse une clé mal formée et ne mesure rien : la section de
-  // consentement disparaît, le panneau doit disparaître avec elle.
-  it('se tait aussi sur une clé que le socle refuse', () => {
+  // consentement disparaît, et le panneau ne décrit plus la mesure. Les
+  // rapports d'erreur, eux, partent toujours : il continue de les dire.
+  it('sur une clé que le socle refuse, ne parle plus que des erreurs', () => {
     poser(MENTIONS);
     vi.stubEnv('VITE_POSTHOG_KEY', 'phc_trop_courte');
     rendre();
 
-    expect(screen.queryByRole('region', { name: 'Vos données' })).toBeNull();
+    const panneau = screen.getByRole('region', { name: 'Vos données' });
+    expect(panneau).not.toHaveTextContent('PostHog');
+    expect(panneau).toHaveTextContent('Sentry');
     expect(
       screen.queryByRole('heading', { name: 'Mesure d’audience' })
     ).toBeNull();
+  });
+
+  it('a le niveau et l’allure des titres de section voisins', () => {
+    poser(MENTIONS);
+    rendre();
+
+    const titre = screen.getByRole('heading', { name: 'Vos données' });
+    expect(titre.tagName).toBe('H3');
+    expect(titre).toHaveClass('about-section__title');
   });
 });
