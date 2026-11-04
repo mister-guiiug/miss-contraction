@@ -13,6 +13,15 @@ interface ImportMetaEnv {
    */
   readonly VITE_POSTHOG_KEY?: string;
   readonly VITE_SENTRY_DSN?: string;
+  /**
+   * Les mentions de l'exploitant du panneau « Vos données » (« À propos ») :
+   * elles dépendent de qui publie l'application, pas du code. Publiques par
+   * conception, puisqu'elles s'affichent, donc `vars` comme la clé PostHog.
+   */
+  readonly VITE_PRIVACY_CONTROLLER?: string;
+  readonly VITE_PRIVACY_CONTACT?: string;
+  readonly VITE_PRIVACY_RETENTION_MONTHS?: string;
+  readonly VITE_PRIVACY_ERROR_BASIS?: string;
 }
 
 interface ImportMeta {
