@@ -3868,23 +3868,12 @@ html[data-theme='dark'] .about-link-card--coffee .about-link-card__icon {
   align-self: flex-start;
 }
 
-/* Le panneau « Vos données » (`PrivacyNotice` du socle) rend son titre en
-   `<h2>` sans classe : il prend l'allure des titres de section voisins, et ses
-   descriptions celle de `.about-section__text`. */
-.about-privacy [data-dwc='privacy-notice-title'] {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin: 0;
-}
-
-/* Une seule colonne, quelle que soit la fenêtre : le socle passe à deux dès
-   32rem de LARGEUR D'ÉCRAN, mais la colonne « À propos » plafonne vers 470 px,
-   et les descriptions y tenaient dans moins de 200 px à côté des termes. */
+/* Le panneau « Vos données » (`PrivacyNotice` du socle) : son titre porte
+   `.about-section__title`, ses descriptions prennent l'allure de
+   `.about-section__text`. La carte reste sous le seuil des deux colonnes du
+   socle : chaque terme coiffe sa description, d'où l'écart resserré entre les
+   deux et l'air laissé sous la description. */
 .about-privacy [data-dwc='privacy-notice-list'] {
-  grid-template-columns: 1fr;
   row-gap: 0.15rem;
 }
 
