@@ -50,7 +50,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
     "@eslint/js": "^10.0.1",
-    "@mister-guiiug/dev-pwa-config": "^6.30.0",
+    "@mister-guiiug/dev-pwa-config": "^6.31.0",
     "@playwright/test": "^1.64.1",
     "@tailwindcss/vite": "^4.3.4",
     "@testing-library/jest-dom": "^7.0.1",
