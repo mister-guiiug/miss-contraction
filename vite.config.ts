@@ -8,7 +8,13 @@ import { cspPlugin } from '@mister-guiiug/dev-pwa-config/vite-csp';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { readFileSync } from 'node:fs';
 import { versionPlugin } from '@mister-guiiug/dev-pwa-config/vite-version';
-import { NAVIGATE_FALLBACK_DENY_FILES } from '@mister-guiiug/dev-pwa-config/vite-pwa';
+import {
+  googleFontsCaching,
+  NAVIGATE_FALLBACK_DENY_FILES,
+  SENTRY_CHUNK,
+  sentryChunkFileNames,
+  sentryGlobIgnores,
+} from '@mister-guiiug/dev-pwa-config/vite-pwa';
 
 const analyze = process.env.ANALYZE === '1';
 const { version } = JSON.parse(readFileSync('./package.json', 'utf-8')) as {
@@ -87,29 +93,8 @@ export default defineConfig(({ command }) => {
       chunkSizeWarningLimit: 800,
       rollupOptions: {
         output: {
-          /*
-           * LE MORCEAU SENTRY GARDE SON NOM, SANS EMPREINTE — parce qu'il est
-           * exclu du précache (`globIgnores` plus bas) et qu'une URL empreintée
-           * y meurt à chaque déploiement.
-           *
-           * Le service worker sert la coquille précachée jusqu'à ce que
-           * l'utilisateur accepte la mise à jour ; cette coquille demande
-           * l'ANCIENNE empreinte, que le déploiement suivant a supprimée de
-           * `assets/`. Mesuré en production sur mister-qowa le 22/09/2026 :
-           * HTTP 404, « Échec du chargement pour le module » dans la console.
-           * `initSentry` avale l'échec (son `try/catch`), donc l'application ne
-           * casse pas — elle rapporte ses erreurs à personne, sans le dire.
-           *
-           * Rien n'est perdu au cache : GitHub Pages répond
-           * `Cache-Control: max-age=600` sur TOUS les fichiers, empreinte ou pas.
-           *
-           * `pwa-doctor` tient l'invariant depuis le socle 6.8.0
-           * (règle `chunk-hors-precache`).
-           */
-          chunkFileNames: chunk =>
-            chunk.name === 'sentry'
-              ? 'assets/sentry.js'
-              : 'assets/[name]-[hash].js',
+          // Le morceau Sentry, nom sans empreinte : socle (`vite-pwa`, 6.32.0).
+          chunkFileNames: sentryChunkFileNames,
           manualChunks(id) {
             if (!id.includes('node_modules')) return;
 
@@ -134,7 +119,7 @@ export default defineConfig(({ command }) => {
              * Le jour où un DSN sera posé, ce morceau se chargera à la demande,
              * après le premier rendu, au lieu de bloquer avec le reste.
              */
-            if (norm.includes('/@sentry/')) return 'sentry';
+            if (norm.includes('/@sentry/')) return SENTRY_CHUNK;
             // ET POSTHOG POUR LA MÊME RAISON, EN PLUS GRAVE. Sentry préchargé
             // coûtait du poids ; PostHog préchargé casse une PROMESSE : l'ADR
             // 0012 dit que rien n'est chargé avant l'accord, et le socle ne
@@ -341,24 +326,8 @@ export default defineConfig(({ command }) => {
           // Un fichier (sitemap.xml, llms.txt…) va au réseau, pas à index.html.
           navigateFallbackDenylist: [NAVIGATE_FALLBACK_DENY_FILES],
           globPatterns: ['**/*.{js,css,html,ico,svg,png,woff2,webmanifest}'],
-          /*
-           * LE MORCEAU SENTRY HORS DU PRÉCACHE, ET C'EST TOUT L'INTÉRÊT DE
-           * L'AVOIR SORTI DE `vendor` plus haut.
-           *
-           * `manualChunks` le range dans son propre morceau, que le socle ne
-           * charge que si un DSN est posé — mais `globPatterns` ci-dessus
-           * ramasse TOUT le JS émis, `import()` ou pas. Mesuré le 16/09/2026
-           * sur la production : `sw.js` listait `sentry-CwaqS02s.js`, 345 KiB
-           * bruts, téléchargés par chaque visiteur à l'installation du service
-           * worker, alors qu'aucune variable `VITE_SENTRY_DSN` n'est posée sur
-           * ce dépôt. Le découpage paresseux était vrai, et entièrement défait
-           * un cran plus loin.
-           *
-           * Hors précache, il est cherché sur le réseau à la première erreur —
-           * et jamais si l'observabilité reste éteinte. Ne pas l'avoir hors
-           * ligne est sans conséquence : rapporter une erreur demande le réseau.
-           */
-          globIgnores: ['**/sentry.js', '**/sentry-*.js'],
+          // Le morceau Sentry hors du précache : socle (`vite-pwa`, 6.32.0).
+          globIgnores: sentryGlobIgnores(),
           /*
            * FREDOKA HORS LIGNE. La police vient de Google à l'exécution
            * (`index.html`) : sans ces deux règles, l'app démarrait hors ligne
@@ -369,28 +338,7 @@ export default defineConfig(({ command }) => {
            * refuse l'opaque par défaut ; écrit, le choix ne dépend plus du
            * défaut de chaque stratégie.
            */
-          runtimeCaching: [
-            {
-              urlPattern: /^https:\/\/fonts\.googleapis\.com\//,
-              handler: 'StaleWhileRevalidate',
-              options: {
-                cacheName: 'google-fonts-stylesheets',
-                cacheableResponse: { statuses: [0, 200] },
-              },
-            },
-            {
-              urlPattern: /^https:\/\/fonts\.gstatic\.com\//,
-              handler: 'CacheFirst',
-              options: {
-                cacheName: 'google-fonts-webfonts',
-                cacheableResponse: { statuses: [0, 200] },
-                expiration: {
-                  maxEntries: 30,
-                  maxAgeSeconds: 60 * 60 * 24 * 365,
-                },
-              },
-            },
-          ],
+          runtimeCaching: [...googleFontsCaching()],
         },
         manifest: {
           id: isNetlify
