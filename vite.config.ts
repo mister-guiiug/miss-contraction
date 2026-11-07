@@ -339,6 +339,9 @@ export default defineConfig(({ command }) => {
            * défaut de chaque stratégie.
            */
           runtimeCaching: [...googleFontsCaching()],
+          // Le toucher d'une notification d'alerte : sans lui, celles que le
+          // worker affiche ne ramènent nulle part (`src/alertNotifications.ts`).
+          importScripts: ['notification-click-sw.js'],
         },
         manifest: {
           id: isNetlify

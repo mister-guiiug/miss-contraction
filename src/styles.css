@@ -1128,15 +1128,6 @@ body {
   margin-top: 0.5rem;
 }
 
-.settings-notify-row {
-  align-items: flex-start;
-}
-
-.settings-notify-row .notify-status {
-  flex: 1;
-  min-width: 8rem;
-}
-
 .settings-save-feedback {
   margin: 0.35rem 0 0;
   min-height: 1.35rem;

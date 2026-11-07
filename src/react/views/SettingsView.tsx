@@ -7,6 +7,11 @@ import { Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { downloadText } from '@mister-guiiug/dev-pwa-config/download';
 import { shareOrCopy } from '@mister-guiiug/dev-pwa-config/share';
+import {
+  permissionState,
+  requestPermission,
+  type PermissionState,
+} from '@mister-guiiug/dev-pwa-config/push';
 import { useAppStore } from '../store/useAppStore';
 import {
   backupFileName,
@@ -82,13 +87,9 @@ export function SettingsView() {
     tone: 'ok' | 'error';
     text: string;
   } | null>(null);
-  const [notifyPermission, setNotifyPermission] =
-    useState<NotificationPermission>(() => {
-      if (typeof window !== 'undefined' && 'Notification' in window) {
-        return Notification.permission;
-      }
-      return 'default';
-    });
+  const [notifyPermission, setNotifyPermission] = useState<PermissionState>(
+    () => permissionState()
+  );
 
   // Recharger les settings depuis localStorage au montage
   // pour synchroniser avec les modifications faits par le code vanilla
@@ -128,11 +129,30 @@ export function SettingsView() {
     setTimeout(() => setSaveStatus(''), 3000);
   };
 
-  const requestNotificationPermission = async () => {
-    if ('Notification' in window) {
-      const permission = await Notification.requestPermission();
+  /**
+   * La case s'applique TOUT DE SUITE, sans attendre « Enregistrer ».
+   *
+   * Cocher demande la permission au navigateur sur ce même geste — la seule
+   * façon de la demander, et une réponse que l'on obtient sur-le-champ. Laisser
+   * ensuite la case en attente d'un enregistrement que l'on peut oublier
+   * aurait donné une permission accordée et des notifications éteintes.
+   * Le choix de langue suit déjà cette règle.
+   */
+  const handleNotificationsToggle = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const wanted = e.target.checked;
+    let permission = notifyPermission;
+    if (wanted) {
+      // Ne redemande pas une permission refusée : le navigateur ne montrerait
+      // rien et répondrait « refusé », l'air d'avoir réessayé.
+      permission = await requestPermission();
       setNotifyPermission(permission);
     }
+    const enabled = wanted && permission === 'granted';
+    setFormData(prev => ({ ...prev, notificationsEnabled: enabled }));
+    updateSettings({ notificationsEnabled: enabled });
+    saveSettings();
   };
 
   const handleSnooze = (minutes: number) => {
@@ -442,6 +462,33 @@ export function SettingsView() {
             <label className="field field-check">
               <input
                 type="checkbox"
+                name="notificationsEnabled"
+                id="notifications-check"
+                data-testid="notifications-check"
+                aria-describedby="notifications-help notification-status"
+                checked={formData.notificationsEnabled}
+                disabled={notifyPermission === 'unsupported'}
+                onChange={e => void handleNotificationsToggle(e)}
+              />
+              <span>{t(language, 'settings.notifications.toggle')}</span>
+            </label>
+            <p
+              className="notify-status"
+              id="notification-status"
+              data-testid="notification-status"
+              aria-live="polite"
+            >
+              {t(language, `settings.notifications.${notifyPermission}`)}
+            </p>
+            <p
+              className="settings-intro settings-intro--tight"
+              id="notifications-help"
+            >
+              {t(language, 'settings.notifications.help')}
+            </p>
+            <label className="field field-check">
+              <input
+                type="checkbox"
                 name="preAlertEnabled"
                 id="pre-alert-check"
                 data-testid="pre-alert-check"
@@ -454,31 +501,6 @@ export function SettingsView() {
                   : 'Pre-alert when rhythm tightens (before full threshold)'}
               </span>
             </label>
-            <div className="field row settings-notify-row">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-testid="request-notification-btn"
-                onClick={requestNotificationPermission}
-              >
-                {language === 'fr'
-                  ? 'Autoriser les notifications'
-                  : 'Allow notifications'}
-              </button>
-              <span className="notify-status" data-testid="notification-status">
-                {notifyPermission === 'granted'
-                  ? language === 'fr'
-                    ? 'Allowed'
-                    : 'Allowed'
-                  : notifyPermission === 'denied'
-                    ? language === 'fr'
-                      ? 'Blocked'
-                      : 'Blocked'
-                    : language === 'fr'
-                      ? 'Not set'
-                      : 'Not set'}
-              </span>
-            </div>
             <div className="field snooze-block">
               <span className="snooze-label">
                 {language === 'fr' ? 'Reporter les alertes' : 'Snooze alerts'}
