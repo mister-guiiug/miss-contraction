@@ -6,6 +6,7 @@ import {
 } from '../../statsHelpers';
 import { loadSnoozeUntil } from '../../storage';
 import { vibrate } from '@mister-guiiug/dev-pwa-config/haptics';
+import { THRESHOLD_VIBRATION } from '../../alertNotifications';
 import { useNow } from './useNow';
 
 interface AlertState {
@@ -27,15 +28,11 @@ export function useAlerts(
     [records, settings]
   );
 
-  // Vibration si le seuil critique est atteint : trois pulsations longues,
-  // le dernier échelon du vocabulaire haptique de l'app (1 = début, 2 = fin,
-  // 3 = seuil atteint). Motif explicite plutôt qu'un `HAPTIC_PATTERNS` nommé :
-  // c'est l'alerte « il est temps de partir à la maternité », ressentie
-  // pendant une contraction, et aucun pattern du socle ne tape aussi fort
-  // (`error` plafonne à 70 ms par pulsation).
+  // Vibration si le seuil critique est atteint. Le motif, et pourquoi il est
+  // explicite, sont dans `alertNotifications.ts` : la notification le partage.
   useEffect(() => {
     if (thresholdKind === 'match' && settings.vibrationEnabled) {
-      vibrate([100, 50, 100, 50, 100]);
+      vibrate(THRESHOLD_VIBRATION);
     }
   }, [thresholdKind, settings.vibrationEnabled]);
 

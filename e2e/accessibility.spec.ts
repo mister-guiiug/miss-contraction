@@ -163,10 +163,17 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
   test('@a11y labels explicites - inputs ont des labels', async ({ page }) => {
     await page.goto(ROUTES.SETTINGS);
 
+    /*
+     * TOUS LES CHAMPS, ET CHACUN. Le test n'en examinait que les dix premiers
+     * mais divisait par le TOTAL : chaque champ ajouté à l'écran faisait
+     * baisser le ratio sans qu'aucun libellé manque. La case des
+     * notifications (le vingtième champ) l'a fait tomber à 10/20, pile sous le
+     * seuil, alors que les vingt champs sont étiquetés.
+     */
     const inputs = await page.locator('input, textarea, select').all();
-    let labeledCount = 0;
+    const unlabeled: string[] = [];
 
-    for (const input of inputs.slice(0, 10)) {
+    for (const input of inputs) {
       const id = await input.getAttribute('id');
       const ariaLabel = await input.getAttribute('aria-label');
       const ariaLabelledBy = await input.getAttribute('aria-labelledby');
@@ -176,18 +183,19 @@ test.describe('Accessibilité - WCAG 2.1 AA', () => {
         el => el.closest('label') !== null
       );
 
-      if (ariaLabel || ariaLabelledBy || wrappedInLabel) {
-        labeledCount++;
-      } else if (id) {
-        const label = page.locator(`label[for="${id}"]`);
-        if (await label.isVisible({ timeout: 300 }).catch(() => false)) {
-          labeledCount++;
-        }
+      if (ariaLabel || ariaLabelledBy || wrappedInLabel) continue;
+      if (id && (await page.locator(`label[for="${id}"]`).count()) > 0) {
+        continue;
       }
+      unlabeled.push(
+        (await input.getAttribute('name')) ??
+          id ??
+          (await input.evaluate(el => el.outerHTML))
+      );
     }
 
-    // Au moins 60% doivent avoir un label
-    expect(labeledCount / inputs.length).toBeGreaterThan(0.5);
+    expect(inputs.length).toBeGreaterThan(0);
+    expect(unlabeled).toEqual([]);
   });
 
   test('@a11y structure - headings hiérarchiques correctes', async ({

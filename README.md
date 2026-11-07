@@ -42,10 +42,10 @@
 | Fonctionnalité          | Description                                                                                                                   |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | Seuils personnalisables | Intervalle max (min), durée min (sec), nombre de contractions consécutives                                                    |
-| Seuil atteint           | Badge « seuil atteint » à l'écran et trois vibrations longues (si les vibrations sont activées)                               |
-| Report de la pré-alerte | Masque le bandeau de pré-alerte pendant 30 min ou 1 h, ou annule le report ; le badge et la vibration du seuil restent actifs |
+| Seuil atteint           | Badge « seuil atteint » à l'écran, trois vibrations longues (si les vibrations sont activées) et une notification, si activée |
+| Report de la pré-alerte | Masque la pré-alerte, bandeau et notification, pendant 30 min ou 1 h, ou annule le report ; le seuil atteint reste signalé    |
 
-**L'application n'envoie pas de notification système** : les alertes s'affichent à l'écran et se sentent par vibration. Gardez-la ouverte pendant le suivi.
+**Notification, en option** : cochée dans les paramètres et autorisée par le navigateur, une notification accompagne le seuil atteint (elle reste affichée jusqu'à ce qu'on la touche) et la pré-alerte. Elle part de l'application elle-même, au moment où elle constate l'alerte — quand une contraction est enregistrée. **Il n'y a pas de serveur de notifications** : application fermée, rien n'arrive. Gardez-la ouverte pendant le suivi.
 
 ### Paramètres et personnalisation
 
@@ -80,7 +80,7 @@
 2. **Configurez votre maternité** dans les paramètres (nom, numéro, consignes).
 3. **Appuyez sur « Début »** au début d'une contraction, puis **« Fin »** quand elle se termine.
 4. L'application calcule automatiquement les intervalles et la durée.
-5. **L'écran vous alerte** quand le rythme se resserre (bandeau), puis quand les seuils sont atteints (badge et vibrations). Aucune notification n'est envoyée : gardez l'application ouverte.
+5. **L'écran vous alerte** quand le rythme se resserre (bandeau), puis quand les seuils sont atteints (badge et vibrations), avec une notification si vous l'avez activée. Elle part de l'application, pas d'un serveur : gardez l'application ouverte.
 6. **Appelez la maternité** directement depuis l'écran dédié.
 
 ---

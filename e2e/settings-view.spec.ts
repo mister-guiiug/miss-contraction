@@ -117,17 +117,51 @@ test.describe('SettingsView - Paramètres @fonctionnel', () => {
     await expect(page.locator(SELECTORS.MATERNITY_LABEL)).toContainText(name);
   });
 
-  test('notifications - le bouton de permission est présent', async ({
+  test('notifications - la case et l’état de la permission sont présents', async ({
     page,
   }) => {
-    // Le navigateur de test n'accorde rien : on vérifie que la commande
+    // Le navigateur de test n'accorde rien ici : on vérifie que la commande
     // existe et que l'écran affiche un état, pas que la permission passe.
     await expect(
-      page.locator('[data-testid="request-notification-btn"]')
+      page.locator('[data-testid="notifications-check"] + span')
     ).toBeVisible();
     await expect(
       page.locator('[data-testid="notification-status"]')
-    ).toBeVisible();
+    ).not.toBeEmpty();
+  });
+
+  /*
+   * `context.grantPermissions(['notifications'])` ne suffit pas : Chromium sans
+   * tête répond `denied` quoi qu'on lui accorde (vérifié le 07/11/2026). On
+   * remplace donc l'API par une permission « pas encore demandée » que la
+   * demande accorde — le parcours exact d'une première fois.
+   */
+  test('notifications - cocher la case l’enregistre sans « Enregistrer »', async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      let permission: NotificationPermission = 'default';
+      const Fake = function () {} as unknown as typeof Notification;
+      Object.defineProperty(Fake, 'permission', { get: () => permission });
+      Fake.requestPermission = () => {
+        permission = 'granted';
+        return Promise.resolve(permission);
+      };
+      window.Notification = Fake;
+    });
+    await settings.goto();
+    await expect(
+      page.locator('[data-testid="notification-status"]')
+    ).toHaveText('Pas encore demandées.');
+
+    await settings.enableNotifications();
+
+    await expect(
+      page.locator('[data-testid="notification-status"]')
+    ).toHaveText('Autorisées par le navigateur.');
+    expect(await storedSettings(page)).toMatchObject({
+      notificationsEnabled: true,
+    });
   });
 
   /*

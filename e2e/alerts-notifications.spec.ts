@@ -4,7 +4,13 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { ROUTES, KEY_RECORDS } from './config';
+import {
+  ROUTES,
+  SELECTORS,
+  KEY_RECORDS,
+  KEY_SETTINGS,
+  KEY_ACTIVE_START,
+} from './config';
 import { readStoredSettings, readStoredSnoozeUntil } from './helpers';
 
 test.describe('Alertes & Notifications @fonctionnel', () => {
@@ -153,6 +159,90 @@ test.describe('Alertes & Notifications @fonctionnel', () => {
     await expect(
       page.locator('[data-testid="threshold-badge"]')
     ).toHaveAttribute('data-state', 'match');
+  });
+
+  /*
+   * La notification ne part qu'au FRANCHISSEMENT du seuil, pas au chargement
+   * d'un historique qui l'atteint déjà : on sème donc deux contractions et une
+   * troisième en cours, et c'est le clic sur « Fin » qui doit la faire partir.
+   *
+   * Le serveur de développement n'a pas de service worker (`main.tsx` les
+   * désinscrit) : c'est le repli de la page, `new Notification`, qu'on observe.
+   * L'espion ne construit pas de vraie notification — seul compte ce que
+   * l'application a demandé d'afficher.
+   */
+  test('seuil atteint - la notification part au clic sur « Fin »', async ({
+    page,
+    context,
+  }) => {
+    await context.grantPermissions(['notifications']);
+    await page.addInitScript(() => {
+      type Vue = { title: string; tag?: string; requireInteraction?: boolean };
+      const sink: Vue[] = [];
+      (window as unknown as { __notifications: Vue[] }).__notifications = sink;
+      const Spy = function (title: string, opts?: NotificationOptions) {
+        sink.push({
+          title,
+          tag: opts?.tag,
+          requireInteraction: opts?.requireInteraction,
+        });
+        return { close() {}, onclick: null };
+      } as unknown as typeof Notification;
+      Object.defineProperty(Spy, 'permission', { get: () => 'granted' });
+      Spy.requestPermission = () => Promise.resolve('granted' as const);
+      window.Notification = Spy;
+    });
+
+    await page.goto(ROUTES.HOME);
+    await page.evaluate(
+      ({ records, settings, active }) => {
+        // L'instantané écrit au chargement masquerait les clés héritées.
+        localStorage.clear();
+        const now = Date.now();
+        localStorage.setItem(
+          records,
+          JSON.stringify([
+            { id: 'n1', start: now - 600_000, end: now - 540_000 },
+            { id: 'n2', start: now - 360_000, end: now - 300_000 },
+          ])
+        );
+        localStorage.setItem(
+          settings,
+          JSON.stringify({ language: 'fr', notificationsEnabled: true })
+        );
+        // En cours depuis 70 s : la fin la portera au-delà des 45 s de durée
+        // minimale, à 290 s du début précédent — sous l'écart de 5 minutes.
+        localStorage.setItem(active, String(now - 70_000));
+      },
+      {
+        records: KEY_RECORDS,
+        settings: KEY_SETTINGS,
+        active: KEY_ACTIVE_START,
+      }
+    );
+    await page.reload();
+    await page.waitForLoadState('networkidle');
+
+    const notifications = () =>
+      page.evaluate(
+        () =>
+          (window as unknown as { __notifications: unknown[] }).__notifications
+      );
+    expect(await notifications()).toEqual([]);
+
+    await page.locator(SELECTORS.TOGGLE_BTN_RECORDING).click();
+
+    await expect(page.locator(SELECTORS.THRESHOLD_BADGE)).toHaveAttribute(
+      'data-state',
+      'match'
+    );
+    await expect.poll(notifications).toEqual([
+      {
+        title: 'Seuil d’alerte atteint',
+        tag: 'mc-threshold',
+        requireInteraction: true,
+      },
+    ]);
   });
 
   test('audio - son joué au déclenchement', async ({ page }) => {

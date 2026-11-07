@@ -21,6 +21,7 @@ import { useAppStore } from './store/useAppStore';
 import { AppLabelsProvider } from './providers/AppLabelsProvider';
 import { ConsentBanner } from '@mister-guiiug/dev-pwa-config/react/consent-banner';
 import { usePageViews } from '@mister-guiiug/dev-pwa-config/react/use-page-views';
+import { useAlertNotifications } from './hooks/useAlertNotifications';
 
 function DocumentTitle() {
   const location = useLocation();
@@ -46,6 +47,12 @@ function DocumentTitle() {
   return null;
 }
 
+/** Ne rend rien : il tient les notifications d'alerte, quelle que soit la route. */
+function AlertNotifier() {
+  useAlertNotifications();
+  return null;
+}
+
 function AppRoutes() {
   const settings = useAppStore(state => state.settings);
   const language = settings.language;
@@ -53,6 +60,7 @@ function AppRoutes() {
   return (
     <Shell>
       <DocumentTitle />
+      <AlertNotifier />
       {/* Une `region`, pas une boîte modale : elle ne recouvre rien et ne
           piège pas le focus. Ne rend RIEN tant que `VITE_POSTHOG_KEY`
           n'est pas posée — sans identifiant, il n'y a rien à demander. */}
