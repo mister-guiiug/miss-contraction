@@ -370,6 +370,23 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
       'Le changement est appliqué immédiatement sur la navigation et les écrans pris en charge.',
     'settings.language.changed': 'Langue changée immédiatement !',
 
+    'settings.notifications.toggle':
+      'Afficher une notification quand une alerte se déclenche',
+    'settings.notifications.help':
+      'L’application l’affiche au moment où elle constate l’alerte, c’est-à-dire quand une contraction est enregistrée. Aucun serveur ne l’envoie : application fermée, rien n’arrive.',
+    'settings.notifications.granted': 'Autorisées par le navigateur.',
+    'settings.notifications.denied':
+      'Bloquées par le navigateur — réautorisez-les dans ses réglages.',
+    'settings.notifications.default': 'Pas encore demandées.',
+    'settings.notifications.unsupported': 'Non disponibles dans ce navigateur.',
+
+    'notification.threshold.title': 'Seuil d’alerte atteint',
+    'notification.threshold.body':
+      'Les {count} dernières contractions correspondent à vos seuils. Suivez les consignes de votre maternité.',
+    'notification.preAlert.title': 'Rythme soutenu',
+    'notification.preAlert.body':
+      'Les contractions se rapprochent de vos seuils d’alerte. Restez attentive aux consignes de votre sage-femme.',
+
     'backup.title': 'Sauvegarde',
     'backup.intro':
       'Tout reste sur cet appareil. Le fichier de sauvegarde contient l’historique et les réglages : gardez-le avant de changer de téléphone, ou envoyez-le à votre sage-femme.',
@@ -722,6 +739,22 @@ export const MESSAGES: Record<AppLanguage, Partial<TranslationMap>> = {
     'settings.language.help':
       'Changes are applied immediately on navigation and supported screens.',
     'settings.language.changed': 'Language changed immediately!',
+
+    'settings.notifications.toggle': 'Show a notification when an alert fires',
+    'settings.notifications.help':
+      'The app shows it when it detects the alert, that is when a contraction is recorded. No server sends it: with the app closed, nothing arrives.',
+    'settings.notifications.granted': 'Allowed by the browser.',
+    'settings.notifications.denied':
+      'Blocked by the browser — allow them again in its settings.',
+    'settings.notifications.default': 'Not requested yet.',
+    'settings.notifications.unsupported': 'Not available in this browser.',
+
+    'notification.threshold.title': 'Alert threshold reached',
+    'notification.threshold.body':
+      'Your last {count} contractions match your thresholds. Follow your maternity unit’s instructions.',
+    'notification.preAlert.title': 'Sustained rhythm',
+    'notification.preAlert.body':
+      'Contractions are getting close to your alert thresholds. Stay attentive to your midwife’s guidance.',
 
     'backup.title': 'Backup',
     'backup.intro':

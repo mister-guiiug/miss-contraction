@@ -103,11 +103,17 @@ export class SettingsPage {
     }
   }
 
-  async requestNotificationPermission() {
-    const btn = this.page.locator('[data-testid="request-notification-btn"]');
-    if (await btn.isVisible({ timeout: TIMEOUTS.SHORT }).catch(() => false)) {
-      await btn.click();
-    }
+  /**
+   * La case des notifications demande la permission au navigateur, et ne se
+   * coche qu'APRÈS sa réponse : `toggleCheckbox` relirait l'état trop tôt.
+   * Le contexte doit avoir accordé la permission (`grantPermissions`).
+   */
+  async enableNotifications() {
+    const checkbox = this.page.locator('[data-testid="notifications-check"]');
+    await this.page
+      .locator('[data-testid="notifications-check"] + span')
+      .click();
+    await expect(checkbox).toBeChecked();
   }
 
   /**
