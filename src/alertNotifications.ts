@@ -9,7 +9,7 @@ import type { AppSettings } from './storage';
  * ELLES PARTENT DE LA PAGE, PAS D'UN SERVEUR. Il n'y a aucun push ici : la
  * notification est émise au moment où l'application constate l'alerte, donc
  * quand une contraction est enregistrée, l'application ouverte. Les textes des
- * réglages le disent ; n'en promettre pas davantage tant qu'aucun serveur
+ * réglages le disent ; ne pas en promettre davantage tant qu'aucun serveur
  * n'existe.
  */
 
