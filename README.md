@@ -12,6 +12,11 @@
 
 ---
 
+## Guides
+
+- [Chronométrer ses contractions](https://mister-guiiug.github.io/miss-contraction/chronometrer-ses-contractions.html)
+- [Quand partir à la maternité](https://mister-guiiug.github.io/miss-contraction/quand-partir-a-la-maternite.html)
+
 ## Table des matières
 
 - [Fonctionnalités](#fonctionnalités)
